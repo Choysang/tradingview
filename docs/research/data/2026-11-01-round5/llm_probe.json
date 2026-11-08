@@ -1,0 +1,12 @@
+{
+ "truth": {
+  "2026-07": -13.28,
+  "2026-08": 5.07,
+  "2026-09": -5.38,
+  "2026-10": -12.32
+ },
+ "answers": {
+  "gpt-6.1-terra": "{\"cutoff\":\"unknown\",\"months\":{\"2026-07\":\"unknown\",\"2026-08\":\"unknown\",\"2026-09\":\"unknown\",\"2026-10\":\"unknown\"},\"events\":[\"none known\"],\"confidence\":\"none\"}",
+  "gpt-6-luna": "{\"cutoff\":\"2024-06\",\"months\":{\"2026-07\":\"unknown\",\"2026-08\":\"unknown\",\"2026-09\":\"unknown\",\"2026-10\":\"unknown\"},\"events\":[\"none known\"],\"confidence\":\"low\"}"
+ }
+}

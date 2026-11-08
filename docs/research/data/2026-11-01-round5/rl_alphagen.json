@@ -1,0 +1,166 @@
+{
+ "episodes": 15868,
+ "evals": 1999,
+ "pool_ic_pre": 0.1445406828633748,
+ "pool": [
+  {
+   "expr": "Log(Add($amount,Add($vwap,Mul(Sign(Ref(Rank(Greater($high,-0.5),10),5)),$close))))",
+   "weight": -0.11156401948783597,
+   "pre_ic": -0.030959850177168846,
+   "sel_ic": -0.16202252413230864,
+   "sel_t": -2.0318904567960847
+  },
+  {
+   "expr": "Sub(Less(Less($amount,Div($vwap,$low)),Sub($cap,$ret)),Less(5,Mul($volume,$turn)))",
+   "weight": -0.10500595139716357,
+   "pre_ic": -0.07905279844999313,
+   "sel_ic": -0.16815019644458185,
+   "sel_t": -2.6700731879648703
+  },
+  {
+   "expr": "Mul($close,$amount)",
+   "weight": 0.5946096185098975,
+   "pre_ic": -0.06197033077478409,
+   "sel_ic": -0.19259830449961804,
+   "sel_t": -2.752756617723342
+  },
+  {
+   "expr": "Log(Greater($volume,Sub(Less($mkt,Sign(Less($high,Sub($mkt,$close)))),Add(1,$high))))",
+   "weight": 0.16861840095972636,
+   "pre_ic": -0.03815946727991104,
+   "sel_ic": -0.04134211587634953,
+   "sel_t": -1.2861033252910103
+  },
+  {
+   "expr": "Div(Greater(Greater(Sign(Greater($high,Div($is_limit_up,$low))),Mul($low,$low)),$low),$volume)",
+   "weight": 0.32789803458032424,
+   "pre_ic": 0.005518946330994368,
+   "sel_ic": -0.09282298881920394,
+   "sel_t": -1.3338173147082224
+  },
+  {
+   "expr": "Log(Mul($cap,Less(Sign(Less(Greater($is_limit_up,$high),1)),Min(Less($close,$turn),10))))",
+   "weight": 0.15198201152879928,
+   "pre_ic": -0.006640806328505278,
+   "sel_ic": -0.11002203890926797,
+   "sel_t": -3.0687923722947468
+  },
+  {
+   "expr": "Min(CSRank(Mul($volume,Mul(Sub($low,$mkt),Mul($vwap,$close)))),20)",
+   "weight": 0.08489189722535138,
+   "pre_ic": -0.01731872372329235,
+   "sel_ic": -0.15906895058420065,
+   "sel_t": -1.9902747093479793
+  },
+  {
+   "expr": "Mul(Sub(Sign($close),$close),Mul(Mul(2,$cap),Greater(1,Abs($high))))",
+   "weight": -0.11882304038890874,
+   "pre_ic": 0.01735498011112213,
+   "sel_ic": 0.15701058781070804,
+   "sel_t": 2.6905856080558412
+  },
+  {
+   "expr": "Mul(Mul($amount,$amount),$close)",
+   "weight": -0.792127481866801,
+   "pre_ic": -0.06780905276536942,
+   "sel_ic": -0.19076365147801963,
+   "sel_t": -3.111892474798685
+  },
+  {
+   "expr": "Mean($amount,10)",
+   "weight": -0.08793034435902107,
+   "pre_ic": -0.05623786151409149,
+   "sel_ic": -0.1750841952667873,
+   "sel_t": -3.591855340212654
+  },
+  {
+   "expr": "Sub(Add(Less(Mul(Abs(Abs($low)),$low),Std($ret,20)),Less(5,$turn)),$open)",
+   "weight": 0.06259574854580804,
+   "pre_ic": 0.00894432608038187,
+   "sel_ic": 0.13814984346390702,
+   "sel_t": 1.9532495209012164
+  },
+  {
+   "expr": "$low",
+   "weight": -0.37876121112182126,
+   "pre_ic": -0.019724685698747635,
+   "sel_ic": -0.14833013220182198,
+   "sel_t": -1.885266607046405
+  },
+  {
+   "expr": "Greater($is_limit_up,Mul($amount,CSRank($high)))",
+   "weight": -0.25622609615434877,
+   "pre_ic": -0.06234108656644821,
+   "sel_ic": -0.19083323490551926,
+   "sel_t": -2.832044660842998
+  },
+  {
+   "expr": "Less(Less(CSRank($close),$volume),$amount)",
+   "weight": 0.3230810082375473,
+   "pre_ic": -0.026049017906188965,
+   "sel_ic": -0.15554997487924993,
+   "sel_t": -1.9923617573750063
+  },
+  {
+   "expr": "CSRank(Greater($amount,CSRank($close)))",
+   "weight": 0.30095712423042426,
+   "pre_ic": -0.0690193921327591,
+   "sel_ic": -0.17544865384909578,
+   "sel_t": -3.744375597500011
+  },
+  {
+   "expr": "CSRank(Mul(Sub(CSRank(Abs(Abs(CSRank(CSRank(Abs($volume)))))),Mul(2,CSRank($turn))),5))",
+   "weight": -0.14909726603455892,
+   "pre_ic": 0.04839616268873215,
+   "sel_ic": 0.11441893702034246,
+   "sel_t": 1.056835770958391
+  },
+  {
+   "expr": "$turn",
+   "weight": -0.1856983123734477,
+   "pre_ic": -0.064638152718544,
+   "sel_ic": -0.1313692331314087,
+   "sel_t": -1.3462140994859275
+  },
+  {
+   "expr": "Add(CSRank(Abs($volume)),$turn)",
+   "weight": 0.1324402899858224,
+   "pre_ic": -0.0643453523516655,
+   "sel_ic": -0.1308907329274172,
+   "sel_t": -1.4728440195244428
+  },
+  {
+   "expr": "$amount",
+   "weight": -0.08684136188963454,
+   "pre_ic": -0.0674494132399559,
+   "sel_ic": -0.17161029621704735,
+   "sel_t": -3.795700410705522
+  },
+  {
+   "expr": "Div($close,$volume)",
+   "weight": -0.11378244875947498,
+   "pre_ic": 0.015817169100046158,
+   "sel_ic": -0.05773400722219693,
+   "sel_t": -0.9449466667363036
+  }
+ ],
+ "combo_sel_zscore_bug": {
+  "ic": -0.13315538699019022,
+  "t": -3.6981256391931208,
+  "icir": -0.9737230539514808,
+  "n": 44
+ },
+ "combo_rank": {
+  "PRE": {
+   "ic": 0.0915,
+   "t": 9.12,
+   "top10": 0.112
+  },
+  "SELECT": {
+   "ic": 0.1654,
+   "t": 2.55,
+   "top10": 1.425
+  },
+  "note": "rescored with per-day ranks (rl_alphagen_rank.pt); the zscore combination in the first run was wrong"
+ }
+}

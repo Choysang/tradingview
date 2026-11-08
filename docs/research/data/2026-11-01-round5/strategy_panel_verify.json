@@ -1,0 +1,389 @@
+{
+ "months": [
+  {
+   "month": "2024-06",
+   "best": "F:SIZE:bot",
+   "best_x": 1.07,
+   "best_trad": "T:boll_expand",
+   "best_trad_x": 0.57,
+   "median": -0.31
+  },
+  {
+   "month": "2024-07",
+   "best": "T:obv_divergence",
+   "best_x": 1.2,
+   "best_trad": "T:obv_divergence",
+   "best_trad_x": 1.2,
+   "median": -0.35
+  },
+  {
+   "month": "2024-08",
+   "best": "T:ma_converge_diverge",
+   "best_x": 1.14,
+   "best_trad": "T:ma_converge_diverge",
+   "best_trad_x": 1.14,
+   "median": -0.47
+  },
+  {
+   "month": "2024-09",
+   "best": "T:xuri_dongsheng",
+   "best_x": 2.45,
+   "best_trad": "T:xuri_dongsheng",
+   "best_trad_x": 2.45,
+   "median": -0.3
+  },
+  {
+   "month": "2024-10",
+   "best": "T:leader_first_red",
+   "best_x": 11.11,
+   "best_trad": "T:leader_first_red",
+   "best_trad_x": 11.11,
+   "median": -0.02
+  },
+  {
+   "month": "2024-11",
+   "best": "F:SIZE:bot",
+   "best_x": 1.58,
+   "best_trad": "T:bias_revert",
+   "best_trad_x": 0.54,
+   "median": -0.62
+  },
+  {
+   "month": "2024-12",
+   "best": "F:RET_STD60:bot",
+   "best_x": 1.72,
+   "best_trad": "T:jinshan_gu",
+   "best_trad_x": 1.58,
+   "median": -0.62
+  },
+  {
+   "month": "2025-01",
+   "best": "F:BETA_MKT60:top",
+   "best_x": 2.13,
+   "best_trad": "T:bias_revert",
+   "best_trad_x": 0.79,
+   "median": -0.64
+  },
+  {
+   "month": "2025-02",
+   "best": "T:xuri_dongsheng",
+   "best_x": 1.66,
+   "best_trad": "T:xuri_dongsheng",
+   "best_trad_x": 1.66,
+   "median": -0.14
+  },
+  {
+   "month": "2025-03",
+   "best": "F:AMP20:bot",
+   "best_x": 2.01,
+   "best_trad": "T:ma_tangle_break",
+   "best_trad_x": 1.92,
+   "median": -0.5
+  },
+  {
+   "month": "2025-04",
+   "best": "F:MAX60:top",
+   "best_x": 2.12,
+   "best_trad": "T:bullish_harami",
+   "best_trad_x": 0.93,
+   "median": -0.67
+  },
+  {
+   "month": "2025-05",
+   "best": "T:golden_pit",
+   "best_x": 2.02,
+   "best_trad": "T:golden_pit",
+   "best_trad_x": 2.02,
+   "median": -0.27
+  },
+  {
+   "month": "2025-06",
+   "best": "T:bullish_harami",
+   "best_x": 1.06,
+   "best_trad": "T:bullish_harami",
+   "best_trad_x": 1.06,
+   "median": -0.45
+  },
+  {
+   "month": "2025-07",
+   "best": "T:vcp_tight",
+   "best_x": 0.33,
+   "best_trad": "T:vcp_tight",
+   "best_trad_x": 0.33,
+   "median": -0.43
+  },
+  {
+   "month": "2025-08",
+   "best": "T:yiyang_4line",
+   "best_x": 1.71,
+   "best_trad": "T:yiyang_4line",
+   "best_trad_x": 1.71,
+   "median": -0.27
+  },
+  {
+   "month": "2025-09",
+   "best": "T:leader_dip_buy",
+   "best_x": 1.91,
+   "best_trad": "T:leader_dip_buy",
+   "best_trad_x": 1.91,
+   "median": -0.35
+  },
+  {
+   "month": "2025-10",
+   "best": "T:flag_break",
+   "best_x": 2.18,
+   "best_trad": "T:flag_break",
+   "best_trad_x": 2.18,
+   "median": -0.27
+  },
+  {
+   "month": "2025-11",
+   "best": "T:leader_dip_buy",
+   "best_x": 1.48,
+   "best_trad": "T:leader_dip_buy",
+   "best_trad_x": 1.48,
+   "median": -0.31
+  },
+  {
+   "month": "2025-12",
+   "best": "T:flag_break",
+   "best_x": 2.15,
+   "best_trad": "T:flag_break",
+   "best_trad_x": 2.15,
+   "median": -0.23
+  },
+  {
+   "month": "2026-01",
+   "best": "T:jin_zhizhu",
+   "best_x": 1.3,
+   "best_trad": "T:jin_zhizhu",
+   "best_trad_x": 1.3,
+   "median": -0.43
+  },
+  {
+   "month": "2026-02",
+   "best": "T:ma_tangle_break",
+   "best_x": 1.32,
+   "best_trad": "T:ma_tangle_break",
+   "best_trad_x": 1.32,
+   "median": -0.32
+  },
+  {
+   "month": "2026-03",
+   "best": "T:daying_then_zt",
+   "best_x": 1.76,
+   "best_trad": "T:daying_then_zt",
+   "best_trad_x": 1.76,
+   "median": -0.39
+  },
+  {
+   "month": "2026-04",
+   "best": "F:MA250:bot",
+   "best_x": 2.76,
+   "best_trad": "T:flag_break",
+   "best_trad_x": 2.75,
+   "median": -0.24
+  },
+  {
+   "month": "2026-05",
+   "best": "T:flag_break",
+   "best_x": 3.21,
+   "best_trad": "T:flag_break",
+   "best_trad_x": 3.21,
+   "median": -0.08
+  },
+  {
+   "month": "2026-06",
+   "best": "F:BETA60:top",
+   "best_x": 3.78,
+   "best_trad": "T:rs_new_high",
+   "best_trad_x": 3.13,
+   "median": -0.24
+  },
+  {
+   "month": "2026-07",
+   "best": "F:RSQR60:top",
+   "best_x": 3.65,
+   "best_trad": "T:tweezer_bottom",
+   "best_trad_x": 1.34,
+   "median": -0.72
+  },
+  {
+   "month": "2026-08",
+   "best": "T:bullish_harami",
+   "best_x": 2.96,
+   "best_trad": "T:bullish_harami",
+   "best_trad_x": 2.96,
+   "median": -0.27
+  },
+  {
+   "month": "2026-09",
+   "best": "T:leader_dip_buy",
+   "best_x": 3.32,
+   "best_trad": "T:leader_dip_buy",
+   "best_trad_x": 3.32,
+   "median": -0.39
+  },
+  {
+   "month": "2026-10",
+   "best": "F:ROC250:top",
+   "best_x": 2.0,
+   "best_trad": "T:vol_surge_first",
+   "best_trad_x": 1.8,
+   "median": -0.55
+  }
+ ],
+ "persistence": [
+  0.44989852788097384,
+  0.7624800284604633,
+  0.3657529722985886,
+  0.02886281486365327,
+  0.13744979470587554,
+  0.20235957786217473,
+  0.018487585072846334,
+  0.28312803544533116,
+  -0.6327557650155002,
+  0.021342976189121628,
+  0.3162292730060384,
+  0.2517870269537009,
+  0.5537300501787787,
+  0.2403044564368576,
+  0.08834828987917694,
+  0.10809103013365245,
+  0.7214746672835047,
+  -0.3423218447106522,
+  -0.05594869438987406,
+  -0.28074469750689246,
+  -0.3953577099107222,
+  -0.5716893442637891,
+  0.586362927116791,
+  0.7134569774613799,
+  -0.7830099267975977,
+  0.153621078405247,
+  0.441059620675054,
+  0.4425939684284043
+ ],
+ "winner_next_pct": [
+  0.7067209775967414,
+  0.45417515274949083,
+  0.6619144602851323,
+  NaN,
+  0.014256619144602852,
+  0.09572301425661914,
+  0.05295315682281059,
+  0.9368635437881874,
+  0.17311608961303462,
+  0.2240325865580448,
+  0.42362525458248473,
+  0.008146639511201629,
+  0.5193482688391039,
+  0.5030549898167006,
+  0.9653767820773931,
+  0.2830957230142566,
+  0.45621181262729127,
+  0.002036659877800407,
+  0.018329938900203666,
+  0.07331975560081466,
+  0.012219959266802444,
+  NaN,
+  0.945010183299389,
+  0.9511201629327902,
+  0.010183299389002037,
+  0.3971486761710794,
+  0.7413441955193483,
+  0.22810590631364563
+ ],
+ "selection": {
+  "recent5_top1": {
+   "2025H1": -1.095,
+   "2025H2": -1.03,
+   "2026H1": -0.308,
+   "SELECT": 0.407,
+   "VERIFY": -0.436
+  },
+  "recent5_top5": {
+   "2025H1": -0.497,
+   "2025H2": -0.91,
+   "2026H1": 0.094,
+   "SELECT": 0.945,
+   "VERIFY": -1.275
+  },
+  "recent20_top1": {
+   "2025H1": -1.781,
+   "2025H2": -0.105,
+   "2026H1": -0.028,
+   "SELECT": -2.615,
+   "VERIFY": -0.822
+  },
+  "recent20_top5": {
+   "2025H1": -0.795,
+   "2025H2": -0.197,
+   "2026H1": 0.391,
+   "SELECT": -2.768,
+   "VERIFY": -1.559
+  },
+  "recent60_top1": {
+   "2025H1": -0.135,
+   "2025H2": -0.493,
+   "2026H1": 0.147,
+   "SELECT": -2.686,
+   "VERIFY": -0.939
+  },
+  "recent60_top5": {
+   "2025H1": -0.041,
+   "2025H2": -0.517,
+   "2026H1": 0.422,
+   "SELECT": -2.977,
+   "VERIFY": -0.805
+  },
+  "recent120_top1": {
+   "2025H1": -0.344,
+   "2025H2": -0.414,
+   "2026H1": 0.164,
+   "SELECT": -3.785,
+   "VERIFY": -0.601
+  },
+  "recent120_top5": {
+   "2025H1": -0.171,
+   "2025H2": -0.354,
+   "2026H1": 0.67,
+   "SELECT": -3.184,
+   "VERIFY": -0.773
+  },
+  "alltime_top1": {
+   "2025H1": -0.149,
+   "2025H2": -0.455,
+   "2026H1": -0.135,
+   "SELECT": -1.351,
+   "VERIFY": -0.147
+  },
+  "alltime_top5": {
+   "2025H1": -0.065,
+   "2025H2": -0.212,
+   "2026H1": -0.428,
+   "SELECT": -0.427,
+   "VERIFY": -0.56
+  },
+  "all_strategies_mean": {
+   "2025H1": -0.485,
+   "2025H2": -0.36,
+   "2026H1": -0.183,
+   "SELECT": -0.634,
+   "VERIFY": -0.558
+  },
+  "state_model_top1": {
+   "2025H1": -0.37,
+   "2025H2": -0.168,
+   "2026H1": 0.126,
+   "SELECT": -2.056,
+   "VERIFY": -1.445
+  },
+  "state_model_top5": {
+   "2025H1": -0.309,
+   "2025H2": -0.233,
+   "2026H1": 0.142,
+   "SELECT": -2.476,
+   "VERIFY": -1.365
+  }
+ }
+}

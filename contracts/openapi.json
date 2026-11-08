@@ -1,0 +1,7670 @@
+{
+  "components": {
+    "schemas": {
+      "AgentManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_url": {
+            "default": "/openapi.json",
+            "title": "Contract Url",
+            "type": "string"
+          },
+          "name": {
+            "default": "Pulse Research API",
+            "title": "Name",
+            "type": "string"
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/AgentToolDefinition"
+            },
+            "title": "Tools",
+            "type": "array"
+          },
+          "version": {
+            "default": "3.0.0",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tools"
+        ],
+        "title": "AgentManifest",
+        "type": "object"
+      },
+      "AgentToolDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "input_schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Schema"
+          },
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "output_schema": {
+            "title": "Output Schema",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "method",
+          "path",
+          "output_schema"
+        ],
+        "title": "AgentToolDefinition",
+        "type": "object"
+      },
+      "AnalogExample": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "distance": {
+            "title": "Distance",
+            "type": "number"
+          },
+          "forward_return": {
+            "title": "Forward Return",
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "date",
+          "distance",
+          "forward_return"
+        ],
+        "title": "AnalogExample",
+        "type": "object"
+      },
+      "AnalogForecast": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "examples": {
+            "items": {
+              "$ref": "#/components/schemas/AnalogExample"
+            },
+            "title": "Examples",
+            "type": "array"
+          },
+          "features": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Features",
+            "type": "object"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "mean_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Return"
+          },
+          "neighbors": {
+            "title": "Neighbors",
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/AnalogQuantiles"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "prob_up": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prob Up"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          }
+        },
+        "required": [
+          "provenance",
+          "code",
+          "as_of",
+          "features",
+          "neighbors",
+          "horizon",
+          "path",
+          "examples",
+          "notes"
+        ],
+        "title": "AnalogForecast",
+        "type": "object"
+      },
+      "AnalogQuantiles": {
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "title": "Day",
+            "type": "integer"
+          },
+          "p10": {
+            "title": "P10",
+            "type": "number"
+          },
+          "p25": {
+            "title": "P25",
+            "type": "number"
+          },
+          "p50": {
+            "title": "P50",
+            "type": "number"
+          },
+          "p75": {
+            "title": "P75",
+            "type": "number"
+          },
+          "p90": {
+            "title": "P90",
+            "type": "number"
+          }
+        },
+        "required": [
+          "day",
+          "p10",
+          "p25",
+          "p50",
+          "p75",
+          "p90"
+        ],
+        "title": "AnalogQuantiles",
+        "type": "object"
+      },
+      "BacktestBatchRequest": {
+        "additionalProperties": false,
+        "description": "Same signal and cost model applied to a short list of stocks.",
+        "properties": {
+          "codes": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Codes",
+            "type": "array"
+          },
+          "commission_bps": {
+            "default": 3,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Commission Bps",
+            "type": "number"
+          },
+          "holding_days": {
+            "default": 5,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "initial_cash": {
+            "default": 100000,
+            "maximum": 1000000000.0,
+            "minimum": 10000.0,
+            "title": "Initial Cash",
+            "type": "number"
+          },
+          "lookback": {
+            "default": 20,
+            "maximum": 60.0,
+            "minimum": 5.0,
+            "title": "Lookback",
+            "type": "integer"
+          },
+          "slippage_bps": {
+            "default": 5,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Slippage Bps",
+            "type": "number"
+          },
+          "stamp_duty_bps": {
+            "default": 5,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Stamp Duty Bps",
+            "type": "number"
+          },
+          "strategy_id": {
+            "pattern": "^[a-z][a-z0-9_]{2,40}$",
+            "title": "Strategy Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "strategy_id",
+          "codes"
+        ],
+        "title": "BacktestBatchRequest",
+        "type": "object"
+      },
+      "BacktestBatchResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "beat_benchmark": {
+            "default": 0,
+            "title": "Beat Benchmark",
+            "type": "integer"
+          },
+          "completed": {
+            "title": "Completed",
+            "type": "integer"
+          },
+          "median_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Return"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "requested": {
+            "title": "Requested",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/BacktestBatchRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "strategy_id": {
+            "title": "Strategy Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provenance",
+          "strategy_id",
+          "requested",
+          "completed",
+          "rows"
+        ],
+        "title": "BacktestBatchResponse",
+        "type": "object"
+      },
+      "BacktestBatchRow": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Return"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "excess_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excess Return"
+          },
+          "max_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "total_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Return"
+          },
+          "trade_count": {
+            "default": 0,
+            "title": "Trade Count",
+            "type": "integer"
+          },
+          "win_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Win Rate"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "BacktestBatchRow",
+        "type": "object"
+      },
+      "BacktestMetrics": {
+        "additionalProperties": false,
+        "description": "Tear-sheet statistics derived from the equity curve and the trade list.",
+        "properties": {
+          "annual_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return"
+          },
+          "annual_volatility": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Volatility"
+          },
+          "avg_holding_days": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Holding Days"
+          },
+          "benchmark_annual_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Annual Return"
+          },
+          "best_trade": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Trade"
+          },
+          "calmar_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calmar Ratio"
+          },
+          "expectancy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectancy"
+          },
+          "max_consecutive_losses": {
+            "default": 0,
+            "title": "Max Consecutive Losses",
+            "type": "integer"
+          },
+          "max_drawdown_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown Days"
+          },
+          "profit_factor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profit Factor"
+          },
+          "sortino_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sortino Ratio"
+          },
+          "worst_trade": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Trade"
+          }
+        },
+        "title": "BacktestMetrics",
+        "type": "object"
+      },
+      "BacktestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "default": "002085",
+            "pattern": "^\\d{6}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "commission_bps": {
+            "default": 3,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Commission Bps",
+            "type": "number"
+          },
+          "holding_days": {
+            "default": 5,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "initial_cash": {
+            "default": 100000,
+            "maximum": 1000000000.0,
+            "minimum": 10000.0,
+            "title": "Initial Cash",
+            "type": "number"
+          },
+          "lookback": {
+            "default": 20,
+            "maximum": 60.0,
+            "minimum": 5.0,
+            "title": "Lookback",
+            "type": "integer"
+          },
+          "slippage_bps": {
+            "default": 5,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Slippage Bps",
+            "type": "number"
+          },
+          "stamp_duty_bps": {
+            "default": 5,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Stamp Duty Bps",
+            "type": "number"
+          },
+          "stop_loss_pct": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "固定止损(%)",
+            "title": "Stop Loss Pct"
+          },
+          "strategy_id": {
+            "default": "momentum_ignition",
+            "pattern": "^[a-z][a-z0-9_]{2,40}$",
+            "title": "Strategy Id",
+            "type": "string"
+          },
+          "take_profit_pct": {
+            "anyOf": [
+              {
+                "maximum": 200.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "固定止盈(%)",
+            "title": "Take Profit Pct"
+          },
+          "trailing_stop_pct": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "自持有期最高收盘回撤(%)离场",
+            "title": "Trailing Stop Pct"
+          }
+        },
+        "title": "BacktestRequest",
+        "type": "object"
+      },
+      "BacktestResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "benchmark_return": {
+            "title": "Benchmark Return",
+            "type": "number"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "equity": {
+            "items": {
+              "$ref": "#/components/schemas/EquityPoint"
+            },
+            "title": "Equity",
+            "type": "array"
+          },
+          "exposure_pct": {
+            "title": "Exposure Pct",
+            "type": "number"
+          },
+          "max_drawdown": {
+            "title": "Max Drawdown",
+            "type": "number"
+          },
+          "metrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BacktestMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "monthly_returns": {
+            "items": {
+              "$ref": "#/components/schemas/MonthlyReturn"
+            },
+            "title": "Monthly Returns",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "request": {
+            "$ref": "#/components/schemas/BacktestRequest"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "sharpe_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sharpe Ratio"
+          },
+          "total_costs": {
+            "title": "Total Costs",
+            "type": "number"
+          },
+          "total_return": {
+            "title": "Total Return",
+            "type": "number"
+          },
+          "trade_count": {
+            "title": "Trade Count",
+            "type": "integer"
+          },
+          "trades": {
+            "items": {
+              "$ref": "#/components/schemas/TradeRecord"
+            },
+            "title": "Trades",
+            "type": "array"
+          },
+          "win_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Win Rate"
+          }
+        },
+        "required": [
+          "run_id",
+          "created_at",
+          "provenance",
+          "request",
+          "total_return",
+          "benchmark_return",
+          "max_drawdown",
+          "trade_count",
+          "total_costs",
+          "exposure_pct",
+          "equity",
+          "trades",
+          "assumptions"
+        ],
+        "title": "BacktestResponse",
+        "type": "object"
+      },
+      "BacktestRunSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "LIVE",
+              "SIM"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "strategy_id": {
+            "title": "Strategy Id",
+            "type": "string"
+          },
+          "total_return": {
+            "title": "Total Return",
+            "type": "number"
+          }
+        },
+        "required": [
+          "run_id",
+          "created_at",
+          "strategy_id",
+          "code",
+          "total_return",
+          "mode"
+        ],
+        "title": "BacktestRunSummary",
+        "type": "object"
+      },
+      "BacktestRunsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/BacktestRunSummary"
+            },
+            "title": "Runs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "runs"
+        ],
+        "title": "BacktestRunsResponse",
+        "type": "object"
+      },
+      "BoardType": {
+        "enum": [
+          "10cm",
+          "20cm",
+          "30cm"
+        ],
+        "title": "BoardType",
+        "type": "string"
+      },
+      "Breadth": {
+        "additionalProperties": false,
+        "properties": {
+          "bucket_labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bucket Labels",
+            "type": "array"
+          },
+          "buckets": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Buckets",
+            "type": "array"
+          },
+          "down": {
+            "title": "Down",
+            "type": "integer"
+          },
+          "flat": {
+            "title": "Flat",
+            "type": "integer"
+          },
+          "up": {
+            "title": "Up",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "up",
+          "down",
+          "flat",
+          "buckets",
+          "bucket_labels"
+        ],
+        "title": "Breadth",
+        "type": "object"
+      },
+      "CrowdSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "industries": {
+            "items": {
+              "$ref": "#/components/schemas/IndustryHeat"
+            },
+            "title": "Industries",
+            "type": "array"
+          },
+          "lhb": {
+            "items": {
+              "$ref": "#/components/schemas/LhbStock"
+            },
+            "title": "Lhb",
+            "type": "array"
+          },
+          "names": {
+            "items": {
+              "$ref": "#/components/schemas/NameCluster"
+            },
+            "title": "Names",
+            "type": "array"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "seats": {
+            "items": {
+              "$ref": "#/components/schemas/SeatRecord"
+            },
+            "title": "Seats",
+            "type": "array"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provenance",
+          "trade_date",
+          "industries",
+          "names",
+          "lhb",
+          "seats",
+          "notes"
+        ],
+        "title": "CrowdSnapshot",
+        "type": "object"
+      },
+      "CrowdStock": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "is_limit_up": {
+            "default": false,
+            "title": "Is Limit Up",
+            "type": "boolean"
+          },
+          "limit_streak": {
+            "default": 0,
+            "title": "Limit Streak",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pct_chg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "title": "CrowdStock",
+        "type": "object"
+      },
+      "DailyReport": {
+        "additionalProperties": false,
+        "properties": {
+          "generated_at": {
+            "title": "Generated At",
+            "type": "string"
+          },
+          "long": {
+            "items": {
+              "$ref": "#/components/schemas/StockPick"
+            },
+            "title": "Long",
+            "type": "array"
+          },
+          "market_detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "熊市模式的依据（指数收盘与 60 日均线）",
+            "title": "Market Detail"
+          },
+          "market_mode": {
+            "default": "normal",
+            "description": "bear = 中证全指收盘低于 60 日均线：暂停短线、波段推荐，长线只保留低波动类防守战法",
+            "enum": [
+              "normal",
+              "bear"
+            ],
+            "title": "Market Mode",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "overall": {
+            "items": {
+              "$ref": "#/components/schemas/StockPick"
+            },
+            "title": "Overall",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "pushed": {
+            "default": false,
+            "title": "Pushed",
+            "type": "boolean"
+          },
+          "regime": {
+            "$ref": "#/components/schemas/RegimeState"
+          },
+          "selection": {
+            "default": "fitness",
+            "description": "投票战法的来源：rotation = 近期轮换推选（已通过检验），fitness = 适配度门槛",
+            "enum": [
+              "rotation",
+              "fitness"
+            ],
+            "title": "Selection",
+            "type": "string"
+          },
+          "short": {
+            "items": {
+              "$ref": "#/components/schemas/StockPick"
+            },
+            "title": "Short",
+            "type": "array"
+          },
+          "swing": {
+            "items": {
+              "$ref": "#/components/schemas/StockPick"
+            },
+            "title": "Swing",
+            "type": "array"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          },
+          "weights": {
+            "items": {
+              "$ref": "#/components/schemas/PlaybookWeight"
+            },
+            "title": "Weights",
+            "type": "array"
+          }
+        },
+        "required": [
+          "trade_date",
+          "generated_at",
+          "provenance",
+          "regime",
+          "weights",
+          "short",
+          "swing",
+          "long",
+          "overall",
+          "notes"
+        ],
+        "title": "DailyReport",
+        "type": "object"
+      },
+      "DataProvenance": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "coverage": {
+            "default": 0,
+            "title": "Coverage",
+            "type": "integer"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "latency_ms": {
+            "default": 0,
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Fields",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "LIVE",
+              "SIM"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "sequence": {
+            "default": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "ready",
+            "enum": [
+              "ready",
+              "fallback",
+              "stale"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "source",
+          "as_of",
+          "trade_date",
+          "detail"
+        ],
+        "title": "DataProvenance",
+        "type": "object"
+      },
+      "EntryRules": {
+        "additionalProperties": false,
+        "description": "When to buy the day after a signal; the default is the open.",
+        "properties": {
+          "max_gap_pct": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "不追高：次日开盘高于信号日收盘该比例以上就放弃",
+            "title": "Max Gap Pct"
+          },
+          "pullback_pct": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "回踩买：次日在信号日收盘价下方该比例挂单，盘中触及才成交；开盘已低于挂单价按开盘价成交",
+            "title": "Pullback Pct"
+          }
+        },
+        "title": "EntryRules",
+        "type": "object"
+      },
+      "EquityPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "基准（中证全指或个股持有）重定基为 100；没有基准数据时为空",
+            "title": "Benchmark"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "drawdown": {
+            "title": "Drawdown",
+            "type": "number"
+          },
+          "strategy": {
+            "title": "Strategy",
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "strategy",
+          "drawdown"
+        ],
+        "title": "EquityPoint",
+        "type": "object"
+      },
+      "ExitLabReport": {
+        "additionalProperties": false,
+        "properties": {
+          "compared": {
+            "description": "选中了非默认卖法的战法数",
+            "title": "Compared",
+            "type": "integer"
+          },
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "improved": {
+            "description": "其中样本外也更好的战法数",
+            "title": "Improved",
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "studies": {
+            "items": {
+              "$ref": "#/components/schemas/PlaybookExitStudy"
+            },
+            "title": "Studies",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provenance",
+          "studies",
+          "compared",
+          "improved",
+          "summary",
+          "notes",
+          "execution_ms"
+        ],
+        "title": "ExitLabReport",
+        "type": "object"
+      },
+      "ExitRules": {
+        "additionalProperties": false,
+        "description": "Hikyuu-style exit components; whichever triggers first closes the trade.",
+        "properties": {
+          "bias_exit_pct": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 3.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "乖离过大：收盘高于 20 日线该比例以上，次日开盘卖",
+            "title": "Bias Exit Pct"
+          },
+          "chandelier_atr": {
+            "anyOf": [
+              {
+                "maximum": 6.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "吊灯止损：收盘低于持仓期最高收盘 − N×ATR14，次日开盘卖",
+            "title": "Chandelier Atr"
+          },
+          "holding_days": {
+            "default": 5,
+            "maximum": 250.0,
+            "minimum": 1.0,
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "scale_out_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "分批止盈：盘中涨到买入价 +该比例时按该价卖出一半，余下按其它规则卖",
+            "title": "Scale Out Pct"
+          },
+          "sell_below_ma5": {
+            "default": false,
+            "description": "收盘跌破 5 日线，次日开盘卖",
+            "title": "Sell Below Ma5",
+            "type": "boolean"
+          },
+          "sell_if_not_limit": {
+            "default": false,
+            "description": "断板卖：收盘没有封住涨停，次日开盘卖（接力类）",
+            "title": "Sell If Not Limit",
+            "type": "boolean"
+          },
+          "sell_on_broken": {
+            "default": false,
+            "description": "炸板卖：盘中触及涨停但收盘没封住，次日开盘卖",
+            "title": "Sell On Broken",
+            "type": "boolean"
+          },
+          "sell_on_ebb": {
+            "default": false,
+            "description": "情绪退潮：市场情绪判定为退潮的当天收盘后，次日开盘卖",
+            "title": "Sell On Ebb",
+            "type": "boolean"
+          },
+          "sell_on_fade": {
+            "default": false,
+            "description": "冲高回落：盘中最高涨幅 ≥ 7% 而收盘涨幅 < 3%，次日开盘卖",
+            "title": "Sell On Fade",
+            "type": "boolean"
+          },
+          "sell_on_shadow": {
+            "default": false,
+            "description": "高位长上影：持仓盈利时，上影线占当日振幅一半以上且成交量超过 5 日均量 2 倍，次日开盘卖",
+            "title": "Sell On Shadow",
+            "type": "boolean"
+          },
+          "sell_on_stall": {
+            "default": false,
+            "description": "放量滞涨：成交量超过 5 日均量 2 倍且涨幅不足 2%，次日开盘卖",
+            "title": "Sell On Stall",
+            "type": "boolean"
+          },
+          "stop_loss_pct": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 8,
+            "title": "Stop Loss Pct"
+          },
+          "t_high_pct": {
+            "anyOf": [
+              {
+                "maximum": 9.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "倒T：持仓日盘中涨到昨收 +该比例时按该价卖出 t_share 的底仓，收盘买回",
+            "title": "T High Pct"
+          },
+          "t_low_pct": {
+            "anyOf": [
+              {
+                "maximum": 9.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "正T：持仓日盘中跌到昨收 −该比例时按该价买入 t_share 的底仓数量，收盘卖出同样数量",
+            "title": "T Low Pct"
+          },
+          "t_share": {
+            "default": 0.5,
+            "description": "做T 每次的数量占底仓的比例（按 100 股取整）",
+            "maximum": 1.0,
+            "minimum": 0.1,
+            "title": "T Share",
+            "type": "number"
+          },
+          "take_profit_pct": {
+            "anyOf": [
+              {
+                "maximum": 300.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Take Profit Pct"
+          },
+          "trailing_stop_pct": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trailing Stop Pct"
+          },
+          "weak_open_pct": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "次日不及预期：买入次日开盘低于买入价该比例，开盘卖",
+            "title": "Weak Open Pct"
+          }
+        },
+        "title": "ExitRules",
+        "type": "object"
+      },
+      "ExitVariantResult": {
+        "additionalProperties": false,
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/EntryRules"
+          },
+          "exits": {
+            "$ref": "#/components/schemas/ExitRules"
+          },
+          "in_sample": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "out_of_sample": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "exits",
+          "in_sample",
+          "out_of_sample"
+        ],
+        "title": "ExitVariantResult",
+        "type": "object"
+      },
+      "FactorContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "weight",
+          "explanation"
+        ],
+        "title": "FactorContribution",
+        "type": "object"
+      },
+      "FactorInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "enum": [
+              "momentum_20",
+              "reversal_5",
+              "volatility_20",
+              "volume_surge",
+              "dist_high_60",
+              "ma_gap_20"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "description"
+        ],
+        "title": "FactorInfo",
+        "type": "object"
+      },
+      "FactorLabRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "factor": {
+            "default": "momentum_20",
+            "enum": [
+              "momentum_20",
+              "reversal_5",
+              "volatility_20",
+              "volume_surge",
+              "dist_high_60",
+              "ma_gap_20"
+            ],
+            "title": "Factor",
+            "type": "string"
+          },
+          "horizon": {
+            "default": 5,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "quantiles": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 3.0,
+            "title": "Quantiles",
+            "type": "integer"
+          },
+          "window": {
+            "default": 120,
+            "maximum": 240.0,
+            "minimum": 40.0,
+            "title": "Window",
+            "type": "integer"
+          }
+        },
+        "title": "FactorLabRequest",
+        "type": "object"
+      },
+      "FactorLabResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "catalog": {
+            "items": {
+              "$ref": "#/components/schemas/FactorInfo"
+            },
+            "title": "Catalog",
+            "type": "array"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "ic_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ic Mean"
+          },
+          "ic_positive_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ic Positive Ratio"
+          },
+          "ic_series": {
+            "items": {
+              "$ref": "#/components/schemas/ICPoint"
+            },
+            "title": "Ic Series",
+            "type": "array"
+          },
+          "ic_std": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ic Std"
+          },
+          "ic_t_stat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ic T Stat"
+          },
+          "icir": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icir"
+          },
+          "long_short": {
+            "items": {
+              "$ref": "#/components/schemas/MarketHistoryPoint"
+            },
+            "title": "Long Short",
+            "type": "array"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "quantile_returns": {
+            "items": {
+              "$ref": "#/components/schemas/QuantileReturn"
+            },
+            "title": "Quantile Returns",
+            "type": "array"
+          },
+          "request": {
+            "$ref": "#/components/schemas/FactorLabRequest"
+          },
+          "top_turnover": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Turnover"
+          },
+          "universe": {
+            "title": "Universe",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provenance",
+          "request",
+          "catalog",
+          "universe",
+          "days",
+          "execution_ms",
+          "ic_series",
+          "quantile_returns",
+          "long_short",
+          "notes"
+        ],
+        "title": "FactorLabResponse",
+        "type": "object"
+      },
+      "FieldCoverage": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Coverage",
+            "type": "number"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "missing": {
+            "minimum": 0.0,
+            "title": "Missing",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "field",
+          "label",
+          "coverage",
+          "missing"
+        ],
+        "title": "FieldCoverage",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "version",
+          "provenance"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "ICPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "ic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ic"
+          }
+        },
+        "required": [
+          "date"
+        ],
+        "title": "ICPoint",
+        "type": "object"
+      },
+      "IndicatorSeries": {
+        "additionalProperties": false,
+        "description": "One indicator line aligned index-for-index with `StockDetailResponse.bars`.",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "pane": {
+            "enum": [
+              "price",
+              "volume",
+              "macd",
+              "kdj",
+              "rsi"
+            ],
+            "title": "Pane",
+            "type": "string"
+          },
+          "style": {
+            "default": "line",
+            "enum": [
+              "line",
+              "histogram"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "pane",
+          "values"
+        ],
+        "title": "IndicatorSeries",
+        "type": "object"
+      },
+      "IndustryHeat": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Pct"
+          },
+          "followers": {
+            "description": "同行业涨幅靠前但未涨停的股票",
+            "items": {
+              "$ref": "#/components/schemas/CrowdStock"
+            },
+            "title": "Followers",
+            "type": "array"
+          },
+          "industry": {
+            "title": "Industry",
+            "type": "string"
+          },
+          "leader": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CrowdStock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "连板最高、其次成交额最大的涨停股"
+          },
+          "limit_ups": {
+            "title": "Limit Ups",
+            "type": "integer"
+          },
+          "members": {
+            "title": "Members",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "industry",
+          "limit_ups",
+          "members"
+        ],
+        "title": "IndustryHeat",
+        "type": "object"
+      },
+      "LadderMember": {
+        "additionalProperties": false,
+        "description": "One stock inside a ladder tier, enough to draw it without a second request.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "first_seal_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Seal Time"
+          },
+          "is_limit_up": {
+            "title": "Is Limit Up",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_board_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Board Count"
+          },
+          "pct_chg": {
+            "title": "Pct Chg",
+            "type": "number"
+          },
+          "seal_order_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal Order Amount"
+          },
+          "theme": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Theme"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "pct_chg",
+          "is_limit_up"
+        ],
+        "title": "LadderMember",
+        "type": "object"
+      },
+      "LadderTierStat": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/LadderMember"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "promotion_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promotion Rate"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "top_stock_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Stock Name"
+          },
+          "top_theme": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Theme"
+          }
+        },
+        "required": [
+          "tier_key",
+          "title",
+          "count"
+        ],
+        "title": "LadderTierStat",
+        "type": "object"
+      },
+      "LhbStock": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "inst_net": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "机构专用净买入（亿元，前五席位口径）",
+            "title": "Inst Net"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pct_chg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg"
+          },
+          "smart_buyers": {
+            "default": 0,
+            "title": "Smart Buyers",
+            "type": "integer"
+          },
+          "trip_buyers": {
+            "default": 0,
+            "title": "Trip Buyers",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "title": "LhbStock",
+        "type": "object"
+      },
+      "MacroDashboardSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "breadth": {
+            "$ref": "#/components/schemas/Breadth"
+          },
+          "broken_rate": {
+            "title": "Broken Rate",
+            "type": "number"
+          },
+          "growth_streak_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/LadderTierStat"
+            },
+            "title": "Growth Streak Tiers",
+            "type": "array"
+          },
+          "hot_themes": {
+            "items": {
+              "$ref": "#/components/schemas/ThemeResonanceStat"
+            },
+            "title": "Hot Themes",
+            "type": "array"
+          },
+          "limit_ladder_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/LadderTierStat"
+            },
+            "title": "Limit Ladder Tiers",
+            "type": "array"
+          },
+          "market_curve": {
+            "items": {
+              "$ref": "#/components/schemas/MarketHistoryPoint"
+            },
+            "title": "Market Curve",
+            "type": "array"
+          },
+          "max_height_stock": {
+            "title": "Max Height Stock",
+            "type": "string"
+          },
+          "max_limit_height": {
+            "title": "Max Limit Height",
+            "type": "integer"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "seal_timeline": {
+            "items": {
+              "$ref": "#/components/schemas/SealPoint"
+            },
+            "title": "Seal Timeline",
+            "type": "array"
+          },
+          "sentiment_score": {
+            "title": "Sentiment Score",
+            "type": "number"
+          },
+          "total_amount": {
+            "title": "Total Amount",
+            "type": "number"
+          },
+          "total_broken_board": {
+            "title": "Total Broken Board",
+            "type": "integer"
+          },
+          "total_limit_up": {
+            "title": "Total Limit Up",
+            "type": "integer"
+          },
+          "total_stocks": {
+            "title": "Total Stocks",
+            "type": "integer"
+          },
+          "yesterday_limit_up_premium": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Yesterday Limit Up Premium"
+          }
+        },
+        "required": [
+          "provenance",
+          "total_stocks",
+          "total_limit_up",
+          "total_broken_board",
+          "broken_rate",
+          "max_limit_height",
+          "max_height_stock",
+          "total_amount",
+          "sentiment_score",
+          "breadth",
+          "limit_ladder_tiers",
+          "growth_streak_tiers",
+          "hot_themes",
+          "market_curve"
+        ],
+        "title": "MacroDashboardSummary",
+        "type": "object"
+      },
+      "MacroPoolType": {
+        "enum": [
+          "all",
+          "limit_up",
+          "n_days_m_boards",
+          "broken_attack",
+          "growth_streak"
+        ],
+        "title": "MacroPoolType",
+        "type": "string"
+      },
+      "MarketEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "seal",
+              "break",
+              "reseal",
+              "surge",
+              "plunge",
+              "new_high"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "limit_streak": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Streak"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pct_chg": {
+            "title": "Pct Chg",
+            "type": "number"
+          },
+          "price": {
+            "title": "Price",
+            "type": "number"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "themes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Themes",
+            "type": "array"
+          },
+          "time": {
+            "title": "Time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sequence",
+          "time",
+          "kind",
+          "code",
+          "name",
+          "price",
+          "pct_chg",
+          "detail"
+        ],
+        "title": "MarketEvent",
+        "type": "object"
+      },
+      "MarketEventsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/MarketEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          }
+        },
+        "required": [
+          "provenance",
+          "events"
+        ],
+        "title": "MarketEventsResponse",
+        "type": "object"
+      },
+      "MarketHistoryPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "time": {
+            "title": "Time",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "time",
+          "value"
+        ],
+        "title": "MarketHistoryPoint",
+        "type": "object"
+      },
+      "ModeSwitchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "LIVE",
+              "SIM"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "ModeSwitchRequest",
+        "type": "object"
+      },
+      "MonthlyReturn": {
+        "additionalProperties": false,
+        "properties": {
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "month",
+          "value"
+        ],
+        "title": "MonthlyReturn",
+        "type": "object"
+      },
+      "NameCluster": {
+        "additionalProperties": false,
+        "properties": {
+          "char": {
+            "description": "名称里共有的少见字",
+            "title": "Char",
+            "type": "string"
+          },
+          "followers": {
+            "description": "同字、涨幅 ≥ 3% 但未涨停",
+            "items": {
+              "$ref": "#/components/schemas/CrowdStock"
+            },
+            "title": "Followers",
+            "type": "array"
+          },
+          "limit_ups": {
+            "items": {
+              "$ref": "#/components/schemas/CrowdStock"
+            },
+            "title": "Limit Ups",
+            "type": "array"
+          }
+        },
+        "required": [
+          "char",
+          "limit_ups"
+        ],
+        "title": "NameCluster",
+        "type": "object"
+      },
+      "OHLCBar": {
+        "additionalProperties": false,
+        "properties": {
+          "close": {
+            "title": "Close",
+            "type": "number"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "high": {
+            "title": "High",
+            "type": "number"
+          },
+          "low": {
+            "title": "Low",
+            "type": "number"
+          },
+          "open": {
+            "title": "Open",
+            "type": "number"
+          },
+          "volume": {
+            "title": "Volume",
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "title": "OHLCBar",
+        "type": "object"
+      },
+      "ParseRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "ParseRequest",
+        "type": "object"
+      },
+      "ParseResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/ScreenerFilterRequest"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/ParsedToken"
+            },
+            "title": "Tokens",
+            "type": "array"
+          },
+          "unmatched": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched",
+            "type": "array"
+          }
+        },
+        "required": [
+          "filters",
+          "tokens",
+          "unmatched",
+          "summary"
+        ],
+        "title": "ParseResponse",
+        "type": "object"
+      },
+      "ParsedToken": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "field",
+          "label"
+        ],
+        "title": "ParsedToken",
+        "type": "object"
+      },
+      "PatternDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "family": {
+            "$ref": "#/components/schemas/PatternFamily"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rule": {
+            "title": "Rule",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "family",
+          "rule",
+          "source",
+          "source_url"
+        ],
+        "title": "PatternDefinition",
+        "type": "object"
+      },
+      "PatternFamily": {
+        "enum": [
+          "trend",
+          "volume",
+          "breakout",
+          "reversal",
+          "volatility"
+        ],
+        "title": "PatternFamily",
+        "type": "string"
+      },
+      "PatternHit": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "pattern_id": {
+            "title": "Pattern Id",
+            "type": "string"
+          },
+          "pct_chg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "strength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strength"
+          }
+        },
+        "required": [
+          "pattern_id",
+          "code",
+          "name",
+          "date",
+          "note"
+        ],
+        "title": "PatternHit",
+        "type": "object"
+      },
+      "PatternScanResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "patterns": {
+            "items": {
+              "$ref": "#/components/schemas/PatternSummary"
+            },
+            "title": "Patterns",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "scanned": {
+            "title": "Scanned",
+            "type": "integer"
+          },
+          "universe": {
+            "title": "Universe",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provenance",
+          "universe",
+          "scanned",
+          "execution_ms",
+          "patterns"
+        ],
+        "title": "PatternScanResponse",
+        "type": "object"
+      },
+      "PatternSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "hit_count": {
+            "title": "Hit Count",
+            "type": "integer"
+          },
+          "hits": {
+            "items": {
+              "$ref": "#/components/schemas/PatternHit"
+            },
+            "title": "Hits",
+            "type": "array"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/PatternDefinition"
+          }
+        },
+        "required": [
+          "pattern",
+          "hit_count",
+          "hits"
+        ],
+        "title": "PatternSummary",
+        "type": "object"
+      },
+      "PerformanceStats": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return"
+          },
+          "avg_holding_days": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Holding Days"
+          },
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Return"
+          },
+          "exposure_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure Pct"
+          },
+          "max_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown"
+          },
+          "median_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Return"
+          },
+          "profit_factor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profit Factor"
+          },
+          "sharpe": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sharpe"
+          },
+          "t_stat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "T Stat"
+          },
+          "trades": {
+            "default": 0,
+            "title": "Trades",
+            "type": "integer"
+          },
+          "win_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Win Rate"
+          }
+        },
+        "title": "PerformanceStats",
+        "type": "object"
+      },
+      "PickReason": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Return"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "playbook_id": {
+            "title": "Playbook Id",
+            "type": "string"
+          },
+          "playbook_name": {
+            "title": "Playbook Name",
+            "type": "string"
+          },
+          "signal": {
+            "description": "该战法当日信号中的强度分位（0–1），集成打分用的就是它",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Signal",
+            "type": "number"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          },
+          "win_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Win Rate"
+          }
+        },
+        "required": [
+          "playbook_id",
+          "playbook_name",
+          "weight",
+          "signal",
+          "note"
+        ],
+        "title": "PickReason",
+        "type": "object"
+      },
+      "PlaybookBoard": {
+        "additionalProperties": false,
+        "properties": {
+          "computed_at": {
+            "title": "Computed At",
+            "type": "string"
+          },
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "playbooks": {
+            "items": {
+              "$ref": "#/components/schemas/PlaybookSummary"
+            },
+            "title": "Playbooks",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "regime": {
+            "$ref": "#/components/schemas/RegimeState"
+          }
+        },
+        "required": [
+          "provenance",
+          "regime",
+          "playbooks",
+          "computed_at",
+          "execution_ms"
+        ],
+        "title": "PlaybookBoard",
+        "type": "object"
+      },
+      "PlaybookEvaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "by_regime": {
+            "items": {
+              "$ref": "#/components/schemas/RegimePerformance"
+            },
+            "title": "By Regime",
+            "type": "array"
+          },
+          "equity": {
+            "items": {
+              "$ref": "#/components/schemas/EquityPoint"
+            },
+            "title": "Equity",
+            "type": "array"
+          },
+          "equity_sparkline": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Equity Sparkline",
+            "type": "array"
+          },
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "fitness": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitness"
+          },
+          "fitness_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fitness Reasons",
+            "type": "array"
+          },
+          "full": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "in_sample": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "out_of_sample": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "period_end": {
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "title": "Period Start",
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "recent": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "signals_today": {
+            "default": 0,
+            "title": "Signals Today",
+            "type": "integer"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/PlaybookSpec"
+          },
+          "split_date": {
+            "title": "Split Date",
+            "type": "string"
+          },
+          "trades": {
+            "items": {
+              "$ref": "#/components/schemas/PlaybookTrade"
+            },
+            "title": "Trades",
+            "type": "array"
+          },
+          "verdict": {
+            "enum": [
+              "effective",
+              "regime_dependent",
+              "weak",
+              "overfit",
+              "insufficient",
+              "unavailable"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          },
+          "verdict_reason": {
+            "title": "Verdict Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "spec",
+          "full",
+          "out_of_sample",
+          "by_regime",
+          "verdict",
+          "verdict_reason",
+          "provenance",
+          "period_start",
+          "period_end",
+          "split_date",
+          "in_sample",
+          "recent",
+          "equity",
+          "trades",
+          "fitness_reasons",
+          "assumptions",
+          "execution_ms"
+        ],
+        "title": "PlaybookEvaluation",
+        "type": "object"
+      },
+      "PlaybookExitStudy": {
+        "additionalProperties": false,
+        "properties": {
+          "chosen_key": {
+            "description": "样本内夏普最高的卖法；都不如默认时为 default",
+            "title": "Chosen Key",
+            "type": "string"
+          },
+          "entry_note": {
+            "default": "",
+            "description": "选中买法的中文操作要点",
+            "title": "Entry Note",
+            "type": "string"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "improved_out_of_sample": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "选中的卖法在样本外是否好过默认卖法；选中默认时为空",
+            "title": "Improved Out Of Sample"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plan": {
+            "description": "选中卖法的中文操作要点",
+            "items": {
+              "type": "string"
+            },
+            "title": "Plan",
+            "type": "array"
+          },
+          "playbook_id": {
+            "title": "Playbook Id",
+            "type": "string"
+          },
+          "variants": {
+            "items": {
+              "$ref": "#/components/schemas/ExitVariantResult"
+            },
+            "title": "Variants",
+            "type": "array"
+          }
+        },
+        "required": [
+          "playbook_id",
+          "name",
+          "horizon",
+          "variants",
+          "chosen_key"
+        ],
+        "title": "PlaybookExitStudy",
+        "type": "object"
+      },
+      "PlaybookParam": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "max": {
+            "title": "Max",
+            "type": "number"
+          },
+          "min": {
+            "title": "Min",
+            "type": "number"
+          },
+          "step": {
+            "title": "Step",
+            "type": "number"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "value",
+          "min",
+          "max",
+          "step"
+        ],
+        "title": "PlaybookParam",
+        "type": "object"
+      },
+      "PlaybookRunRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "exits": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExitRules"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "params": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Params",
+            "type": "object"
+          },
+          "sizing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SizingRule"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "PlaybookRunRequest",
+        "type": "object"
+      },
+      "PlaybookSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "default": true,
+            "title": "Available",
+            "type": "boolean"
+          },
+          "entry": {
+            "$ref": "#/components/schemas/EntryRules"
+          },
+          "exits": {
+            "$ref": "#/components/schemas/ExitRules"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "params": {
+            "items": {
+              "$ref": "#/components/schemas/PlaybookParam"
+            },
+            "title": "Params",
+            "type": "array"
+          },
+          "rule": {
+            "title": "Rule",
+            "type": "string"
+          },
+          "sizing": {
+            "$ref": "#/components/schemas/SizingRule"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "default": "",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "style": {
+            "enum": [
+              "sentiment",
+              "trend",
+              "momentum",
+              "reversal",
+              "breakout",
+              "volume",
+              "volatility",
+              "value"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailable Reason"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "style",
+          "horizon",
+          "summary",
+          "rule",
+          "source",
+          "exits",
+          "sizing"
+        ],
+        "title": "PlaybookSpec",
+        "type": "object"
+      },
+      "PlaybookSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "by_regime": {
+            "items": {
+              "$ref": "#/components/schemas/RegimePerformance"
+            },
+            "title": "By Regime",
+            "type": "array"
+          },
+          "equity_sparkline": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Equity Sparkline",
+            "type": "array"
+          },
+          "fitness": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitness"
+          },
+          "full": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "out_of_sample": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          },
+          "signals_today": {
+            "default": 0,
+            "title": "Signals Today",
+            "type": "integer"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/PlaybookSpec"
+          },
+          "verdict": {
+            "enum": [
+              "effective",
+              "regime_dependent",
+              "weak",
+              "overfit",
+              "insufficient",
+              "unavailable"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          },
+          "verdict_reason": {
+            "title": "Verdict Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "spec",
+          "full",
+          "out_of_sample",
+          "by_regime",
+          "verdict",
+          "verdict_reason"
+        ],
+        "title": "PlaybookSummary",
+        "type": "object"
+      },
+      "PlaybookTrade": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "entry_date": {
+            "title": "Entry Date",
+            "type": "string"
+          },
+          "entry_price": {
+            "title": "Entry Price",
+            "type": "number"
+          },
+          "exit_date": {
+            "title": "Exit Date",
+            "type": "string"
+          },
+          "exit_price": {
+            "title": "Exit Price",
+            "type": "number"
+          },
+          "exit_reason": {
+            "enum": [
+              "time",
+              "stop",
+              "target",
+              "trailing",
+              "end",
+              "weak_open",
+              "not_limit",
+              "below_ma5",
+              "stall",
+              "fade",
+              "chandelier",
+              "ebb",
+              "broken",
+              "shadow",
+              "bias",
+              "t_out"
+            ],
+            "title": "Exit Reason",
+            "type": "string"
+          },
+          "holding_days": {
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "regime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regime"
+          },
+          "return_pct": {
+            "title": "Return Pct",
+            "type": "number"
+          },
+          "t_trades": {
+            "default": 0,
+            "description": "持有期间做T 的次数",
+            "title": "T Trades",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "entry_date",
+          "exit_date",
+          "entry_price",
+          "exit_price",
+          "return_pct",
+          "holding_days",
+          "exit_reason"
+        ],
+        "title": "PlaybookTrade",
+        "type": "object"
+      },
+      "PlaybookWeight": {
+        "additionalProperties": false,
+        "properties": {
+          "fitness": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitness"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "playbook_id": {
+            "title": "Playbook Id",
+            "type": "string"
+          },
+          "verdict": {
+            "enum": [
+              "effective",
+              "regime_dependent",
+              "weak",
+              "overfit",
+              "insufficient",
+              "unavailable"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "playbook_id",
+          "name",
+          "horizon",
+          "weight",
+          "verdict"
+        ],
+        "title": "PlaybookWeight",
+        "type": "object"
+      },
+      "ProviderStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "scenario",
+              "live",
+              "history",
+              "store"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "kind",
+          "available",
+          "active",
+          "detail"
+        ],
+        "title": "ProviderStatus",
+        "type": "object"
+      },
+      "ProvidersResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderStatus"
+            },
+            "title": "Providers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "providers"
+        ],
+        "title": "ProvidersResponse",
+        "type": "object"
+      },
+      "PushStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "last_pushed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Pushed"
+          }
+        },
+        "required": [
+          "configured",
+          "detail"
+        ],
+        "title": "PushStatus",
+        "type": "object"
+      },
+      "QualityResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldCoverage"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provenance",
+          "rows",
+          "fields"
+        ],
+        "title": "QualityResponse",
+        "type": "object"
+      },
+      "QuantileReturn": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "mean_return": {
+            "title": "Mean Return",
+            "type": "number"
+          },
+          "quantile": {
+            "title": "Quantile",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quantile",
+          "mean_return",
+          "count"
+        ],
+        "title": "QuantileReturn",
+        "type": "object"
+      },
+      "RegimeHistoryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/RegimeState"
+          },
+          "index_name": {
+            "title": "Index Name",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/RegimePoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "rules": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Rules",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provenance",
+          "index_name",
+          "current",
+          "points",
+          "rules"
+        ],
+        "title": "RegimeHistoryResponse",
+        "type": "object"
+      },
+      "RegimePerformance": {
+        "additionalProperties": false,
+        "properties": {
+          "dimension": {
+            "enum": [
+              "trend",
+              "liquidity",
+              "sentiment",
+              "style"
+            ],
+            "title": "Dimension",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "regime": {
+            "title": "Regime",
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/PerformanceStats"
+          }
+        },
+        "required": [
+          "dimension",
+          "regime",
+          "label",
+          "stats"
+        ],
+        "title": "RegimePerformance",
+        "type": "object"
+      },
+      "RegimePoint": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Ratio"
+          },
+          "breadth_ma20": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breadth Ma20"
+          },
+          "broken_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Broken Rate"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "index_close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Close"
+          },
+          "limit_up_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Up Count"
+          },
+          "liquidity": {
+            "enum": [
+              "expanding",
+              "steady",
+              "contracting"
+            ],
+            "title": "Liquidity",
+            "type": "string"
+          },
+          "max_height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Height"
+          },
+          "premium": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium"
+          },
+          "sentiment": {
+            "enum": [
+              "freezing",
+              "repair",
+              "climax",
+              "ebb"
+            ],
+            "title": "Sentiment",
+            "type": "string"
+          },
+          "style": {
+            "enum": [
+              "large",
+              "small",
+              "balanced"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "trend": {
+            "enum": [
+              "bull",
+              "bear",
+              "range"
+            ],
+            "title": "Trend",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "trend",
+          "liquidity",
+          "sentiment",
+          "style"
+        ],
+        "title": "RegimePoint",
+        "type": "object"
+      },
+      "RegimeState": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Ratio"
+          },
+          "breadth_ma20": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breadth Ma20"
+          },
+          "broken_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Broken Rate"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "explanation": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Explanation",
+            "type": "array"
+          },
+          "index_close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Close"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "limit_up_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Up Count"
+          },
+          "liquidity": {
+            "enum": [
+              "expanding",
+              "steady",
+              "contracting"
+            ],
+            "title": "Liquidity",
+            "type": "string"
+          },
+          "max_height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Height"
+          },
+          "premium": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium"
+          },
+          "sentiment": {
+            "enum": [
+              "freezing",
+              "repair",
+              "climax",
+              "ebb"
+            ],
+            "title": "Sentiment",
+            "type": "string"
+          },
+          "style": {
+            "enum": [
+              "large",
+              "small",
+              "balanced"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "trend": {
+            "enum": [
+              "bull",
+              "bear",
+              "range"
+            ],
+            "title": "Trend",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "trend",
+          "liquidity",
+          "sentiment",
+          "style",
+          "label",
+          "explanation"
+        ],
+        "title": "RegimeState",
+        "type": "object"
+      },
+      "ReportIndex": {
+        "additionalProperties": false,
+        "properties": {
+          "reports": {
+            "items": {
+              "$ref": "#/components/schemas/ReportIndexItem"
+            },
+            "title": "Reports",
+            "type": "array"
+          }
+        },
+        "required": [
+          "reports"
+        ],
+        "title": "ReportIndex",
+        "type": "object"
+      },
+      "ReportIndexItem": {
+        "additionalProperties": false,
+        "properties": {
+          "generated_at": {
+            "title": "Generated At",
+            "type": "string"
+          },
+          "regime_label": {
+            "title": "Regime Label",
+            "type": "string"
+          },
+          "top": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Top",
+            "type": "array"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trade_date",
+          "generated_at",
+          "regime_label",
+          "top"
+        ],
+        "title": "ReportIndexItem",
+        "type": "object"
+      },
+      "RotationConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "in_sample": {
+            "$ref": "#/components/schemas/RotationStats",
+            "description": "分割日及以前结束的期：只用来选设置"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "trailing",
+              "regime"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "out_of_sample": {
+            "$ref": "#/components/schemas/RotationStats",
+            "description": "分割日以后开始的期：检验选中的设置"
+          },
+          "top_k": {
+            "title": "Top K",
+            "type": "integer"
+          },
+          "window": {
+            "title": "Window",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "method",
+          "window",
+          "top_k",
+          "in_sample",
+          "out_of_sample"
+        ],
+        "title": "RotationConfig",
+        "type": "object"
+      },
+      "RotationPeriod": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "全部战法同期每笔平均收益(%)",
+            "title": "Baseline Return"
+          },
+          "chosen": {
+            "description": "该期推选的战法名称；为空表示空仓",
+            "items": {
+              "type": "string"
+            },
+            "title": "Chosen",
+            "type": "array"
+          },
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "selected_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "推选战法该期每笔平均收益(%)，空仓记 0",
+            "title": "Selected Return"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "chosen"
+        ],
+        "title": "RotationPeriod",
+        "type": "object"
+      },
+      "RotationReport": {
+        "additionalProperties": false,
+        "properties": {
+          "configs": {
+            "items": {
+              "$ref": "#/components/schemas/RotationConfig"
+            },
+            "title": "Configs",
+            "type": "array"
+          },
+          "current": {
+            "items": {
+              "$ref": "#/components/schemas/RotationScore"
+            },
+            "title": "Current",
+            "type": "array"
+          },
+          "decided_on": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "当前推选的推选日（与逐期检验同一个锚点）",
+            "title": "Decided On"
+          },
+          "default_key": {
+            "description": "样本内 t 值最高的设置；当前推选与样本外检验都用它",
+            "title": "Default Key",
+            "type": "string"
+          },
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "next_in_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "距下次重新推选还有几个交易日",
+            "title": "Next In Days"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/RotationPeriod"
+            },
+            "title": "Periods",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "split_date": {
+            "description": "样本内最后一个交易日",
+            "title": "Split Date",
+            "type": "string"
+          },
+          "step": {
+            "description": "每隔多少个交易日重新推选",
+            "title": "Step",
+            "type": "integer"
+          },
+          "validated": {
+            "title": "Validated",
+            "type": "boolean"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provenance",
+          "step",
+          "default_key",
+          "split_date",
+          "configs",
+          "periods",
+          "current",
+          "validated",
+          "verdict",
+          "notes",
+          "execution_ms"
+        ],
+        "title": "RotationReport",
+        "type": "object"
+      },
+      "RotationScore": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "窗口内每笔平均收益(%)，扣成本",
+            "title": "Avg Return"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "playbook_id": {
+            "title": "Playbook Id",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "排序分：收益之和 ÷（笔数 + 收缩项）",
+            "title": "Score"
+          },
+          "selected": {
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "trades": {
+            "description": "已平仓交易数（推选窗口内）",
+            "title": "Trades",
+            "type": "integer"
+          },
+          "window": {
+            "default": 0,
+            "description": "推选窗口（交易日）",
+            "title": "Window",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "playbook_id",
+          "name",
+          "horizon",
+          "trades",
+          "selected"
+        ],
+        "title": "RotationScore",
+        "type": "object"
+      },
+      "RotationStats": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Avg"
+          },
+          "cash_periods": {
+            "default": 0,
+            "title": "Cash Periods",
+            "type": "integer"
+          },
+          "excess_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "每期超额的平均值（百分点）",
+            "title": "Excess Avg"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "跑赢基线的期数占比(%)",
+            "title": "Hit Rate"
+          },
+          "invested_excess_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "只看有持仓的期：每期超额的平均值",
+            "title": "Invested Excess Avg"
+          },
+          "invested_periods": {
+            "default": 0,
+            "title": "Invested Periods",
+            "type": "integer"
+          },
+          "periods": {
+            "default": 0,
+            "title": "Periods",
+            "type": "integer"
+          },
+          "selected_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Avg"
+          },
+          "t_stat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "超额的 t 值，Newey-West 滞后 1 期（相邻期持仓重叠）",
+            "title": "T Stat"
+          }
+        },
+        "title": "RotationStats",
+        "type": "object"
+      },
+      "ScreenerFilterRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_doji_tolerance": {
+            "default": false,
+            "title": "Allow Doji Tolerance",
+            "type": "boolean"
+          },
+          "boards": {
+            "items": {
+              "$ref": "#/components/schemas/BoardType"
+            },
+            "title": "Boards",
+            "type": "array"
+          },
+          "codes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codes"
+          },
+          "exclude_new": {
+            "default": true,
+            "title": "Exclude New",
+            "type": "boolean"
+          },
+          "exclude_st": {
+            "default": true,
+            "title": "Exclude St",
+            "type": "boolean"
+          },
+          "free_cap_max": {
+            "default": 20000,
+            "minimum": 0.0,
+            "title": "Free Cap Max",
+            "type": "number"
+          },
+          "free_cap_min": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Free Cap Min",
+            "type": "number"
+          },
+          "include_suspended": {
+            "default": false,
+            "title": "Include Suspended",
+            "type": "boolean"
+          },
+          "limit": {
+            "default": 300,
+            "maximum": 6000.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "limit_streak_exact": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Streak Exact"
+          },
+          "max_first_seal_time": {
+            "anyOf": [
+              {
+                "pattern": "^(09|1[0-5]):[0-5]\\d:[0-5]\\d$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max First Seal Time"
+          },
+          "max_open_board_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Open Board Count"
+          },
+          "min_amount_today": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Min Amount Today",
+            "type": "number"
+          },
+          "min_growth_streak": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Growth Streak"
+          },
+          "min_seal_span_minutes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Seal Span Minutes"
+          },
+          "min_seal_success_rate_1y": {
+            "default": 0,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Min Seal Success Rate 1Y",
+            "type": "number"
+          },
+          "min_seal_to_amount_ratio": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Min Seal To Amount Ratio",
+            "type": "number"
+          },
+          "min_streak_cum_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Streak Cum Return"
+          },
+          "min_zt_count_1y": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Min Zt Count 1Y",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "only_early_seal": {
+            "default": false,
+            "title": "Only Early Seal",
+            "type": "boolean"
+          },
+          "only_near_60d_high": {
+            "default": false,
+            "title": "Only Near 60D High",
+            "type": "boolean"
+          },
+          "pb_max": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pb Max"
+          },
+          "pct_chg_max": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": -100.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg Max"
+          },
+          "pct_chg_min": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": -100.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg Min"
+          },
+          "pe_max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "市盈率(TTM)上限；亏损（负值）不满足",
+            "title": "Pe Max"
+          },
+          "pool_type": {
+            "$ref": "#/components/schemas/MacroPoolType",
+            "default": "all"
+          },
+          "price_max": {
+            "default": 10000,
+            "minimum": 0.0,
+            "title": "Price Max",
+            "type": "number"
+          },
+          "price_min": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Price Min",
+            "type": "number"
+          },
+          "search": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Search",
+            "type": "string"
+          },
+          "selected_themes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Selected Themes",
+            "type": "array"
+          },
+          "sort_by": {
+            "default": "composite_score",
+            "enum": [
+              "composite_score",
+              "pct_chg",
+              "price",
+              "limit_streak",
+              "growth_streak",
+              "amount_today",
+              "turnover_today",
+              "free_float_mkt_cap",
+              "turnover_ratio_yd",
+              "seal_to_amount_ratio"
+            ],
+            "title": "Sort By",
+            "type": "string"
+          },
+          "sort_desc": {
+            "default": true,
+            "title": "Sort Desc",
+            "type": "boolean"
+          },
+          "total_cap_max": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cap Max"
+          },
+          "total_cap_min": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cap Min"
+          },
+          "turnover_ratio_max": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Ratio Max"
+          },
+          "turnover_ratio_min": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Ratio Min"
+          },
+          "turnover_regime": {
+            "$ref": "#/components/schemas/TurnoverRegime",
+            "default": "all"
+          },
+          "turnover_today_max": {
+            "default": 100,
+            "minimum": 0.0,
+            "title": "Turnover Today Max",
+            "type": "number"
+          },
+          "turnover_today_min": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Turnover Today Min",
+            "type": "number"
+          },
+          "turnover_yd_max": {
+            "default": 100,
+            "minimum": 0.0,
+            "title": "Turnover Yd Max",
+            "type": "number"
+          },
+          "turnover_yd_min": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Turnover Yd Min",
+            "type": "number"
+          }
+        },
+        "title": "ScreenerFilterRequest",
+        "type": "object"
+      },
+      "ScreenerQueryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "execution_ms": {
+            "title": "Execution Ms",
+            "type": "number"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/StockTickRecord"
+            },
+            "title": "Records",
+            "type": "array"
+          },
+          "total_matched": {
+            "title": "Total Matched",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provenance",
+          "total_matched",
+          "execution_ms",
+          "records"
+        ],
+        "title": "ScreenerQueryResponse",
+        "type": "object"
+      },
+      "SealPoint": {
+        "additionalProperties": false,
+        "description": "A limit-up (or broken) stock placed on the session clock by first seal time.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "first_seal_time": {
+            "title": "First Seal Time",
+            "type": "string"
+          },
+          "is_limit_up": {
+            "title": "Is Limit Up",
+            "type": "boolean"
+          },
+          "limit_streak": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Streak"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_board_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Board Count"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "first_seal_time",
+          "is_limit_up"
+        ],
+        "title": "SealPoint",
+        "type": "object"
+      },
+      "SeatRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "次日开盘买、第 3 根收盘卖的收缩平均收益(%)",
+            "title": "Avg Return"
+          },
+          "bought_today": {
+            "description": "今天买入的股票名称",
+            "items": {
+              "type": "string"
+            },
+            "title": "Bought Today",
+            "type": "array"
+          },
+          "events": {
+            "description": "已到期的上榜买入次数",
+            "title": "Events",
+            "type": "integer"
+          },
+          "seat": {
+            "title": "Seat",
+            "type": "string"
+          },
+          "smart": {
+            "title": "Smart",
+            "type": "boolean"
+          },
+          "trip": {
+            "title": "Trip",
+            "type": "boolean"
+          },
+          "trip_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "买入后次日即上卖方榜的比例(%)",
+            "title": "Trip Share"
+          }
+        },
+        "required": [
+          "seat",
+          "events",
+          "smart",
+          "trip"
+        ],
+        "title": "SeatRecord",
+        "type": "object"
+      },
+      "SizingRule": {
+        "additionalProperties": false,
+        "properties": {
+          "max_new_per_day": {
+            "default": 2,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Max New Per Day",
+            "type": "integer"
+          },
+          "max_positions": {
+            "default": 5,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Max Positions",
+            "type": "integer"
+          },
+          "method": {
+            "default": "equal",
+            "enum": [
+              "equal",
+              "volatility"
+            ],
+            "title": "Method",
+            "type": "string"
+          }
+        },
+        "title": "SizingRule",
+        "type": "object"
+      },
+      "StockDetailResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bars": {
+            "items": {
+              "$ref": "#/components/schemas/OHLCBar"
+            },
+            "title": "Bars",
+            "type": "array"
+          },
+          "history_provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "indicators": {
+            "items": {
+              "$ref": "#/components/schemas/IndicatorSeries"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "observations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Observations",
+            "type": "array"
+          },
+          "patterns": {
+            "items": {
+              "$ref": "#/components/schemas/PatternHit"
+            },
+            "title": "Patterns",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/StockTickRecord"
+          }
+        },
+        "required": [
+          "provenance",
+          "history_provenance",
+          "stock",
+          "bars",
+          "observations"
+        ],
+        "title": "StockDetailResponse",
+        "type": "object"
+      },
+      "StockPick": {
+        "additionalProperties": false,
+        "properties": {
+          "agreement": {
+            "title": "Agreement",
+            "type": "integer"
+          },
+          "close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "entry_note": {
+            "title": "Entry Note",
+            "type": "string"
+          },
+          "exit_plan": {
+            "description": "卖出计划：按顺序检查的卖出条件",
+            "items": {
+              "type": "string"
+            },
+            "title": "Exit Plan",
+            "type": "array"
+          },
+          "holding_days": {
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pct_chg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Chg"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/PickReason"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "risk_flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Risk Flags",
+            "type": "array"
+          },
+          "score": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          },
+          "sentiment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sentiment"
+          },
+          "stop_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Loss"
+          },
+          "take_profit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Take Profit"
+          },
+          "technical": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technical"
+          },
+          "themes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Themes",
+            "type": "array"
+          },
+          "trend": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trend"
+          }
+        },
+        "required": [
+          "rank",
+          "code",
+          "name",
+          "horizon",
+          "score",
+          "agreement",
+          "holding_days",
+          "entry_note",
+          "reasons"
+        ],
+        "title": "StockPick",
+        "type": "object"
+      },
+      "StockTickRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_today": {
+            "title": "Amount Today",
+            "type": "number"
+          },
+          "board": {
+            "$ref": "#/components/schemas/BoardType"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "composite_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Composite Score"
+          },
+          "days_since_listing": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Since Listing"
+          },
+          "dist_to_60d_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To 60D High"
+          },
+          "early_seal": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Early Seal"
+          },
+          "ever_limit_up_today": {
+            "default": false,
+            "title": "Ever Limit Up Today",
+            "type": "boolean"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/FactorContribution"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "first_seal_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Seal Time"
+          },
+          "float_mkt_cap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Float Mkt Cap"
+          },
+          "free_float_mkt_cap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Free Float Mkt Cap"
+          },
+          "growth_streak": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Streak"
+          },
+          "high_60d": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High 60D"
+          },
+          "intraday_sparkline": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Intraday Sparkline",
+            "type": "array"
+          },
+          "is_limit_up": {
+            "default": false,
+            "title": "Is Limit Up",
+            "type": "boolean"
+          },
+          "is_new": {
+            "default": false,
+            "title": "Is New",
+            "type": "boolean"
+          },
+          "is_st": {
+            "default": false,
+            "title": "Is St",
+            "type": "boolean"
+          },
+          "is_suspended": {
+            "default": false,
+            "title": "Is Suspended",
+            "type": "boolean"
+          },
+          "last_seal_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Seal Time"
+          },
+          "limit_streak": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Streak"
+          },
+          "listing_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Listing Date"
+          },
+          "max_streak_1y": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Streak 1Y"
+          },
+          "n_days_m_boards_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Days M Boards Label"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_board_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Board Count"
+          },
+          "pb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pb"
+          },
+          "pct_chg": {
+            "title": "Pct Chg",
+            "type": "number"
+          },
+          "pe_ttm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pe Ttm"
+          },
+          "price": {
+            "title": "Price",
+            "type": "number"
+          },
+          "seal_order_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal Order Amount"
+          },
+          "seal_span_minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal Span Minutes"
+          },
+          "seal_success_rate_1y": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal Success Rate 1Y"
+          },
+          "seal_to_amount_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal To Amount Ratio"
+          },
+          "seal_to_cap_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seal To Cap Ratio"
+          },
+          "streak_cum_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Streak Cum Return"
+          },
+          "theme_tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Theme Tags",
+            "type": "array"
+          },
+          "total_mkt_cap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Mkt Cap"
+          },
+          "turnover_ratio_yd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Ratio Yd"
+          },
+          "turnover_today": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Today"
+          },
+          "turnover_yesterday": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Yesterday"
+          },
+          "volume_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Ratio"
+          },
+          "zt_count_1y": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zt Count 1Y"
+          },
+          "zt_count_1y_bar": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zt Count 1Y Bar"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "board",
+          "price",
+          "pct_chg",
+          "amount_today"
+        ],
+        "title": "StockTickRecord",
+        "type": "object"
+      },
+      "StrategyCatalog": {
+        "additionalProperties": false,
+        "properties": {
+          "strategies": {
+            "items": {
+              "$ref": "#/components/schemas/StrategyDefinition"
+            },
+            "title": "Strategies",
+            "type": "array"
+          }
+        },
+        "required": [
+          "strategies"
+        ],
+        "title": "StrategyCatalog",
+        "type": "object"
+      },
+      "StrategyDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "factor_weights": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Factor Weights",
+            "type": "object"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/ScreenerFilterRequest"
+          },
+          "holding_days": {
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inspiration": {
+            "title": "Inspiration",
+            "type": "string"
+          },
+          "lookback": {
+            "title": "Lookback",
+            "type": "integer"
+          },
+          "methodology": {
+            "title": "Methodology",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "signal": {
+            "enum": [
+              "momentum",
+              "breakout",
+              "mean_reversion"
+            ],
+            "title": "Signal",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "subtitle": {
+            "title": "Subtitle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "subtitle",
+          "description",
+          "category",
+          "signal",
+          "lookback",
+          "holding_days",
+          "filters",
+          "factor_weights",
+          "inspiration",
+          "source_url",
+          "methodology"
+        ],
+        "title": "StrategyDefinition",
+        "type": "object"
+      },
+      "SyncJob": {
+        "additionalProperties": false,
+        "properties": {
+          "done": {
+            "default": 0,
+            "title": "Done",
+            "type": "integer"
+          },
+          "errors": {
+            "default": 0,
+            "title": "Errors",
+            "type": "integer"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "backfill",
+              "daily",
+              "synthetic"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "default": "",
+            "title": "Message",
+            "type": "string"
+          },
+          "progress": {
+            "default": 0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "started_at": {
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "done",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "started_at"
+        ],
+        "title": "SyncJob",
+        "type": "object"
+      },
+      "SyncRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 6000,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "只同步这些代码；为空表示全市场",
+            "title": "Codes"
+          },
+          "kind": {
+            "default": "daily",
+            "enum": [
+              "backfill",
+              "daily"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "years": {
+            "default": 3,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Years",
+            "type": "integer"
+          }
+        },
+        "title": "SyncRequest",
+        "type": "object"
+      },
+      "ThemeResonanceStat": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "number"
+          },
+          "avg_pct_chg": {
+            "title": "Avg Pct Chg",
+            "type": "number"
+          },
+          "growth_count": {
+            "title": "Growth Count",
+            "type": "integer"
+          },
+          "leader_code": {
+            "title": "Leader Code",
+            "type": "string"
+          },
+          "leader_name": {
+            "title": "Leader Name",
+            "type": "string"
+          },
+          "limit_up_count": {
+            "title": "Limit Up Count",
+            "type": "integer"
+          },
+          "sparkline": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Sparkline",
+            "type": "array"
+          },
+          "stock_count": {
+            "title": "Stock Count",
+            "type": "integer"
+          },
+          "strength": {
+            "title": "Strength",
+            "type": "number"
+          },
+          "theme_name": {
+            "title": "Theme Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme_name",
+          "stock_count",
+          "limit_up_count",
+          "growth_count",
+          "avg_pct_chg",
+          "amount",
+          "leader_code",
+          "leader_name",
+          "strength"
+        ],
+        "title": "ThemeResonanceStat",
+        "type": "object"
+      },
+      "TrackRecordPoint": {
+        "additionalProperties": false,
+        "description": "`simulated`: out-of-sample replay of the ensemble with weights fixed on\nin-sample data only. `recorded`: a report that was actually published.",
+        "properties": {
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Return"
+          },
+          "benchmark_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Return"
+          },
+          "excess_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excess Return"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit Rate"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long",
+              "overall"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "kind": {
+            "default": "recorded",
+            "enum": [
+              "simulated",
+              "recorded"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "matured": {
+            "title": "Matured",
+            "type": "integer"
+          },
+          "picks": {
+            "title": "Picks",
+            "type": "integer"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trade_date",
+          "horizon",
+          "picks",
+          "matured"
+        ],
+        "title": "TrackRecordPoint",
+        "type": "object"
+      },
+      "TrackRecordResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/TrackRecordPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          },
+          "summary": {
+            "items": {
+              "$ref": "#/components/schemas/TrackRecordSummary"
+            },
+            "title": "Summary",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provenance",
+          "summary",
+          "points",
+          "notes"
+        ],
+        "title": "TrackRecordResponse",
+        "type": "object"
+      },
+      "TrackRecordSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Return"
+          },
+          "excess_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excess Return"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit Rate"
+          },
+          "horizon": {
+            "enum": [
+              "short",
+              "swing",
+              "long",
+              "overall"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "kind": {
+            "default": "recorded",
+            "enum": [
+              "simulated",
+              "recorded"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "matured_picks": {
+            "title": "Matured Picks",
+            "type": "integer"
+          },
+          "reports": {
+            "title": "Reports",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "horizon",
+          "reports",
+          "matured_picks"
+        ],
+        "title": "TrackRecordSummary",
+        "type": "object"
+      },
+      "TradeRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "costs": {
+            "title": "Costs",
+            "type": "number"
+          },
+          "entry_date": {
+            "title": "Entry Date",
+            "type": "string"
+          },
+          "entry_price": {
+            "title": "Entry Price",
+            "type": "number"
+          },
+          "exit_date": {
+            "title": "Exit Date",
+            "type": "string"
+          },
+          "exit_price": {
+            "title": "Exit Price",
+            "type": "number"
+          },
+          "pnl": {
+            "title": "Pnl",
+            "type": "number"
+          },
+          "return_pct": {
+            "title": "Return Pct",
+            "type": "number"
+          },
+          "shares": {
+            "title": "Shares",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "entry_date",
+          "exit_date",
+          "entry_price",
+          "exit_price",
+          "shares",
+          "pnl",
+          "return_pct",
+          "costs"
+        ],
+        "title": "TradeRecord",
+        "type": "object"
+      },
+      "TurnoverRegime": {
+        "enum": [
+          "all",
+          "shrink",
+          "normal",
+          "expand"
+        ],
+        "title": "TurnoverRegime",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "WarehouseStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "enum": [
+              "live",
+              "sim"
+            ],
+            "title": "Active",
+            "type": "string"
+          },
+          "coverage_codes": {
+            "default": 0,
+            "title": "Coverage Codes",
+            "type": "integer"
+          },
+          "datasets": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/WarehouseTable"
+              },
+              "type": "array"
+            },
+            "title": "Datasets",
+            "type": "object"
+          },
+          "job": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SyncJob"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_trade_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Trade Date"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
+          }
+        },
+        "required": [
+          "active",
+          "provenance",
+          "datasets"
+        ],
+        "title": "WarehouseStatus",
+        "type": "object"
+      },
+      "WarehouseTable": {
+        "additionalProperties": false,
+        "properties": {
+          "bytes": {
+            "title": "Bytes",
+            "type": "integer"
+          },
+          "codes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codes"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "files": {
+            "title": "Files",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          }
+        },
+        "required": [
+          "name",
+          "rows",
+          "files",
+          "bytes"
+        ],
+        "title": "WarehouseTable",
+        "type": "object"
+      },
+      "WatchlistRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codes": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 300,
+            "title": "Codes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "codes"
+        ],
+        "title": "WatchlistRequest",
+        "type": "object"
+      },
+      "WatchlistResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Codes",
+            "type": "array"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codes",
+          "updated_at"
+        ],
+        "title": "WatchlistResponse",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "A 股盘中市场结构、可解释多因子筛选与确定性回测。契约见 /openapi.json。",
+    "title": "A-Share Pulse API",
+    "version": "3.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/admin/mode": {
+      "post": {
+        "operationId": "switch_mode_api_v1_admin_mode_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModeSwitchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProvenance"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Switch Mode",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/agent/manifest": {
+      "get": {
+        "operationId": "manifest_api_v1_agent_manifest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentManifest"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Manifest",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/crowd": {
+      "get": {
+        "operationId": "crowd_snapshot_api_v1_crowd_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrowdSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Crowd Snapshot",
+        "tags": [
+          "crowd"
+        ]
+      }
+    },
+    "/api/v1/data/sync": {
+      "post": {
+        "operationId": "start_sync_api_v1_data_sync_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Sync",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/api/v1/data/warehouse": {
+      "get": {
+        "operationId": "warehouse_status_api_v1_data_warehouse_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Warehouse Status",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/lab/factors": {
+      "post": {
+        "operationId": "analyse_factor_api_v1_lab_factors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FactorLabRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactorLabResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyse Factor",
+        "tags": [
+          "lab"
+        ]
+      }
+    },
+    "/api/v1/lab/patterns": {
+      "get": {
+        "operationId": "scan_patterns_api_v1_lab_patterns_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatternScanResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Scan Patterns",
+        "tags": [
+          "lab"
+        ]
+      }
+    },
+    "/api/v1/market/events": {
+      "get": {
+        "operationId": "market_events_api_v1_market_events_get",
+        "parameters": [
+          {
+            "description": "Last sequence already seen; only newer events are returned.",
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last sequence already seen; only newer events are returned.",
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 300,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketEventsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Market Events",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/api/v1/market/overview": {
+      "get": {
+        "operationId": "overview_api_v1_market_overview_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MacroDashboardSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "market"
+        ]
+      }
+    },
+    "/api/v1/notify/status": {
+      "get": {
+        "operationId": "notify_status_api_v1_notify_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Notify Status",
+        "tags": [
+          "notify"
+        ]
+      }
+    },
+    "/api/v1/notify/test": {
+      "post": {
+        "description": "Send the latest report (generating it when none exists) to the webhook.",
+        "operationId": "notify_test_api_v1_notify_test_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Notify Test",
+        "tags": [
+          "notify"
+        ]
+      }
+    },
+    "/api/v1/picks/generate": {
+      "post": {
+        "operationId": "picks_generate_api_v1_picks_generate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Picks Generate",
+        "tags": [
+          "picks"
+        ]
+      }
+    },
+    "/api/v1/picks/history": {
+      "get": {
+        "operationId": "picks_history_api_v1_picks_history_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportIndex"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Picks History",
+        "tags": [
+          "picks"
+        ]
+      }
+    },
+    "/api/v1/picks/today": {
+      "get": {
+        "operationId": "picks_today_api_v1_picks_today_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Picks Today",
+        "tags": [
+          "picks"
+        ]
+      }
+    },
+    "/api/v1/picks/track-record": {
+      "get": {
+        "operationId": "picks_track_record_api_v1_picks_track_record_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackRecordResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Picks Track Record",
+        "tags": [
+          "picks"
+        ]
+      }
+    },
+    "/api/v1/picks/{trade_date}": {
+      "get": {
+        "operationId": "picks_by_date_api_v1_picks__trade_date__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trade_date",
+            "required": true,
+            "schema": {
+              "title": "Trade Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Picks By Date",
+        "tags": [
+          "picks"
+        ]
+      }
+    },
+    "/api/v1/playbooks": {
+      "get": {
+        "operationId": "playbook_board_api_v1_playbooks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaybookBoard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Playbook Board",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/playbooks/exits": {
+      "get": {
+        "description": "Every playbook's sell-rule comparison: chosen in-sample, checked out-of-sample.",
+        "operationId": "playbook_exit_lab_api_v1_playbooks_exits_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExitLabReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Playbook Exit Lab",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/playbooks/rotation": {
+      "get": {
+        "description": "Walk-forward election of the playbooks that work now, and whether following it pays.",
+        "operationId": "playbook_rotation_api_v1_playbooks_rotation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RotationReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Playbook Rotation",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/playbooks/{playbook_id}": {
+      "get": {
+        "operationId": "playbook_detail_api_v1_playbooks__playbook_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "title": "Playbook Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaybookEvaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Playbook Detail",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/playbooks/{playbook_id}/exits": {
+      "get": {
+        "operationId": "playbook_exits_api_v1_playbooks__playbook_id__exits_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "title": "Playbook Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaybookExitStudy"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Playbook Exits",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/playbooks/{playbook_id}/run": {
+      "post": {
+        "description": "Custom parameters, exits or sizing; the result is computed fresh and never cached.",
+        "operationId": "playbook_run_api_v1_playbooks__playbook_id__run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "title": "Playbook Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaybookRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaybookEvaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Playbook Run",
+        "tags": [
+          "playbooks"
+        ]
+      }
+    },
+    "/api/v1/providers": {
+      "get": {
+        "operationId": "providers_api_v1_providers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProvidersResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Providers",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/api/v1/quality": {
+      "get": {
+        "operationId": "quality_api_v1_quality_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Quality",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/api/v1/regime": {
+      "get": {
+        "description": "Daily trend / liquidity / sentiment-cycle / style labels with the rules that produced them.",
+        "operationId": "regime_api_v1_regime_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "maximum": 2000,
+              "minimum": 60,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegimeHistoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Regime",
+        "tags": [
+          "regime"
+        ]
+      }
+    },
+    "/api/v1/research/backtests": {
+      "get": {
+        "operationId": "list_backtests_api_v1_research_backtests_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestRunsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Backtests",
+        "tags": [
+          "research"
+        ]
+      },
+      "post": {
+        "operationId": "create_backtest_api_v1_research_backtests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Backtest",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/backtests/batch": {
+      "post": {
+        "description": "Run one strategy across a short list under the same cost model.\n\nPer-code failures are returned as rows with `error` instead of aborting the\nwhole comparison, so one short history does not hide the other results.",
+        "operationId": "batch_backtest_api_v1_research_backtests_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestBatchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Batch Backtest",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/backtests/{run_id}": {
+      "get": {
+        "operationId": "read_backtest_api_v1_research_backtests__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Backtest",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/screener/parse": {
+      "post": {
+        "description": "Natural-language text to filters. Deterministic: no model is involved.",
+        "operationId": "parse_query_api_v1_screener_parse_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Parse Query",
+        "tags": [
+          "screener"
+        ]
+      }
+    },
+    "/api/v1/screener/query": {
+      "post": {
+        "operationId": "query_api_v1_screener_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenerFilterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenerQueryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Query",
+        "tags": [
+          "screener"
+        ]
+      }
+    },
+    "/api/v1/stocks/{code}": {
+      "get": {
+        "operationId": "stock_detail_api_v1_stocks__code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock Detail",
+        "tags": [
+          "market"
+        ]
+      }
+    },
+    "/api/v1/stocks/{code}/analogs": {
+      "get": {
+        "description": "What happened after historically similar setups (nearest-neighbour distribution).",
+        "operationId": "stock_analogs_api_v1_stocks__code__analogs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 60,
+              "minimum": 5,
+              "title": "Horizon",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalogForecast"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock Analogs",
+        "tags": [
+          "market"
+        ]
+      }
+    },
+    "/api/v1/strategies": {
+      "get": {
+        "operationId": "strategies_api_v1_strategies_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StrategyCatalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Strategies",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/stream/sse": {
+      "get": {
+        "operationId": "stream_api_v1_stream_sse_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stream",
+        "tags": [
+          "stream"
+        ]
+      }
+    },
+    "/api/v1/watchlist": {
+      "get": {
+        "operationId": "read_watchlist_api_v1_watchlist_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Read Watchlist",
+        "tags": [
+          "watchlist"
+        ]
+      },
+      "put": {
+        "operationId": "write_watchlist_api_v1_watchlist_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Write Watchlist",
+        "tags": [
+          "watchlist"
+        ]
+      }
+    }
+  }
+}

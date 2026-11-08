@@ -1,0 +1,25 @@
+[
+  {"source": "ths.724", "received_at": "2026-11-06T00:00:10+00:00", "items": [
+    {"item_id": "101", "title": "星河制药收到证监会立案告知书", "body": "公司因涉嫌信息披露违规被立案", "url": null, "source_published_at": "2026-11-05 23:50:00+00:00", "source_modified_at": null, "codes": [], "comments": null, "level": null},
+    {"item_id": "102", "title": "金桥建设中标重大项目", "body": "中标金额约12亿元", "url": null, "source_published_at": "2026-11-05 23:55:00+00:00", "source_modified_at": null, "codes": ["600777"], "comments": null, "level": null}
+  ]},
+  {"source": "ths.724", "received_at": "2026-11-06T00:00:40+00:00", "items": [
+    {"item_id": "103", "title": "海川电子披露业绩预亏公告", "body": "预计全年亏损", "url": null, "source_published_at": "2026-11-06 00:00:30+00:00", "source_modified_at": null, "codes": ["002451"], "comments": null, "level": null},
+    {"item_id": "104", "title": "央行宣布降准0.5个百分点", "body": "释放长期资金约1万亿元", "url": null, "source_published_at": "2026-11-06 00:00:31+00:00", "source_modified_at": null, "codes": [], "comments": null, "level": "important"},
+    {"item_id": "105", "title": "国际油价大涨，布伦特原油突破90美元", "body": "", "url": null, "source_published_at": "2026-11-06 00:00:32+00:00", "source_modified_at": null, "codes": [], "comments": null, "level": null},
+    {"item_id": "106", "title": "今日天气晴朗", "body": "市场整体平稳运行", "url": null, "source_published_at": "2026-11-06 00:00:33+00:00", "source_modified_at": null, "codes": [], "comments": null, "level": null},
+    {"item_id": "107", "title": "某公司减持计划已完成", "body": "股东减持结果公告", "url": null, "source_published_at": "2026-11-06 00:00:34+00:00", "source_modified_at": null, "codes": ["600513"], "comments": null, "level": null}
+  ]},
+  {"source": "em.724", "received_at": "2026-11-06T00:01:00+00:00", "items": [
+    {"item_id": "201", "title": "猪价继续下跌，创年内新低", "body": "", "url": null, "source_published_at": "2026-11-06 00:00:50+00:00", "source_modified_at": null, "codes": [], "comments": 0, "level": null},
+    {"item_id": "202", "title": "海川电子披露业绩预亏公告", "body": "预计全年亏损", "url": null, "source_published_at": "2026-11-06 00:00:55+00:00", "source_modified_at": null, "codes": ["002451"], "comments": 2, "level": null},
+    {"item_id": "203", "title": "创鑫软件拟回购股份", "body": "回购金额不超过1亿元", "url": null, "source_published_at": "2026-11-06 00:00:56+00:00", "source_modified_at": null, "codes": ["300001"], "comments": 0, "level": null}
+  ]},
+  {"source": "cls.telegraph", "received_at": "2026-11-06T00:02:00+00:00", "items": [
+    {"item_id": "301", "title": "", "body": "青松科技(603001)签订重大合同，金额超5亿元", "url": null, "source_published_at": "2026-11-06 00:01:50+00:00", "source_modified_at": "2026-11-06 00:01:55+00:00", "codes": [], "comments": 0, "level": "B"}
+  ]},
+  {"source": "ths.724", "received_at": "2026-11-06T00:02:30+00:00", "items": [
+    {"item_id": "103", "title": "海川电子披露业绩预亏公告", "body": "预计全年亏损", "url": null, "source_published_at": "2026-11-06 00:00:30+00:00", "source_modified_at": null, "codes": ["002451"], "comments": null, "level": null},
+    {"item_id": "106", "title": "今日天气晴朗", "body": "市场整体平稳运行", "url": null, "source_published_at": "2026-11-06 00:00:33+00:00", "source_modified_at": null, "codes": [], "comments": null, "level": null}
+  ]}
+]

@@ -1,0 +1,12 @@
+{
+ "SELECT": {
+  "total": -12.52,
+  "index": -8.08,
+  "sharpe": -1.11,
+  "mdd": -28.67,
+  "trades": 96,
+  "turnover_per_day": 0.195,
+  "days": 44,
+  "avg_exposure": 1.0
+ }
+}

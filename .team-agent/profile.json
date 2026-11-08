@@ -1,0 +1,233 @@
+{
+  "preset": "custom",
+  "updated_at": "2026-10-18T16:48:33.447472+00:00",
+  "detected_harnesses": [
+    "claude",
+    "codex",
+    "antigravity_or_muse",
+    "codebuddy",
+    "trae",
+    "kimi"
+  ],
+  "roles": {
+    "Explorer": {
+      "tier": "fast",
+      "codex_model": "gpt-6-luna",
+      "codex_fallbacks": [
+        "gpt-5.5",
+        "gpt-5"
+      ],
+      "claude_model": "haiku",
+      "claude_fallbacks": [
+        "sonnet",
+        "flash"
+      ],
+      "antigravity_model": "Gemini 3.8 Flash",
+      "antigravity_fallbacks": [],
+      "qwen_model": "fast",
+      "qwen_fallbacks": [
+        "inherit"
+      ],
+      "generic_model": "fast-tier",
+      "generic_fallbacks": [
+        "standard-tier"
+      ],
+      "effort": "High",
+      "readonly": true,
+      "multiplier": 0.3,
+      "active_model": "Gemini 3.8 Flash"
+    },
+    "Executor": {
+      "tier": "standard",
+      "codex_model": "gpt-6-luna",
+      "codex_fallbacks": [
+        "gpt-6.1-sol",
+        "gpt-5.5"
+      ],
+      "claude_model": "sonnet",
+      "claude_fallbacks": [
+        "haiku",
+        "opus"
+      ],
+      "antigravity_model": "Gemini 3.8 Flash",
+      "antigravity_fallbacks": [],
+      "qwen_model": "inherit",
+      "qwen_fallbacks": [
+        "fast"
+      ],
+      "generic_model": "standard-tier",
+      "generic_fallbacks": [
+        "high-tier"
+      ],
+      "effort": "High",
+      "readonly": false,
+      "multiplier": 0.5,
+      "active_model": "Gemini 3.8 Flash"
+    },
+    "Reviewer": {
+      "tier": "high",
+      "codex_model": "gpt-6.1-sol",
+      "codex_fallbacks": [
+        "gpt-6-luna",
+        "gpt-5.5"
+      ],
+      "claude_model": "sonnet",
+      "claude_fallbacks": [
+        "opus",
+        "haiku"
+      ],
+      "antigravity_model": "Claude Sonnet 4.6 (Thinking)",
+      "antigravity_fallbacks": [
+        "Gemini 3.8 Flash"
+      ],
+      "qwen_model": "inherit",
+      "qwen_fallbacks": [
+        "fast"
+      ],
+      "generic_model": "high-tier",
+      "generic_fallbacks": [
+        "standard-tier"
+      ],
+      "effort": "Thinking",
+      "readonly": true,
+      "multiplier": 1.2,
+      "active_model": "Claude Sonnet 4.6 (Thinking)"
+    },
+    "ExpertAdvisor": {
+      "tier": "flagship",
+      "codex_model": "gpt-6-astral",
+      "codex_fallbacks": [
+        "gpt-6.1-sol",
+        "gpt-6-luna"
+      ],
+      "claude_model": "opus",
+      "claude_fallbacks": [
+        "sonnet"
+      ],
+      "antigravity_model": "Claude Opus 4.6 (Thinking)",
+      "antigravity_fallbacks": [
+        "Claude Sonnet 4.6 (Thinking)",
+        "Gemini 3.8 Flash"
+      ],
+      "qwen_model": "inherit",
+      "qwen_fallbacks": [
+        "fast"
+      ],
+      "generic_model": "flagship-tier",
+      "generic_fallbacks": [
+        "high-tier"
+      ],
+      "effort": "Thinking",
+      "readonly": true,
+      "multiplier": 2.5,
+      "active_model": "Claude Opus 4.6 (Thinking)"
+    },
+    "Researcher": {
+      "tier": "fast",
+      "codex_model": "gpt-6-luna",
+      "codex_fallbacks": [
+        "gpt-5.5"
+      ],
+      "claude_model": "haiku",
+      "claude_fallbacks": [
+        "sonnet"
+      ],
+      "antigravity_model": "Gemini 3.8 Flash",
+      "antigravity_fallbacks": [
+        "Claude Sonnet 4.6 (Thinking)",
+        "GPT-OSS 120B"
+      ],
+      "qwen_model": "fast",
+      "qwen_fallbacks": [
+        "inherit"
+      ],
+      "generic_model": "fast-tier",
+      "generic_fallbacks": [
+        "standard-tier"
+      ],
+      "effort": "High",
+      "readonly": true,
+      "multiplier": 0.4,
+      "active_model": "Gemini 3.8 Flash"
+    },
+    "GeneralWorker": {
+      "tier": "standard",
+      "codex_model": "gpt-6.1-sol",
+      "codex_fallbacks": [
+        "gpt-6-luna"
+      ],
+      "claude_model": "sonnet",
+      "claude_fallbacks": [
+        "opus"
+      ],
+      "antigravity_model": "Gemini 3.8 Flash",
+      "antigravity_fallbacks": [
+        "Claude Sonnet 4.6 (Thinking)"
+      ],
+      "qwen_model": "inherit",
+      "qwen_fallbacks": [
+        "fast"
+      ],
+      "generic_model": "standard-tier",
+      "generic_fallbacks": [
+        "high-tier"
+      ],
+      "effort": "High",
+      "readonly": false,
+      "multiplier": 1.0,
+      "active_model": "Gemini 3.8 Flash"
+    },
+    "Designer": {
+      "tier": "fast",
+      "codex_model": "gpt-6-luna",
+      "codex_fallbacks": [],
+      "claude_model": "haiku",
+      "claude_fallbacks": [],
+      "antigravity_model": "Gemini 3.8 Flash",
+      "antigravity_fallbacks": [],
+      "qwen_model": "fast",
+      "qwen_fallbacks": [],
+      "generic_model": "fast-tier",
+      "generic_fallbacks": [],
+      "effort": "Medium",
+      "readonly": true,
+      "multiplier": 0.5,
+      "active_model": "Gemini 3.8 Flash"
+    }
+  },
+  "synced_files": [
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-executor.md",
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-reviewer.md",
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-expertadvisor.md",
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-researcher.md",
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-generalworker.md",
+    "D:\\zuomian\\idea\\trading\\.claude\\agents\\team-designer.md",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\Explorer.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\Executor.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\Reviewer.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\ExpertAdvisor.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\Researcher.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\GeneralWorker.toml",
+    "D:\\zuomian\\idea\\trading\\.codex\\agents\\Designer.toml",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-explorer.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-executor.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-reviewer.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-expertadvisor.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-researcher.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-generalworker.md",
+    "D:\\zuomian\\idea\\trading\\.codebuddy\\agents\\team-designer.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-explorer.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-executor.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-reviewer.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-expertadvisor.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-researcher.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-generalworker.md",
+    "D:\\zuomian\\idea\\trading\\.agents\\agents\\team-designer.md",
+    "D:\\zuomian\\idea\\trading\\.trae\\rules\\team-router.md",
+    "D:\\zuomian\\idea\\trading\\.kimi-code\\agents\\team-reviewer.md",
+    "D:\\zuomian\\idea\\trading\\.kimi-code\\agents\\team-expertadvisor.md",
+    "D:\\zuomian\\idea\\trading\\.kimi-code\\agents\\team-researcher.md",
+    "D:\\zuomian\\idea\\trading\\.kimi-code\\agents\\team-generalworker.md",
+    "D:\\zuomian\\idea\\trading\\.kimi-code\\agents\\team-designer.md"
+  ]
+}

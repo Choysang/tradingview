@@ -1,0 +1,26 @@
+{
+ "gp_pre": {
+  "generated": 2272,
+  "valid": 2212,
+  "mining_pass": 376,
+  "dedup": 370,
+  "select_survive": 184,
+  "select_same_sign": 330
+ },
+ "gp_recent": {
+  "generated": 1,
+  "valid": 1,
+  "mining_pass": 0,
+  "dedup": 0,
+  "select_survive": 0,
+  "select_same_sign": 0
+ },
+ "llm_pre": {
+  "generated": 300,
+  "valid": 300,
+  "mining_pass": 71,
+  "dedup": 63,
+  "select_survive": 18,
+  "select_same_sign": 54
+ }
+}

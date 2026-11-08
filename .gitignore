@@ -1,0 +1,20 @@
+.venv/
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+*.pyc
+.work/
+backend/data/
+*.log
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+
+# local tooling and private documents (never published)
+.claude/
+.claude-flow/
+*.tsbuildinfo
+/A股*

@@ -1,0 +1,67 @@
+{
+ "frozen": [
+  "low_risk",
+  "llm_composite",
+  "ml_h20_v1b",
+  "switch"
+ ],
+ "results": {
+  "low_risk": {
+   "start": "2026-08-01",
+   "end": "2026-10-30",
+   "trades": 56,
+   "win": 51.79,
+   "avg": 0.0,
+   "sharpe": 0.016,
+   "ann": -0.26,
+   "mdd": -3.32,
+   "total": -0.06,
+   "exposure": 76.41,
+   "excess_avg": 3.769,
+   "excess_t": 2.0623478926513643,
+   "index": -12.83,
+   "ew": -7.41,
+   "daily_sharpe": 0.001
+  },
+  "llm_composite": {
+   "start": "2026-08-01",
+   "end": "2026-10-30",
+   "trades": 55,
+   "win": 21.82,
+   "avg": -5.165,
+   "sharpe": -2.586,
+   "ann": -47.2,
+   "mdd": -17.4,
+   "total": -13.67,
+   "exposure": 76.48,
+   "excess_avg": -0.597,
+   "excess_t": -0.5838281072186434,
+   "index": -12.83,
+   "ew": -7.41,
+   "daily_sharpe": -0.1629
+  },
+  "ml_h20_v1b": {
+   "start": "2026-08-01",
+   "end": "2026-10-30",
+   "trades": 56,
+   "win": 23.21,
+   "avg": -5.699,
+   "sharpe": -2.833,
+   "ann": -52.13,
+   "mdd": -20.84,
+   "total": -15.6,
+   "exposure": 76.1,
+   "excess_avg": 1.415,
+   "excess_t": 1.497665401539911,
+   "index": -12.83,
+   "ew": -7.41,
+   "daily_sharpe": -0.1785
+  },
+  "switch": {
+   "total": -9.84,
+   "mdd": -8.23,
+   "weeks_offensive": 5,
+   "weeks": 12
+  }
+ }
+}

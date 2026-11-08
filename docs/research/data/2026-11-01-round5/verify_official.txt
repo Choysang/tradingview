@@ -1,0 +1,21 @@
+[harness] context 726 days 2023-11-01..2026-10-30 27s
+r5:fusion_static40_mined.parquet (hold 5, 20 slots) round 5 official
+  PRE     2023-11-01..2026-06-30 trades 1491 total +123.12% ann  +37.0% sharpe +1.46 mdd  -24.4% ex/trade  +0.23 t +1.30 | index +45.10% ew +66.50%
+  SELECT  2026-07-01..2026-08-31 trades  144 total  +20.95% ann +204.9% sharpe +4.01 mdd   -5.5% ex/trade  +2.71 t +5.05 | index  -8.89% ew  -1.48%
+  VERIFY  2026-09-01..2026-10-30 trades  124 total  -11.59% ann  -56.8% sharpe -3.42 mdd  -14.6% ex/trade  +0.51 t +0.94 | index -17.03% ew -15.56%
+r5:fusion_static40.parquet (hold 5, 20 slots) round 5 official
+  PRE     2023-11-01..2026-06-30 trades 1485 total  +55.22% ann  +18.8% sharpe +0.90 mdd  -25.3% ex/trade  -0.29 t -2.05 | index +45.10% ew +66.50%
+  SELECT  2026-07-01..2026-08-31 trades  144 total   +8.83% ann  +64.2% sharpe +1.82 mdd  -10.3% ex/trade  +1.53 t +2.55 | index  -8.89% ew  -1.48%
+  VERIFY  2026-09-01..2026-10-30 trades  124 total  -13.09% ann  -61.5% sharpe -3.83 mdd  -16.1% ex/trade  +0.57 t +1.06 | index -17.03% ew -15.56%
+r5:fusion_long10_exp.parquet (hold 5, 20 slots) round 5 official
+  PRE     2023-11-01..2026-06-30 trades 1490 total  +93.60% ann  +29.6% sharpe +1.20 mdd  -19.3% ex/trade  +0.01 t +0.08 | index +45.10% ew +66.50%
+  SELECT  2026-07-01..2026-08-31 trades  144 total  +12.97% ann +104.3% sharpe +2.39 mdd  -11.2% ex/trade  +2.06 t +3.93 | index  -8.89% ew  -1.48%
+  VERIFY  2026-09-01..2026-10-30 trades  124 total  -13.97% ann  -64.1% sharpe -4.12 mdd  -16.4% ex/trade  +0.29 t +0.67 | index -17.03% ew -15.56%
+r5:fusion_static20_mined.parquet (hold 5, 20 slots) round 5 official
+  PRE     2023-11-01..2026-06-30 trades 1491 total  +81.02% ann  +26.2% sharpe +1.06 mdd  -23.2% ex/trade  -0.08 t -0.50 | index +45.10% ew +66.50%
+  SELECT  2026-07-01..2026-08-31 trades  144 total  +17.17% ann +153.0% sharpe +2.93 mdd   -7.2% ex/trade  +2.27 t +3.26 | index  -8.89% ew  -1.48%
+  VERIFY  2026-09-01..2026-10-30 trades  124 total  -14.36% ann  -65.2% sharpe -4.07 mdd  -17.1% ex/trade  -0.23 t -0.35 | index -17.03% ew -15.56%
+r5:rl_alphagen_rank.parquet (hold 5, 20 slots) round 5 official
+  PRE     2023-11-01..2026-06-30 trades 1744 total   +2.81% ann   +1.1% sharpe +0.16 mdd  -22.9% ex/trade  -0.58 t -4.61 | index +45.10% ew +66.50%
+  SELECT  2026-07-01..2026-08-31 trades  144 total   +5.70% ann  +38.4% sharpe +1.54 mdd   -4.5% ex/trade  +1.18 t +1.84 | index  -8.89% ew  -1.48%
+  VERIFY  2026-09-01..2026-10-30 trades  124 total   -8.45% ann  -45.2% sharpe -3.30 mdd   -9.4% ex/trade  +0.71 t +1.49 | index -17.03% ew -15.56%

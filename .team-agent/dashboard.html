@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Team Agent 架构与遥测看板</title>
+<style>
+body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; }
+.tag { font-size: 12px; background: #3b82f6; padding: 2px 8px; border-radius: 99px; float: right; }
+table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 10px; overflow: hidden; }
+th, td { padding: 10px 12px; border-bottom: 1px solid #334155; text-align: left; font-size: 14px; }
+th { background: #0f172a; color: #94a3b8; }
+code { background: #0f172a; padding: 2px 6px; border-radius: 4px; color: #38bdf8; }
+</style>
+</head>
+<body>
+<h2>Team Agent 控制台 (当前档位: custom)</h2>
+<div class="grid"><div class='card'><h3>Explorer <span class='tag'>只读隔离</span></h3><p>生效模型: <b><code>Gemini 3.8 Flash</code></b></p><p>备选候选: <small>standard-tier</small></p><p>思考强度: <b>High</b> | 算力档: fast</p></div><div class='card'><h3>Executor <span class='tag'>独占写入</span></h3><p>生效模型: <b><code>Gemini 3.8 Flash</code></b></p><p>备选候选: <small>high-tier</small></p><p>思考强度: <b>High</b> | 算力档: standard</p></div><div class='card'><h3>Reviewer <span class='tag'>只读隔离</span></h3><p>生效模型: <b><code>Claude Sonnet 4.6 (Thinking)</code></b></p><p>备选候选: <small>Gemini 3.8 Flash</small></p><p>思考强度: <b>Thinking</b> | 算力档: high</p></div><div class='card'><h3>ExpertAdvisor <span class='tag'>只读隔离</span></h3><p>生效模型: <b><code>Claude Opus 4.6 (Thinking)</code></b></p><p>备选候选: <small>Claude Sonnet 4.6 (Thinking), Gemini 3.8 Flash</small></p><p>思考强度: <b>Thinking</b> | 算力档: flagship</p></div><div class='card'><h3>Researcher <span class='tag'>只读隔离</span></h3><p>生效模型: <b><code>Gemini 3.8 Flash</code></b></p><p>备选候选: <small>Claude Sonnet 4.6 (Thinking), GPT-OSS 120B</small></p><p>思考强度: <b>High</b> | 算力档: fast</p></div><div class='card'><h3>GeneralWorker <span class='tag'>独占写入</span></h3><p>生效模型: <b><code>Gemini 3.8 Flash</code></b></p><p>备选候选: <small>Claude Sonnet 4.6 (Thinking)</small></p><p>思考强度: <b>High</b> | 算力档: standard</p></div><div class='card'><h3>Designer <span class='tag'>只读隔离</span></h3><p>生效模型: <b><code>Gemini 3.8 Flash</code></b></p><p>备选候选: <small>无</small></p><p>思考强度: <b>Medium</b> | 算力档: fast</p></div></div>
+<h3>子代理调用与额度倍率账本 (最近 30 条)</h3>
+<table>
+<thead><tr><th>时间 (UTC)</th><th>角色</th><th>生效模型</th><th>轮次</th><th>加权消耗</th><th>独占文件锁</th><th>任务摘要</th></tr></thead>
+<tbody><tr><td colspan="7">暂无调用记录</td></tr></tbody>
+</table>
+</body>
+</html>

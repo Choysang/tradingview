@@ -1,0 +1,52 @@
+@layer feature {
+  .sources { top: 8vh; width: min(720px, calc(100vw - 32px)); max-height: 84vh; }
+  .sources-head { display: flex; justify-content: space-between; align-items: flex-start; padding: var(--s-5) var(--s-6) var(--s-3); }
+  .sources-head h2 { font-size: var(--fs-28); margin-top: 4px; }
+  .sources-body { overflow-y: auto; padding: 0 var(--s-6) var(--s-6); display: grid; gap: var(--s-6); }
+  .sources-body h3 { font-size: var(--fs-13); font-weight: 600; color: var(--text-1); margin-bottom: var(--s-3); display: flex; gap: var(--s-2); align-items: baseline; flex-wrap: wrap; }
+  .sources-body h3 small { font-weight: 400; font-size: var(--fs-11); }
+  .sources-mode { display: flex; justify-content: space-between; gap: var(--s-4); align-items: flex-start; padding: var(--s-4); border-radius: var(--r-3); background: var(--ink-2); border: 1px solid var(--line); }
+  .sources-mode strong { font-size: var(--fs-16); }
+  .sources-mode p { font-size: var(--fs-12); color: var(--text-2); margin-top: 4px; max-width: 52ch; }
+  .providers { display: grid; gap: var(--s-2); }
+  .providers li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: var(--s-3); align-items: start; padding: var(--s-3); border-radius: var(--r-2); border: 1px solid var(--line); }
+  .providers li.active { border-color: var(--accent-line); background: var(--accent-soft); }
+  .providers strong { font-size: var(--fs-13); display: inline-flex; gap: var(--s-2); align-items: center; }
+  .providers p { font-size: var(--fs-12); color: var(--text-2); margin-top: 2px; }
+  .coverage { display: grid; gap: 6px; }
+  .coverage li { display: grid; grid-template-columns: 110px minmax(0, 1fr) 44px; gap: var(--s-3); align-items: center; font-size: var(--fs-12); color: var(--text-1); }
+  .coverage-bar { height: 5px; border-radius: 5px; background: var(--ink-4); overflow: hidden; }
+  .coverage-bar i { display: block; height: 100%; border-radius: 5px; background: var(--down); }
+  .coverage-bar i.mid { background: var(--gold); }
+  .coverage-bar i.low { background: var(--up); }
+  .coverage b { text-align: right; font-weight: 500; }
+  .sources-foot { font-size: var(--fs-11); }
+
+  .warehouse { display: grid; gap: var(--s-3); }
+  .wh-active { padding: var(--s-4); border-radius: var(--r-3); background: var(--ink-2); border: 1px solid var(--line); }
+  .wh-active.sim { border-color: var(--gold-line); }
+  .wh-active.live { border-color: var(--down-line); }
+  .wh-active strong { font-size: var(--fs-14); }
+  .wh-active p { font-size: var(--fs-12); color: var(--text-2); margin-top: 4px; line-height: 1.55; }
+  .wh-job { display: grid; gap: 6px; padding: var(--s-3) var(--s-4); border-radius: var(--r-2); border: 1px solid var(--line); }
+  .wh-job.failed { border-color: var(--up-line); }
+  .wh-job-head { display: flex; justify-content: space-between; gap: var(--s-3); font-size: var(--fs-12); }
+  .wh-job p { font-size: var(--fs-12); color: var(--text-2); }
+  .wh-progress { height: 5px; border-radius: 5px; background: var(--ink-4); overflow: hidden; }
+  .wh-progress i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width var(--t-3) var(--ease-out); }
+  .wh-job.done .wh-progress i { background: var(--down); }
+  .wh-job.failed .wh-progress i { background: var(--up); }
+  .wh-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+  .wh-datasets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+  .wh-datasets h4 { font-size: var(--fs-11); color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 6px; font-weight: 500; }
+  .wh-tables { display: grid; gap: 6px; }
+  .wh-tables li { display: grid; gap: 1px; font-size: var(--fs-12); padding: var(--s-2) var(--s-3); border-radius: var(--r-1); background: var(--ink-2); }
+  .wh-tables strong { font-weight: 500; }
+  .wh-tables span { font-size: var(--fs-11); }
+  .wh-notes { display: grid; gap: 4px; font-size: var(--fs-11); color: var(--text-3); line-height: 1.6; }
+  .wh-notes li::before { content: '· '; }
+  @media (max-width: 760px) {
+    .sources-mode { flex-direction: column; }
+    .wh-datasets { grid-template-columns: 1fr; }
+  }
+}

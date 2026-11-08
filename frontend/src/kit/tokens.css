@@ -1,0 +1,127 @@
+/*
+ * Pulse design tokens. One source for colour, type, space and motion.
+ *
+ * Colour is authored in OKLCH so lightness steps are perceptually even and the
+ * ambient "mood" hue can rotate without changing perceived brightness.
+ * A-share convention: red rises, green falls. Gold marks height, violet marks
+ * interaction (focus, selection, the ask bar) so it never collides with price colour.
+ */
+
+@property --mood-h {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 80;
+}
+
+@property --flash {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer tokens {
+  :root {
+    color-scheme: dark;
+
+    /* surfaces: ink, raised in small even steps */
+    --ink-0: oklch(0.145 0.010 268);
+    --ink-1: oklch(0.172 0.011 268);
+    --ink-2: oklch(0.198 0.012 268);
+    --ink-3: oklch(0.232 0.013 268);
+    --ink-4: oklch(0.275 0.014 268);
+    --glass: oklch(0.172 0.011 268 / 0.72);
+    --line: oklch(1 0 0 / 0.07);
+    --line-2: oklch(1 0 0 / 0.12);
+    --line-3: oklch(1 0 0 / 0.2);
+
+    /* text: every step used for meaning clears 4.5:1 on --ink-1 */
+    --text-0: oklch(0.965 0.004 268);
+    --text-1: oklch(0.82 0.008 268);
+    --text-2: oklch(0.69 0.012 268);
+    --text-3: oklch(0.55 0.012 268);
+
+    /* market semantics */
+    --up: oklch(0.71 0.19 19);
+    --up-2: oklch(0.79 0.13 19);
+    --up-soft: oklch(0.71 0.19 19 / 0.14);
+    --up-line: oklch(0.71 0.19 19 / 0.42);
+    --down: oklch(0.79 0.135 166);
+    --down-soft: oklch(0.79 0.135 166 / 0.13);
+    --down-line: oklch(0.79 0.135 166 / 0.4);
+    --gold: oklch(0.84 0.14 82);
+    --gold-soft: oklch(0.84 0.14 82 / 0.14);
+    --gold-line: oklch(0.84 0.14 82 / 0.45);
+    --cyan: oklch(0.81 0.11 214);
+    --cyan-soft: oklch(0.81 0.11 214 / 0.13);
+    --flat: var(--text-2);
+
+    /* interaction accent */
+    --accent: oklch(0.76 0.14 284);
+    --accent-2: oklch(0.86 0.08 284);
+    --accent-soft: oklch(0.76 0.14 284 / 0.14);
+    --accent-line: oklch(0.76 0.14 284 / 0.5);
+    --focus: 0 0 0 2px var(--ink-0), 0 0 0 4px var(--accent);
+
+    /* ambient mood: hue is set from the sentiment score at runtime */
+    --mood: oklch(0.72 0.15 var(--mood-h));
+    --mood-soft: oklch(0.72 0.15 var(--mood-h) / 0.16);
+
+    /* type */
+    --font-sans: 'Geist', 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', 'SFMono-Regular', ui-monospace, 'Microsoft YaHei UI', monospace;
+    --font-display: 'Noto Serif SC', 'Songti SC', 'STSong', 'Source Han Serif SC', serif;
+
+    --fs-10: 0.625rem;
+    --fs-11: 0.6875rem;
+    --fs-12: 0.75rem;
+    --fs-13: 0.8125rem;
+    --fs-14: 0.875rem;
+    --fs-16: 1rem;
+    --fs-20: 1.25rem;
+    --fs-28: 1.75rem;
+    --fs-40: 2.5rem;
+    --fs-hero: clamp(4.5rem, 3rem + 5vw, 8.25rem);
+
+    /* space, 4 pt grid */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 20px;
+    --s-6: 24px;
+    --s-8: 32px;
+    --s-10: 40px;
+    --s-14: 56px;
+
+    --r-1: 6px;
+    --r-2: 10px;
+    --r-3: 14px;
+    --r-4: 20px;
+    --r-pill: 999px;
+
+    --rail: 72px;
+    --ribbon: 56px;
+    --gutter: clamp(16px, 1rem + 1vw, 32px);
+
+    /* motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1);
+    --t-1: 120ms;
+    --t-2: 220ms;
+    --t-3: 360ms;
+    --t-4: 640ms;
+
+    --shadow-1: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 10px 30px -18px oklch(0 0 0 / 0.8);
+    --shadow-2: 0 1px 0 oklch(1 0 0 / 0.06) inset, 0 30px 80px -30px oklch(0 0 0 / 0.9);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --t-1: 0ms;
+      --t-2: 0ms;
+      --t-3: 0ms;
+      --t-4: 0ms;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+[
+  {"source": "em.724", "received_at": "2026-11-06T02:10:00+00:00", "items": [
+    {"item_id": "204", "title": "银杏航空发生生产事故，部分产线停产", "body": "", "url": null, "source_published_at": "2026-11-06 02:09:50+00:00", "source_modified_at": null, "codes": [], "comments": 0, "level": null}
+  ]},
+  {"source": "cls.telegraph", "received_at": "2026-11-06T02:10:05+00:00", "items": [
+    {"item_id": "301", "title": "", "body": "青松科技(603001)签订重大合同，金额超5亿元；公司同时披露问询函回复", "url": null, "source_published_at": "2026-11-06 00:01:50+00:00", "source_modified_at": "2026-11-06 02:09:55+00:00", "codes": [], "comments": 0, "level": "B"}
+  ]}
+]

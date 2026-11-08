@@ -1,0 +1,339 @@
+{
+ "scores": {
+  "fusion_static40_mined.pt": {
+   "SELECT": {
+    "ic": 0.179,
+    "t": 5.01,
+    "top10": 1.609,
+    "book": {
+     "total": 22.47,
+     "index": -8.08,
+     "sharpe": 4.12,
+     "mdd": -5.88,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.1307,
+    "t": 7.18,
+    "top10": 0.74,
+    "book": {
+     "total": -6.86,
+     "index": -11.04,
+     "sharpe": -2.13,
+     "mdd": -12.6,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "fusion_static40.pt": {
+   "SELECT": {
+    "ic": 0.1288,
+    "t": 4.79,
+    "top10": 1.155,
+    "book": {
+     "total": 4.9,
+     "index": -8.08,
+     "sharpe": 1.13,
+     "mdd": -12.65,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.0934,
+    "t": 3.1,
+    "top10": 0.344,
+    "book": {
+     "total": -6.05,
+     "index": -11.04,
+     "sharpe": -1.73,
+     "mdd": -11.76,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "fusion_long10_exp.pt": {
+   "SELECT": {
+    "ic": 0.1002,
+    "t": 4.03,
+    "top10": 0.928,
+    "book": {
+     "total": 13.4,
+     "index": -8.08,
+     "sharpe": 2.47,
+     "mdd": -11.2,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.0652,
+    "t": 3.07,
+    "top10": 0.464,
+    "book": {
+     "total": -6.83,
+     "index": -11.04,
+     "sharpe": -2.16,
+     "mdd": -9.64,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "fusion_static20_mined.pt": {
+   "SELECT": {
+    "ic": 0.1652,
+    "t": 5.07,
+    "top10": 1.426,
+    "book": {
+     "total": 12.41,
+     "index": -8.08,
+     "sharpe": 2.29,
+     "mdd": -8.16,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.1257,
+    "t": 7.6,
+    "top10": 0.736,
+    "book": {
+     "total": -11.34,
+     "index": -11.04,
+     "sharpe": -3.21,
+     "mdd": -16.02,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "rl_alphagen_rank.pt": {
+   "SELECT": {
+    "ic": 0.1654,
+    "t": 2.55,
+    "top10": 1.425,
+    "book": {
+     "total": 6.53,
+     "index": -8.08,
+     "sharpe": 1.63,
+     "mdd": -5.12,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.1534,
+    "t": 3.17,
+    "top10": 0.944,
+    "book": {
+     "total": -4.84,
+     "index": -11.04,
+     "sharpe": -2.25,
+     "mdd": -6.82,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "fusion_dyn20.pt": {
+   "SELECT": {
+    "ic": -0.0849,
+    "t": -1.2,
+    "top10": -1.547,
+    "book": {
+     "total": -28.43,
+     "index": -8.08,
+     "sharpe": -3.71,
+     "mdd": -31.61,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": 0.0454,
+    "t": 1.35,
+    "top10": -0.198,
+    "book": {
+     "total": -10.31,
+     "index": -11.04,
+     "sharpe": -3.25,
+     "mdd": -13.83,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  },
+  "fusion_long10_120.pt": {
+   "SELECT": {
+    "ic": -0.1129,
+    "t": -2.68,
+    "top10": -2.116,
+    "book": {
+     "total": -26.08,
+     "index": -8.08,
+     "sharpe": -3.01,
+     "mdd": -30.17,
+     "trades": 176,
+     "turnover_per_day": 0.382,
+     "days": 44
+    }
+   },
+   "VERIFY": {
+    "ic": -0.0412,
+    "t": -0.87,
+    "top10": -0.37,
+    "book": {
+     "total": -13.54,
+     "index": -11.04,
+     "sharpe": -3.43,
+     "mdd": -18.51,
+     "trades": 128,
+     "turnover_per_day": 0.375,
+     "days": 32
+    }
+   }
+  }
+ },
+ "fqi": {
+  "excess_g0.8": {
+   "total": -11.52,
+   "index": -11.04,
+   "sharpe": -2.13,
+   "mdd": -17.86,
+   "trades": 77,
+   "turnover_per_day": 0.209,
+   "days": 32,
+   "avg_exposure": 1.0
+  },
+  "raw_g0.8": {
+   "total": -9.43,
+   "index": -11.04,
+   "sharpe": -1.52,
+   "mdd": -18.99,
+   "trades": 173,
+   "turnover_per_day": 0.509,
+   "days": 32,
+   "avg_exposure": 0.892
+  }
+ },
+ "exposure": {
+  "always": {
+   "total": -6.86,
+   "index": -11.04,
+   "sharpe": -2.13,
+   "mdd": -12.6,
+   "trades": 128,
+   "turnover_per_day": 0.375,
+   "days": 32
+  },
+  "index_ma5": {
+   "total": -1.86,
+   "index": -11.04,
+   "sharpe": -1.4,
+   "mdd": -4.21,
+   "trades": 40,
+   "turnover_per_day": 0.125,
+   "days": 32
+  },
+  "index_ma20": {
+   "total": -2.08,
+   "index": -11.04,
+   "sharpe": -2.05,
+   "mdd": -3.58,
+   "trades": 16,
+   "turnover_per_day": 0.05,
+   "days": 32
+  },
+  "index_ma60": {
+   "total": 0.0,
+   "index": -11.04,
+   "sharpe": null,
+   "mdd": 0.0,
+   "trades": 0,
+   "turnover_per_day": 0.0,
+   "days": 32
+  },
+  "breadth": {
+   "total": -3.92,
+   "index": -11.04,
+   "sharpe": -1.72,
+   "mdd": -7.12,
+   "trades": 80,
+   "turnover_per_day": 0.238,
+   "days": 32
+  },
+  "limit_down_spike": {
+   "total": -6.86,
+   "index": -11.04,
+   "sharpe": -2.13,
+   "mdd": -12.6,
+   "trades": 128,
+   "turnover_per_day": 0.375,
+   "days": 32
+  },
+  "sentiment": {
+   "total": -3.13,
+   "index": -11.04,
+   "sharpe": -1.76,
+   "mdd": -5.92,
+   "trades": 66,
+   "turnover_per_day": 0.194,
+   "days": 32
+  }
+ },
+ "gp_recent": [
+  {
+   "expr": "Less(Corr($vwap,Mul($volume,$turn),5),$vwap)",
+   "mine_ic": -0.040868409624291134,
+   "SELECT": 0.06440486659465189,
+   "VERIFY": 0.03572188104953966
+  },
+  {
+   "expr": "Div(Greater(CSRank(Sub($vwap,$close)),Std($turn,60)),Sqrt(Mean($low,3)))",
+   "mine_ic": -0.05051673129843227,
+   "SELECT": -0.013532624550862238,
+   "VERIFY": 0.06826345108129317
+  },
+  {
+   "expr": "Div(Greater(CSRank(Sub($vwap,$turn)),CSRank(Add($turn,$ret))),Sqrt(Mean($low,3)))",
+   "mine_ic": -0.051701535519708255,
+   "SELECT": -0.04332108364906162,
+   "VERIFY": 0.0476072800665861
+  },
+  {
+   "expr": "Div(Std($turn,3),Min($vwap,2))",
+   "mine_ic": -0.04991037398175304,
+   "SELECT": -0.018504451059429397,
+   "VERIFY": 0.06525180788594298
+  },
+  {
+   "expr": "Sum(Sub($turn,Add($mkt,Add($mkt,$turn))),20)",
+   "mine_ic": -0.017977098340232825,
+   "SELECT": 0.05351936525072564,
+   "VERIFY": -0.06571487206383608
+  },
+  {
+   "expr": "Min(Neg($is_limit_up),30)",
+   "mine_ic": 0.03007182255557915,
+   "SELECT": 0.03272020367016508,
+   "VERIFY": 0.059432954381918535
+  }
+ ]
+}
