@@ -15,10 +15,23 @@ from .live import AkShareFeed
 from .simulation import _scale, _series, synthetic_history
 
 CST = timezone(timedelta(hours=8))
+HISTORY_BARS = 320
 
 
 def _now() -> datetime:
     return datetime.now(CST)
+
+
+def _last_weekday_before(day: date) -> date:
+    day -= timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return day
+
+
+def _fresh(entry: tuple[list, DataProvenance]) -> bool:
+    """A cached entry lasts for the day it was made, so a long-running process picks up new sessions."""
+    return entry[1].as_of[:10] == _now().date().isoformat()
 
 
 class HistoryProvider:
@@ -34,12 +47,13 @@ class HistoryProvider:
     def bars(self, code: str, anchor: float | None = None) -> tuple[list, DataProvenance]:
         with self._lock:
             cached = self._cache.get(code)
-        if cached:
+        if cached and _fresh(cached):
             return cached
         # The network fetch runs unlocked so one slow code cannot stall the panel or warm-up.
         result = self._live_bars(code) or self._synthetic_bars(code, anchor)
         with self._lock:
-            return self._cache.setdefault(code, result)
+            self._cache[code] = result
+            return result
 
     # --- cross-section for pattern scans and factor research ---------------------
 
@@ -103,7 +117,7 @@ class HistoryProvider:
 
     def _cached_live(self) -> dict[str, list]:
         with self._lock:
-            return {code: bars for code, (bars, info) in self._cache.items() if info.mode == "LIVE"}
+            return {code: entry[0] for code, entry in self._cache.items() if entry[1].mode == "LIVE" and _fresh(entry)}
 
     def _live_panel(self, cached: dict[str, list], warm: int) -> tuple[pl.DataFrame, DataProvenance]:
         series = {
@@ -135,16 +149,45 @@ class HistoryProvider:
     def _warm(self, codes: list[str]) -> None:
         for code in codes:
             with self._lock:
-                if code in self._cache and self._cache[code][1].mode == "LIVE":
+                if code in self._cache and self._cache[code][1].mode == "LIVE" and _fresh(self._cache[code]):
                     continue
             result = self._live_bars(code)  # network call, deliberately outside the lock
             if result:
                 with self._lock:
                     self._cache[code] = result
 
-    def _live_bars(self, code: str) -> tuple[list, DataProvenance] | None:
-        if not self._live:
+    def _warehouse_bars(self, code: str) -> tuple[list, DataProvenance] | None:
+        """Real bars this machine already holds: no network, and it works where the chart sources refuse the server.
+        Bars that end before the last weekday are marked stale; the caller prefers a network source for them."""
+        from contracts.schema import OHLCBar
+
+        from ..warehouse.store import warehouse
+
+        try:
+            lazy = warehouse("live").scan("bars")
+            if lazy is None:
+                return None
+            frame = (lazy.filter(pl.col("code") == code).drop_nulls(["open", "high", "low", "close"])
+                     .sort("date").tail(HISTORY_BARS).collect())
+            bars = [OHLCBar(date=str(row["date"])[:10], open=row["open"], high=row["high"], low=row["low"],
+                            close=row["close"], volume=row["volume"] or 0.0) for row in frame.iter_rows(named=True)]
+        except Exception:  # noqa: BLE001 - a damaged warehouse must not take the chart down; the next source is tried
             return None
+        if not bars:
+            return None
+        info = self._bars_provenance(bars, "本地数据仓库 · 前复权日线", "每日同步进仓库的新浪前复权日线，不发网络请求。")
+        if bars[-1].date < _last_weekday_before(_now().date()).isoformat():
+            info = info.model_copy(update={"status": "stale", "detail": f"仓库日线只到 {bars[-1].date}，每日同步可能停了或该股停牌。"})
+        return bars, info
+
+    def _live_bars(self, code: str) -> tuple[list, DataProvenance] | None:
+        stored = self._warehouse_bars(code)
+        if stored and stored[1].status != "stale":
+            return stored
+        fetched = self._network_bars(code) if self._live else None
+        return fetched or stored
+
+    def _network_bars(self, code: str) -> tuple[list, DataProvenance] | None:
         from ..research.tencent_history import fetch_daily
 
         try:

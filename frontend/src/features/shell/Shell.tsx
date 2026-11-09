@@ -85,14 +85,15 @@ function ModeBadge() {
   const provenance = overview?.provenance;
   const mode = provenance?.mode ?? '—';
   const fallback = provenance?.status === 'fallback';
+  const stale = provenance?.status === 'stale';
   return (
     <button
-      className={`mode ${mode === 'LIVE' ? 'live' : 'sim'} ${fallback ? 'fallback' : ''}`}
+      className={`mode ${mode === 'LIVE' ? 'live' : 'sim'} ${fallback || stale ? 'fallback' : ''}`}
       onClick={() => useWorkspace.setState({ sourcesOpen: true })}
-      data-tip={provenance?.source ?? '数据来源'}
+      data-tip={stale ? provenance?.detail : provenance?.source ?? '数据来源'}
     >
       <span className="num">{mode}</span>
-      <span className="mode-label">{mode === 'LIVE' ? '实盘' : '模拟'}{fallback ? ' · 回退' : ''}</span>
+      <span className="mode-label">{mode === 'LIVE' ? '实盘' : '模拟'}{fallback ? ' · 回退' : stale ? ' · 过期' : ''}</span>
     </button>
   );
 }

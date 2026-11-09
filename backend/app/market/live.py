@@ -53,6 +53,39 @@ POOL = {
     "所属行业": "industry",
 }
 POOL_FIELDS = ["first_seal_time", "last_seal_time", "open_board_count", "seal_order_amount"]
+POOL_BUDGET_S, EASTMONEY_BUDGET_S, SINA_BUDGET_S = 30.0, 120.0, 180.0
+
+
+_PENDING: dict[str, threading.Thread] = {}
+_PENDING_LOCK = threading.Lock()
+
+
+def _bounded(name: str, call, budget: float):
+    """Run a third-party call on its own daemon thread and give up after `budget` seconds. A connection that never
+    answers would otherwise stop every later refresh: on 2026-11-08 one Eastmoney call hung and the site served the same
+    snapshot for over a day. Python cannot kill the thread; it ends when its socket does. While it is still hanging,
+    the same source is not called again, so at most one thread per source can be stuck."""
+    with _PENDING_LOCK:
+        previous = _PENDING.get(name)
+        if previous is not None and previous.is_alive():
+            raise TimeoutError(f"{name}: the previous call has not returned")
+        box: dict = {}
+
+        def work() -> None:
+            try:
+                box["value"] = call()
+            except BaseException as error:  # noqa: BLE001 - raised again in the caller
+                box["error"] = error
+
+        worker = threading.Thread(target=work, name=f"pulse-live-{name}", daemon=True)
+        _PENDING[name] = worker
+    worker.start()
+    worker.join(budget)
+    if worker.is_alive():
+        raise TimeoutError(f"no answer in {budget:g} s")
+    if "error" in box:
+        raise box["error"]
+    return box["value"]
 
 
 class AkShareFeed:
@@ -84,12 +117,14 @@ class AkShareFeed:
 
     def _loop(self) -> None:
         while True:
+            started = time.monotonic()
             try:
                 self.refresh_now()
             except Exception as error:  # noqa: BLE001 - a dead thread must stay visible
                 with self._lock:
                     self._error = f"后台刷新异常：{type(error).__name__}: {error}"
-            time.sleep(self.ttl_seconds)
+            # A fixed cadence: a slow load must not push the snapshot age past the stale threshold.
+            time.sleep(max(5.0, self.ttl_seconds - (time.monotonic() - started)))
 
     def refresh_now(self) -> pl.DataFrame | None:
         frame, note, error = self._load()
@@ -339,7 +374,7 @@ def _assemble(spot: pl.DataFrame, pool: pl.DataFrame | None) -> pl.DataFrame:
 
 def _load_pool(ak) -> tuple[pl.DataFrame | None, str]:
     try:
-        pool = ak.stock_zt_pool_em(date=_today())
+        pool = _bounded("pool", lambda: ak.stock_zt_pool_em(date=_today()), POOL_BUDGET_S)
     except Exception:  # noqa: BLE001 - the pool is optional detail
         return None, ""
     if _is_empty(pool) or "代码" not in pool.columns:
@@ -349,7 +384,7 @@ def _load_pool(ak) -> tuple[pl.DataFrame | None, str]:
 
 def _load_spot(ak) -> tuple[pl.DataFrame | None, str, str]:
     try:
-        raw = ak.stock_zh_a_spot_em()
+        raw = _bounded("eastmoney", ak.stock_zh_a_spot_em, EASTMONEY_BUDGET_S)
         if not _is_empty(raw) and all(column in raw.columns for column in EASTMONEY_SPOT):
             return _select_rename(raw, EASTMONEY_SPOT), "东方财富全市场", ""
     except Exception as error:  # noqa: BLE001 - reported through provenance
@@ -357,7 +392,7 @@ def _load_spot(ak) -> tuple[pl.DataFrame | None, str, str]:
     else:
         first_error = "东方财富快照字段不完整"
     try:
-        raw = ak.stock_zh_a_spot()
+        raw = _bounded("sina", ak.stock_zh_a_spot, SINA_BUDGET_S)
         if not _is_empty(raw) and all(column in raw.columns for column in SINA_SPOT):
             return _select_rename(raw, SINA_SPOT), "新浪全市场", ""
         return None, "", f"{first_error}；新浪快照字段不完整"

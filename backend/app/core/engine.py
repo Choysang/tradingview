@@ -200,8 +200,9 @@ class MarketEngine:
                 self._mode = "LIVE"
                 self._source = self._live.name
                 self._status = "ready" if age < self._live.ttl_seconds * 2 else "stale"
+                failed = f"最近一次刷新失败：{self._live.error}。" if self._status == "stale" and self._live.error else ""
                 self._detail = (
-                    f"{self._live.note}；快照 {int(age)} 秒前获取。"
+                    f"{self._live.note}；快照 {int(age)} 秒前获取。{failed}"
                     "炸板数按快照口径统计，是下界；换手、量比等字段缺失处保留为空。"
                 )
                 return live

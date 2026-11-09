@@ -303,10 +303,18 @@ def test_sim_panel_cache_is_keyed_on_members_not_count() -> None:
     assert set(first["code"]) == {"600000", "000001"} and set(second["code"]) == {"600000", "000002"}
 
 
+def history_now():
+    from backend.app.market.history import _now
+
+    return _now()
+
+
 def test_live_panel_uses_every_cached_real_bar_series_and_starts_no_thread_offline() -> None:
     history = HistoryProvider()
     history._live = False
-    real = DataProvenance(mode="LIVE", source="t", as_of="x", trade_date="2026-01-02", detail="d")
+    # entries are only used on the day they were made
+    real = DataProvenance(mode="LIVE", source="t", as_of=history_now().isoformat(), trade_date="2026-01-02", detail="d")
+    history._cache["601000"] = (make_bars([30.0] * 5), real.model_copy(update={"as_of": "2026-01-02T15:00:00+08:00"}))
     history._cache["600000"] = (make_bars([10.0] * 5), real)
     history._cache["000001"] = (make_bars([9.0] * 5), real.model_copy(update={"mode": "SIM"}))
     history._cache["688001"] = (make_bars([20.0] * 5), real)  # cached, but not in today's top list

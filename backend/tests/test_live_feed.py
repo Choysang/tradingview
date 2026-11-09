@@ -7,6 +7,7 @@ only by the `pl.from_pandas` branch and is not exercised here.
 from __future__ import annotations
 
 import sys
+import threading
 import types
 
 import polars as pl
@@ -218,3 +219,135 @@ def test_quotes_fill_turnover_volume_ratio_cap_and_limit(monkeypatch) -> None:
     assert rows["600000"]["free_float_mkt_cap"] == pytest.approx(1891.0)
     # A quoted limit beats a derived one: it already knows ST and board rules.
     assert rows["600000"]["limit_price"] == pytest.approx(11.05)
+
+
+def test_a_call_that_never_answers_cannot_stop_the_refresh(monkeypatch) -> None:
+    """2026-11-08: one Eastmoney connection hung and the site kept the same snapshot for over a day."""
+    never = threading.Event()
+
+    def hang(*args, **kwargs):
+        never.wait(30)
+
+    monkeypatch.setattr("backend.app.market.live._tencent_quotes", lambda codes: {})
+    monkeypatch.setattr("backend.app.market.live.POOL_BUDGET_S", 0.05)
+    monkeypatch.setattr("backend.app.market.live.EASTMONEY_BUDGET_S", 0.05)
+    monkeypatch.setitem(
+        sys.modules, "akshare", _module(stock_zh_a_spot_em=hang, stock_zh_a_spot=lambda: SINA_SPOT, stock_zt_pool_em=hang)
+    )
+    feed = AkShareFeed()
+    frame = feed.refresh_now()
+    never.set()
+    assert frame is not None and frame.height == 2
+    assert "新浪" in feed.note
+
+
+def test_every_source_hanging_is_reported_not_silent(monkeypatch) -> None:
+    never = threading.Event()
+
+    def hang(*args, **kwargs):
+        never.wait(30)
+
+    for name in ("POOL_BUDGET_S", "EASTMONEY_BUDGET_S", "SINA_BUDGET_S"):
+        monkeypatch.setattr(f"backend.app.market.live.{name}", 0.05)
+    monkeypatch.setitem(sys.modules, "akshare", _module(stock_zh_a_spot_em=hang, stock_zh_a_spot=hang, stock_zt_pool_em=hang))
+    feed = AkShareFeed()
+    assert feed.refresh_now() is None
+    never.set()
+    assert "TimeoutError" in feed.error
+
+
+def _warehouse_with(tmp_path, monkeypatch, rows: int = 400):
+    from datetime import date, timedelta
+
+    from backend.app.warehouse import store
+
+    stored = store.Warehouse(tmp_path / "live", "live")
+    monkeypatch.setattr(store, "warehouse", lambda dataset: stored)
+    frame = pl.DataFrame({
+        "code": ["002085"] * rows, "date": [date(2025, 1, 1) + timedelta(days=i) for i in range(rows)],
+        "open": [8.0] * rows, "high": [9.0] * rows, "low": [7.0] * rows, "close": [8.5] * rows,
+        "volume": [100.0] * (rows - 1) + [None], "amount": [None] * rows,
+    }, schema_overrides={"amount": pl.Float64, "volume": pl.Float64})
+    stored.write("bars", frame)
+    return frame
+
+
+def test_real_bars_come_from_the_warehouse_without_the_network(tmp_path, monkeypatch) -> None:
+    from datetime import datetime
+
+    from backend.app.market import history as H
+    from backend.app.market.history import HISTORY_BARS, HistoryProvider
+
+    frame = _warehouse_with(tmp_path, monkeypatch)  # ends 2026-02-04, a Wednesday
+    monkeypatch.setattr(H, "_now", lambda: datetime(2026, 2, 5, 9, 0, tzinfo=H.CST))
+    provider = HistoryProvider()
+    monkeypatch.setattr(provider, "_akshare_bars", lambda code: pytest.fail("the network must not be used"))
+    bars, info = provider.bars("002085", 8.5)
+    assert info.mode == "LIVE" and info.status == "ready" and "仓库" in info.source and len(bars) == HISTORY_BARS
+    assert bars[-1].date == frame["date"].max().isoformat() and bars[-1].volume == 0.0
+    assert info.trade_date == bars[-1].date
+
+
+def test_a_code_the_warehouse_lacks_falls_back_and_is_labelled(tmp_path, monkeypatch) -> None:
+    from backend.app.market.history import HistoryProvider
+
+    _warehouse_with(tmp_path, monkeypatch)
+    provider = HistoryProvider()
+    provider._live = False
+    bars, info = provider.bars("600000", 10.0)
+    assert info.mode == "SIM" and info.status == "fallback" and bars
+
+
+def test_a_cached_entry_only_lasts_for_its_day(tmp_path, monkeypatch) -> None:
+    from datetime import datetime
+
+    from backend.app.market import history as H
+
+    _warehouse_with(tmp_path, monkeypatch)
+    provider = H.HistoryProvider()
+    calls = []
+    real = provider._warehouse_bars
+    monkeypatch.setattr(provider, "_warehouse_bars", lambda code: calls.append(code) or real(code))
+    monkeypatch.setattr(H, "_now", lambda: datetime(2026, 11, 10, 9, 0, tzinfo=H.CST))
+    provider.bars("002085")
+    provider.bars("002085")
+    assert len(calls) == 1
+    monkeypatch.setattr(H, "_now", lambda: datetime(2026, 11, 11, 9, 0, tzinfo=H.CST))
+    provider.bars("002085")
+    assert len(calls) == 2
+
+
+def test_old_warehouse_bars_yield_to_the_network_and_are_marked_when_alone(tmp_path, monkeypatch) -> None:
+    from datetime import datetime
+
+    from backend.app.market import history as H
+
+    frame = _warehouse_with(tmp_path, monkeypatch)  # ends 2026-02-04
+    provider = H.HistoryProvider()
+    monkeypatch.setattr(H, "_now", lambda: datetime(2026, 11, 10, 9, 0, tzinfo=H.CST))
+    fresh = ([object()], H.HistoryProvider._bars_provenance([], "net", "net"))
+    monkeypatch.setattr(provider, "_network_bars", lambda code: fresh)
+    provider._live = True
+    assert provider._live_bars("002085") is fresh
+    monkeypatch.setattr(provider, "_network_bars", lambda code: None)
+    bars, info = provider._live_bars("002085")
+    assert info.status == "stale" and bars[-1].date == frame["date"].max().isoformat()
+
+
+def test_a_source_still_hanging_is_not_called_again(monkeypatch) -> None:
+    from backend.app.market import live as L
+
+    release, calls = threading.Event(), []
+
+    def hang():
+        calls.append(1)
+        release.wait(30)
+
+    monkeypatch.setattr(L, "_PENDING", {})
+    for _ in range(3):
+        with pytest.raises(TimeoutError):
+            L._bounded("x", hang, 0.05)
+    release.set()
+    assert len(calls) == 1
+    L._PENDING["x"].join(5)
+    assert L._bounded("x", lambda: 7, 1.0) == 7
