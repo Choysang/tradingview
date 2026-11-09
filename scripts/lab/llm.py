@@ -1,4 +1,4 @@
-"""Thin OpenAI Responses API client. The key is read from OPENAI_API_KEY only; never stored."""
+"""Thin OpenAI Responses API client. The key comes from the caller or OPENAI_API_KEY; this module never stores it."""
 import json
 import os
 import time
@@ -10,8 +10,8 @@ USAGE_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
 
 
 def ask(prompt: str, model: str = "gpt-6.1-terra", effort: str | None = "high", system: str | None = None,
-        extra: dict | None = None, timeout: float = 600) -> str:
-    key = os.environ["OPENAI_API_KEY"]
+        extra: dict | None = None, timeout: float = 600, key: str | None = None) -> str:
+    key = key or os.environ["OPENAI_API_KEY"]
     body: dict = {"model": model, "input": prompt}
     if system:
         body["instructions"] = system

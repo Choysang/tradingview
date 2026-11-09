@@ -24,6 +24,9 @@ The server is the only writer of the live warehouse; this script only reads it. 
 9. The frozen book's holdings and next buys go to the server as C:/pulse/data/holdings/book.json, read by the news
    alert process (E075, news_alerts.py): holdings, watch = the names it will try to buy plus the offer's top 10.
    A failure is logged and does not fail the run.
+10. E092: llm_live.py prepares the day's web-search LLM jobs and sends them to the server, which holds the key. Without
+   the switch file .work/lab/live/llm_live.enabled this is a free dry run (llm_ask.py check); with it the server makes
+   the paid calls (llm_ask.py run) and the verdicts come back. A failure is logged and does not fail the run.
 When step 2 finds no new session but step 1 copied files (a server data revision, such as a backfilled session),
 the panel is refreshed and only forward_monitor.py and os20_forward.py run, so flagged dates whose window now passes the gate are
 evaluated again; the books are not rerun. `--revision` forces this path.
@@ -261,6 +264,58 @@ def push_holdings() -> None:
         log(f"holdings push FAILED (books unaffected): {type(e).__name__}: {str(e)[:300]}")
 
 
+LLM_SWITCH = WORK / "lab" / "live" / "llm_live.enabled"
+LLM_DECISIONS = MAIN / "live" / "decisions.jsonl"
+REMOTE_LLM = "C:/pulse/data/llm"  # outside the application folder: the call ledger holds the spending limits
+REMOTE_PY = r"C:\pulse\app\backend\.venv\Scripts\python.exe"
+
+
+def remote_ps(ps: str, timeout: int = 120) -> str:
+    enc = base64.b64encode(ps.encode("utf-16-le")).decode()
+    return run([str(SSH / "ssh.exe"), *SSH_OPTS, HOST, f"powershell -NoProfile -EncodedCommand {enc}"], cwd=ROOT, timeout=timeout)
+
+
+def pull_llm_decisions() -> None:
+    """Mirror the server's verdicts. Rows held here that the server has lost are kept and reported."""
+    from llm_ask import read_rows
+    LLM_DECISIONS.parent.mkdir(parents=True, exist_ok=True)
+    tmp = LLM_DECISIONS.with_suffix(".part")
+    run([str(SSH / "scp.exe"), "-q", *SSH_OPTS, f"{HOST}:{REMOTE_LLM}/decisions.jsonl", str(tmp)], cwd=ROOT, timeout=120)
+    remote = read_rows(tmp)
+    ids = {r.get("id") for r in remote}
+    lost = [r for r in read_rows(LLM_DECISIONS) if r.get("id") not in ids]
+    if lost:
+        tmp.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in lost + remote), encoding="utf-8")
+        log(f"llm_live FAILED: the server's decisions lack {len(lost)} ids held here; both kept in the local file")
+    os.replace(tmp, LLM_DECISIONS)
+
+
+def llm_flag(mode: str, result: dict) -> str:
+    """A paid run that did not finish, or a key file that cannot work, has to stand out in the morning check."""
+    bad = result.get("status") not in ("done", "limit") if mode == "run" else result.get("refusal") == "bad_key"
+    return " FAILED" if bad else ""
+
+
+def run_llm_live() -> None:
+    """Step 10 (E092): a failure is logged and does not fail the run."""
+    try:
+        made = run([str(LAB_PY), "llm_live.py", "prepare"], env={"LAB_UNIVERSE": "main", "LIVE_SCORE": SCORE + ".pt"})
+        jobs = Path(made.strip().splitlines()[-1])
+        mode = "run" if LLM_SWITCH.exists() else "check"
+        remote = f"{REMOTE_LLM}/{jobs.name}"
+        remote_ps(f"New-Item -ItemType Directory -Force '{REMOTE_LLM}' | Out-Null")
+        run([str(SSH / "scp.exe"), "-q", *SSH_OPTS, str(jobs), f"{HOST}:{remote}"], cwd=ROOT, timeout=120)
+        ps = (rf"Set-Location C:\pulse\app; $env:PYTHONUTF8='1'; $env:PULSE_LLM_DIR='{REMOTE_LLM}'; "
+              rf"& '{REMOTE_PY}' scripts\lab\llm_ask.py {mode} '{remote}'; exit $LASTEXITCODE")
+        line = remote_ps(ps, timeout=7200).strip().splitlines()[-1]
+        result = json.loads(line)
+        log(f"llm_live {mode}{llm_flag(mode, result)}: {line[:600]}")
+        if result.get("logged"):  # also in a dry run, so verdicts a failed pull left behind still come home
+            pull_llm_decisions()
+    except Exception as e:  # noqa: BLE001 - the books ran already
+        log(f"llm_live FAILED (books unaffected): {type(e).__name__}: {str(e)[-400:]}")
+
+
 def refresh_panel() -> None:
     """export_panel.py (every board) and the 上证 benchmark from index_bars 000001, both on the snapshot."""
     snap_env = {"PULSE_DATA_DIR": str(SNAP)}
@@ -316,6 +371,7 @@ def main() -> None:
             log(f"{script}: " + run([str(BACKEND_PY), script], env=BOOK_ENV).strip().splitlines()[-1][:600])
         run_os20()
         push_holdings()
+        run_llm_live()
         log(f"done in {time.perf_counter() - t0:.0f}s")
     except Exception as e:  # noqa: BLE001 - every failure is logged for the morning check
         log(f"FAILED: {type(e).__name__}: {e}")

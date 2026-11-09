@@ -2,38 +2,39 @@
 read today's news: decide after the close of day D using the web, record it, score it 5 trading days
 after the next open. Never run it on past days (search results would leak later information).
 
-`decide`: candidates for the last panel day D = the top 30 names by a fusion score plus 10 random
-tradable controls (seed = D). Each call gets the real code and name, the recent bars and the market
-state, and is asked to search for news (company, sector, policy) published up to now. Verdicts go to
-.work/lab/live/decisions.jsonl with timestamps.
-`score`: for every decision whose 5-day window has closed in the current panel, the realised return
-(next open -> open 5 days later) and its excess over the tradable mean.
-Env: LIVE_SCORE (fusion_static40.pt), LIVE_TOP (30), LIVE_CONTROLS (10), LIVE_MODEL, LIVE_EFFORT.
+`prepare` (LAB_UNIVERSE=main): candidates for the last panel day D = the top 30 names by the fusion score plus 10
+random tradable controls (seed = D). Each job holds the real code and name, the recent bars and the market state.
+The jobs file goes to the server, where `llm_ask.py` calls the model with the server's key (E092). No key and no
+network here. The decisions come back to E.LAB/live/decisions.jsonl, so the main-board log stays apart from the E002
+batch in .work/lab/live/decisions.jsonl, which holds other boards.
+`score` (LAB_UNIVERSE=main for the E092 log; `score --e002` without it for the older batch): for every decision made in time whose 5-day
+window has closed in the current panel, the realised return (next open -> open 5 days later), its excess over the
+tradable mean, and the pre-registered verdict from llm_eval.py.
+Env: LIVE_SCORE (fusion_static40_safe.pt), LIVE_TOP (30), LIVE_CONTROLS (10).
 """
 from __future__ import annotations
 
 import json
+import math
 import os
 import random
 import sys
-import time
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-import numpy as np
 import polars as pl
 import torch
 
-import llm
+from llm_ask import LIVE_EFFORT, LIVE_MODEL, deadline_after, read_rows
+from llm_eval import evaluate, scorable
 import tengine as E
 
 LIVE = E.LAB / "live"
 LIVE.mkdir(exist_ok=True)
 DECISIONS = LIVE / "decisions.jsonl"
-MODEL, EFFORT = os.environ.get("LIVE_MODEL", "gpt-6.1-terra"), os.environ.get("LIVE_EFFORT", "high")
+JOBS = LIVE / "jobs"
 
 SYSTEM = """你是一名经验丰富的 A 股交易员，可以联网搜索。今天是 {today}。你要判断一只股票在下一个交易日开盘买入、
-持有 5 个交易日后开盘卖出，能否跑赢全市场可交易股票的平均收益（往返成本约 0.2%）。
+持有 5 个交易日后开盘卖出，能否跑赢沪深主板可交易股票的平均收益（往返成本约 0.25%）。
 请先搜索：该公司最近两周的公告和新闻、所属行业或题材的最新动态、相关政策，以及当前 A 股整体情绪。
 只使用发布日期不晚于今天的信息，并结合下面给出的行情数据作判断。
 只输出一个 JSON 对象，不要输出其他文字：
@@ -50,79 +51,74 @@ def _bars(rows: pl.DataFrame) -> str:
     return "\n".join(out)
 
 
-def decide() -> None:
+def prepare() -> None:
+    if E.UNIVERSE != "main":
+        raise SystemExit("prepare is main-board only: set LAB_UNIVERSE=main")
     d = E.Data()
     t = d.T - 1
     day = d.dates[t]
-    score = torch.load(E.LAB / os.environ.get("LIVE_SCORE", "fusion_static40.pt"))
-    s = torch.where(d.tradable[t], score[t], -torch.inf)
-    top = torch.topk(s, int(os.environ.get("LIVE_TOP", "30"))).indices.tolist()
+    score = torch.load(E.LAB / os.environ.get("LIVE_SCORE", "fusion_static40_safe.pt"))
+    if tuple(score.shape) != (d.T, d.N):
+        raise SystemExit(f"score shape {tuple(score.shape)} does not match the panel {(d.T, d.N)}")
+    n_top = int(os.environ.get("LIVE_TOP", "30"))
+    ok = d.tradable[t] & torch.isfinite(score[t])
+    if int(ok.sum()) < n_top:
+        raise SystemExit(f"{day}: only {int(ok.sum())} tradable names have a score")
+    top = torch.topk(torch.where(ok, score[t], -torch.inf), n_top).indices.tolist()
     rng = random.Random(day.toordinal())
     pool = [j for j in torch.nonzero(d.tradable[t]).flatten().tolist() if j not in set(top)]
     controls = rng.sample(pool, int(os.environ.get("LIVE_CONTROLS", "10")))
-    p = pl.read_parquet(E.LAB / "panel.parquet").filter(pl.col("date") > d.dates[max(0, t - 30)]).sort("code", "date")
-    idx = d.index_close.numpy()
-    market = f"中证全指 {day} 收盘 {idx[t]:.2f}，近5日 {(idx[t] / idx[t - 5] - 1) * 100:+.1f}%，近20日 {(idx[t] / idx[t - 20] - 1) * 100:+.1f}%，近60日 {(idx[t] / idx[t - 60] - 1) * 100:+.1f}%"
-    done = {json.loads(x)["id"] for x in DECISIONS.open(encoding="utf-8")} if DECISIONS.exists() else set()
+    p = pl.read_parquet(E.BASE / "panel.parquet").filter(pl.col("date") > d.dates[max(0, t - 30)]).sort("code", "date")
+    idx = d.index_close.numpy()  # benchmark_sh under LAB_UNIVERSE=main
+    if not all(map(math.isfinite, (idx[t], idx[t - 5], idx[t - 20], idx[t - 60]))):
+        raise SystemExit(f"{day}: the benchmark has no close for the market line of the prompt")
+    market = f"上证指数 {day} 收盘 {idx[t]:.2f}，近5日 {(idx[t] / idx[t - 5] - 1) * 100:+.1f}%，近20日 {(idx[t] / idx[t - 20] - 1) * 100:+.1f}%，近60日 {(idx[t] / idx[t - 60] - 1) * 100:+.1f}%"
     jobs = []
     for j, group in [(j, "top") for j in top] + [(j, "control") for j in controls]:
         code = d.codes[j]
-        rid = f"{day.isoformat()}_{code}"
-        if rid in done:
-            continue
         rows = p.filter(pl.col("code") == code)
         last = rows.tail(1).row(0, named=True)
-        prompt = (f"市场：{market}\n股票：{code} {last['name']}，行业 {last['industry']}，流通市值约 {last['float_cap']:.0f} 亿元\n"
+        industry = f"行业 {last['industry']}，" if last["industry"] else ""  # the panel has no industry for some names
+        prompt = (f"市场：{market}\n股票：{code} {last['name']}，{industry}流通市值约 {last['float_cap']:.0f} 亿元\n"
                   f"近20个交易日：\n{_bars(rows)}")
-        jobs.append((rid, code, group, prompt, float(score[t, j])))
-    system = SYSTEM.format(today=datetime.now().strftime("%Y-%m-%d"))
-    print(f"decision day {day}: {len(jobs)} calls ({MODEL}/{EFFORT}, web search)", flush=True)
-
-    def one(job):
-        rid, code, group, prompt, sc = job
-        for attempt in range(3):
-            try:
-                text = llm.ask(prompt, model=MODEL, effort=EFFORT, system=system, extra={"tools": [{"type": "web_search"}]})
-                obj = json.loads(text[text.find("{"): text.rfind("}") + 1])
-                return {"id": rid, "decision_date": day.isoformat(), "code": code, "group": group, "score": sc,
-                        "asked_at": datetime.now().isoformat(timespec="seconds"), "model": MODEL, **obj}
-            except Exception as exc:
-                err = str(exc)[:200]
-                time.sleep(5 * (attempt + 1))
-        return {"id": rid, "error": err}
-
-    with ThreadPoolExecutor(4) as ex:
-        for row in ex.map(one, jobs):
-            if "error" in row:
-                print("fail", row, flush=True)
-                continue
-            with DECISIONS.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
-    print("done", flush=True)
+        jobs.append({"id": f"{day.isoformat()}_{code}", "code": code, "group": group, "score": float(score[t, j]), "prompt": prompt})
+    payload = {"decision_date": day.isoformat(), "not_after": deadline_after(day).isoformat(), "model": LIVE_MODEL, "effort": LIVE_EFFORT,
+               "system": SYSTEM.format(today=datetime.now().strftime("%Y-%m-%d")), "jobs": jobs}
+    JOBS.mkdir(exist_ok=True)
+    path = JOBS / f"jobs_{day.isoformat()}.json"
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    tmp.replace(path)
+    print(path, flush=True)
 
 
 def score() -> None:
-    if not DECISIONS.exists():
+    e002 = "--e002" in sys.argv
+    if (E.UNIVERSE == "main") == e002:
+        raise SystemExit("use LAB_UNIVERSE=main for the E092 log, or --e002 without it for the older all-board batch")
+    logged = read_rows(DECISIONS)
+    if not logged:
         print("no decisions yet")
         return
     d = E.Data()
     y = d.label(5)
     raw = (E._shift(d.f["open"], -6) / E._shift(d.f["open"], -1) - 1) * 100
     rows = []
-    for x in (json.loads(v) for v in DECISIONS.open(encoding="utf-8")):
+    for x in scorable(logged):
         t = d.dates.index(datetime.fromisoformat(x["decision_date"]).date()) if datetime.fromisoformat(x["decision_date"]).date() in d.date_index else None
-        if t is None or t + 6 >= d.T:
+        if t is None or t + 6 >= d.T or x.get("p_outperform") is None:
             continue
         j = d.codes.index(x["code"])
-        rows.append({**{k: x.get(k) for k in ("decision_date", "code", "group", "action", "p_outperform", "score")},
-                     "ret5": float(raw[t, j]), "ex5": float(y[t, j])})
+        rows.append({**{k: x.get(k) for k in ("decision_date", "code", "group", "action", "score")},
+                     "p_outperform": float(x["p_outperform"]), "ret5": float(raw[t, j]), "ex5": float(y[t, j])})
     if not rows:
         print("no decision has a complete 5-day window yet")
         return
-    df = pl.DataFrame(rows)
+    df = pl.DataFrame(rows).filter(pl.col("ex5").is_finite())
     print(df.group_by("group", "action").agg(pl.len(), pl.col("ex5").mean(), pl.col("ret5").mean()).sort("group", "action"))
     print("spearman(p, ex5):", df.select(pl.corr("p_outperform", "ex5", method="spearman")).item())
+    print("E002 under the E092 rules:" if e002 else "E092 verdict:", json.dumps(evaluate(rows), ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    {"decide": decide, "score": score}[sys.argv[1] if len(sys.argv) > 1 else "score"]()
+    {"prepare": prepare, "score": score}[sys.argv[1] if len(sys.argv) > 1 else "score"]()
