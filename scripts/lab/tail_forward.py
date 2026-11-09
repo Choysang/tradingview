@@ -61,6 +61,12 @@ def at(q: pl.DataFrame, day: date, hhmm: time, kinds: tuple[str, ...] = ("full",
     return w.sort("code", "poll_ts").group_by("code", maintain_order=True).first()
 
 
+def last_by(q: pl.DataFrame, day: date, start: time, end: time) -> pl.DataFrame:
+    """Per code, the last row between start and end: the first row after 15:00 may be 5 s in, before the final print."""
+    w = q.filter((pl.col("poll_ts") >= datetime.combine(day, start)) & (pl.col("poll_ts") <= datetime.combine(day, end)))
+    return w.sort("code", "poll_ts").group_by("code", maintain_order=True).last()
+
+
 def closing(q: pl.DataFrame, day: date) -> pl.DataFrame:
     c = at(q, day, time(15, 1), ("close",), 5)
     return c if c.height else at(q, day, time(15, 0), ("full",), 2)
@@ -129,7 +135,7 @@ def e078_row(day: date, q: pl.DataFrame, day_dir_ext: Path | None) -> dict:
     if f is not None and f.exists():
         x = pl.read_parquet(f).filter(pl.col("symbol") == INDEX).rename({"symbol": "code"}).with_columns(pl.lit("full").alias("kind"))
         row["index"] = halfhour({"p1000": at(x, day, time(10, 0)), "p1430": at(x, day, time(14, 30)),
-                                 "pclose": at(x, day, time(15, 0), ("full",), 3)}) if x.height else None
+                                 "pclose": last_by(x, day, time(15, 0), time(15, 5))}) if x.height else None
     return row
 
 
