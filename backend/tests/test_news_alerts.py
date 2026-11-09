@@ -88,7 +88,7 @@ RULE_TABLE = [
     ("公司首亏", {"N-EARN-01"}),
     ("公司续亏", {"N-EARN-01"}),
     ("三季度净利润预减", {"N-EARN-01"}),
-    ("股东预减持股份", set()),  # 预减持 is not an earnings warning
+    ("股东预减持股份", {"N-SELL-01"}),  # 预减持 is a selldown, not an earnings warning
     ("公司股票被实施退市风险警示", {"N-DELIST-01"}),
     ("公司股票被实施风险警示", {"N-DELIST-01"}),
     ("公司申请撤销退市风险警示", set()),  # unless 撤销 / 申请撤销
@@ -96,7 +96,7 @@ RULE_TABLE = [
     ("股东拟减持不超过3%股份", {"N-SELL-01"}),
     ("股东发布减持计划", {"N-SELL-01"}),
     ("股东减持股份预披露公告", {"N-SELL-01"}),
-    ("股东承诺不减持，另发布减持计划", set()),  # unless 不减持
+    ("股东承诺不减持，另发布减持计划", {"N-SELL-01"}),  # 不减持 only clears its own clause
     ("股东终止减持计划", set()),  # unless 终止
     ("股东减持计划已完成", set()),  # unless 完成
     ("股东减持计划实施结果", set()),  # unless 结果
@@ -138,9 +138,9 @@ RULE_TABLE = [
     ("公司无法扭亏", set()),
     ("公司拟收购某资产", {"P-MA-01"}),
     ("公司筹划资产重组", {"P-MA-01"}),
-    ("公司终止收购", set()),  # but not 终止
+    ("公司终止收购", {"N-TERM-01"}),  # not P-MA-01, and since v2 a terminated deal is its own bad news
     ("公司取消重组", set()),
-    ("公司重组失败", set()),
+    ("公司重组失败", {"N-TERM-01"}),
     ("产品获批上市", {"P-APPROVAL-01"}),
     ("公司获得医疗器械注册证", {"P-APPROVAL-01"}),
     ("申请未获批", set()),
@@ -193,12 +193,125 @@ def test_macro_industries_exist_in_the_sw_table():
     assert {i for r in R.MACRO_RULES for i in r.industries} <= known
 
 
-def test_company_verdict_negative_wins_and_title_or_body_counts():
-    c = R.classify("公司获得签订重大合同", "同时收到问询函")
-    assert c.company_verdict() == (R.NEGATIVE, 2)
+def test_company_verdict_negative_wins_and_body_counts_only_without_a_title():
+    assert R.classify("公司签订重大合同并收到问询函").company_verdict() == (R.NEGATIVE, 2)
+    assert R.classify("公司签订重大合同", "同时收到问询函").company_verdict() == (R.POSITIVE, 2)
     assert R.classify("", "公司中标项目").company_verdict() == (R.POSITIVE, 2)
+    assert R.classify("", "财联社11月9日电，公司收到问询函").company_verdict() == (R.NEGATIVE, 2)
     assert R.classify("今日天气晴朗").company_verdict() is None
     assert R.looks_macro("国务院发布新规") and not R.looks_macro("今日天气晴朗")
+
+
+# Patterns of the wrong verdicts in the recorded messages of 2026-11-02 ~ 11-09 (E088), company names replaced.
+V2_CASES = [
+    # (title, body, direction or None)
+    ("甲公司：董事长提议回购4亿至5亿元股份", "未来三个月无减持计划", R.POSITIVE),  # was read as a selldown
+    ("甲公司：公司及相关责任人被出具警示函", "公司此前披露收购股权暨签署协议", R.NEGATIVE),  # was read as a takeover
+    ("甲公司：公司及相关责任人收到证监局行政监管措施决定书", "", R.NEGATIVE),
+    ("甲公司：股东乙减持300万股，合计持股5.68%", "公司此前披露收购事项", R.NEGATIVE),
+    ("甲公司：因提供虚假资料 子公司被暂停中标资格2年", "", R.NEGATIVE),
+    ("甲公司：机器人业务现阶段收入和利润占比极低", "公司控股股东增持", R.NEGATIVE),
+    ("甲公司：相关业务商业化能力具有一定不确定性", "", R.NEGATIVE),
+    ("甲公司：公司不涉及生产半导体设备", "", R.NEGATIVE),
+    ("甲公司：股价异动，澄清不从事机器人业务", "", R.NEGATIVE),  # a denied concept stays bad for a stock that ran on it
+    ("甲公司：副总经理乙被实施留置", "", R.NEGATIVE),
+    ("甲公司：财务总监乙因个人原因辞职", "", R.NEGATIVE),
+    ("甲公司：副总经理乙因工作调动辞职", "", None),
+    ("甲公司：合同对方再次违约 公司已发催告函", "", R.NEGATIVE),
+    ("甲公司：终止14.9亿元项目投资框架协议", "", R.NEGATIVE),
+    ("甲公司：网传产品停产等消息不实", "", None),  # a denied rumour is not the event
+    ("甲公司澄清：物料短缺及生产停工传闻不实", "", None),
+    ("甲公司：未因涉嫌内幕交易被立案", "", None),
+    ("甲公司：绝大部分客户未下修需求", "分析师下调评级的说法不准确", None),
+    ("甲公司：拟注册发行30亿元公司债券", "此前收购事项已完成", None),
+    ("甲公司：将维护公司价值和投资者利益", "公司将结合回购再贷款政策", None),
+    ("商务部：对进口某化工品进行反倾销立案调查", "", None),
+    ("乙公司研究员：自动驾驶的最大意义是减少事故", "", None),
+    ("甲公司：子公司发生火情事故 未造成人员伤亡", "", R.NEGATIVE),
+    ("某机构将某科技股评级上调至增持", "", None),
+    # review of v2: a real event with a denial in another clause stays bad; a denial in its own clause does not count
+    ("甲公司：控股股东被立案调查 公司称与经营无关", "", R.NEGATIVE),
+    ("甲公司：控股股东被立案，与公司无关，公司拟回购", "", R.NEGATIVE),
+    ("甲公司：收到证监会立案告知书，否认相关传闻", "", R.NEGATIVE),
+    ("甲公司：关于收到文件的公告", "公司收到《立案告知书》，此事与公司日常经营无关", R.NEGATIVE),
+    ("甲公司：否认收购传闻", "", None),
+    ("甲公司：中标传闻不实", "", None),
+    ("甲公司：未筹划重组，收购传闻不实", "", None),
+    ("甲公司：公司不存在退市风险", "", None),
+    ("甲公司：最近三年未受到行政处罚", "", None),
+    ("甲公司：起诉乙公司获法院立案", "", None),
+    ("甲公司：聘任乙为总经理", "乙未受过刑事处罚，不存在被证监会立案的情形", None),
+    ("甲公司：股东暂无减持计划", "", None),
+    ("甲公司：股东减持1%股份", "", R.NEGATIVE),
+    ("甲公司：大股东减持1.2亿股", "", R.NEGATIVE),
+    ("甲公司：前三季度净利润同比下滑30%", "", R.NEGATIVE),
+    ("甲公司：2026年前瞻 收到立案告知书", "", R.NEGATIVE),  # a known speaker's title is no digest
+    ("甲公司澄清：公司未因内幕交易被调查", "网传公司被证监会立案，当事人非公司员工", None),  # the body retells the rumour
+    ("甲公司：可降解螺钉获医疗器械注册证", "", R.POSITIVE),
+    ("甲公司：注射液获美国FDA上市许可", "", R.POSITIVE),
+]
+
+
+@pytest.mark.parametrize("title,body,direction", V2_CASES, ids=[c[0] for c in V2_CASES])
+def test_v2_verdicts_on_recorded_failure_patterns(title: str, body: str, direction: str | None):
+    verdict = R.classify(title, body).company_verdict()
+    assert (verdict[0] if verdict else None) == direction
+
+
+def test_digests_fire_no_rule_whatever_they_mention():
+    body = "1、某公司被证监会立案。2、WTI原油跌超4%。3、某公司拟回购股份。"
+    for title in ("财联社11月4日早间新闻精选", "11月3日投资避雷针：三公司遭证监会立案", "美股盘前要闻一览：某公司收购", "港股收评：恒生指数涨0.42%"):
+        assert R.classify(title, body).hits == ()
+    assert R.classify("", "财联社11月4日早间新闻精选 1、某公司被证监会立案").hits == ()
+
+
+def test_a_severe_rule_reads_the_body_of_a_one_speaker_title_only():
+    plain = "甲公司：关于收到相关文件的公告"
+    assert R.classify(plain, "公司收到中国证监会下发的《立案告知书》").company_verdict() == (R.NEGATIVE, 3)
+    assert R.classify(plain, "公司收到问询函").company_verdict() is None  # magnitude 2 stays on the title
+    assert R.classify(plain, "x" * 400 + "立案").company_verdict() is None  # beyond the head of the body
+    assert R.classify("证券板块今日走强", "某公司被立案").company_verdict() is None  # no speaker
+    assert R.speaker("甲公司股份：拟回购") == "甲公司股份" and R.speaker("今日市场大涨") is None
+
+
+def mini_engine(day_dir: Path, tmp_path: Path, names: dict[str, str], holdings: list[str], key: str | None = None,
+                client: httpx.Client | None = None) -> A.AlertEngine:
+    book = tmp_path / "mini_book.json"
+    book.write_text(json.dumps({"date": DAY.isoformat(), "holdings": holdings, "watch": [], "source": "test"}), encoding="utf-8")
+    frame = pl.DataFrame({"code": list(names), "name": list(names.values())})
+    return A.AlertEngine(day_dir, DAY, book_path=book, names=A.NameIndex.from_frame(frame), members=members_for(tmp_path),
+                         key_loader=lambda: key, llm_client=client, sleep=lambda s: None)
+
+
+def one_message(day_dir: Path, title: str, codes: list[str], body: str = "") -> None:
+    write_raw(day_dir, [{"source": "ths.724", "received_at": "2026-11-06T01:00:00+00:00",
+                         "items": [{"item_id": "1", "title": title, "body": body, "codes": codes}]}])
+
+
+SUBJECT_NAMES = {"600100": "星河制药", "600200": "云峰地产", "600300": "中信证券", "601988": "中国银行"}
+
+
+@pytest.mark.parametrize("title,codes,holdings,hit", [
+    ("云峰地产：被证监会立案", ["600200", "600100"], ["600100"], []),  # an unheld company tagging a held one (say, its lender)
+    ("星河制药：被证监会立案", ["600100", "600200"], ["600100"], ["600100"]),
+    ("云峰地产：被证监会立案 星河制药为其担保", ["600200"], ["600100"], ["600100"]),  # named in the title
+    ("中信证券：下调星河制药评级", ["600300", "600100"], ["600100"], ["600100"]),  # a broker is not the subject of its own note
+    ("中信证券：下调星河制药评级", ["600300", "600100"], ["600300"], []),
+    ("中信证券：被证监会立案", ["600300"], ["600300"], ["600300"]),
+    ("证监会：对星河制药立案调查", ["600100"], ["600100"], ["600100"]),  # another speaker keeps what the message tags
+    ("中国银行业协会：多家银行被立案", ["600100"], ["600100"], ["600100"]),  # 中国银行 inside a longer name is no speaker
+])
+def test_who_a_company_rule_speaks_about(day_dir: Path, tmp_path: Path, title: str, codes: list[str], holdings: list[str], hit: list[str]):
+    one_message(day_dir, title, codes)
+    mini_engine(day_dir, tmp_path, SUBJECT_NAMES, holdings).step()
+    assert [c for r in rows_of(day_dir) if r["level"] == "P0" for c in r["holdings_hit"]] == hit
+
+
+def test_a_digest_naming_a_holding_never_reaches_the_llm(day_dir: Path, tmp_path: Path):
+    one_message(day_dir, "财联社11月6日早间新闻精选", ["600100"], "星河制药发布公告。国务院发布新规。")
+    calls: list[httpx.Request] = []
+    mini_engine(day_dir, tmp_path, SUBJECT_NAMES, ["600100"], key=SECRET, client=llm_client(ok_handler(calls))).step()
+    assert calls == [] and rows_of(day_dir) == []
 
 
 # --- mapping --------------------------------------------------------------------------------------

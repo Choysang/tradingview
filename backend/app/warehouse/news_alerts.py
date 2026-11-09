@@ -166,6 +166,9 @@ def load_book(day: date, path: Path | None = None) -> Book:
 
 # --- names, codes and industries ------------------------------------------------------------------
 
+BROKER_SUFFIX = "证券"
+
+
 def _squash(name: str) -> str:
     return re.sub(r"\s+", "", R.normalize(name))
 
@@ -193,6 +196,10 @@ class NameIndex:
                 grouped.setdefault(name[0], []).append((name, next(iter(codes))))
         names = {code: _squash(name or "") for code, name in frame.select("code", "name").sort("code").iter_rows()}
         return cls({k: tuple(sorted(v, key=lambda x: -len(x[0]))) for k, v in grouped.items()}, frozenset(names), names)
+
+    def exact(self, name: str) -> str | None:
+        """The code of exactly this name, not of a name inside it ("中国银行业协会" is not 中国银行)."""
+        return next((code for known, code in self.by_first.get(name[:1], ()) if known == name), None)
 
     def find(self, text: str) -> list[str]:
         out: list[str] = []
@@ -581,6 +588,18 @@ class AlertEngine:
                 out.append(code)
         return tuple(out)
 
+    def subject_codes(self, title: str, codes: tuple[str, ...]) -> tuple[str, ...]:
+        """The codes a company-level rule speaks about: a title's speaker that is exactly a known stock and the stocks
+        the title names, not every company the message tags (a buyback loan letter tags the lending banks too). A
+        broker's title is about the stock it names. Any other speaker (a ministry, a person, a half-matched name)
+        leaves everything the message tags."""
+        name = R.speaker(title)
+        own = self.names.exact(_squash(name)) if name else None
+        if own is None:
+            return codes
+        named = tuple(c for c in self.names.find(_squash(title)) if c != own)
+        return named if named and name.endswith(BROKER_SUFFIX) else (own, *named)
+
     def safe_judge(self, m: Msg) -> list[dict[str, Any]]:
         try:
             return self.judge(m)
@@ -591,10 +610,10 @@ class AlertEngine:
     def judge(self, m: Msg) -> list[dict[str, Any]]:
         text = R.normalize(f"{m.title}\n{m.body}")
         codes = self.mapped_codes(m, text)
-        verdict = rule_verdict(m, codes)
+        verdict = rule_verdict(m, self.subject_codes(m.title, codes))
         llm_status = "not_needed"
         touches = bool(set(codes) & (self.book.holdings | self.book.watch))
-        if not verdict.rule_ids and (touches or R.looks_macro(m.title, m.body)):
+        if not verdict.rule_ids and not R.is_digest(m.title, m.body) and (touches or R.looks_macro(m.title, m.body)):
             verdict, llm_status = self.ask_llm(m, text, codes, verdict, touches)
         rows = []
         for level, info in decide_levels(verdict, self.book, self.members).items():

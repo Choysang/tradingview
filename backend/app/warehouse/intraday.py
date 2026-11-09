@@ -19,7 +19,8 @@ One process per trading day, started by a scheduled task at 09:10 Asia/Shanghai,
   after 15:00 are not verified yet, so these polls always keep their raw text;
 * 15:25  Eastmoney limit-up, broken-board and limit-down pools (first / last seal time, opens, seal money);
 * 16:20  minute bars of the hot set, names moving 5% or more, the day's pools and news-linked names, at
-  1 request a second, after Pulse's 15:35 daily sync, most important first (`minute_order`: limit-up,
+  1 request a second with a 2-minute rest every 100 codes (the host blocked about 150 s into every unbroken run,
+  at 1/s and at 2/s alike; E090), after Pulse's 15:35 daily sync, most important first (`minute_order`: limit-up,
   broken board, limit-down, news-linked, the rest), so a block late in the run loses only the least wanted.
   At the end of the day every code gets 1-minute bars built from the snapshots (`minute_synth.parquet`). The rest of the board is not fetched: on 2026-11-02 ~300 minute requests at 2/s from
   15:31 drew a WAF block, and the 60 s full snapshots already cover every code.
@@ -115,6 +116,7 @@ ONE_SHOTS = (
     ("minute_hot", dtime(16, 20), dtime(16, 50)),
 )
 MINUTE_PACE = 1.0  # seconds between minute requests, on top of the host pacer
+MINUTE_BURST, MINUTE_REST = 100, 120.0  # requests in a run, seconds of rest after it (E090)
 STOP_AT = dtime(17, 0)
 # Seconds a poll may take before its remaining batches are dropped (normal: full ~4 s, hot ~1 s).
 POLL_BUDGET = {"auction": 40.0, "full": 40.0, "auction_final": 40.0, "close": 40.0, "after": 40.0, "hot": 8.0,
@@ -482,7 +484,7 @@ class Recorder:
             if MINUTE_HOST in self.blocked or self.late():
                 break
             if i:
-                time.sleep(MINUTE_PACE)
+                time.sleep(MINUTE_REST if i % MINUTE_BURST == 0 else MINUTE_PACE)
             try:
                 response = _get(self.client, MINUTE_URL, params={"code": _ticker(code)})
                 payload = response.json()

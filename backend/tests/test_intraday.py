@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+import httpx
 import polars as pl
 
 from backend.app.warehouse import intraday as I
@@ -244,3 +245,27 @@ def test_reparse_rebuilds_rows_with_the_stored_poll_time(tmp_path):
     assert new["kind"].to_list() == ["after", "full"] and (day / "quotes.v0.parquet").exists()
     after = new.row(0, named=True)
     assert after["poll_ts"] == poll and (after["after_amount_wan"], after["after_lots"]) == (214.0134, 103.0)
+
+
+def test_minute_fetch_rests_every_run_and_a_block_stops_it(tmp_path, monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(I.time, "sleep", sleeps.append)
+    seen: list[str] = []
+    block_at = [0]
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req.url.params["code"])
+        return httpx.Response(501 if len(seen) == block_at[0] else 200, json={"data": {}})
+
+    codes = [f"600{i:03d}" for i in range(I.MINUTE_BURST * 2 + 5)]
+    _recorder(tmp_path / "short", handler).minutes(codes[:I.MINUTE_BURST], "hot")
+    assert I.MINUTE_REST not in sleeps  # a list that fits in one run never rests
+    seen.clear()
+    _recorder(tmp_path / "long", handler).minutes(codes, "hot")
+    assert sleeps.count(I.MINUTE_REST) == 2 and len(seen) == len(codes)  # at codes 100 and 200
+    seen.clear()
+    sleeps.clear()
+    block_at[0] = I.MINUTE_BURST + 50
+    rec = _recorder(tmp_path / "blocked", handler)
+    rec.minutes(codes, "hot")
+    assert sleeps.count(I.MINUTE_REST) == 1 and len(seen) == block_at[0] and I.MINUTE_HOST in rec.blocked
