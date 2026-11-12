@@ -12,7 +12,9 @@ function Step($name, [string[]]$argv) {
     if ($LASTEXITCODE -ne 0) { Add-Content $log "!! $name failed exit $LASTEXITCODE"; return $false }
     return $true
 }
-$since = (Get-Date).AddDays(-10).ToString('yyyy-MM-dd')
+# The research snapshot is exactly the imported window (not merged with earlier ones): keep it long enough for
+# listing age, 250-session features and the chart window.
+$since = (Get-Date).AddDays(-400).ToString('yyyy-MM-dd')
 $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).

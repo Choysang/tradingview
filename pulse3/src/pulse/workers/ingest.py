@@ -73,10 +73,21 @@ def _parser() -> argparse.ArgumentParser:
     return ap
 
 
-def universe_codes(conn) -> list[str]:
-    """Codes of every instrument imported from the legacy warehouse (the research universe), sorted."""
+def universe_codes(conn, lake: LakeStore, recent_sessions: int = 5) -> list[str]:
+    """Codes of the research universe: instruments with a bar in the latest READY research snapshot's last sessions.
+
+    The legacy alias table also holds delisted codes (Sina returns their 2002 bars, outside every partition), so it is
+    not the universe."""
+    from pulse.application import bindings as B
+
+    man = B._ready_manifest(conn, B.RESEARCH_DATASET, None)
+    df = None if man is None else lake.read_snapshot_frames(man["content_hash"])
+    if df is None or df.height == 0:
+        return []
+    days = sorted(df["trade_date"].unique().to_list())[-recent_sessions:]
+    ids = df.filter(df["trade_date"].is_in(days))["instrument_id"].unique().to_list()
     rows = conn.execute("SELECT DISTINCT source_symbol FROM core.instrument_alias WHERE source_id='legacy_warehouse'"
-                        " ORDER BY 1").fetchall()
+                        " AND instrument_id = ANY(%s::uuid[]) ORDER BY 1", ([str(i) for i in ids],)).fetchall()
     return [r["source_symbol"] for r in rows]
 
 
@@ -91,7 +102,7 @@ def run(argv: list[str] | None = None) -> int:
         if a.cmd == "legacy-import":
             out = [svc.import_legacy(LegacyWarehouse(Path(a.warehouse)), a.since, codes=a.codes, boards=a.boards)]
         elif a.cmd == "live-daily":
-            codes = universe_codes(conn) if a.universe else list(a.codes)
+            codes = universe_codes(conn, svc.lake) if a.universe else list(a.codes)
             out = []
             for i in range(0, len(codes), max(1, a.chunk)):
                 part = codes[i:i + max(1, a.chunk)]

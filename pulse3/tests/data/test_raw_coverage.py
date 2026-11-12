@@ -46,9 +46,18 @@ def test_universe_codes_are_the_imported_legacy_codes(fresh_dsn, tmp_path):
     try:
         svc = DataService(conn, LakeStore(tmp_path / "lake"))
         svc.bootstrap()
-        assert universe_codes(conn) == []
+        assert universe_codes(conn, svc.lake) == []
         svc.import_legacy(LegacyWarehouse(LEGACY_MINI), date(2026, 10, 1))
-        codes = universe_codes(conn)
+        codes = universe_codes(conn, svc.lake)
         assert codes and codes == sorted(set(codes)) and all(len(c) == 6 for c in codes)
     finally:
         conn.close()
+
+
+def test_short_research_window_is_refused():
+    from pulse.application.release_service import require_research_window
+
+    short = SimpleNamespace(sessions=[DAY] * 9)
+    with pytest.raises(RawCoverageMissing, match="research snapshot holds 9 sessions"):
+        require_research_window(short, 60)
+    require_research_window(SimpleNamespace(sessions=[DAY] * 60), 60)

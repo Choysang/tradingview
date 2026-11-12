@@ -203,6 +203,14 @@ def require_raw_coverage(research, raw_close) -> None:
             f" for {on_day} research instruments (need >= {MIN_RAW_COVERAGE:.0%}); run `pulse.workers.ingest live-daily --universe`")
 
 
+def require_research_window(research, min_sessions: int) -> None:
+    """Listing age is counted in research sessions: a window shorter than the new-listing rule makes every stock 'new'."""
+    if len(research.sessions) < min_sessions:
+        raise RawCoverageMissing(
+            f"research snapshot holds {len(research.sessions)} sessions, fewer than the {min_sessions}-session new-listing rule;"
+            " import a longer legacy window (`ingest legacy-import --since <400 days ago>`)")
+
+
 def resolve_inputs(svc: DataService, lake: LakeStore, cfg: BuildConfig, as_of: datetime | None) -> BuildInputs:
     conn = svc.conn
     cap_manifest = None
@@ -221,6 +229,7 @@ def resolve_inputs(svc: DataService, lake: LakeStore, cfg: BuildConfig, as_of: d
     require_raw_coverage(research, raw_close)
     facts = B.build_facts(metas, listed, research.sessions, raw_close, caps)
     policy = universe_policy_for(bool(caps))
+    require_research_window(research, policy.rules.new_listing_min_sessions)
     doc = {
         "availability_policy": pol, "slot": cfg.slot_key, "session_date": research.session_date.isoformat(), "decision_as_of": decision_as_of,
         "research": [str(research.manifest["snapshot_id"]), research.manifest["content_hash"]],
