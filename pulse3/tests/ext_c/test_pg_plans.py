@@ -178,3 +178,22 @@ def test_get_trade_plan_hides_another_users_edit(make_api, conn, principal, plan
     assert api2.c.get(path).status_code == 404                      # anonymous
     sys_path = f"/v1/plans/{plans['plan']['plan_id']}/versions/{plans['plan']['plan_version']}"
     assert api2.c.get(sys_path).status_code == 200                  # system plan stays public
+
+
+def test_a_failed_compile_leaves_no_partial_state(make_api, conn, principal, plans, monkeypatch):
+    """The compile step is one transaction: a failure while writing the version rolls back the 'running' mark too."""
+    from pulse.adapters.postgres import decision_repo
+
+    api = make_api(principal)
+    pid = api.post("propose-trade-plan", propose_body(plans), key="tx1").json()["data"]["receipt"]["resource_id"]
+
+    def boom(*a, **k):
+        raise RuntimeError("disk full")
+
+    monkeypatch.setattr(decision_repo, "append_plan_version", boom)
+    done = drain(conn)
+    assert done and done[0]["state"] == "failed"
+    row = conn.execute("SELECT state, compiled_plan_id FROM decision.plan_proposal WHERE proposal_id=%s", (pid,)).fetchone()
+    assert row["state"] == "queued" and row["compiled_plan_id"] is None
+    assert conn.execute("SELECT count(*) n FROM decision.plan_revision_metadata m JOIN decision.trade_plan t USING (plan_id, plan_version)"
+                        " WHERE t.instrument_id=%s", (plans["iid"],)).fetchone()["n"] == 0

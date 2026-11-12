@@ -15,11 +15,11 @@
   "both": 1414,
   "ranked": 1966,
   "included_not_ranked": {
-   "605338": "ranking_rule:missing_feature (no research bars)",
-   "603998": "ranking_rule:missing_feature (no research bars)",
-   "603279": "ranking_rule:missing_feature (no research bars)",
-   "002275": "ranking_rule:missing_feature (no research bars)",
-   "603309": "ranking_rule:missing_feature (no research bars)"
+   "605338": "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)",
+   "603998": "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)",
+   "603279": "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)",
+   "002275": "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)",
+   "603309": "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)"
   },
   "ranked_not_included": [],
   "old_only": 1062,
@@ -33,11 +33,10 @@
   "new_only_explained_by_old_pool_rule": {
    "old_rule:turnover_20d_below_0.5e8 (estimated)": 517,
    "old_rule:close_below_2": 34,
-   "old_rule:listed_under_120_sessions": 5
+   "old_rule:listed_under_120_sessions": 5,
+   "old_rule:st_like_price_heuristic (new uses the exchange risk-warning flag)": 1
   },
-  "new_only_unexplained": [
-   "000727"
-  ],
+  "new_only_unexplained": [],
   "new_exclusion_reasons": {
    "unknown_price": 2744,
    "circulating_market_cap_above_cap": 1501,
@@ -107,7 +106,7 @@
   ],
   "old_nav": 168.6138,
   "old_rule": "hold 5, 20 slots, top 40, gate 20d/0.25",
-  "new_accounts": 1,
+  "new_accounts": 3,
   "new_positions": [],
   "explanation": "different books: the old frozen main book (rule above) has traded since 2026-11-01; the new paper account has no fills yet, so positions, fills, costs and NAV cannot match and are not compared line by line. A like-for-like book comparison needs the same plan replayed in both ledgers."
  }

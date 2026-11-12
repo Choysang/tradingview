@@ -226,7 +226,15 @@ def _finish(conn: psycopg.Connection, proposal_id: UUID, state: str, reason: str
 
 @ops_service.register_handler("PortfolioService.compile_proposal")
 def compile_proposal(conn: psycopg.Connection, run, args: dict) -> dict:
-    """The one PlanCompiler step: re-check the pinned inputs, then append a user-edit version. Never an order."""
+    """The one PlanCompiler step: re-check the pinned inputs, then append a user-edit version. Never an order.
+
+    One transaction from the proposal row lock to the new version: the base-version check, the version number and the
+    write cannot interleave with another compile of the same plan, and a failure leaves no partial state."""
+    with conn.transaction():
+        return _compile_proposal(conn, run)
+
+
+def _compile_proposal(conn: psycopg.Connection, run) -> dict:
     p = conn.execute("SELECT * FROM decision.plan_proposal WHERE job_run_id=%s FOR UPDATE", (run.job_run_id,)).fetchone()
     if p is None:
         raise LookupError("proposal for job run not found")
@@ -252,6 +260,7 @@ def compile_proposal(conn: psycopg.Connection, run, args: dict) -> dict:
                                 " ORDER BY plan_version DESC LIMIT 1", (p["instrument_id"], p["based_on_release_id"])).fetchone()
         if base_row is None:
             return _finish(conn, p["proposal_id"], "rejected", "NO_BASELINE_PLAN")
+    conn.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", (f"plan:{base_row['plan_id']}",))
     src = base_row["plan_payload"]
     user_chain = conn.execute("SELECT 1 FROM decision.plan_revision_metadata WHERE plan_id=%s AND plan_version=%s AND origin='user_edit'",
                               (base_row["plan_id"], base_row["plan_version"])).fetchone() is not None

@@ -53,6 +53,17 @@ def new_rankings(conn, release_id: uuid.UUID, codes: dict[str, str]) -> dict[str
 
 
 OLD_MIN_AMOUNT_E8, OLD_MIN_DAYS, OLD_MIN_PRICE = 0.5, 120, 2.0   # old scoring pool: scripts/lab/harness.py tradable()
+OLD_ST_WINDOW, OLD_ST_MIN_HITS, OLD_TICK = 60, 2, 0.011            # old st_like(): backend/app/playbooks/library_factor.py
+
+
+def old_st_like(g: pl.DataFrame) -> bool:
+    """The old price-behaviour ST heuristic: >= 2 closes on the exact 5% limit in the last 60 bars, no move above 5.25%."""
+    t = g.tail(OLD_ST_WINDOW + 1).with_columns(pl.col("close").shift(1).alias("prev"))
+    t = t.with_columns(((pl.col("prev") * 1.05 * 100).round(0) / 100).alias("up"), ((pl.col("prev") * 0.95 * 100).round(0) / 100).alias("dn"),
+                       ((pl.col("close") / pl.col("prev") - 1).abs() * 100).alias("pct")).tail(OLD_ST_WINDOW)
+    hits = t.filter((((pl.col("close") - pl.col("up")).abs() <= OLD_TICK) & (pl.col("close") >= pl.col("high")))
+                    | (((pl.col("close") - pl.col("dn")).abs() <= OLD_TICK) & (pl.col("close") <= pl.col("low")))).height
+    return hits >= OLD_ST_MIN_HITS and not bool((t["pct"].fill_null(0) > 5.25).any())
 
 
 def old_pool_reasons(wh: LegacyWarehouse, day: date, codes: list[str]) -> dict[str, str]:
@@ -87,12 +98,23 @@ def old_pool_reasons(wh: LegacyWarehouse, day: date, codes: list[str]) -> dict[s
             out[c] = "old_rule:listed_under_120_sessions"
         elif amt is not None and amt / 1e8 < OLD_MIN_AMOUNT_E8:
             out[c] = "old_rule:turnover_20d_below_0.5e8 (estimated)"
+        elif c[:3] not in ("300", "301", "688", "689") and old_st_like(g):
+            out[c] = "old_rule:st_like_price_heuristic (new uses the exchange risk-warning flag)"
         else:
             out[c] = "unexplained"
     return out
 
 
-def securities_section(inp, codes: dict[str, str], old_scored: set[str], ranked: set[str], wh: LegacyWarehouse) -> dict:
+def revised_after_cutoff(lake: LakeStore, inp) -> set[str]:
+    """Instruments whose research series was re-adjusted after the cutoff: the lake keeps only the latest revision,
+    so at a reconstructed cutoff their bars are (correctly) not visible."""
+    full = lake.read_snapshot_frames(inp.research.manifest["content_hash"])
+    late = full.filter((pl.col("revision") > 1) & (pl.col("available_at") > inp.research.decision_as_of))
+    return set(late["instrument_id"].unique().to_list())
+
+
+def securities_section(inp, codes: dict[str, str], old_scored: set[str], ranked: set[str], wh: LegacyWarehouse,
+                       lake: LakeStore | None = None) -> dict:
     uni = apply_universe(inp.universe_policy, inp.facts)
     included = {codes.get(str(f.instrument_id)) for f in uni.included}
     why = {codes.get(str(e.instrument_id)): e.reason_codes for e in uni.exclusions}
@@ -108,8 +130,16 @@ def securities_section(inp, codes: dict[str, str], old_scored: set[str], ranked:
     new_why = old_pool_reasons(wh, inp.research.session_date, new_only)
     bar_counts = inp.research.bars.group_by("instrument_id").len()
     nbars = dict(zip(bar_counts["instrument_id"].to_list(), bar_counts["len"].to_list()))
-    not_ranked = {codes.get(str(f.instrument_id)): ("ranking_rule:missing_feature (no research bars)"
-                                                     if nbars.get(str(f.instrument_id), 0) == 0 else "unexplained")
+    late = revised_after_cutoff(lake, inp) if lake is not None else set()
+
+    def why_unranked(iid: str) -> str:
+        if nbars.get(iid, 0) > 0:
+            return "unexplained"
+        if iid in late:
+            return "ranking_rule:missing_feature (forward-adjusted history revised after the cutoff; PIT-correct absence)"
+        return "ranking_rule:missing_feature (no research bars)"
+
+    not_ranked = {codes.get(str(f.instrument_id)): why_unranked(str(f.instrument_id))
                   for f in uni.included if codes.get(str(f.instrument_id)) not in ranked}
     return {
         "old_scored": len(old_scored), "new_included": len(included), "both": len(old_scored & included),
@@ -213,7 +243,7 @@ def run(argv: list[str] | None = None) -> int:
             "availability_policy": pol, "new_release_id": str(a.release),
             "old_inputs": {"scores": a.old_scores.name, "scores_sha256_16": None if old_book is None else old_book.get("scores_sha256_16"),
                            "warehouse": "legacy live warehouse (read-only)"},
-            "securities": securities_section(inp, codes, set(old_rank), set(new.get("20td", [])), LegacyWarehouse(a.warehouse)),
+            "securities": securities_section(inp, codes, set(old_rank), set(new.get("20td", [])), LegacyWarehouse(a.warehouse), lake),
             "prices": prices_section(conn, LegacyWarehouse(a.warehouse), day, inp, codes),
             "signals": signals_section(old_rank, new, a.top_k),
             "book": book_section(conn, old_book),
