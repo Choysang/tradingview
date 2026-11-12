@@ -1,0 +1,163 @@
+{
+ "taken_at": "2026-11-12T22:49:07.502499+00:00",
+ "baseline_release": {
+  "release_id": "f068799b-79a0-5316-abb8-9e21334f15b0",
+  "decision_as_of": "2026-11-12T21:48:59.215350+00:00",
+  "degraded": [
+   "heating.community_growth",
+   "heating.fund_proxy",
+   "heating.news_novelty"
+  ]
+ },
+ "instances": 241,
+ "by_lifecycle": {
+  "specified": 75,
+  "discovered": 166
+ },
+ "by_implementation": {
+  "implemented": 75,
+  "not_implemented": 166
+ },
+ "by_reproduction": {
+  "not_started": 241
+ },
+ "by_health": {
+  "healthy": 69,
+  "unavailable": 172
+ },
+ "with_production_influence": [],
+ "lifecycle_events": {},
+ "source_health": [
+  {
+   "source_id": "cls_telegraph",
+   "endpoint_id": "roll_list_web",
+   "runtime_state": "healthy",
+   "freshness_state": "current",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:56:24.154307+00:00"
+  },
+  {
+   "source_id": "cninfo_announcements",
+   "endpoint_id": "his_announcement_query",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:57:15.171268+00:00"
+  },
+  {
+   "source_id": "eastmoney_fund_flow",
+   "endpoint_id": "fflow_daykline",
+   "runtime_state": "unavailable",
+   "freshness_state": "unknown",
+   "consecutive_failures": 3,
+   "last_error_code": "RemoteProtocolError: Server disconnected without sending a response.",
+   "updated_at": "2026-11-12T01:50:14.149618+00:00"
+  },
+  {
+   "source_id": "eastmoney_guba_comments",
+   "endpoint_id": "post_list_by_publish_time",
+   "runtime_state": "healthy",
+   "freshness_state": "current",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T01:35:57.773094+00:00"
+  },
+  {
+   "source_id": "eastmoney_lhb_disclosure",
+   "endpoint_id": "daily_list",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:56:35.794347+00:00"
+  },
+  {
+   "source_id": "eastmoney_lhb_disclosure",
+   "endpoint_id": "seat_buy",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:56:34.309973+00:00"
+  },
+  {
+   "source_id": "eastmoney_lhb_disclosure",
+   "endpoint_id": "seat_sell",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:56:35.190504+00:00"
+  },
+  {
+   "source_id": "eastmoney_news_724",
+   "endpoint_id": "fast_news_list",
+   "runtime_state": "healthy",
+   "freshness_state": "stale",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T20:56:22.387611+00:00"
+  },
+  {
+   "source_id": "legacy_warehouse",
+   "endpoint_id": "bars",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T21:06:32.644305+00:00"
+  },
+  {
+   "source_id": "sina",
+   "endpoint_id": "hq_quote",
+   "runtime_state": "healthy",
+   "freshness_state": "current",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T01:39:54.314451+00:00"
+  },
+  {
+   "source_id": "sina",
+   "endpoint_id": "kline_daily",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-12T21:48:59.236493+00:00"
+  },
+  {
+   "source_id": "sina",
+   "endpoint_id": "kline_minute",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-11T12:24:16.911283+00:00"
+  },
+  {
+   "source_id": "tencent",
+   "endpoint_id": "kline_day",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-11T12:24:09.503678+00:00"
+  },
+  {
+   "source_id": "tencent",
+   "endpoint_id": "kline_minute",
+   "runtime_state": "healthy",
+   "freshness_state": "not_expected",
+   "consecutive_failures": 0,
+   "last_error_code": null,
+   "updated_at": "2026-11-11T12:24:13.544419+00:00"
+  }
+ ],
+ "open_gates": [
+  "M5-E03 10-session continuity (needs sessions after 2026-11-13)",
+  "M5-E04 forward record nodes N1-N3 (docs/m5/E04_preregistration.md)",
+  "M6 cutover (needs M5 and the user's decision)"
+ ]
+}

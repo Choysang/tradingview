@@ -20,8 +20,10 @@ def _configure(conn: psycopg.Connection) -> None:
 def pool() -> ConnectionPool:
     global _pool
     if _pool is None:
+        # check: a connection broken by a database restart is replaced before it serves a request (M5-E02 drill:
+        # the first request after `Restart-Service pulse3-pg` returned 500 without it).
         _pool = ConnectionPool(config.load().dsn, min_size=1, max_size=8, open=True, configure=_configure,
-                               kwargs={"row_factory": dict_row, "autocommit": True})
+                               check=ConnectionPool.check_connection, kwargs={"row_factory": dict_row, "autocommit": True})
     return _pool
 
 

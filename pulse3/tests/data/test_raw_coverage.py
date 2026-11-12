@@ -61,3 +61,19 @@ def test_short_research_window_is_refused():
     with pytest.raises(RawCoverageMissing, match="research snapshot holds 9 sessions"):
         require_research_window(short, 60)
     require_research_window(SimpleNamespace(sessions=[DAY] * 60), 60)
+
+
+def test_unreachable_source_exits_3_without_traceback(fresh_dsn, tmp_path, monkeypatch, capsys):
+    import httpx
+
+    from pulse.adapters.sources.http import RateLimitedClient
+    from pulse.workers import ingest as cli
+
+    def refuse(request):
+        raise httpx.ConnectError("refused", request=request)
+
+    monkeypatch.setattr(cli, "RateLimitedClient",
+                        lambda **kw: RateLimitedClient(min_interval_seconds=0, transport=httpx.MockTransport(refuse)))
+    base = ["--dsn", fresh_dsn, "--lake", str(tmp_path / "lake"), "--min-interval", "0"]
+    assert cli.run(base + ["live-daily", "--codes", "000001", "--count", "5"]) == 3
+    assert "SOURCE UNREACHABLE" in capsys.readouterr().err

@@ -27,7 +27,7 @@ from pulse import config
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
 from pulse.adapters.sources.cninfo import CninfoAdapter
-from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked
+from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked, TransportFailure
 from pulse.adapters.sources.legacy import LegacyWarehouse
 from pulse.adapters.sources.sina import SinaAdapter
 from pulse.adapters.sources.tencent import TencentAdapter
@@ -131,6 +131,9 @@ def run(argv: list[str] | None = None) -> int:
     except SourceBlocked as exc:
         print(f"BLOCKED: {exc}; stopped immediately, health marked unavailable (circuit OPEN)", file=sys.stderr)
         return 2
+    except TransportFailure as exc:                 # network down / timeout: the batch is FAILED, the cursor did not move
+        print(f"SOURCE UNREACHABLE: {exc}; batch marked failed, cursor unchanged, rerun to resume", file=sys.stderr)
+        return 3
     finally:
         client.close()
         conn.close()

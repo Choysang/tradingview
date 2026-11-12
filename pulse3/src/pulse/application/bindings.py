@@ -366,13 +366,16 @@ CAP_UNIT_NOTE = ("legacy securities.float_cap interpreted as 100 million CNY (äº
 
 
 def publish_cap_snapshot(svc: DataService, warehouse_root: str) -> dict | None:
-    """Publish the newest legacy securities caps as a dataset. Returns the manifest (reused when identical)."""
+    """Publish the legacy securities caps, one row per (instrument, as_of) version, as a dataset.
+
+    Every dated version is kept so a history rebuild sees the cap that was known for its session; readers pick the
+    latest visible version per instrument. Returns the manifest (reused when identical)."""
     from pathlib import Path
 
     from pulse.adapters.sources.legacy import LegacyWarehouse
 
     wh = LegacyWarehouse(Path(warehouse_root))
-    sec = wh.read_securities().sort("ingested_at").unique("code", keep="last")
+    sec = wh.read_securities().sort("ingested_at").unique(["code", "as_of"], keep="last")
     sec = sec.filter(pl.col("float_cap").is_not_null())
     if sec.height == 0:
         return None
@@ -387,7 +390,7 @@ def publish_cap_snapshot(svc: DataService, warehouse_root: str) -> dict | None:
         rows.append({"instrument_id": str(iid), "as_of": asof, "float_cap_cny": Decimal(str(cap)) * Decimal("100000000"),
                      "total_cap_cny": None if tot is None else Decimal(str(tot)) * Decimal("100000000"), "available_at": ing})
     frame = pl.DataFrame(rows, schema={"instrument_id": pl.String, "as_of": pl.String, "float_cap_cny": pl.Decimal(38, 2),
-                                       "total_cap_cny": pl.Decimal(38, 2), "available_at": pl.Datetime("us", "UTC")}).sort("instrument_id")
+                                       "total_cap_cny": pl.Decimal(38, 2), "available_at": pl.Datetime("us", "UTC")}).sort(["instrument_id", "as_of"])
     digest = hashlib.sha256(frame.write_csv().encode()).hexdigest()
     hit = find_derived(svc.conn, CAP_DATASET, "frame_sha256", digest)
     if hit is not None:
@@ -404,12 +407,17 @@ def load_caps(conn: psycopg.Connection, lake: LakeStore, as_of: datetime,
     man = _ready_manifest(conn, CAP_DATASET, None if reconstructed(availability_policy) else as_of)
     if man is None:
         return {}, None
-    df = lake.read_snapshot_frames(man["content_hash"])
+    return visible_caps(lake.read_snapshot_frames(man["content_hash"]), as_of, availability_policy), man
+
+
+def visible_caps(df: pl.DataFrame, as_of: datetime, availability_policy: str) -> dict[uuid.UUID, Decimal]:
+    """Latest cap version per instrument visible at ``as_of``: by recorded time (observed) or by its own date (reconstructed)."""
     if not reconstructed(availability_policy):
         df = df.filter(pl.col("available_at") <= as_of)
     else:                                       # a cap fact is usable only for sessions on/after its own as-of date
         df = df.filter(pl.col("as_of") <= as_of.astimezone(CST).date().isoformat())
-    return ({uuid.UUID(i): c for i, c in zip(df["instrument_id"].to_list(), df["float_cap_cny"].to_list()) if c is not None}, man)
+    df = df.sort(["as_of", "available_at"]).unique("instrument_id", keep="last")
+    return {uuid.UUID(i): c for i, c in zip(df["instrument_id"].to_list(), df["float_cap_cny"].to_list()) if c is not None}
 
 
 # --------------------------------------------------------------------------------------------------------

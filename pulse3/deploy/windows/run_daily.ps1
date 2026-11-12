@@ -23,4 +23,6 @@ if ($ok) { $null = Step 'intel-news' @('-m', 'pulse.workers.intel', 'news', '--s
 if ($ok) { $null = Step 'intel-claims' @('-m', 'pulse.workers.intel', 'claims') }
 if ($ok) { $null = Step 'intel-seats' @('-m', 'pulse.workers.intel', 'seats', '--days', '2') }
 if ($ok) { $ok = Step 'analysis-daily' @('-m', 'pulse.workers.analysis', 'daily') }
+# M5-E04 forward record: settle the previous session and decide the next one from the release just published.
+if ($ok) { $null = Step 'forward-daily' @('-m', 'pulse.workers.forward', 'daily') }
 Add-Content $log "== $(Get-Date -Format s) done ok=$ok"

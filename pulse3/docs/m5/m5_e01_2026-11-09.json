@@ -1,0 +1,114 @@
+{
+ "evidence_id": "M5-E01",
+ "session_date": "2026-11-09",
+ "decision_as_of": "2026-11-09T13:30:00+00:00",
+ "availability_policy": "reconstructed-session-close-plus-1h-v1",
+ "new_release_id": "0825ba71-7275-5a03-8b85-f4b197d78f1d",
+ "old_inputs": {
+  "scores": "scores_asof.parquet",
+  "scores_sha256_16": "31b75907cfdee60f",
+  "warehouse": "legacy live warehouse (read-only)"
+ },
+ "securities": {
+  "old_scored": 2476,
+  "new_included": 1971,
+  "both": 1414,
+  "ranked": 1966,
+  "included_not_ranked": {
+   "605338": "ranking_rule:missing_feature (no research bars)",
+   "603998": "ranking_rule:missing_feature (no research bars)",
+   "603279": "ranking_rule:missing_feature (no research bars)",
+   "002275": "ranking_rule:missing_feature (no research bars)",
+   "603309": "ranking_rule:missing_feature (no research bars)"
+  },
+  "ranked_not_included": [],
+  "old_only": 1062,
+  "old_only_explained_by_new_exclusion": {
+   "new_excludes:circulating_market_cap_above_cap": 1018,
+   "new_excludes:price_above_cap": 27,
+   "new_excludes:risk_warning_st": 17
+  },
+  "old_only_unexplained": [],
+  "new_only": 557,
+  "new_only_explained_by_old_pool_rule": {
+   "old_rule:turnover_20d_below_0.5e8 (estimated)": 517,
+   "old_rule:close_below_2": 34,
+   "old_rule:listed_under_120_sessions": 5
+  },
+  "new_only_unexplained": [
+   "000727"
+  ],
+  "new_exclusion_reasons": {
+   "unknown_price": 2744,
+   "circulating_market_cap_above_cap": 1501,
+   "board_not_in_universe:chinext": 1455,
+   "unknown_listing_age": 1331,
+   "board_not_in_universe:star": 623,
+   "venue_not_in_universe:XBSE": 362,
+   "board_not_in_universe:bse": 362,
+   "risk_warning_st": 317,
+   "price_above_cap": 28,
+   "new_listing": 15,
+   "unknown_circulating_market_cap": 15
+  }
+ },
+ "prices": {
+  "date": "2026-11-09",
+  "old_closes": 3191,
+  "new_raw_closes": 3191,
+  "both": 3191,
+  "match_within_0.1pct": 3181,
+  "old_below_raw_explained_as_forward_adjustment": 10,
+  "forward_adjusted_codes": [
+   "000686",
+   "002152",
+   "002275",
+   "601801",
+   "601811",
+   "603279",
+   "603309",
+   "603596",
+   "603998",
+   "605338"
+  ],
+  "unexplained": [],
+  "old_only": 0,
+  "new_only": 0
+ },
+ "signals": {
+  "note": "auxiliary only: the old fusion model and the new baseline ranking are different models",
+  "top_k": 40,
+  "20td": {
+   "overlap": 0,
+   "overlap_codes": [],
+   "spearman_on_common": -0.3559,
+   "common": 1410
+  },
+  "5td": {
+   "overlap": 0,
+   "overlap_codes": [],
+   "spearman_on_common": -0.2438,
+   "common": 1410
+  },
+  "60td": {
+   "overlap": 0,
+   "overlap_codes": [],
+   "spearman_on_common": -0.2882,
+   "common": 1410
+  }
+ },
+ "book": {
+  "old_book_date": "2026-11-09",
+  "old_holdings": [
+   "002632",
+   "600513",
+   "600790",
+   "605077"
+  ],
+  "old_nav": 168.6138,
+  "old_rule": "hold 5, 20 slots, top 40, gate 20d/0.25",
+  "new_accounts": 1,
+  "new_positions": [],
+  "explanation": "different books: the old frozen main book (rule above) has traded since 2026-11-01; the new paper account has no fills yet, so positions, fills, costs and NAV cannot match and are not compared line by line. A like-for-like book comparison needs the same plan replayed in both ledgers."
+ }
+}
