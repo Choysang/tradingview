@@ -1,0 +1,27 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T02:50:05.412833+00:00",
+  "read_only": true,
+  "document": "deliverables/Pulse_Rewrite_Package_v32_build/spec/REFERENCE_RECONCILIATION_V32.md",
+  "sha256": "cef7142413bcff9dd69f9cdac23d0eb94da47084cbf885ace69ad2a69d7c696e",
+  "all_four_closed": true,
+  "items": {
+    "CL-S01": {
+      "status": "closed",
+      "evidence": "权威已实现损益继续采用既有 `weighted_average_gross`；批次仅用于库存可卖资格、持有期和税务处理，不再生成第二套FIFO已实现损益。"
+    },
+    "CL-S02": {
+      "status": "closed",
+      "evidence": "baseline缺必需数据、快照不完整或运行失败时，阻止新的完整READY榜单；旧版仅可只读显示并标stale，不得从它派生新的actionable计划。"
+    },
+    "CL-S03": {
+      "status": "closed",
+      "evidence": "“153条”来自75与78两批测试数量，其中包含重测和重叠，不能当153条互相独立的技术规则。"
+    },
+    "CL-S04": {
+      "status": "closed",
+      "evidence": "该预算是排序融合预算，不是资金仓位，也不是上涨概率。"
+    }
+  },
+  "limits": "仅回读所列主规范句子；未变更任何stage文件，不宣称实现已完成。"
+}

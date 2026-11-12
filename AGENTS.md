@@ -8,6 +8,8 @@
 > - Agent 接入：`GET /llms.txt`、`GET /api/v1/agent/manifest`、MCP `http://127.0.0.1:8000/mcp`，三者由 `backend/app/agent/capabilities.py` 同源生成。
 >
 > 启动方式统一为 `python scripts/pulse.py install|check|test|build|dev`，不要按下方 Stage 0–4 的旧流程重建目录。
+>
+> **重建规格（2026-11-10，待用户确认后执行）**：`docs/rebuild/README.md`。它规定在 `rebuild` 分支从零重写，新代码不引用本分支的旧代码。在用户确认 `docs/rebuild/10-decisions.md` 的 D01 之前，本分支的线上系统照常按上面的文档维护。
 
 > **使用方法（历史交接指南，已被上面的状态说明取代）**：
 > 1. 在本地新建一个空目录 `ashare-pulse`，将本文档保存为根目录下的 `AGENTS.md`。

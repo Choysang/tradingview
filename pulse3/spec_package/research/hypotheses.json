@@ -1,0 +1,1421 @@
+{
+  "cutoff_date": "2026-11-10",
+  "hypotheses": [
+    {
+      "hypothesis_id": "H-AP01",
+      "paper_ref": "AP01",
+      "title": "AlphaBench",
+      "method": "把因子生成、因子质量判断、迭代搜索分开评测；以可执行金融 DSL 和统一回测比较提示、推理配置及搜索范式。",
+      "module": [
+        "research.factor_dsl",
+        "research.factor_search",
+        "evaluation.model_benchmarks"
+      ],
+      "data_requirements": "附录因子数据集使用 CSI300、2021–2025；项目列出 1,857 条指令；不同子任务使用不同构造，不把它当单一训练/测试区间。",
+      "required_reproduction": [
+        "固定作者版本与依赖，核对算子时间方向和缺失值语义。",
+        "用统一 A 股日频/分钟数据复现三个任务，设置等 token/时延/试验次数预算。",
+        "再以未接触的滚动区间检验成本后边际贡献和相关性。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP02",
+      "paper_ref": "AP02",
+      "title": "VTA",
+      "method": "将价格序列转为文字标注，训练语言推理，再把推理属性作为时间序列骨干的条件；推理奖励与预测误差相关。",
+      "module": [
+        "stock.technical_analysis",
+        "experts.time_series_reasoning",
+        "forecast.multi_horizon"
+      ],
+      "data_requirements": "StockNet 88 只美股，2012–2017；额外 Dow Jones、China A50、EURO STOXX50 数据，测试 2024-01-01 至 2025-01-01。",
+      "required_reproduction": [
+        "固定序列标注和模型版本，先复现预测与解释两套指标。",
+        "在 A 股用 1/5/20 日与分钟窗口分别标定，比较有无语言推理的增量。",
+        "接入真实持仓与费用后再测买卖策略。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP03",
+      "paper_ref": "AP03",
+      "title": "FinSearchComp",
+      "method": "用实时数据获取、简单历史检索、复杂历史调查三类任务测金融搜索与推理。",
+      "module": [
+        "data.source_registry",
+        "research.search_agent",
+        "evaluation.retrieval_benchmarks"
+      ],
+      "data_requirements": "635 问、70 位金融专家、全球及大中华市场；21 个模型/产品。属于检索任务集，不是股票回测时间窗。",
+      "required_reproduction": [
+        "按任务分类复现公开题集，不把今天答案用于历史题。",
+        "增加 A 股官方来源、跨市场时区和同名证券消歧题。",
+        "比较同模型不同工具、同工具不同模型，分别归因。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP04",
+      "paper_ref": "AP04",
+      "title": "AlphaSAGE",
+      "method": "RGCN 编码因子表达式图，GFlowNet 探索多个有价值表达式区域，密集多目标奖励同时考虑预测与多样性。",
+      "module": [
+        "research.expression_graph",
+        "research.factor_search",
+        "research.diversity"
+      ],
+      "data_requirements": "中国 CSI300/500/1000：2010–2020 训练、2021 验证、2022–2024 测试；S&P500：2010–2016/2017/2018–2020。",
+      "required_reproduction": [
+        "重建同样算子库与分区，测搜索采样质量。",
+        "以计算预算匹配 GP、随机搜索及 LLM。",
+        "在盲测区间评估去相关后增量，而非只比较最佳单因子。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP05",
+      "paper_ref": "AP05",
+      "title": "AlphaMaster",
+      "method": "生成链与优化链分工，联合 RL、GFlowNet、LLM 符号生成和 GP；用相关性约束减少同质因子。",
+      "module": [
+        "research.multi_generator",
+        "strategy.evolution",
+        "research.diversity"
+      ],
+      "data_requirements": "摘要：CSI500/CSI1000，2010–2025。",
+      "required_reproduction": [
+        "取得正式全文、代码与交易假设。",
+        "统一每个生成器预算，比较单生成器与组合生成器。",
+        "测新增候选对现有池的边际贡献、衰减与换手。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP06",
+      "paper_ref": "AP06",
+      "title": "FactorMiner",
+      "method": "可执行研究技能加成功/失败经验库；快速 IC 筛选、池内相关性检查、批内去重、完整验证和近邻因子替换。",
+      "module": [
+        "research.memory",
+        "research.factor_library",
+        "strategy.evolution",
+        "data.feature_compute"
+      ],
+      "data_requirements": "CSI300/500/1000 与 64 个加密资产，10 分钟 bars；2024 训练、2025 测试，另检验至 2026-Q1。",
+      "required_reproduction": [
+        "保持相同算子/字段/候选数量，复现记忆消融。",
+        "冻结方向和组合权重，增加费用、库存、限价可成交模拟。",
+        "把纯计算性能与读数据/排队/传输延迟分别测量。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP07",
+      "paper_ref": "AP07",
+      "title": "Fin-RATE",
+      "method": "区分单文档细节推理、跨企业比较、跨期追踪，并把检索、实体、时间与推理错误拆开。",
+      "module": [
+        "data.financial_statements",
+        "evidence.claim_registry",
+        "evaluation.filing_reasoning"
+      ],
+      "data_requirements": "2020–2025 SEC 文件；43 公司、2,472 份申报、15,311 块；三任务各 2,500 例。",
+      "required_reproduction": [
+        "先复现公开任务分类和错误分解。",
+        "用 A 股年报/季报/更正公告构建同样三任务。",
+        "对同一证据比较模型，对同一模型比较检索，避免混淆瓶颈。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP08",
+      "paper_ref": "AP08",
+      "title": "FinRAQ",
+      "method": "NewsRank 以时间图的语义/时间双通道聚合新闻重要性；多空视角使用结构化 Socratic 提问相互检查假设。",
+      "module": [
+        "news.importance_ranker",
+        "news.temporal_event_graph",
+        "agents.evidence_debate"
+      ],
+      "data_requirements": "正式 PDF 为 21 资产（20 美股及 BTC）；训练 2022-03-01 至 2024-03-01，测试至 2026-03-01。",
+      "required_reproduction": [
+        "先重建时间/语义边和新闻可得时间，再比较去掉 NewsRank/提问的消融。",
+        "冻结新闻与模型版本，测新闻延迟、重复转载和跨市场休市场景。",
+        "重跑长仓 A 股成本/可成交协议并比较单 Agent 同预算。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP09",
+      "paper_ref": "AP09",
+      "title": "FinEvo",
+      "method": "把新闻驱动的异质金融 Agent 放入连续双向拍卖市场，并通过资本重分配使参与者种群变化。",
+      "module": [
+        "simulation.agent_market",
+        "strategy.population_diagnostics"
+      ],
+      "data_requirements": "模拟冲击和历史新闻驱动的 128 次实验；本次未取得具体市场日期和逐项配置。",
+      "required_reproduction": [
+        "取得全文与环境后核对撮合/消息时间及种群规则。",
+        "与固定市场回放分别报告，先标定真实市场统计。",
+        "以跨策略容量/拥挤变化作为研究输出。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP10",
+      "paper_ref": "AP10",
+      "title": "KTD-Fin",
+      "method": "股票标识和日期匿名化控制历史记忆，再用 Barra 风格归因区分市场、风格和选股贡献。",
+      "module": [
+        "evaluation.contamination",
+        "portfolio.attribution",
+        "recommendations.rank_quality"
+      ],
+      "data_requirements": "CSI300；长窗 2024-01-01 至 2026-04-10；价格/技术指标输入，无新闻或财报；十个 LLM、18 个训练基线。",
+      "required_reproduction": [
+        "先用相同价格数据复现 masking × 决策模式。",
+        "加新闻/财报后设计价格-only、新闻-only、组合消融。",
+        "持续存档未来到期标签前的预测，待标签可得再评分。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP11",
+      "paper_ref": "AP11",
+      "title": "AlphaForgeBench",
+      "method": "把可执行因子与组合策略代码作为研究结果，固定执行环境来区分研究能力与逐次动作波动。",
+      "module": [
+        "strategy.specification",
+        "agents.stateful_planning",
+        "evaluation.reproducibility"
+      ],
+      "data_requirements": "多模型和多个金融任务；本次未完整抄录所有市场及日期，不能合并成单一时间窗。",
+      "required_reproduction": [
+        "复现实验并加入持仓记忆、迟滞和计划版本基线。",
+        "用本项目交易协议重新计算费用/滑点后的效果。",
+        "同模型同预算比较直接计划、代码策略和二者组合。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP12",
+      "paper_ref": "AP12",
+      "title": "AgenticFinBench",
+      "method": "问题专属 rubric 加两阶段原子声明核验，区分缺少轨迹证据与被外部证据反驳。",
+      "module": [
+        "evidence.claim_registry",
+        "evaluation.agent_research",
+        "stock.research_dossier"
+      ],
+      "data_requirements": "230 个真实金融任务、8 类、2 种语言、4 个复杂度；18 系统配置；非交易收益基准。",
+      "required_reproduction": [
+        "复现公开评分协议，构建中文投资研究任务集。",
+        "固定工具比较模型，固定模型比较工具与上下文。",
+        "对高影响数据和结论随机人工双评，检查自动 grader 偏差。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP13",
+      "paper_ref": "AP13",
+      "title": "PRISM-VQ",
+      "method": "金融先验因子与 VQ 离散潜变量结合，结构条件 MoE 动态生成因子载荷。",
+      "module": [
+        "recommendations.cross_section_ranker",
+        "models.mixture_of_experts",
+        "factors.prior_library"
+      ],
+      "data_requirements": "CSI300/S&P500 动态成分，Alpha158、20 日回看、主目标 5 日远期收益；2009–2019/2020–2021/2022–2024 划分。",
+      "required_reproduction": [
+        "复现公开 CSI300 设置并检查动态成分与前向填充边界。",
+        "与 LightGBM、线性、无先验、无 VQ、无 MoE 同预算比较。",
+        "扩展全 A 股和盘后数据延迟，测费用/容量及风格暴露。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP14",
+      "paper_ref": "AP14",
+      "title": "TransAlpha",
+      "method": "横截面去噪、时间注意力门控、聚合与混合损失，降低日内高维因子预测计算量。",
+      "module": [
+        "forecast.intraday",
+        "data.feature_matrix",
+        "stock.t_opportunity"
+      ],
+      "data_requirements": "沪深全 A 股及 CSI300/500/1000/2000；400 个专有 15 分钟因子；2021-01 至 2023-09 训练、2023Q4 验证、2024 测试。",
+      "required_reproduction": [
+        "核实作者匿名数据/代码可得性，再复现实验。",
+        "换为自己可实时计算的特征，同时对照线性与 LightGBM。",
+        "加入 T+1、底仓、滑点、涨跌停和长仓约束重测。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP15",
+      "paper_ref": "AP15",
+      "title": "Kronos",
+      "method": "把金融 K 线离散为同时表达价量的 token，使用自回归预训练支撑价格、波动与生成任务。",
+      "module": [
+        "models.financial_foundation",
+        "forecast.price_distribution",
+        "stock.grid_parameters"
+      ],
+      "data_requirements": "作者称跨 45 个交易所、超过 120 亿 K 线；本次未完整确认所有市场训练截止和重叠排除清单。",
+      "required_reproduction": [
+        "固定模型/ tokenizer 版本，核对训练截止。",
+        "在严格未见区间比较零样本、微调与简单基线。",
+        "将预测分布接到统一决策器后检验校准与净收益。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP16",
+      "paper_ref": "AP16",
+      "title": "FinRpt",
+      "method": "聚合公司、财报、公告、新闻及行情等资料生成研究报告，配套报告评价与专用 Agent 训练。",
+      "module": [
+        "stock.research_dossier",
+        "evidence.document_pipeline",
+        "agents.report_composer"
+      ],
+      "data_requirements": "CSI800；2024-09-03 至 2024-11-05，周度 10 个分析日，6,825 份输入/报告样本。",
+      "required_reproduction": [
+        "重现报告输入和评价后，增加更长时段及不同规模股票。",
+        "将事实准确率、数字口径、引用覆盖与投资判断分开评分。",
+        "报告变化与股票实际收益增量另外验证。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP17",
+      "paper_ref": "AP17",
+      "title": "TiMi",
+      "method": "语义分析、编程与数学推理 Agent 生成并优化交易程序，降低每次执行对连续大模型推理的依赖。",
+      "module": [
+        "agents.strategy_research",
+        "strategy.compiler",
+        "strategy.plan_versions"
+      ],
+      "data_requirements": "作者称股票与加密市场 200+ 交易对；逐市场样本起止本次未完整核实。",
+      "required_reproduction": [
+        "核实数据和代码后复现部署/优化循环。",
+        "固定反思频率与预算，比较持续 Agent、固定程序、事件驱动更新。",
+        "在 A 股验证订单可执行性与计划更新造成的换手。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP18",
+      "paper_ref": "AP18",
+      "title": "Market-JEPA",
+      "method": "把每日无序资产特征编码为一组因子 token，时序 JEPA 学习紧凑市场状态。",
+      "module": [
+        "market.regime_encoder",
+        "strategy.expert_router"
+      ],
+      "data_requirements": "美国股票；具体股票池、日期与划分在本次可读摘要中未确认。",
+      "required_reproduction": [
+        "取得 PDF/代码确认因果掩码与标签时点。",
+        "在 A 股训练无监督状态，再冻结下游样本外路由。",
+        "测其对组合专家净增量，而不只展示状态图好看。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP19",
+      "paper_ref": "AP19",
+      "title": "Biased-Consensus",
+      "method": "用受控实验与社会动力学模型研究偏差、从众和采样噪声怎样形成多 Agent 共识，并测试异质性。",
+      "module": [
+        "agents.collaboration_protocol",
+        "evaluation.error_correlation",
+        "strategy.expert_fusion"
+      ],
+      "data_requirements": "通用决策、投资决策和 LLM-as-a-judge 任务；不是 A 股收益回测。",
+      "required_reproduction": [
+        "构建同模型多次采样、异模型、异证据、单模型等预算四类对照。",
+        "测方向准确率外，还测共同错误与错误自信。",
+        "只保留能带来增量的交互轮次。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP20",
+      "paper_ref": "AP20",
+      "title": "Market-Regime-Council",
+      "method": "三个专家的单体/双体/全体输出用于 Shapley 贡献估计，配合指数加权历史、贝叶斯冷启动和状态权重。",
+      "module": [
+        "strategy.expert_fusion",
+        "strategy.credit_assignment",
+        "market.regime_router"
+      ],
+      "data_requirements": "13 个加密资产，2023-03-01 至 2025-12-31，1,037 天，五随机种子。",
+      "required_reproduction": [
+        "复现三个专家全部 coalition，拆开辩论与加权收益。",
+        "在 A 股同费用、同库存约束测等权/最佳单体/动态加权。",
+        "测权重稳定、标签延迟、冷启动和 regime 错判影响。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP21",
+      "paper_ref": "AP21",
+      "title": "FinAuditing",
+      "method": "用 XBRL/会计分类结构评测语义匹配、关系抽取和数值一致性，跨文档核对财务事实。",
+      "module": [
+        "data.accounting_taxonomy",
+        "evidence.numeric_verification",
+        "evaluation.financial_tables"
+      ],
+      "data_requirements": "US-GAAP XBRL；1,102 个标注实例，平均超过 33k tokens；财报起止日期未核实。",
+      "required_reproduction": [
+        "核实正式资源版本与公开代码。",
+        "用中国报表科目映射构造语义/关系/数值三类测试。",
+        "比较原文 RAG、结构化工具和组合，单独量化数字错误率。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP22",
+      "paper_ref": "AP22",
+      "title": "FC4FinQA",
+      "method": "从真实查询构建工具调用样本，用 AugFC 补参数分布盲点，再 SFT/RL 训练函数选择与参数提取。",
+      "module": [
+        "platform.tool_registry",
+        "data.semantic_gateway",
+        "evaluation.tool_calling"
+      ],
+      "data_requirements": "金融 QA 私有 API/线上查询与公开工具基准；Qwen2.5 1.5B/7B/32B；不是股价回测。",
+      "required_reproduction": [
+        "先用无需训练的强模型加规范 schema 建基线。",
+        "建立证券代码/简称/别名、日期、周期、单位的参数回归集。",
+        "足够失败样本后再比较数据增强/小模型蒸馏是否改善成本与延迟。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-AP23",
+      "paper_ref": "AP23",
+      "title": "JFE-LLM-News",
+      "method": "用 LLM 新闻标题评分研究初始价格反应与后续漂移，并分析模型规模、消息类型和收益随普及变化。",
+      "module": [
+        "news.event_response",
+        "evaluation.latency_adjusted_alpha",
+        "strategy.signal_decay"
+      ],
+      "data_requirements": "美国股票，2021-10 至 2024-05；CRSP、新闻、RavenPack、NYSE TAQ；作者称使用晚于所测模型知识截止的新闻。",
+      "required_reproduction": [
+        "取得正式论文成本与事件定义，锁定模型版本。",
+        "以真实新闻可得时刻加总延迟定义可交易起点。",
+        "A 股按市值、流动性、正负消息和公告种类做样本外事件研究。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP01",
+      "paper_ref": "EP01",
+      "title": "AlphaQuanter",
+      "method": "以 GRPO 训练单个工具调用型语言模型，按需查询行情、基本面、新闻及宏观工具后输出日频买入/卖出/持有。",
+      "module": [
+        "selection",
+        "allocation",
+        "exit"
+      ],
+      "data_requirements": {
+        "market": "美国五只大型科技股 GOOGL/MSFT/META/NVDA/TSLA；逐只交易",
+        "train": "2022-09-01—2024-03-30",
+        "validation": "2024-05-15—2024-11-14",
+        "test": "2025-01-01—2025-06-30"
+      },
+      "required_reproduction": [
+        "锁定原文配置，复跑五股作为接口正确性检查。",
+        "在共享现金、多资产、T+1、最低佣金及涨跌停环境中重新训练和评价。",
+        "测量工具调用的增量信息、净收益、延迟和成本；不能只比较语言解释质量。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP02",
+      "paper_ref": "EP02",
+      "title": "STABLE",
+      "method": "宏观与个股条件扩散生成收益轨迹，估计联合收益分布，再将均值/协方差信息送入 Black–Litterman 配置。",
+      "module": [
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "美国 55、中国 CSI300 55、欧洲 37、韩国 44 只股票",
+        "train": "2013-01—2024-09",
+        "test": "截至 2025-03",
+        "universe": "按 2025-03-31 规模选各行业股票并要求长历史完整"
+      },
+      "required_reproduction": [
+        "复现文中四地设置并明确其选择偏差。",
+        "替换为时点股票池和实际可交易约束，补全费用、换手和容量曲线。",
+        "记录宏观信息增量和扩散模型额外贡献，防止把复杂度当效果。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP03",
+      "paper_ref": "EP03",
+      "title": "Decision-focused Sparse Portfolio",
+      "method": "将可微稀疏 Sharpe 优化层接入预测模型，以决策损失与预测误差混合训练，并用可微 top-k 选择持股。",
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "Euro Stoxx 50、FTSE100、KOSPI200、Nikkei225",
+        "period": "2016-01—2025-12",
+        "split": "按时间约 80/20；100 日历史输入",
+        "universe": "仅稳定成员；忽略期间进出指数者"
+      },
+      "required_reproduction": [
+        "先复现原配置确认梯度与稀疏性。",
+        "构造动态股票池、长仓、换手、费率、涨跌停与 T+1 约束版本。",
+        "用等权、简单动量和成本感知二阶段优化作为必须击败的基线。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP04",
+      "paper_ref": "EP04",
+      "title": "PSGA/STCO",
+      "method": "以稀疏持股与交易成本构造优化问题，采用差分凸松弛和近端次梯度算法；理论给出特定条件下的线性收敛。",
+      "module": [
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "NYSE(O) 36 股、NYSE(N) 23 股、TSE 88 股、MSCI 24 地区指数",
+        "period": "各数据段分别位于 1962—2010；不是 2026 交易数据"
+      },
+      "required_reproduction": [
+        "复现原文公开小数据与收敛曲线。",
+        "移植到同一时点 A 股数据、成本函数和账户约束，比较简单二次优化。",
+        "记录求解时延、最优性/可行性残差与净收益分别发生什么变化。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP05",
+      "paper_ref": "EP05",
+      "title": "ReCAP",
+      "method": "ReCAP 用在线状态变化检测器维护市场阶段，保存 PPO 的策略参数增量；门控混合阶段经验，适配新阶段并合并相似增量。",
+      "module": [
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "DOW 29、NASDAQ 73、S&P500 398、Nikkei 29、商品 ETF 7",
+        "pretrain": "2008-05-01—2020-04-30",
+        "evaluation": "2020-05-01—2025-04-29",
+        "universe": "要求连续上市/完整数据"
+      },
+      "required_reproduction": [
+        "核对论文设置与简化仓库差异后建立锁定配置。",
+        "动态股票池、滚动训练、严格时间外逐日重演，所有更新只能使用已经成熟的标签。",
+        "对照简单指数加权专家组合、定期重训和冻结模型，计算切换收益及额外换手。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP06",
+      "paper_ref": "EP06",
+      "title": "FineFT",
+      "method": "以选择性 TD 更新训练专家，筛选各状态中表现较好的策略，再用能力/分布外状态路由决定采用哪个专家。",
+      "module": [
+        "allocation",
+        "overlay",
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "Binance BNB/BTC/DOT/ETH USDT 永续合约",
+        "train": "2022",
+        "validation": "2023-01—2023-05",
+        "test": "2023-06—2024-01-01",
+        "frequency": "分钟级，含 5 倍杠杆设置"
+      },
+      "required_reproduction": [
+        "先复现作者合约实验，避免把移植差异误报成复现失败。",
+        "另建 A 股长仓及 T+1 动作空间，单独训练评估。",
+        "比较最优单专家、平均预测、动态专家路由，分别报告训练预算和换手。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP07",
+      "paper_ref": "EP07",
+      "title": "DigMA",
+      "method": "条件扩散生成中间价收益和订单到达参数，再由带经济先验的元 Agent 生成订单流。",
+      "module": [
+        "execution",
+        "overlay"
+      ],
+      "data_requirements": {
+        "market": "Wind 深交所 2020 年主板 1452 股、创业板 854 股",
+        "split": "以股票日随机抽取各 5000 验证/测试实例，其余训练；不是纯时间外划分"
+      },
+      "required_reproduction": [
+        "复现公开示例与统计量。",
+        "在有许可的 A 股逐笔数据上重建时间外测试。",
+        "注入不同规模母单，检查冲击、恢复和队列机制，再决定能否用于策略训练。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP08",
+      "paper_ref": "EP08",
+      "title": "DASRL",
+      "method": "根据当前市场状态缩减执行动作集合，结合自适应探索与经验回放重整，学习大额卖出母单的拆分执行。",
+      "module": [
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "8 只上证50成分股、十档盘口",
+        "period": "2014-06—2015-03",
+        "split": "前约80%训练，后约20%测试",
+        "filter": "排除了涨跌停日"
+      },
+      "required_reproduction": [
+        "在相同历史八股条件下检验原结果。",
+        "扩充当前动态股票池且不删除难成交日，按参与率及母单方向分组。",
+        "用成交后净滑点、完成率和未完成头寸终值联合评价。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP09",
+      "paper_ref": "EP09",
+      "title": "Continuous-time Execution RL",
+      "method": "在熵正则的均值—二次变差执行控制下构造可解析的策略/价值参数化，通过 actor–critic 与重校准学习执行路径。",
+      "module": [
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "七只 Nasdaq 股票 LOBSTER 数据及三类模拟市场",
+        "period": "2016Q3—2017Q1",
+        "protocol": "以前一季度训练后一季度评估；约10%日均量母单，约6小时执行"
+      },
+      "required_reproduction": [
+        "先复现解析模拟与经典控制解。",
+        "在当前 A 股订单数据重新估计冲击与时段效应。",
+        "检验不同母单量级及市场阶段的改善，并检查未完成部分的机会成本。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP10",
+      "paper_ref": "EP10",
+      "title": "LOB-Impact",
+      "method": "通过向生成订单簿注入母单，并比较可见/隐藏订单干预，测量自身市场冲击和执行后的恢复。",
+      "module": [
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "EA、NVDA、MSFT、AMD、GOOG 五只 Nasdaq 股票",
+        "test": "2026-01 订单簿保留月份",
+        "intervention": "100 个子单的母单，按约10%参与率校准实验"
+      },
+      "required_reproduction": [
+        "跑作者公开 benchmark 检验每种生成器。",
+        "扩展 A 股样本与时段，和真实母单冲击曲线校准。",
+        "分开报告生成拟合分数和策略干预响应，不能合成一个掩盖缺陷的总分。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP11",
+      "paper_ref": "EP11",
+      "title": "PROMOTE",
+      "method": "PROMOTE 给新候选登记不可返还的检验预算，只用出生后净收益的有界分数更新 e-process，以控制持续搜索中的错误晋级概率。",
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "公开 ETF 与行业序列的24条规则；另有受控零均值模拟",
+        "period": "伪样本外约2015—2026-05；数据快照 2026-07-31"
+      },
+      "required_reproduction": [
+        "复现零假设模拟、晋级账本和下一时段部署边界。",
+        "用本站策略池的真实候选产生过程检验选择偏差。",
+        "同时报告错误晋级率、发现率、等待时间和增量净收益，避免只优化一个指标。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP12",
+      "paper_ref": "EP12",
+      "title": "MACE",
+      "method": "MACE 以可替换执行成本模块比较固定比例费用、Almgren–Chriss 类冲击和衰减冲击，记录交易参与率与换手。",
+      "module": [
+        "allocation",
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "NASDAQ100 股票及多种 RL 环境",
+        "period": "2010-01—2026-01",
+        "universe": "约2021年的静态成分",
+        "evaluation_claim": "作者称2025为最终样本外，另以样本外 Sharpe 跨 epoch 调参"
+      },
+      "required_reproduction": [
+        "先用固定策略检查成本计算是否守恒且随规模合理变化。",
+        "清楚分开训练、调参和锁定终测，并保存 epoch 选择规则。",
+        "以真实成交样本拟合成本，再比较不同模型下策略排名是否稳定。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP13",
+      "paper_ref": "EP13",
+      "title": "Implementable Efficient Frontier",
+      "method": "把机器学习收益预测放入含交易成本与多期持有决策的组合问题，评价可实施有效前沿及经济意义上的特征贡献。",
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "data_requirements": {
+        "market": "美国股票；作者仓库使用 WRDS/CRSP、公司特征及借券相关数据",
+        "period": null,
+        "horizons": "代码包含1—12个月预测期限；完整最终论文测试日期未核实"
+      },
+      "required_reproduction": [
+        "获取最终正式全文并对照作者工作论文配置，补全数据期。",
+        "先复现简单成本感知动态组合，再加入机器学习。",
+        "在 A 股长仓约束、动态股票池和统一费用模型下作公平基准。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP14",
+      "paper_ref": "EP14",
+      "title": "Grid Wealth Decomposition",
+      "method": "将网格交易和相同初始风险敞口的静态组合比较，重点区分波动收益与额外库存风险。",
+      "module": [
+        "overlay"
+      ],
+      "data_requirements": {
+        "market": "中国股票 ETF 分钟数据",
+        "period": "2009—2026，精确最后交易日未核实",
+        "grid": "摘要列3%、5%、10%间距及1/3/5年窗口"
+      },
+      "required_reproduction": [
+        "先获取作者全文和可验证数据说明，补足严格样本外细节。",
+        "建立机械网格经济账本，人工可核对每笔现金、库存和费用。",
+        "比较等敞口持有、无网格和多种网格；在趋势/震荡、上涨/下跌中分层。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-EP15",
+      "paper_ref": "EP15",
+      "title": "EDGMGT",
+      "method": "EDGMGT 将网格越界作为事件，之后由有动作掩码的 PPO 选择买/卖/持有；不要求每次越界都成交。",
+      "module": [
+        "overlay",
+        "execution"
+      ],
+      "data_requirements": {
+        "market": "中国银行 ETF 分钟数据",
+        "period": "2018—2023",
+        "test": "摘要称共同测试242日，完整切分待核实"
+      },
+      "required_reproduction": [
+        "获取完整论文/代码，复核时间切分、费用和动作掩码。",
+        "机械网格先通过可计算账本验证，再加入学习策略。",
+        "在同一成交引擎、资本、初始敞口与费用下比较固定阈值、监督学习和 PPO。"
+      ],
+      "required_baselines": [
+        "matched_information_simple_baseline",
+        "existing_frozen_baseline",
+        "component_ablation"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS01",
+      "paper_ref": "CS01",
+      "title": "LOAM / LOAM-Race",
+      "method": "由大模型设计观测和动作接口；以学习曲线外推及不确定性分配训练预算，减少对所有候选完整训练的开销。",
+      "module": [
+        "research.environment_design",
+        "research.budget_scheduler"
+      ],
+      "data_requirements": "原始实验是 HumanoidBench、Isaac Lab 连续控制；论文采用 FastTD3，并比较观测/动作设计及计算预算。不是股票收益实验。",
+      "required_reproduction": [
+        "同一PIT数据、初始资产、时间切分、候选数量、环境步数和模型调用预算。",
+        "比较找到合格候选的总成本、候选多样性及未接触区间成本后增量；不能只比较训练最大收益。",
+        "大模型不能生成交易所规则、补造行情或改变账本。"
+      ],
+      "required_baselines": [
+        "uniform_budget",
+        "successive_halving",
+        "fixed_feature_action_baseline"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS02",
+      "paper_ref": "CS02",
+      "title": "PATH",
+      "method": "把环境先修关系表示成课程DAG，先沿多条随机路径扩大覆盖，再用学习潜力信号集中训练未掌握区域。",
+      "module": [
+        "research.rl_training",
+        "evaluation.scenario_coverage"
+      ],
+      "data_requirements": "原始任务包括 MiniGrid、BipedalWalker，正文使用 PPO；报告训练效率、泛化、均值/IQM和完成率，非证券交易。",
+      "required_reproduction": [
+        "相同训练更新数下比较随机训练、固定课程、PATH式课程。",
+        "验收实际订单合法率、持仓与现金一致性、未见机制组合下的净收益和失败率。",
+        "课程只是训练安排，不能通过放宽实盘交易规则制造高分。"
+      ],
+      "required_baselines": [
+        "uniform_scenario_sampling",
+        "fixed_curriculum",
+        "replay_prioritization"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS03",
+      "paper_ref": "CS03",
+      "title": "DAL",
+      "method": "将平稳 bandit 算法、变化检测和强制探索组成框架；检测到变化后重启当前 bandit 学习器并清空所有检测历史。本项目设计另要求：平台已登记的历史实验成绩不随之改写。",
+      "module": [
+        "strategy.regime_router",
+        "research.drift_detection"
+      ],
+      "data_requirements": "覆盖多种参数化/核/上下文bandit，比较合成分段变化与漂移情景下动态遗憾和运行时间。",
+      "required_reproduction": [
+        "以固定权重、滑窗权重、折扣权重为对照，统一切换成本与延迟奖励。",
+        "分别检验误报警率、检测延迟、切换次数和成本后增量。",
+        "先在研究/影子环境探索，正式计划仅采用已经准入的动作。"
+      ],
+      "required_baselines": [
+        "fixed_router",
+        "sliding_window_router",
+        "discounted_router"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS04",
+      "paper_ref": "CS04",
+      "title": "GLBM-SCB",
+      "method": "用过去动作构成记忆矩阵，研究动作对未来奖励的影响；把一个反馈区间内的动作当作整体，构造分块估计与置信界。",
+      "module": [
+        "strategy.stateful_router",
+        "research.action_memory"
+      ],
+      "data_requirements": "理论与数值实验分析线性及广义线性bandit中的记忆、非线性反馈与延迟更新。",
+      "required_reproduction": [
+        "构造相同价格但不同库存/执行历史的配对场景。",
+        "将动作影响和市场外生变化分开消融，检查动作反馈何时真实可见。",
+        "评价联合账户权益，不相加互相占用同一资金的独立回测结果。"
+      ],
+      "required_baselines": [
+        "memoryless_router",
+        "fixed_history_features",
+        "shared_account_policy"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS05",
+      "paper_ref": "CS05",
+      "title": "Nonstationary Linear BAI",
+      "method": "区分累计遗憾最小化与固定预算下识别最优臂；分析非平稳线性奖励中由候选几何相邻关系决定的识别难度。",
+      "module": [
+        "research.strategy_league",
+        "research.budget_scheduler"
+      ],
+      "data_requirements": "主问题为固定预算、有限线性动作集、独立零均值 sub-Gaussian 噪声；目标是在给定参数序列下识别累计期望线性奖励最优的臂，研究错误概率，而非累计噪声实现值最优的臂。",
+      "required_reproduction": [
+        "同预算比较全量轮询、瑞士轮式调度和模型化候选筛选。",
+        "统计选错冠军率、计算耗时和最终盲测表现，不用积分替代经济价值。",
+        "所有配对保留共同样本、种子、费用、成交分辨率和候选家族身份。"
+      ],
+      "required_baselines": [
+        "round_robin_equal_budget",
+        "swiss_style_equal_context",
+        "fixed_budget_selection"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS06",
+      "paper_ref": "CS06",
+      "title": "Robust-CPD-UCB",
+      "method": "用适合重尾分布的Catoni式估计与置信序列进行变化检测，再结合平稳阶段的bandit学习处理突变。",
+      "module": [
+        "research.drift_detection",
+        "strategy.lifecycle"
+      ],
+      "data_requirements": "理论讨论有界(1+epsilon)阶中心绝对矩、分段平稳环境、检测延迟与误报的关系；并有数值实验。",
+      "required_reproduction": [
+        "以普通均值CUSUM、滑窗检验、稳健检测做对照。",
+        "报告误报/漏报、恢复时长、降权损失和被避免的损失，按市场状态分组。",
+        "使用固定训练阈值及独立状态区间，检测后产生可审计的暂停/重评原因。"
+      ],
+      "required_baselines": [
+        "rolling_mean_detector",
+        "cusum_detector",
+        "robust_change_detector"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS07",
+      "paper_ref": "CS07",
+      "title": "GC-TTT",
+      "method": "在测试时从既有离线经验中选择与当前状态及目标相关的子轨迹，用少量梯度步局部调整策略，并以滚动方式重复。",
+      "module": [
+        "research.offline_rl_adaptation",
+        "research.model_budget"
+      ],
+      "data_requirements": "原始研究是目标条件离线强化学习，使用导航/控制/操作类基准及既有离线RL骨干；比较测试计算与扩大模型。",
+      "required_reproduction": [
+        "冻结模型、相同FLOPs大模型、历史检索但不微调、局部微调四组比较。",
+        "更新可用数据严格available_at<=decision_as_of，禁止吸收未来持有期结果。",
+        "将训练/推理延迟计入可行动时间，比较净增量而非只看离线预测。"
+      ],
+      "required_baselines": [
+        "frozen_policy",
+        "larger_equal_compute_policy",
+        "retrieval_only_policy"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    },
+    {
+      "hypothesis_id": "H-CS08",
+      "paper_ref": "CS08",
+      "title": "Retriever Portfolios",
+      "method": "离线选择一小组互补检索器，以查询集合上best-of-k覆盖为目标；在线路由到少量检索器并组合回答。",
+      "module": [
+        "evidence.retrieval_router",
+        "evaluation.source_coverage"
+      ],
+      "data_requirements": "原始验证为HotpotQA、2WikiMultihopQA、TriviaQA、MuSiQue等问答检索；不是金融资产配置。",
+      "required_reproduction": [
+        "单检索器、全部并行、固定分组和学习路由按相同时间/成本比较。",
+        "使用有发布日期、实体歧义和转载链的A股验证题。",
+        "只把检索结果当证据入口，不能由回答模型投票创造事实共识。"
+      ],
+      "required_baselines": [
+        "single_retriever",
+        "all_retrievers",
+        "fixed_category_router"
+      ],
+      "evaluation_context": [
+        "point_in_time_data",
+        "versioned_cost_and_execution",
+        "held_out_time_periods",
+        "shared_account_ledger"
+      ],
+      "status": "specified_not_implemented",
+      "profitability_validated": false
+    }
+  ]
+}

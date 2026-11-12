@@ -1,0 +1,318 @@
+{
+  "package_version": "2.0",
+  "design_as_of": "2026-11-10",
+  "baseline_repository": "https://github.com/Choysang/tradingview",
+  "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+  "delivery_type": "greenfield_specification_evidence_catalogs_executable_reference_models_and_limited_legacy_patch",
+  "new_system_implementation_status": "specification_with_two_bounded_reference_models",
+  "complete_website_implemented": false,
+  "deployment_status": "not_deployed",
+  "counts": {
+    "audit_findings": 30,
+    "legacy_fixes": 3,
+    "patch_files": 6,
+    "base_specification_chapters": 16,
+    "v2_specification_chapters": 13,
+    "acceptance_scenarios": 49,
+    "source_entries": 137,
+    "unique_source_urls": 133,
+    "factor_candidates": 96,
+    "original_strategy_candidates": 60,
+    "paper_hypotheses": 38,
+    "papers": 38,
+    "platforms": 10,
+    "platform_capabilities": 56,
+    "schema_seed_definitions": 37,
+    "tracked_repository_files": 435,
+    "symbol_declarations": 3484,
+    "reason_records": 24,
+    "requirement_anchors": 24,
+    "word_pages": 90,
+    "package_files_excluding_manifest": 52
+  },
+  "validation": {
+    "legacy_related_tests_passed": 248,
+    "legacy_related_tests_skipped": 1,
+    "legacy_test_result_scope": "retained_first_edition_related_suite_results_not_reexecuted_in_v2",
+    "entire_repository_suite_executed": false,
+    "reference_tests_passed": 45,
+    "feature_reference_tests": 19,
+    "account_reference_tests": 26,
+    "contract_seed_validation": "pass_for_declared_structure_and_selected_relations",
+    "negative_contract_examples": 8,
+    "source_and_reason_reference_closure": "pass",
+    "author_paper_experiments_independently_run": 0,
+    "profitability_test_performed_in_this_delivery": false,
+    "live_source_integrations_completed_in_this_delivery": 0,
+    "word_visual_qa": "90_pages_checked_with_change_aware_reinspection"
+  },
+  "separate_reading_artifact": {
+    "filename": "Pulse_Ashare_Rewrite_2026.docx",
+    "bytes": 304629,
+    "sha256": "5d0d68c0e108476d2d0b18a5fc28f9076486141dc77b16c2addfd1fea0cef43c",
+    "included_in_zip": false
+  },
+  "manifest_scope": "All package files except this manifest itself; the Word reading copy is a separate deliverable. Counts describe evidence or design unless explicitly marked executed.",
+  "files": [
+    {
+      "path": "AGENT_START_PROMPT.md",
+      "bytes": 5038,
+      "sha256": "d3784242892ebb14a44b0cf49a27d71539589bdab579c1d12a4563a788db60e9"
+    },
+    {
+      "path": "PACKAGE_VALIDATION.log",
+      "bytes": 758,
+      "sha256": "b847c13dd1d313825d549d30e5196e80f9fa8f4ab2ec3cb7d9300c54a2d4cf59"
+    },
+    {
+      "path": "Pulse_Ashare_Rewrite_Full.md",
+      "bytes": 234774,
+      "sha256": "2e4c7e75b65ed1874ce58a551f80cc4d2fce29c7753100301f2bf8ca59db4904"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8537,
+      "sha256": "698bb0d9c9df7fee565cb76c4c9ae3bacc09c821dc80720c298adb378a1f9bc3"
+    },
+    {
+      "path": "V2_SUMMARY.json",
+      "bytes": 1029,
+      "sha256": "ca43c65ccd37cc829c52b59e9b848ad68132fd05cff472549269f162a90f3beb"
+    },
+    {
+      "path": "catalogs/README.md",
+      "bytes": 11186,
+      "sha256": "3c8879d71bed8645ff8071a822a1ed81a7e61eec4c00904ed5ff4abb72da4681"
+    },
+    {
+      "path": "catalogs/build_catalogs.py",
+      "bytes": 70413,
+      "sha256": "949dcd5cc2f055dd76a5189bf8f591aad71c4b683b7280b840dcaba7be964181"
+    },
+    {
+      "path": "catalogs/factor_catalog.json",
+      "bytes": 178064,
+      "sha256": "b08e12c8cbf2a0ad7a96d3d5c6c1fcd91e873b8b3d8b9e8ed869ea7d5aac4ee5"
+    },
+    {
+      "path": "catalogs/reference_inputs.json",
+      "bytes": 11042,
+      "sha256": "b16eb96eed05f88be75508d1a8825ff2d917ef3b2edcc0529d5199882daf63dc"
+    },
+    {
+      "path": "catalogs/source_catalog.json",
+      "bytes": 53500,
+      "sha256": "e36488f9a64c54f600530175611d6f734a41aeb25750e292feee371cecbb1228"
+    },
+    {
+      "path": "catalogs/strategy_catalog.json",
+      "bytes": 228065,
+      "sha256": "2b17ffc3f3c108e94e01b68adbf0a677fed8ea1f24906b0d0b11af144b84dd63"
+    },
+    {
+      "path": "contracts/README.md",
+      "bytes": 9108,
+      "sha256": "9a5368db6604c0d1725a507b19a69a1cc9758e5c223e7be81c6b5feea7a7c0ab"
+    },
+    {
+      "path": "contracts/V2_PROTOCOLS.md",
+      "bytes": 10429,
+      "sha256": "bb2881d17c66c25a470f1d958c150706fa3f2e4ddd0bebe3c4a1fa038f4ee4f6"
+    },
+    {
+      "path": "contracts/definitions.schema.json",
+      "bytes": 49965,
+      "sha256": "f4e41e9bc237ddcbb925c1d2ec2329b781e88d31b421f3eba805e18dd5f0a880"
+    },
+    {
+      "path": "contracts/fixture.json",
+      "bytes": 30833,
+      "sha256": "1f97e9a20ce47242f62e5d3f3ad727b97fdfa0e883f03b5e4e0cef6e0da8e99a"
+    },
+    {
+      "path": "contracts/requirements-validation.txt",
+      "bytes": 19,
+      "sha256": "756cc9e506ae4ee1a6f6c0507088b5cfc0dc8ba350fb2d2d46f1ffa72033adb6"
+    },
+    {
+      "path": "contracts/validate_fixture.py",
+      "bytes": 12324,
+      "sha256": "86240628e92d3f284a42c2c9b806ff870def713a975994d92d1f427d65ab2c96"
+    },
+    {
+      "path": "contracts/validation.log",
+      "bytes": 1132,
+      "sha256": "0d1d6a03b007335a7e9ba20e66ac8bc7807d7de06ee707ff8b5ea1ef147952a0"
+    },
+    {
+      "path": "patches/README.md",
+      "bytes": 3188,
+      "sha256": "36af20f7ff3da3b7226fc1400fc829916734f6603b56679a7481d28b10d4ef8a"
+    },
+    {
+      "path": "patches/legacy_fixes.patch",
+      "bytes": 15061,
+      "sha256": "b4bb58bcd2bd82b77c50d741e5bb8fe8e65467939b289251cc8ff8579484a600"
+    },
+    {
+      "path": "reference_models/README.md",
+      "bytes": 14587,
+      "sha256": "17e672800144260560bcdfd943348a689a243fed85643bfdd1c405882a5bea24"
+    },
+    {
+      "path": "reference_models/account_model.py",
+      "bytes": 16107,
+      "sha256": "eddc59920038d5104a95ad7111e2442159362df48bee36168effc54845c8e0f6"
+    },
+    {
+      "path": "reference_models/feature_store.py",
+      "bytes": 8841,
+      "sha256": "2ce4928536549200b8989e6c63ee3f317c7c5ea73cdb4523456a693d5187af67"
+    },
+    {
+      "path": "reference_models/test_account_model.py",
+      "bytes": 13743,
+      "sha256": "f0b95f141f2e9718717420bb076f9c481e7d33353c4130feca3178ab0b19c1e4"
+    },
+    {
+      "path": "reference_models/test_feature_store.py",
+      "bytes": 14947,
+      "sha256": "c51550b0b712449929e10052ae58377bb516633341097c85dd1e035815906763"
+    },
+    {
+      "path": "reference_models/validation.log",
+      "bytes": 7357,
+      "sha256": "ba7d423b43147379713cd50a5bb008dc2411b725388f16678e4bcb7e4a16facb"
+    },
+    {
+      "path": "research/hypotheses.json",
+      "bytes": 46965,
+      "sha256": "7fcd91e4fd04f7731aa5380b620565dcd1b77db6f92f82b96d1160bbdc7a0e79"
+    },
+    {
+      "path": "research/papers_agents.json",
+      "bytes": 85796,
+      "sha256": "23d3220e32ec0aca5b17acbce33ca417092f8693334beb497c82a0b305e95080"
+    },
+    {
+      "path": "research/papers_agents_full.md",
+      "bytes": 69867,
+      "sha256": "2c0e353ef815dde6bcf2e771f4e575c3a160a91f02f6f31acf1365fb6e03567e"
+    },
+    {
+      "path": "research/papers_execution.json",
+      "bytes": 73850,
+      "sha256": "80587693dd63d95ec8cb2e8ea5428d8479941a6d3d9b868f65917d8b4915ab01"
+    },
+    {
+      "path": "research/papers_execution_full.md",
+      "bytes": 65812,
+      "sha256": "6749d9bf98bf4cb74b84f15e2f7c0cc75794c14b7a52186717c692d30d136054"
+    },
+    {
+      "path": "research/papers_registry.json",
+      "bytes": 94939,
+      "sha256": "691d1f3ac0d6360afc3fc72cd8f05b2021b636d07ac3e65bafb8e751d37cd4f8"
+    },
+    {
+      "path": "research/platforms.json",
+      "bytes": 92432,
+      "sha256": "242b18c7e55daac75c87fc03414fedab7b55819d325a7100e6ab37c4e4109b6b"
+    },
+    {
+      "path": "research/platforms_full.md",
+      "bytes": 42964,
+      "sha256": "859021408ee0324c6e0f3884c7ca650b4e106a532274bdfc4eb54d4974df7814"
+    },
+    {
+      "path": "research/source_index.json",
+      "bytes": 38816,
+      "sha256": "13fdbb86b72f61ae59f4ebf4b3906f76c82add794ea27f25d46ef74460190397"
+    },
+    {
+      "path": "spec/CODE_AUDIT.md",
+      "bytes": 27609,
+      "sha256": "da123bd5c871c9b7308be1ddc528d9049bba915abcd48810d2af4ba9f7794ac1"
+    },
+    {
+      "path": "spec/CODE_AUDIT_V2.md",
+      "bytes": 11717,
+      "sha256": "9d4c29145d353b6ffee47a3e9f9fadd0bdf0ba326ca6bea96e65721b46e73659"
+    },
+    {
+      "path": "spec/GREENFIELD_SPEC.md",
+      "bytes": 60110,
+      "sha256": "c46298d56fdff08bfb451b7175f77c2685396218932a69de41778981140ca635"
+    },
+    {
+      "path": "spec/IMPLEMENTATION_GUIDE.md",
+      "bytes": 23772,
+      "sha256": "2926e5669261c6a69cda44d528207460180ce07920b94f19e4f98fb394c0fbbe"
+    },
+    {
+      "path": "spec/PAPERS_SYNTHESIS.md",
+      "bytes": 34998,
+      "sha256": "5a843688d0f87f9bfbe19fd1b110c4eec58e1613bc6c77164d2a425553d2fa45"
+    },
+    {
+      "path": "spec/PLATFORM_SYNTHESIS.md",
+      "bytes": 14187,
+      "sha256": "3eddda36ea15386b582fe2a22f382d203e38fb86bdcf55c61ea53b37ade36487"
+    },
+    {
+      "path": "spec/REFERENCES.md",
+      "bytes": 11871,
+      "sha256": "fa43dffd3f8d759307a282f5cfa763d22a292958a72a6581495a1adff17f85e5"
+    },
+    {
+      "path": "spec/V2_SYSTEM_DESIGN.md",
+      "bytes": 30385,
+      "sha256": "04bb7707fe2dea8288be6ed436c61d956c81d46df11a77d6f7adbfd0e8df744a"
+    },
+    {
+      "path": "traceability/README.md",
+      "bytes": 6476,
+      "sha256": "5899a07bd74ba90a35a9f20bc72447f82fff1a75046ffff312ee4a19ae58f2e9"
+    },
+    {
+      "path": "traceability/code_inventory.json",
+      "bytes": 318563,
+      "sha256": "35f5052d4f4c19700805da6095dbc7f2c2b9dbd30f7783776f41520420e1a473"
+    },
+    {
+      "path": "traceability/document_qa.md",
+      "bytes": 1037,
+      "sha256": "46dcf8aaf4ac63855ac44798ad607f5611f5e7c4bab465139dc5b14495b3d5ea"
+    },
+    {
+      "path": "traceability/ledger_negative_input_repro.py",
+      "bytes": 1005,
+      "sha256": "1e1148647481bae8f47b6baf98409cb441ab4f39d55a221b3fc1951e1ef14959"
+    },
+    {
+      "path": "traceability/reason_records.json",
+      "bytes": 114537,
+      "sha256": "3c62c40b5e06067e17634cfdf6e51d7b7df290d6d8056ce9d8a633806c3ab145"
+    },
+    {
+      "path": "traceability/requirements_map.json",
+      "bytes": 67627,
+      "sha256": "31385fad5ee18f75dd61a9bc4600b59b527e863949c41d51c02fe872ba31cb7a"
+    },
+    {
+      "path": "traceability/review_resolution.md",
+      "bytes": 2139,
+      "sha256": "12b973d214d6d810fe4390f8cd811f554e42b0785212c19e24f09acb1c62c462"
+    },
+    {
+      "path": "traceability/symbol_inventory.json",
+      "bytes": 1308227,
+      "sha256": "ca8bd36403a6b69564c048ee3821f35f4bc09d111fcc2d7b2b73c3d19cfe6b49"
+    },
+    {
+      "path": "validate_package.py",
+      "bytes": 5064,
+      "sha256": "fa5b31a7a3ce8c0afce1642159414755d434877cf9996bd12befbcd02d9fc330"
+    }
+  ]
+}

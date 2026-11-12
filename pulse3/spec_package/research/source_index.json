@@ -1,0 +1,2305 @@
+[
+  {
+    "id": "A01",
+    "title": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "supports": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓"
+  },
+  {
+    "id": "A02",
+    "title": "官方说明ST 5%改10% 盘后固定价扩容",
+    "url": "https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20260424_10816474.shtml",
+    "supports": "官方说明ST 5%改10% 盘后固定价扩容"
+  },
+  {
+    "id": "A03",
+    "title": "深证上〔2026〕551号 2026-07-06生效",
+    "url": "https://investor.szse.cn/lawrules/rule/trade/t20260424_620190.html",
+    "supports": "深证上〔2026〕551号 2026-07-06生效"
+  },
+  {
+    "id": "A04",
+    "title": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "supports": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后"
+  },
+  {
+    "id": "A05",
+    "title": "现行交易时段 主板10% 创业板20%",
+    "url": "https://www.szse.cn/English/services/trading/tradOverview/",
+    "supports": "现行交易时段 主板10% 创业板20%"
+  },
+  {
+    "id": "A06",
+    "title": "沪市A股盘后固定价15:05–15:30",
+    "url": "https://one.sse.com.cn/onething/gptz/",
+    "supports": "沪市A股盘后固定价15:05–15:30"
+  },
+  {
+    "id": "A07",
+    "title": "北向实时买卖及总成交不再提供 季度持股披露",
+    "url": "https://www.hkex.com.hk/News/Market-Communications/2024/2404122news?sc_lang=en",
+    "supports": "北向实时买卖及总成交不再提供 季度持股披露"
+  },
+  {
+    "id": "A08",
+    "title": "2024披露调整实际生效日期",
+    "url": "https://www.hkex.com.hk/-/media/HKEX-Market/News/News-Release/2025/250227news/250227_FY-Results_e.pdf",
+    "supports": "2024披露调整实际生效日期"
+  },
+  {
+    "id": "A09",
+    "title": "L2包含逐笔/订单关联等 专网协议",
+    "url": "https://www.sseinfo.com/services/assortment/level2/",
+    "supports": "L2包含逐笔/订单关联等 专网协议"
+  },
+  {
+    "id": "A10",
+    "title": "news来源 最大1500条 需独立新闻权限",
+    "url": "https://tushare.pro/document/2?doc_id=143",
+    "supports": "news来源 最大1500条 需独立新闻权限"
+  },
+  {
+    "id": "A11",
+    "title": "积分与独立权限分离 分钟/公告/新闻非同一权限",
+    "url": "https://tushare.pro/document/1?doc_id=290",
+    "supports": "积分与独立权限分离 分钟/公告/新闻非同一权限"
+  },
+  {
+    "id": "A12",
+    "title": "2026发布日程 数据库更新与新闻首发有时差",
+    "url": "https://www.stats.gov.cn/sj/fbrc/bnxxfb/",
+    "supports": "2026发布日程 数据库更新与新闻首发有时差"
+  },
+  {
+    "id": "A13",
+    "title": "官方货币政策/讲话/统计RSS",
+    "url": "https://www.federalreserve.gov/feeds/feeds.htm",
+    "supports": "官方货币政策/讲话/统计RSS"
+  },
+  {
+    "id": "A14",
+    "title": "ALFRED当时已知版本 realtime_start/end",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/realtime_period.html",
+    "supports": "ALFRED当时已知版本 realtime_start/end"
+  },
+  {
+    "id": "A15",
+    "title": "FRED API key和参数",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/series.html",
+    "supports": "FRED API key和参数"
+  },
+  {
+    "id": "A16",
+    "title": "BLS官方HTTPS GET/POST JSON数据API",
+    "url": "https://www.bls.gov/audience/developers.htm",
+    "supports": "BLS官方HTTPS GET/POST JSON数据API"
+  },
+  {
+    "id": "A17",
+    "title": "BLS API限制和API可用延迟说明",
+    "url": "https://www.bls.gov/bls/api_features.htm",
+    "supports": "BLS API限制和API可用延迟说明"
+  },
+  {
+    "id": "A18",
+    "title": "EIA APIv2 免费key及接口结构",
+    "url": "https://www.eia.gov/opendata/documentation.php",
+    "supports": "EIA APIv2 免费key及接口结构"
+  },
+  {
+    "id": "A19",
+    "title": "EIA库存报告API可能滞后至两小时 秒级首发另有服务",
+    "url": "https://www.eia.gov/opendata/faqs.php",
+    "supports": "EIA库存报告API可能滞后至两小时 秒级首发另有服务"
+  },
+  {
+    "id": "A20",
+    "title": "GDELT2.0 65语言 15分钟更新",
+    "url": "https://gdeltproject.org/data.html",
+    "supports": "GDELT2.0 65语言 15分钟更新"
+  },
+  {
+    "id": "A21",
+    "title": "YouTube官方API配额机制",
+    "url": "https://developers.google.com/youtube/data/getting-started",
+    "supports": "YouTube官方API配额机制"
+  },
+  {
+    "id": "A22",
+    "title": "Reddit数据API须批准/认证 商业需对应权限",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/14945211791892-Developer-Platform-Accessing-Reddit-Data",
+    "supports": "Reddit数据API须批准/认证 商业需对应权限"
+  },
+  {
+    "id": "A23",
+    "title": "Reddit开发者批准和使用条件",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/16471395473812-Moderation-Bots-Tooling",
+    "supports": "Reddit开发者批准和使用条件"
+  },
+  {
+    "id": "A24",
+    "title": "巨潮公开数据/API/商城入口",
+    "url": "https://www.cninfo.com.cn/new/index?lang=en",
+    "supports": "巨潮公开数据/API/商城入口"
+  },
+  {
+    "id": "A25",
+    "title": "抖音视频搜索接口与scope",
+    "url": "https://developer.open-douyin.com/docs/resource/zh-CN/dop/develop/openapi/douyin-search-capability/",
+    "supports": "抖音视频搜索接口与scope"
+  },
+  {
+    "id": "A26",
+    "title": "抖音搜索能力页面仍标实验不对外开放",
+    "url": "https://partner.open-douyin.com/docs/resource/zh-CN/dop/ability/search-management/item-search",
+    "supports": "抖音搜索能力页面仍标实验不对外开放"
+  },
+  {
+    "id": "A27",
+    "title": "CFFEX 2020沪深300股指期货交易细则 历史背景",
+    "url": "https://www.cffex.com.cn/u/cms/www/202003/27165505w3j5.pdf",
+    "supports": "仅支持历史规则背景；2026现行合约日历和规则仍须另行核实"
+  },
+  {
+    "id": "A28",
+    "title": "财政部政策发布和政策解读栏目",
+    "url": "https://www.mof.gov.cn/zhengwuxinxi/",
+    "supports": "财政部政策发布和政策解读栏目"
+  },
+  {
+    "id": "A29",
+    "title": "发改委政策通知栏目",
+    "url": "https://www.ndrc.gov.cn/xxgk/zcfb/tz/wap_index.html",
+    "supports": "发改委政策通知栏目"
+  },
+  {
+    "id": "A30",
+    "title": "BLS发布日历 美国东部时区 可订阅ICS",
+    "url": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+    "supports": "BLS发布日历 美国东部时区 可订阅ICS"
+  },
+  {
+    "id": "T01",
+    "title": "Temporal Workflow Definition",
+    "url": "https://docs.temporal.io/workflow-definition",
+    "supports": "Workflow须确定性；外部API/LLM/DB交互应放Activity"
+  },
+  {
+    "id": "T02",
+    "title": "Temporal Activity Definition",
+    "url": "https://docs.temporal.io/activity-definition",
+    "supports": "Activity会重试、多次执行；幂等由业务端实现"
+  },
+  {
+    "id": "T03",
+    "title": "NATS JetStream",
+    "url": "https://docs.nats.io/concepts/jetstream",
+    "supports": "持久化、回放、至少一次交付、消费者独立进度"
+  },
+  {
+    "id": "T04",
+    "title": "Polars Lazy API",
+    "url": "https://docs.pola.rs/user-guide/lazy/using/",
+    "supports": "整体查询优化、流式与schema检查"
+  },
+  {
+    "id": "T05",
+    "title": "DuckDB Parquet",
+    "url": "https://duckdb.org/docs/stable/data/parquet/overview",
+    "supports": "直接读写Parquet，按列/过滤扫描"
+  },
+  {
+    "id": "T06",
+    "title": "TradingView Product Comparison",
+    "url": "https://www.tradingview.com/charting-library-docs/latest/getting_started/product-comparison/",
+    "supports": "Lightweight Charts不自带行情或指标"
+  },
+  {
+    "id": "T07",
+    "title": "Qlib PIT",
+    "url": "https://qlib.readthedocs.io/en/latest/advanced/PIT.html",
+    "supports": "修订财报版本的时点读取；当前主要季/年因子"
+  },
+  {
+    "id": "T08",
+    "title": "Bailey & López de Prado DSR paper",
+    "url": "https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf",
+    "supports": "多重试验选择偏差与非正态修正"
+  },
+  {
+    "id": "T09",
+    "title": "Bailey et al PBO paper",
+    "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+    "supports": "回测过拟合概率与CSCV方法"
+  },
+  {
+    "id": "T10",
+    "title": "Microsoft Qlib",
+    "url": "https://github.com/microsoft/qlib",
+    "supports": "ML量化研究管线与模型/数据/回测组织"
+  },
+  {
+    "id": "T11",
+    "title": "Microsoft RD-Agent",
+    "url": "https://github.com/microsoft/RD-Agent",
+    "supports": "因子/模型提出、实现与联合研究流程"
+  },
+  {
+    "id": "T12",
+    "title": "vectorbt",
+    "url": "https://vectorbt.dev/",
+    "supports": "数组化批量策略与参数研究；注意免费和PRO能力差别"
+  },
+  {
+    "id": "T13",
+    "title": "LEAN Trade Fills",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+    "supports": "fill与slippage职责；默认完全成交、部分成交自定义"
+  },
+  {
+    "id": "T14",
+    "title": "NautilusTrader Backtesting",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/",
+    "supports": "回测共享核心组件，流数据驱动"
+  },
+  {
+    "id": "T15",
+    "title": "NautilusTrader Fill Models",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/fill-models/",
+    "supports": "book type、触价成交概率、滑点、流动性消耗约束"
+  },
+  {
+    "id": "T16",
+    "title": "FinRL Training Testing Trading",
+    "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/master/docs/source/finrl_meta/overview.rst",
+    "supports": "DRL训练、测试、交易的阶段分离"
+  },
+  {
+    "id": "T17",
+    "title": "MCP Tools Specification",
+    "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx",
+    "supports": "工具定义有inputSchema/outputSchema，稳定工具顺序有利缓存"
+  },
+  {
+    "id": "T18",
+    "title": "A2A Specification",
+    "url": "https://github.com/a2aproject/A2A/blob/main/docs/specification.md",
+    "supports": "Agent Card、任务、跨独立Agent系统交互"
+  },
+  {
+    "id": "T19",
+    "title": "QuantConnect Research Guide",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/research-guide",
+    "supports": "财务发布日期、复权价格、动态股票池与生存偏差"
+  },
+  {
+    "id": "T20",
+    "title": "PostgreSQL Transaction Isolation",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "supports": "事务隔离含义；作为交易与版本状态库的基础"
+  },
+  {
+    "id": "X01",
+    "title": "NATS JetStream事件持久化与独立消费者",
+    "url": "https://docs.nats.io/concepts/jetstream",
+    "supports": "区分Core NATS与JetStream；独立消费游标、至少一次投递和回放。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X02",
+    "title": "DuckLake官方FAQ",
+    "url": "https://ducklake.select/faq",
+    "supports": "2026年1.0生产可用声明、多实例共享Parquet和SQL目录；业务表不提供主外键约束。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X03",
+    "title": "DuckLake事务与快照",
+    "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/transactions",
+    "supports": "数据及目录快照隔离、多表事务；不能推导与业务数据库天然跨库原子。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X04",
+    "title": "上交所2026交易规则发布与正式附件",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "supports": "2026年7月6日生效，按品种与规则版本处理交易。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X05",
+    "title": "深交所2026交易规则正式PDF",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "supports": "交收前卖出限制及回转例外、会话和盘后交易规则。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X06",
+    "title": "恒生A股通服务常见问题",
+    "url": "https://www.hangseng.com/zh-cn/investment/securities-services/stock-connect/faq-stock-connect/",
+    "supports": "该服务未交收卖款不可再买A股；只用于特定渠道，不能推广全部账户。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X07",
+    "title": "东方财富证券投资者教育基础知识",
+    "url": "https://edu.18.cn/CaiFuShuYuan/JiChuZhiShi",
+    "supports": "官方索引片段说明国内卖出款可交易使用与可取不同；正文打开遇重定向，接入账户时仍须核对券商政策。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP01",
+    "title": "AlphaBench: Benchmarking Large Language Models in Formulaic Alpha Factor Mining",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4f3820576130a8f796ddbf204c841487-Abstract-Conference.html",
+    "supports": "把因子生成、因子质量判断、迭代搜索分开评测；以可执行金融 DSL 和统一回测比较提示、推理配置及搜索范式。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP02",
+    "title": "Reasoning on Time-Series for Financial Technical Analysis",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/68c1b9784d982fa5575bb45ace7bd64e-Abstract-Conference.html",
+    "supports": "将价格序列转为文字标注，训练语言推理，再把推理属性作为时间序列骨干的条件；推理奖励与预测误差相关。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP03",
+    "title": "FinSearchComp: Towards a Realistic, Expert-Level Evaluation of Financial Search and Reasoning",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d42358702dff82e1436550a05ade260-Abstract-Conference.html",
+    "supports": "用实时数据获取、简单历史检索、复杂历史调查三类任务测金融搜索与推理。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP04",
+    "title": "AlphaSAGE: Structure-Aware Alpha Mining via GFlowNets for Robust Exploration",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/06115011841a8d500050261c0ac4b1e4-Abstract-Conference.html",
+    "supports": "RGCN 编码因子表达式图，GFlowNet 探索多个有价值表达式区域，密集多目标奖励同时考虑预测与多样性。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP05",
+    "title": "AlphaMaster: Dual-Chain Feedback for Scalable and Diverse Alpha Factor Discovery",
+    "url": "https://doi.org/10.1145/3770855.3818120",
+    "supports": "生成链与优化链分工，联合 RL、GFlowNet、LLM 符号生成和 GP；用相关性约束减少同质因子。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP06",
+    "title": "FactorMiner: A Self-Evolving Agent with Skills and Experience Memory for Financial Alpha Discovery",
+    "url": "https://kdd2026.kdd.org/papers/",
+    "supports": "可执行研究技能加成功/失败经验库；快速 IC 筛选、池内相关性检查、批内去重、完整验证和近邻因子替换。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP07",
+    "title": "Fin-RATE: A Real-world Financial Analytics and Tracking Evaluation Benchmark for LLMs on SEC Filings",
+    "url": "https://doi.org/10.1145/3770855.3817528",
+    "supports": "区分单文档细节推理、跨企业比较、跨期追踪，并把检索、实体、时间与推理错误拆开。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP08",
+    "title": "FinRAQ: Financial News Reasoning through Importance Ranking and Socratic Questioning",
+    "url": "https://aclanthology.org/2026.findings-emnlp.1432/",
+    "supports": "NewsRank 以时间图的语义/时间双通道聚合新闻重要性；多空视角使用结构化 Socratic 提问相互检查假设。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP09",
+    "title": "FinEvo: Financial Language Agents Shape the Markets That Evaluate Them",
+    "url": "https://aclanthology.org/2026.finnlp-1.5/",
+    "supports": "把新闻驱动的异质金融 Agent 放入连续双向拍卖市场，并通过资本重分配使参与者种群变化。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP10",
+    "title": "From Knowing to Doing: A Memory-Controlled Benchmark for LLM Trading Agents on Stock Markets",
+    "url": "https://arxiv.org/abs/2605.28359",
+    "supports": "股票标识和日期匿名化控制历史记忆，再用 Barra 风格归因区分市场、风格和选股贡献。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP11",
+    "title": "AlphaForgeBench: Benchmarking End-to-End Trading Strategy Design with Large Language Models",
+    "url": "https://kdd2026.kdd.org/papers/",
+    "supports": "把可执行因子与组合策略代码作为研究结果，固定执行环境来区分研究能力与逐次动作波动。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP12",
+    "title": "AgenticFinBench: Benchmarking Financial Agents on Diverse Tasks from Real-World Requests",
+    "url": "https://arxiv.org/abs/2611.04813",
+    "supports": "问题专属 rubric 加两阶段原子声明核验，区分缺少轨迹证据与被外部证据反驳。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP13",
+    "title": "Vector-Quantized Discrete Latent Factors Meet Financial Priors: Dynamic Cross-Sectional Stock Ranking Prediction for Portfolio Construction",
+    "url": "https://ijcai.org/proceedings/2026/492",
+    "supports": "金融先验因子与 VQ 离散潜变量结合，结构条件 MoE 动态生成因子载荷。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP14",
+    "title": "TransAlpha: Lightweight Design Empowers Stock Return Forecasting",
+    "url": "https://ijcai.org/proceedings/2026/580",
+    "supports": "横截面去噪、时间注意力门控、聚合与混合损失，降低日内高维因子预测计算量。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP15",
+    "title": "Kronos: A Foundation Model for the Language of Financial Markets",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/39730",
+    "supports": "把金融 K 线离散为同时表达价量的 token，使用自回归预训练支撑价格、波动与生成任务。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP16",
+    "title": "FinRpt: Dataset, Evaluation System and LLM-based Multi-agent Framework for Equity Research Report Generation",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/37014",
+    "supports": "聚合公司、财报、公告、新闻及行情等资料生成研究报告，配套报告评价与专用 Agent 训练。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP17",
+    "title": "Trade in Minutes! Rationality-Driven Agentic System for Quantitative Financial Trading",
+    "url": "https://iclr.cc/Downloads/2026",
+    "supports": "语义分析、编程与数学推理 Agent 生成并优化交易程序，降低每次执行对连续大模型推理的依赖。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP18",
+    "title": "Joint-Embedding Predictive Learning of Latent Market States in U.S. Equities",
+    "url": "https://proceedings.mlr.press/v306/mahns26a.html",
+    "supports": "把每日无序资产特征编码为一组因子 token，时序 JEPA 学习紧凑市场状态。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP19",
+    "title": "Emergence of Biased Consensus in Multi-Agent LLM Debates",
+    "url": "https://proceedings.mlr.press/v306/okawa26a.html",
+    "supports": "用受控实验与社会动力学模型研究偏差、从众和采样噪声怎样形成多 Agent 共识，并测试异质性。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP20",
+    "title": "Market Regime Council for Dynamic Credit Assignment in Multi-Agent LLM Decision Systems",
+    "url": "https://neurips.cc/Downloads/2026",
+    "supports": "三个专家的单体/双体/全体输出用于 Shapley 贡献估计，配合指数加权历史、贝叶斯冷启动和状态权重。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP21",
+    "title": "FinAuditing: A Financial Taxonomy-Structured Multi-Document Benchmark for Evaluating LLMs",
+    "url": "https://doi.org/10.1145/3805712.3808578",
+    "supports": "用 XBRL/会计分类结构评测语义匹配、关系抽取和数值一致性，跨文档核对财务事实。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP22",
+    "title": "Data-Driven Function Calling Improvements in Large Language Model for Online Financial QA",
+    "url": "https://www2026.thewebconf.org/accepted/industry",
+    "supports": "从真实查询构建工具调用样本，用 AugFC 补参数分布盲点，再 SFT/RL 训练函数选择与参数提取。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP23",
+    "title": "Can ChatGPT forecast stock price movements? Return predictability and large language models",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0304405X26001066",
+    "supports": "用 LLM 新闻标题评分研究初始价格反应与后续漂移，并分析模型规模、消息类型和收益随普及变化。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP01",
+    "title": "AlphaQuanter: An End-to-End Tool-Augmented Agentic Reinforcement Learning Framework for Stock Trading",
+    "url": "https://aclanthology.org/2026.findings-acl.456/",
+    "supports": "以 GRPO 训练单个工具调用型语言模型，按需查询行情、基本面、新闻及宏观工具后输出日频买入/卖出/持有。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP02",
+    "title": "STABLE: Shift-Tolerant Allocation via Black-Litterman Using Conditional Diffusion Estimates",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d4dbc5c955c5d273eed12d565335068-Abstract-Conference.html",
+    "supports": "宏观与个股条件扩散生成收益轨迹，估计联合收益分布，再将均值/协方差信息送入 Black–Litterman 配置。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP03",
+    "title": "Decision-focused Sparse Tangent Portfolio Optimization",
+    "url": "https://proceedings.mlr.press/v306/jeon26a.html",
+    "supports": "将可微稀疏 Sharpe 优化层接入预测模型，以决策损失与预测误差混合训练，并用可微 top-k 选择持股。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP04",
+    "title": "A Linearly Convergent Proximal Subgradient Algorithm for Sparse Portfolio Optimization with Transaction Cost",
+    "url": "https://proceedings.mlr.press/v306/yao26s.html",
+    "supports": "以稀疏持股与交易成本构造优化问题，采用差分凸松弛和近端次梯度算法；理论给出特定条件下的线性收敛。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP05",
+    "title": "Regime-Adaptive Continual Learning for Portfolio Management",
+    "url": "https://arxiv.org/abs/2606.00143",
+    "supports": "ReCAP 用在线状态变化检测器维护市场阶段，保存 PPO 的策略参数增量；门控混合阶段经验，适配新阶段并合并相似增量。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP06",
+    "title": "FineFT: Efficient and Risk-Aware Ensemble Reinforcement Learning for Futures Trading",
+    "url": "https://arxiv.org/abs/2512.23773",
+    "supports": "以选择性 TD 更新训练专家，筛选各状态中表现较好的策略，再用能力/分布外状态路由决定采用哪个专家。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP07",
+    "title": "Controllable Financial Market Generation with Diffusion Guided Meta Agent",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/37009",
+    "supports": "条件扩散生成中间价收益和订单到达参数，再由带经济先验的元 Agent 生成订单流。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP08",
+    "title": "Dynamic Action Space Reinforcement Learning for Optimal Trading Execution",
+    "url": "https://ifaamas.org/Proceedings/aamas2026/pdfs/GFLB4392.pdf",
+    "supports": "根据当前市场状态缩减执行动作集合，结合自适应探索与经验回放重整，学习大额卖出母单的拆分执行。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP09",
+    "title": "Reinforcement learning for continuous-time optimal execution: actor–critic algorithm and error analysis",
+    "url": "https://link.springer.com/article/10.1007/s00780-026-00589-5",
+    "supports": "在熵正则的均值—二次变差执行控制下构造可解析的策略/价值参数化，通过 actor–critic 与重校准学习执行路径。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP10",
+    "title": "LOB-Impact Benchmark: Emergent Market Impact in Generative Limit Order Book Models",
+    "url": "https://arxiv.org/abs/2610.27100",
+    "supports": "通过向生成订单簿注入母单，并比较可见/隐藏订单干预，测量自身市场冲击和执行后的恢复。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP11",
+    "title": "Can We Stop the Backtest Yet? Anytime-Valid Promotion Tests for Adaptive Financial Research Agents",
+    "url": "https://arxiv.org/abs/2611.03384",
+    "supports": "PROMOTE 给新候选登记不可返还的检验预算，只用出生后净收益的有界分数更新 e-process，以控制持续搜索中的错误晋级概率。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP12",
+    "title": "Realistic Market Impact Modeling for Reinforcement Learning Trading Environments",
+    "url": "https://arxiv.org/abs/2603.29086",
+    "supports": "MACE 以可替换执行成本模块比较固定比例费用、Almgren–Chriss 类冲击和衰减冲击，记录交易参与率与换手。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP13",
+    "title": "Machine Learning and the Implementable Efficient Frontier",
+    "url": "https://academic.oup.com/rfs/article/39/10/3035/8524346",
+    "supports": "把机器学习收益预测放入含交易成本与多期持有决策的组合问题，评价可实施有效前沿及经济意义上的特征贡献。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP14",
+    "title": "Volatility Harvesting or Inventory Risk? Market-Wide Evidence on Grid Trading in China's Equity ETF Market",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7429819",
+    "supports": "将网格交易和相同初始风险敞口的静态组合比较，重点区分波动收益与额外库存风险。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP15",
+    "title": "Decoupling Grid Triggers from Trade Decisions: A Constrained Event-Driven Reinforcement Learning Architecture for ETF Trading",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7313639",
+    "supports": "EDGMGT 将网格越界作为事件，之后由有动作掩码的 PPO 选择买/卖/持有；不要求每次越界都成交。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV01",
+    "title": "多图同步",
+    "url": "https://www.tradingview.com/support/solutions/43000629992-how-to-sync-the-charts-of-my-layout/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV02",
+    "title": "布局保存、事件、图形同步",
+    "url": "https://www.tradingview.com/support/solutions/43000746975-tradingview-layouts-a-quick-guide/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV03",
+    "title": "Pine Screener 功能及限制",
+    "url": "https://www.tradingview.com/support/solutions/43000742436-tradingview-pine-screener-key-features-and-requirements/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV04",
+    "title": "Pine v6 策略与模拟成交",
+    "url": "https://www.tradingview.com/pine-script-docs/concepts/strategies/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV05",
+    "title": "Pine 策略 FAQ",
+    "url": "https://www.tradingview.com/pine-script-docs/faq/strategies",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV06",
+    "title": "历史回放交易",
+    "url": "https://www.tradingview.com/support/solutions/43000691889-learn-to-trade-on-historical-data/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV07",
+    "title": "Pine 警报 FAQ",
+    "url": "https://tradingview.com/pine-script-docs/faq/alerts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV08",
+    "title": "Webhook 警报",
+    "url": "https://www.tradingview.com/support/solutions/43000529348-how-to-configure-webhook-alerts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV09",
+    "title": "投资组合",
+    "url": "https://www.tradingview.com/support/solutions/43000760937-tradingview-portfolios-track-your-assets-know-your-trades/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV10",
+    "title": "自选列表",
+    "url": "https://www.tradingview.com/support/solutions/43000745825-mastering-the-tradingview-watchlists/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV11",
+    "title": "Supercharts 工作区",
+    "url": "https://www.tradingview.com/support/solutions/43000746464-getting-started-with-supercharts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TS01",
+    "title": "界面、MTFA、规则共用与扫描",
+    "url": "https://help.trendspider.com/kb/interface/interface-overview",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TS02",
+    "title": "产品功能",
+    "url": "https://trendspider.com/product/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC01",
+    "title": "Algorithm Framework",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/overview",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC02",
+    "title": "多 Alpha 与 Insight",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/alpha/key-concepts",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC03",
+    "title": "算法引擎",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/algorithm-engine",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC04",
+    "title": "实盘关键概念",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/key-concepts",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB01",
+    "title": "Mosaic 布局",
+    "url": "https://www.ibkrguides.com/traderworkstation/mosaic-layout.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB02",
+    "title": "Risk Navigator",
+    "url": "https://www.ibkrguides.com/traderworkstation/open-risk-navigator.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB03",
+    "title": "API 条件订单类型",
+    "url": "https://www.interactivebrokers.com/docs/tws-api/protobuf/order-condition",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB04",
+    "title": "颜色联动面板",
+    "url": "https://ibkrguides.com/traderworkstation/color-grouping-linked-panels.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD01",
+    "title": "公式分类",
+    "url": "https://help.tdx.com.cn/gspt/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD02",
+    "title": "条件选股",
+    "url": "https://help.tdx.com.cn/gspt/docs/markdown/tdxgs-gsxt/tdxgs-1d1kngjqe0gck.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD03",
+    "title": "V7.66 产品更新",
+    "url": "https://www.tdx.com.cn/article/soft_7_66.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD04",
+    "title": "量化通用接口",
+    "url": "https://help.tdx.com.cn/quant/docs/markdown/ctx.stock.md/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IF01",
+    "title": "iFinD 数据接口",
+    "url": "https://quantapi.5ifind.cn/gwstatic/static/ds_web/quantapi-web/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IF02",
+    "title": "数据接口与数据库差别",
+    "url": "https://quantapi.10jqka.com.cn/gwstatic/static/ds_web/quantapi-web/help-center/faq.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH01",
+    "title": "数据量化接口目录",
+    "url": "https://quantapi.eastmoney.com/Manual/CSharp?from=client",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH02",
+    "title": "资讯函数",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Csharp.html?_=639277105644042728",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH03",
+    "title": "交易日历",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Python.html?_=637077181105957032",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH04",
+    "title": "条件选股接口",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Java.pdf?_=637592694454980342",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH05",
+    "title": "数据浏览器",
+    "url": "https://choice.eastmoney.com/School/Help",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU01",
+    "title": "网格策略教程",
+    "url": "https://www.futunn.com/learn/grid-trading-strategy",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU02",
+    "title": "交易 API 总览",
+    "url": "https://openapi.futunn.com/futu-api-doc/trade/overview.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU03",
+    "title": "行情 API 总览",
+    "url": "https://openapi.futunn.com/futu-api-doc/quote/overview.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU04",
+    "title": "行情订阅与异步回调",
+    "url": "https://openapi.futunn.com/futu-api-doc/qa/quote.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU05",
+    "title": "实时 K 线参数",
+    "url": "https://openapi.futunn.com/futu-api-doc/quote/get-kl.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI01",
+    "title": "数据服务",
+    "url": "https://www.wind.com.cn/portal/zh/WDS/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI02",
+    "title": "ClientAPI",
+    "url": "https://www.wind.com.cn/portal/zh/ClientApi/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI03",
+    "title": "金融终端",
+    "url": "https://www.wind.com.cn/portal/zh/WFT/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "XQ01",
+    "title": "雪球组合 FAQ",
+    "url": "https://xueqiu.com/p/faq",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "XQ02",
+    "title": "官方功能 FAQ",
+    "url": "https://www.xueqiu.com/about/faq",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "DB01",
+    "title": "PostgreSQL Table Partitioning",
+    "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html",
+    "supports": "Partition pruning depends on partition bounds and query predicates; Partitioned-table unique/primary constraints must include partition key columns; Partition count and application workload affect the tradeoff; partitioning is not an unconditional speedup",
+    "read_depth": "Overview, declarative partitioning, limitations, pruning and best-practice sections.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB02",
+    "title": "PostgreSQL Transaction Isolation",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "supports": "Read Committed statements may see different committed snapshots within one transaction; Repeatable Read provides a stable transaction snapshot, and serialization conflicts require application handling; Sequence increments are visible independently of transaction rollback and cannot establish commit order",
+    "read_depth": "Isolation comparison, sequence caveat, Read Committed/Repeatable Read/Serializable behavior.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB03",
+    "title": "PostgreSQL CREATE TABLE",
+    "url": "https://www.postgresql.org/docs/current/sql-createtable.html",
+    "supports": "Column and table constraints have distinct semantics; Foreign keys and unique constraints enforce declared relations, not arbitrary JSON payload or PIT meanings",
+    "read_depth": "Constraint and partition grammar reference used for schema design.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB04",
+    "title": "ClickHouse MergeTree",
+    "url": "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree",
+    "supports": "MergeTree sorting and sparse index design is workload-dependent; Primary keys do not impose row uniqueness; TTL processing is tied to background processing and is not an instantaneous application guarantee",
+    "read_depth": "Index, sorting/primary key and TTL sections.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB05",
+    "title": "ClickHouse ReplacingMergeTree",
+    "url": "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replacingmergetree",
+    "supports": "Replacement/deduplication occurs through merges and is not immediate uniqueness; ORDER BY determines duplicate identity; a version column can select a revision",
+    "read_depth": "Deduplication, version and merge behavior.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB06",
+    "title": "DuckLake Transactions",
+    "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/transactions",
+    "supports": "DuckLake has transactional snapshot semantics for its own catalog/data operations",
+    "read_depth": "Transactions and snapshot isolation discussion.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB07",
+    "title": "DuckLake Snapshots",
+    "url": "https://ducklake.select/docs/stable/duckdb/usage/snapshots",
+    "supports": "Committed change sets create catalog snapshots; Snapshots expose ID, commit metadata and optional extra information; Catalog identity must accompany a snapshot identifier in a multi-catalog application",
+    "read_depth": "Snapshot listing, current/last committed snapshot functions and commit-extra-info example.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB08",
+    "title": "NATS JetStream pull consumers",
+    "url": "https://docs.nats.io/learn/jetstream/pull-consumers",
+    "supports": "Pull consumers support explicitly acknowledged batch fetching and continuously driven pull consumption; Fetch size, timeout and consumer bounds must be set by application workload",
+    "read_depth": "Pull patterns, fetch/consume examples and bounded batch discussion.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB09",
+    "title": "Tushare daily",
+    "url": "https://tushare.pro/document/2?doc_id=27",
+    "supports": "daily vol is in hands and amount is in thousand yuan; pre_close is described as an ex-rights reference price, and pct_chg is in percent; Daily raw/unadjusted data and postclose fields have endpoint-specific publication/coverage meanings",
+    "read_depth": "Input/output field table, unadjusted/availability notes and postclose optional fields.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB10",
+    "title": "Tushare rt_k",
+    "url": "https://tushare.pro/document/2?doc_id=372",
+    "supports": "rt_k vol is in shares and amount is in yuan, unlike daily; The endpoint exposes cumulative intraday fields and a trade count; optional trade_time may be absent",
+    "read_depth": "Endpoint description, permission note and output fields.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB11",
+    "title": "AKShare stock_zh_a_hist",
+    "url": "https://akshare.akfamily.xyz/data/stock/stock_quote.html",
+    "supports": "Chinese field 成交量 is in hands and 成交额 in yuan; The adjust parameter distinguishes raw/forward-adjusted/backward-adjusted outputs; AKShare documents Eastmoney as this endpoint underlying source",
+    "read_depth": "stock_zh_a_hist input/output tables and example under stock quote documentation.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB12",
+    "title": "OpenAPI Specification directory",
+    "url": "https://spec.openapis.org/oas/",
+    "supports": "The official specification has multiple published versions; a contract must select an explicit supported version",
+    "read_depth": "Official version directory.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB13",
+    "title": "Apache Arrow Columnar Format",
+    "url": "https://arrow.apache.org/docs/format/Columnar.html",
+    "supports": "Arrow defines a language-independent typed columnar representation, including decimal and timestamp types",
+    "read_depth": "Format overview and type/layout definitions.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "DB15",
+    "title": "DuckLake Conflict Resolution",
+    "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/conflict_resolution",
+    "supports": "Concurrent metadata/data operations can require retries or conflict handling rather than unconditional success",
+    "read_depth": "Conflict-resolution documentation.",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "database/evidence.json"
+  },
+  {
+    "id": "EXS01",
+    "title": "IFRS 9 Financial Instruments — official issued-standard summary",
+    "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+    "supports": "IFRS 9 concerns recognition/classification/measurement of financial instruments; Initial transaction-cost treatment depends on classification; FVTPL is an exception to capitalizing directly attributable transaction costs",
+    "read_depth": "Public official summary; no claim to have read licensed full standard",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS02",
+    "title": "IFRS 13 Fair Value Measurement — official issued-standard summary",
+    "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-13-fair-value-measurement/",
+    "supports": "Fair value uses an orderly-transaction exit-price concept and a measurement framework",
+    "read_depth": "Public official summary",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS03",
+    "title": "GIPS Standards Handbook for Firms",
+    "url": "https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/",
+    "supports": "Trade-date accounting values transactions before cash settlement; Transaction costs are included even in gross-of-fees returns; TWR treatment should neutralize external capital flows with consistent methodology",
+    "read_depth": "Targeted full-page sections on trade-date accounting, transaction costs, valuation, external flows and TWR; not a claim of complete 9,000-line handbook reading",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS04",
+    "title": "2026 CFA curriculum: Overview of the Global Investment Performance Standards",
+    "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards",
+    "supports": "The 2026 refresher explains the 2020 GIPS edition; Return calculation, cash and fees, valuation and verification are distinct GIPS subjects",
+    "read_depth": "Official public introduction, learning outcomes and summary; full paid reading not read",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS05",
+    "title": "FIX Order State Changes — FIX Latest as of EP258 July 2020",
+    "url": "https://www.fixtrading.org/wp-content/uploads/download-manager-files/Order-State-Changes.pdf",
+    "supports": "A pending cancellation can overlap further executions; Order state uses cumulative and remaining quantities; Trade corrections/cancellations reference prior execution identity",
+    "read_depth": "Official 56-page PDF targeted state-transition examples: pending cancel/fills/cancel confirmation/trade correct-cancel",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS06",
+    "title": "关于发布《上海证券交易所交易规则（2026年修订）》的通知",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "supports": "2026 revised rules take effect 2026-07-06 and replace the 2023 edition; Notice separately identifies provisions whose implementation remains deferred",
+    "read_depth": "Official notice page and attachment listing; DOCX body and all deferred clauses not exhaustively read",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS07",
+    "title": "深圳证券交易所交易规则（2026年修订）",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "supports": "Securities generally cannot be resold before settlement except permitted revolving-trading instruments; Price/time priority and distinct auction/continuous matching apply; Unfilled quantity/cancellation confirmation require explicit handling; Mainboard and ChiNext price-limit profiles differ and include exceptions; Ex-right/ex-dividend reference pricing has explicit rules; Effective date is 2026-07-06",
+    "read_depth": "Official PDF targeted clauses 3.1.4, 3.2.6–3.2.7, 3.3.13, 3.3.21, 3.4.2–3.4.6, 4.4 and 10.9",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS08",
+    "title": "GIPS Q&A: external cash flow clarification",
+    "url": "https://www.gipsstandards.org/qadatabase/4807/",
+    "supports": "External flows are capital entering/exiting a portfolio; Income receipts and transaction costs are not external flows; Fee/expense treatment differs by gross-of-fees versus net-of-fees presentation and must be declared",
+    "read_depth": "Full substantive FAQ, current status",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS09",
+    "title": "上海证券交易所收费一览表（2026年1月）",
+    "url": "https://www.sse.com.cn/services/tradingservice/charge/ssecharge/",
+    "supports": "A-share competitive-auction handling fee is 0.00341% of consideration in each direction in the shown schedule; The exchange charges members/other specified participants; this is not the complete client commission",
+    "read_depth": "Official current fee table, A-share exchange handling fee rows and payer column",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS10",
+    "title": "深交所收费及代收税费标准（2026年1月）",
+    "url": "https://www.szse.cn/marketServices/deal/payFees/",
+    "supports": "Search-exposed official table lists A-share handling fee 0.0341 per mille, equivalent to SSE 0.00341%; Schedule distinguishes exchange handling and regulatory charges",
+    "read_depth": "Official-domain search result with detailed fee table; direct open timed out (turn155view1)",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "EXS11",
+    "title": "上海证券交易所 股票投资一件事 — 交易收费说明",
+    "url": "https://one.sse.com.cn/onething/gptz/",
+    "supports": "Guide separately explains stamp tax, regulatory/exchange fees, transfer fee and broker commission; Guide explains exchange/regulatory charges may be contained in broker commission",
+    "read_depth": "Official investor guide fee section (also exposed in official search result turn154search5)",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "execution/evidence.json"
+  },
+  {
+    "id": "NS01",
+    "title": "新华社供稿技术方式",
+    "url": "https://www.xinhuanet.com/xinhuashe/ggjs.htm",
+    "supports": "新华社官方列出 API、RSS、FTP push/download、Email 等供稿方式; 文档提到 XML、CNML、NewsML 等格式和稿件更正/撤回相关服务",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS02",
+    "title": "中经社数据服务",
+    "url": "https://www.ceis.cn/xzy/detail/20210705/3209023_1.html",
+    "supports": "官方数据服务介绍涵盖资讯、证券、宏观、行业与定制数据服务",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS03",
+    "title": "证券时报实时财经资讯库（机构版）挂牌",
+    "url": "https://stcn.com/article/detail/1450627.html",
+    "supports": "证券时报官方报道其实时财经资讯库机构产品在深圳数据交易所挂牌; 报道描述原创财经资讯以及展示、加工、舆情监测、模型训练等应用场景",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS04",
+    "title": "上海证券报数据产品挂牌",
+    "url": "https://paper.cnstock.com/html/2024-01/17/content_1867502.htm",
+    "supports": "上证报官方报道其数据产品在上海数据交易所挂牌",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS05",
+    "title": "财联社版权与服务介绍",
+    "url": "https://www.cls.cn/our?nav=copyright",
+    "supports": "官方页面介绍 7×24 财经电报及其内容授权",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS06",
+    "title": "东方财富终端常见问题：资金流向",
+    "url": "https://emdesk.eastmoney.com/pc_activity/Pages/VIPTrade/pages/answer.html",
+    "supports": "FAQ 说明其介绍的实时/盘后个股资金流向由各软件自行计算，算法差异会带来不同结果; 大单分类可能依据原始大额委托归属，不能单看成交金额; 主力净流入的 FAQ 公式组合大单与超大单流入流出",
+    "read_depth": "questions_33_to_37",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS07",
+    "title": "东方财富人气榜规则与刷新口径冲突",
+    "url": "https://guba.eastmoney.com/rank/",
+    "supports": "官方索引规则描述访问、关注、社区互动构成人气; 同 URL 官方索引写每 2 分钟，直接打开页脚写每 10 分钟，粉丝指标写每小时",
+    "read_depth": "direct_page_footer_and_official_indexed_rules",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS08",
+    "title": "雪球官方 FAQ 与服务规则",
+    "url": "https://www.xueqiu.com/about/faq",
+    "supports": "官方资料介绍投资讨论社区及其服务规则; 服务条款对未经授权的自动化采集和绕过访问限制设有约束",
+    "read_depth": "full_relevant_service_and_community_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS09",
+    "title": "上交所沪港通交易信息披露调整通知",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/global/hkexsc/c/c_20250613_10781806.shtml",
+    "supports": "页面标示上证发〔2024〕106号现行有效，相关调整自 2024-08-19 起实施; 沪股通盘后披露成交总额、总笔数等及活跃证券总额；季度末持股于后续指定交易日披露; 港股通披露安排与沪股通不同",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS10",
+    "title": "上交所交易公开信息页面",
+    "url": "https://www.sse.com.cn/disclosure/diclosure/public/inquirydata/index.shtml?secCode=605136",
+    "supports": "该页注明交易公开信息口径为竞价交易，不包括大宗交易和盘后固定价格交易; 官方查询页索引显示营业部、买卖方向、金额等字段；部分金额以万元显示",
+    "read_depth": "page_notes_and_indexed_field_labels",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS11",
+    "title": "巨潮资讯交易公开信息",
+    "url": "https://www.cninfo.com.cn/new/commonUrl?url=data/public-information",
+    "supports": "官方公开信息页面列出证券、交易日、披露原因等，金额页面单位为元; 巨潮页面提供到官方数据 API 平台的入口; 官方索引示例包含营业部同时出现于买/卖榜及报告局部机构标签",
+    "read_depth": "page_fields_units_navigation_and_indexed_examples",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS12",
+    "title": "东方财富席位历史排行口径说明",
+    "url": "https://emdata.eastmoney.com/lhb/businessranking.html",
+    "supports": "页面定义上榜后 1 天等统计，并提供多个持有窗口与统计区间",
+    "read_depth": "full_relevant_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS13",
+    "title": "证券时报：以差异化披露推动龙虎榜高质量发展",
+    "url": "https://epaper.stcn.com/att/202601/27/32414cf2-254b-42a3-87ed-8bca8b4cb000.pdf",
+    "supports": "作者指出营业部/交易单位展示并不完整揭示背后资金主体与账户数量",
+    "read_depth": "relevant_pdf_text",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS14",
+    "title": "上市公司行业统计分类与代码标准条目",
+    "url": "https://www.csisc.cn/zbscbzw/c100177/202411/aefc8a590c7647b5b5aad487768bd099.shtml",
+    "supports": "标准条目列出 JR/T 0020—2024，发布日期/实施日期为 2024-11-20",
+    "read_depth": "metadata_only",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS15",
+    "title": "上交所行业统计分类说明",
+    "url": "https://www.sse.com.cn/assortment/stock/areatrade/trade/",
+    "supports": "上交所行业统计页说明采用中国上市公司协会的上市公司行业统计分类指引",
+    "read_depth": "methodology_note",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS16",
+    "title": "深交所深港通披露机制调整说明",
+    "url": "https://investor.szse.cn/szhk/hkbussiness/news/t20240726_608353.html",
+    "supports": "官方索引内容与 2024 年北向信息披露调整方向一致",
+    "read_depth": "official_indexed_text_direct_open_timeout",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS17",
+    "title": "上交所行情服务",
+    "url": "https://www.sse.com.cn/transparency/services/",
+    "supports": "官方行情服务入口说明产品介绍、授权、费用、技术文档及申请流程，覆盖 Level-1、Level-2 等",
+    "read_depth": "relevant_product_and_authorization_sections",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "NS18",
+    "title": "HTTP 条件请求和限流标准入口",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "supports": "RFC 9110 为 HTTP Semantics 官方标准文档入口",
+    "read_depth": "metadata_and_table_of_contents",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "sources_sectors/evidence.json"
+  },
+  {
+    "id": "CS01",
+    "title": "Designing Observation and Action Models for Efficient Reinforcement Learning with LLMs",
+    "url": "https://proceedings.mlr.press/v306/yoon26b.html",
+    "supports": "由大模型设计观测和动作接口；以学习曲线外推及不确定性分配训练预算，减少对所有候选完整训练的开销。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS02",
+    "title": "Active Curriculum Refinement for Reinforcement Learning",
+    "url": "https://proceedings.mlr.press/v306/liu26j.html",
+    "supports": "把环境先修关系表示成课程DAG，先沿多条随机路径扩大覆盖，再用学习潜力信号集中训练未掌握区域。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS03",
+    "title": "DAL: A Practical Prior-Free Black-Box Framework for Piecewise Stationary Bandits",
+    "url": "https://proceedings.mlr.press/v306/gerogiannis26a.html",
+    "supports": "将平稳 bandit 算法、变化检测和强制探索组成框架；检测到变化后重启当前 bandit 学习器并清空所有检测历史。本项目设计另要求：平台已登记的历史实验成绩不随之改写。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS04",
+    "title": "Generalized Linear Bandits with Memory",
+    "url": "https://proceedings.mlr.press/v306/ann26a.html",
+    "supports": "用过去动作构成记忆矩阵，研究动作对未来奖励的影响；把一个反馈区间内的动作当作整体，构造分块估计与置信界。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS05",
+    "title": "On the Complexity of Best-Arm Identification in Non-Stationary Linear Bandits",
+    "url": "https://proceedings.mlr.press/v336/maynard-zhang26a.html",
+    "supports": "区分累计遗憾最小化与固定预算下识别最优臂；分析非平稳线性奖励中由候选几何相邻关系决定的识别难度。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS06",
+    "title": "Catoni-Style Change Point Detection for Regret Minimization in Piecewise-Stationary Heavy-Tailed Bandits",
+    "url": "https://proceedings.mlr.press/v300/genalti26a.html",
+    "supports": "用适合重尾分布的Catoni式估计与置信序列进行变化检测，再结合平稳阶段的bandit学习处理突变。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS07",
+    "title": "Test-time Offline Reinforcement Learning on Goal-related Experience",
+    "url": "https://proceedings.mlr.press/v306/bagatella26a.html",
+    "supports": "在测试时从既有离线经验中选择与当前状态及目标相关的子轨迹，用少量梯度步局部调整策略，并以滚动方式重复。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CS08",
+    "title": "Retriever Portfolios: A Principled Approach to Adaptive RAG",
+    "url": "https://proceedings.mlr.press/v306/stouras26a.html",
+    "supports": "离线选择一小组互补检索器，以查询集合上best-of-k覆盖为目标；在线路由到少量检索器并组合回答。",
+    "read_depth": "targeted_fulltext",
+    "verified_as_of": "2026-11-10",
+    "evidence_file": "research/papers_cs_2026.json"
+  },
+  {
+    "id": "CR01",
+    "title": "Polars ASOF官方接口",
+    "url": "https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.join_asof.html",
+    "supports": "backward/forward/nearest; sorted keys, groups and tolerance; no financial PIT interpretation",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR02",
+    "title": "DuckDB2.0正式发布",
+    "url": "https://duckdb.org/2026/10/21/announcing-duckdb-200",
+    "supports": "2.0.0 release2026-10-21; LTS; asyncIO; pre2.0 cannot read newly created2.0 native storage; compatibility requires validation",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR03",
+    "title": "Polars2.1正式发布",
+    "url": "https://pola.rs/posts/polars-2-1-changelog/",
+    "supports": "2.1 release2026-10-27; out-of-core group-by spills; budget example is not full-data residency",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR04",
+    "title": "Pydantic下一版本计划",
+    "url": "https://pydantic.dev/articles/pydantic-validation-next-steps",
+    "supports": "2026-10-30 article: V3 work starts, no release date; V2.14.2 referenced",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR05",
+    "title": "PostgreSQL19 RC1公告",
+    "url": "https://www.postgresql.org/about/news/postgresql-19-rc-1-released-3409/",
+    "supports": "19RC1 released10-15; plannedRC2 11-12 and GA11-19, not yet GA on reviewdate",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR06",
+    "title": "PostgreSQL精确和浮点类型",
+    "url": "https://www.postgresql.org/docs/current/datatype-numeric.html",
+    "supports": "numeric exact versus float inexact; monetary exactness versus performance tradeoff",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR07",
+    "title": "Arrow数据共享边界",
+    "url": "https://arrow.apache.org/docs/format/Intro.html",
+    "supports": "in-process C data interface sharing distinguished from interprocess/network IPC",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR08",
+    "title": "GIPS业绩标准概述",
+    "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards",
+    "supports": "performance calculation/presentation/cashflow/fees;2026 course covers2020 edition",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "CR09",
+    "title": "GIPS合规适用范围",
+    "url": "https://www.gipsstandards.org/standards/",
+    "supports": "all applicable requirements and interpretations apply to compliance claim",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/contract_review.json"
+  },
+  {
+    "id": "VM-S01",
+    "title": "MERA official WWW2025 Companion metadata and abstract",
+    "url": "https://www.sigweb.sigweb.hosting.acm.org/toc/www25b.html",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "publisher_catalog_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S02",
+    "title": "UMI author institution method summary",
+    "url": "https://www.bigscity.com/publications/learning-universal-multi-level-market-irrationality-factors-to-improve-stock-return-forecasting/index.html",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S02a",
+    "title": "UMI author code and input descriptions",
+    "url": "https://github.com/lIcIIl/UMI",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_readme",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S02b",
+    "title": "KDD2025 research paper registry",
+    "url": "https://kdd.org/kdd2025/research-track-papers-2/",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_venue_registry",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S03",
+    "title": "SAMBA IEEE publication metadata",
+    "url": "https://ieeexplore.ieee.org/document/10888749/",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "publisher_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S03a",
+    "title": "SAMBA author fulltext",
+    "url": "https://arxiv.org/html/2410.03707v2",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "targeted_fulltext_model_and_evaluation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S04",
+    "title": "HRFT ACM publication",
+    "url": "https://doi.org/10.1145/3701716.3715235",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "publisher_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S04a",
+    "title": "HRFT/IRFT author code",
+    "url": "https://github.com/wencyxu/IRF-LLM-accepted-at-WWW25-",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_readme",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S05",
+    "title": "Hawkes-Structured Network fulltext",
+    "url": "https://arxiv.org/html/2610.16524v1",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "targeted_fulltext_sections_3_to_5",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S05a",
+    "title": "Hawkes-Structured Network author metadata",
+    "url": "https://arxiv.org/abs/2610.16524",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S05b",
+    "title": "ICAIF2026 accepted papers",
+    "url": "https://icaif2026.org/accepted-papers/",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_venue_registry",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S06",
+    "title": "DeepScalper author fulltext",
+    "url": "https://arxiv.org/html/2201.09058v3",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "targeted_fulltext_sections_4_1_to_4_3_and_evaluation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S06a",
+    "title": "DeepScalper official CIKM2022 registry",
+    "url": "https://www.sigweb.org/toc/cikm22.html",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_venue_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S06b",
+    "title": "DeepScalper author metadata",
+    "url": "https://arxiv.org/abs/2201.09058",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_metadata",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S07",
+    "title": "RAM NeurIPS2025 official abstract",
+    "url": "https://papers.neurips.cc/paper_files/paper/2025/hash/76981cb7a06b5ad53639f5bbe9924388-Abstract-Conference.html",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S08",
+    "title": "TradingAgents author version history",
+    "url": "https://arxiv.org/abs/2412.20138",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_metadata_and_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S09",
+    "title": "FinMem AAAI Symposium Series publication",
+    "url": "https://ojs.aaai.org/index.php/AAAI-SS/article/view/31290",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "publisher_search_returned_abstract_and_metadata_open_blocked",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S09a",
+    "title": "FinMem first preprint",
+    "url": "https://arxiv.org/abs/2311.13743",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "author_abstract",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S10",
+    "title": "TradingView volume profile measurement semantics",
+    "url": "https://www.tradingview.com/support/solutions/43000502040-volume-profile-indicators-basic-concepts/",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_product_docs",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S11",
+    "title": "Broker CYQ approximation explanation",
+    "url": "https://www.essence.com.cn/axhelp/jbtx_5.jsp",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_product_docs",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S12",
+    "title": "TradingView pivot/repainting semantics",
+    "url": "https://www.tradingview.com/pine-script-docs/v5/concepts/repainting/",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_product_docs",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S13",
+    "title": "CFA information ratio definition",
+    "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/using-multifactor-models",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_education_summary",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S14",
+    "title": "Qlib signal and portfolio benchmark metrics",
+    "url": "https://github.com/microsoft/qlib/blob/main/examples/benchmarks/README.md",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_project_docs",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "VM-S15",
+    "title": "SciPy randomized permutation p-value conventions",
+    "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
+    "supports": "supports_method_or_identity_not_project_profitability",
+    "read_depth": "official_technical_docs",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/methods_sources.json"
+  },
+  {
+    "id": "SP-S01",
+    "title": "上交所交易规则2026及生效通知",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/fund/trading/c/c_20260424_10817739.shtml",
+    "supports": "现行通知2026-07-06施行；部分条文暂缓。对应正式DOCX已下载并抽取3.3.1、5.2.1、5.4.8。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S02",
+    "title": "上交所ETF常见问题",
+    "url": "https://www.sse.com.cn/assortment/fund/etf/question/",
+    "supports": "第2问二级市场买卖；第5-7问一级市场申赎与份额创造，不能互换。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S03",
+    "title": "上交所ETF申赎清单栏目",
+    "url": "https://www.sse.com.cn/disclosure/fund/etflist/",
+    "supports": "栏目开市前8:30披露、由基金公司提供；不是分钟级实际净申赎事实流。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S04",
+    "title": "上交所ETF清单实例588690",
+    "url": "https://www.sse.com.cn/disclosure/fund/etflist/detail.shtml?fundid=588690",
+    "supports": "搜索索引读取到申赎允许情况、最小单位和额度上限；再次打开为JS空壳，读取边界保留search excerpt。",
+    "read_depth": "search_excerpt_only",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S05",
+    "title": "上交所2025可转债交易细则",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/bond/convertible/trading/c/c_20250606_10782995.shtml",
+    "supports": "正式DOCX已下载并读第五、六条：当日回转；每百元面值价格；100元一张；最小变动0.001元。不证明领先正股。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S06",
+    "title": "TradingView产品比较",
+    "url": "https://www.tradingview.com/charting-library-docs/latest/product-comparison/",
+    "supports": "Lightweight Charts是客户端库，不含行情，不带内置指标，能力不能等同完整终端。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S07",
+    "title": "TradingView插件目录",
+    "url": "https://tradingview.github.io/lightweight-charts/plugins",
+    "supports": "插件扩展画线、序列、图层、UX能力；不等于现成包含全部目标图表。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S08",
+    "title": "新华社供稿方式",
+    "url": "https://www.xinhuanet.com/xinhuashe/ggjs.htm",
+    "supports": "API、RSS、FTP等接入方式确有产品依据，具体接入账户、端点和SLA仍待配置。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S09",
+    "title": "东方财富官方FAQ33-37",
+    "url": "https://emdesk.eastmoney.com/pc_activity/Pages/VIPTrade/pages/answer.html",
+    "supports": "资金流由软件自行计算，方法不同；不采信其营销词为真实最终账户识别证明。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "SP-S10",
+    "title": "上交所龙虎榜查询范围说明",
+    "url": "https://www.sse.com.cn/disclosure/diclosure/public/inquirydata/index.shtml?secCode=900901",
+    "supports": "只含竞价交易，不含大宗交易和盘后固定价格交易。",
+    "read_depth": "targeted_official_documentation",
+    "verified_as_of": "2026-11-11",
+    "evidence_file": "research/supplement_review/sources_product_evidence.json"
+  },
+  {
+    "id": "R32-P01",
+    "title": "Detecting Lookahead Bias in LLM Forecasts",
+    "url": "https://arxiv.org/abs/2512.23847",
+    "supports": "标题已由旧称A Test改为Detecting；采用LAP与预测交互的污染诊断。检测未发现不等于绝无记忆，样本外检验也不能自动验证交易净收益。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P01"
+  },
+  {
+    "id": "R32-P02",
+    "title": "The Memorization Problem Can We Trust LLMs Economic Forecasts",
+    "url": "https://arxiv.org/html/2504.14765v2",
+    "supports": "采用模型记忆与输入时点分离、遮蔽重识别诊断；全文明确遮蔽需future-invariance和detectable skill，失败重识别不证明没有通道。拒绝仅用假装截止日提示证明回测有效。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P02"
+  },
+  {
+    "id": "R32-P03",
+    "title": "Assessing Look Ahead Bias in Stock Return Predictions Generated By GPT Sentiment Analysis",
+    "url": "https://arxiv.org/abs/2309.17322",
+    "supports": "保留前视与分心效应的区分及匿名化对照；该样本匿名化表现改善不是通用去泄漏保证，也不能与另一研究的记忆结果简单互相否定。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P03"
+  },
+  {
+    "id": "R32-P04",
+    "title": "Chronologically Consistent Large Language Models",
+    "url": "https://arxiv.org/abs/2502.21206",
+    "supports": "ChronoBERT/ChronoGPT严格时间训练值得列为研究输入模型选择；其美股/新闻结果不是A股可交易收益或目前服务器可训练的保证。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P04"
+  },
+  {
+    "id": "R32-P05",
+    "title": "Scaling Point in Time Language Models",
+    "url": "https://www.nber.org/papers/w35247",
+    "supports": "NBER35247身份与2026年5月工作论文确认；时间过滤语料和月度checkpoint支持模型时间边界设计，不要求本项目自行训练4B模型或复制作者Sharpe。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P05"
+  },
+  {
+    "id": "R32-P06",
+    "title": "DatedGPT Preventing Lookahead Bias with Time Aware Pretraining",
+    "url": "https://arxiv.org/abs/2603.11838",
+    "supports": "确认十二个年度截止模型与DatedInstruct方法；3.20Sharpe和26.4bp泄漏溢价属于作者特定实验，不能进入平台默认收益或当本轮复现。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P06"
+  },
+  {
+    "id": "R32-P07",
+    "title": "Look Ahead Bench",
+    "url": "https://arxiv.org/abs/2601.13770",
+    "supports": "采用时间外推、基线与任务级评测；作者对其PiT模型的优越性仍是自报，alpha decay还可能混入市场制度变化，不能当纯记忆量。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P07"
+  },
+  {
+    "id": "R32-P08",
+    "title": "From Knowing to Doing KTD Fin",
+    "url": "https://arxiv.org/html/2605.28359v1",
+    "supports": "正文归因段确认十个模型九个负选股alpha，一个约+0.2%近零；采用匿名化与市场/风格/选择归因。结论限CSI300与2024–2026设置，不能泛化为未来所有模型无选股能力。 原文price-only观察不含归档新闻/公告/宏观；Common是截面回归截距的单位暴露，不能替代外部市场指数。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P08"
+  },
+  {
+    "id": "R32-P09",
+    "title": "Quant Arena Benchmarking LLM Agents for Quantitative Trading Research",
+    "url": "https://arxiv.org/html/2610.30113v1",
+    "supports": "确认2026年10月预印本、2022–2023反馈与封存2024；采用封存年度和统一现金评估。输入的“所有模型未跑赢等权”不成立：Table 2 的 GPT-6 Sol medium 列为18.4%年化、对毛等权参照的超额栏为+1.4个百分点。结果多数弱，不能删掉这项例外或将基准差异消去，更不能据此否定本项目排序能力。 论文等权参考为gross of costs，参赛策略承担成本和模拟冲击；不能声称在同成本可执行基准下全面失败。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P09"
+  },
+  {
+    "id": "R32-P10",
+    "title": "Can LLM based Financial Investing Strategies Outperform the Market in Long Run FINSABER",
+    "url": "https://arxiv.org/abs/2505.07078",
+    "supports": "v6注明KDD2026 Datasets and Benchmarks Oral，并修过FinAgent结果；采用长时期/宽截面/制度分段与简单基线，不能从其负面结果推出状态路由不值得研究。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P10"
+  },
+  {
+    "id": "R32-P11",
+    "title": "StockBench",
+    "url": "https://arxiv.org/abs/2510.02209",
+    "supports": "多数模型难赢buy-and-hold而部分改善；保留连续决策、回撤与Sortino比较，不能删掉原文少数成功例外或把静态金融问答分数当交易能力。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P11"
+  },
+  {
+    "id": "R32-P12",
+    "title": "AlphaForgeBench",
+    "url": "https://arxiv.org/abs/2602.18481",
+    "supports": "采用研究代码生成与确定执行分离，符合开发Agent而非必须运行交易Agent；可重复执行并不能自动证明公式经济有效，仍需独立评估。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P12"
+  },
+  {
+    "id": "R32-P13",
+    "title": "AI Trader Benchmarking Autonomous Agents in Real Time Financial Markets",
+    "url": "https://arxiv.org/abs/2512.10971",
+    "supports": "确认美国/A股/加密实时benchmark和多数模型弱收益的作者结论；采用实时冻结评测与信息成本记录，不照搬其自治范围或作盈利承诺。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P13"
+  },
+  {
+    "id": "R32-P14",
+    "title": "Stop Overvaluing Multi Agent Debate",
+    "url": "https://arxiv.org/abs/2502.08788",
+    "supports": "从二手升级为原始摘要；采用强单模型基线、同预算及异质模型对照。论文是五种debate、九benchmark的比较，不否定工程并行分工或独立代码审查。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P14"
+  },
+  {
+    "id": "R32-P15",
+    "title": "LLM crypto trading contest media report",
+    "url": "https://protos.com/llm-crypto-trading-contest-finds-llms-cant-trade-crypto/",
+    "supports": "保留媒体线索作为动机，不作为模型表现或架构选择的定量证据；比赛范围、账户设置与市场不同，未取得可复核原始评测记录。",
+    "reading_level": "media_page",
+    "evidence_file": "research/reference_papers_v32.json#R32-P15"
+  },
+  {
+    "id": "R32-P16",
+    "title": "Can ChatGPT Forecast Stock Price Movements",
+    "url": "https://arxiv.org/abs/2304.07619",
+    "supports": "最新摘要明确约90%组合—日命中率是不可交易的初始反应，随后漂移才是另一个目标；采用首发/已反应价格/可交易漂移分离，不把标题打分当已实现买点。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P16"
+  },
+  {
+    "id": "R32-P17",
+    "title": "Large Language Models and Return Prediction in China",
+    "url": "https://lintan-tsinghua.github.io/talk/preprint2/",
+    "supports": "作者页确认中国新闻模型与约两日吸收；90%/69%为多空组合年化、未在此页提供充分费用/可借券细节，保留文本候选不移植绩效。",
+    "reading_level": "author_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P17"
+  },
+  {
+    "id": "R32-P18",
+    "title": "All the News Thats Fit to Reprint",
+    "url": "https://users.nber.org/~confer/2007/bff07/tetlock.pdf",
+    "supports": "本次确认2007工作稿而不是直接阅读全文2011期刊终版；采用旧闻/新信息与短期反转区分，稿次及样本要保留，不将周反转写成当前A股必然规律。",
+    "reading_level": "author_working_paper_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P18"
+  },
+  {
+    "id": "R32-P19",
+    "title": "When can the market identify old news",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0304405X23000685",
+    "supports": "采用直接重印与旧内容重组分别标注及来源链；摘要支持差异反应与反转，没有在此核到“近一半”数字，删除该比例作为已核事实。",
+    "reading_level": "publisher_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P19"
+  },
+  {
+    "id": "R32-P20",
+    "title": "投资者有限关注与股票收益 以百度指数作为关注度的一项实证研究",
+    "url": "https://search.napstic.cn/literature/periodical/010jryj201208013",
+    "supports": "作者发布目录和期刊目录支持2012文章身份；给定论文页本次不可达，收益方向原文未核。仅保留候选，不把该断言用作热度反向交易证据。",
+    "reading_level": "identity_only",
+    "evidence_file": "research/reference_papers_v32.json#R32-P20"
+  },
+  {
+    "id": "R32-P21",
+    "title": "Retail Investor Attention and Stock Returns Evidence from Market Industry and Individual Stock Perspectives",
+    "url": "https://xtglxb.sjtu.edu.cn/EN/10.3969/j.issn.2097-4558.2026.02.016",
+    "supports": "原刊摘要确认2026年35卷2期525–542，三层注意力当日关系与后续差异；采纳市场/行业/个股分层，不能把股吧评论量当论文搜索码数据或统一反向信号。",
+    "reading_level": "primary_abstract_search_result",
+    "evidence_file": "research/reference_papers_v32.json#R32-P21"
+  },
+  {
+    "id": "R32-P22",
+    "title": "Retail Trading and Return Predictability in China",
+    "url": "https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/abs/retail-trading-and-return-predictability-in-china/37449FE025B0DA87A92A9BF9D30ED0FF",
+    "supports": "论文使用全面账户级数据、分五组，小账户与大账户表现不同；采纳异质性，拒绝把所有散户/社区意见一律反向。成本可抵消大账户选股能力也需并列说明。 摘要仅支持异质性，原输入所称精确负向系数/周期/显著性尚未核；该原主张不标全量核实。",
+    "reading_level": "publisher_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P22"
+  },
+  {
+    "id": "R32-P23",
+    "title": "资金优势账户可以利用投资者注意力获利吗",
+    "url": "https://qks.sufe.edu.cn/J/CJYJ/Article/Details/A44c2c628-9dee-45e0-b8ab-0f112001e2d9/CN",
+    "supports": "摘要确有2015–2019某券商营业部个人账户级成交与龙虎榜事件证据；采纳披露后行为研究，公开席位表不等同其私有账户数据，不能反演真实持仓天数。",
+    "reading_level": "publisher_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P23"
+  },
+  {
+    "id": "R32-P24",
+    "title": "券商龙虎榜营业部大洗牌 头部席位资金聚焦三大方向",
+    "url": "https://finance.sina.cn/2026-10-14/detail-inivchzv7280878.d.html",
+    "supports": "证券时报转载页确有线上个人账户归集的报道；它是媒体解释，不提供每个席位当前账户构成证明，更不支持次日必跌。保留实体背景为媒体来源。",
+    "reading_level": "media_page",
+    "evidence_file": "research/reference_papers_v32.json#R32-P24"
+  },
+  {
+    "id": "R32-P25",
+    "title": "Replicating and Digesting Anomalies in the Chinese A Share Market",
+    "url": "https://research.polyu.edu.hk/en/publications/replicating-and-digesting-anomalies-in-the-chinese-a-share-market/",
+    "supports": "原始收益83.37%、CAPM84.22%、FF3 86.99%不显著；修正笼统84–87%。采用主板断点/容量/权重敏感性，不能声称所有策略的普遍失败率。",
+    "reading_level": "institutional_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P25"
+  },
+  {
+    "id": "R32-P26",
+    "title": "Size and Value in China",
+    "url": "https://faculty.wharton.upenn.edu/wp-content/uploads/2018/03/Size-and-Value-in-China.pdf",
+    "supports": "作者2018工作稿支持中国市场规模/价值因子及壳价值等设计；采用中国风格归因对照，反转与换手未解释细节需正文核查，不据旧稿声明最新实证成立。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P26"
+  },
+  {
+    "id": "R32-P27",
+    "title": "Replicating Anomalies",
+    "url": "https://www.nber.org/papers/w23394",
+    "supports": "447变量、微盘处理、64%常规不显著及更高t门槛85%属该研究；与中国469项不可混数。采用全试验登记和容量约束，不自动拒绝全部新增因子。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P27"
+  },
+  {
+    "id": "R32-P28",
+    "title": "Is There A Replication Crisis In Finance",
+    "url": "https://www.nber.org/papers/w28432",
+    "supports": "保留反方证据，多数因子可复现、13主题与93国样本支持相关簇和多地区测试；不同加权/统计方法不能多数票决定谁正确。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P28"
+  },
+  {
+    "id": "R32-P29",
+    "title": "and the Cross Section of Expected Returns",
+    "url": "https://www.nber.org/papers/w20592",
+    "supports": "采用相关多重检验；作者约t>3是其建模与因子发现环境，不是所有本项目策略/持有期的统一硬门槛。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P29"
+  },
+  {
+    "id": "R32-P30",
+    "title": "Machine Learning and the Implementable Efficient Frontier",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4187217",
+    "supports": "采用净交易成本下风险收益前沿与经济特征贡献；模型优化对象为权重不是仅预测精度，仍需本平台资金量、整手及费用下复现。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P30"
+  },
+  {
+    "id": "R32-P31",
+    "title": "Machine learning in the Chinese stock market",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0304405X21003743",
+    "supports": "原文摘要、样本与结论页明确2000–2020及long-only扣费结果；与旧项目的短样本负结果有差异，不能认定论文被证伪。采用同母集/时期/费用对照定位差异。",
+    "reading_level": "targeted_publisher_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P31"
+  },
+  {
+    "id": "R32-P32",
+    "title": "Momentum Reversals and Investor Clientele",
+    "url": "https://revfin.org/momentum-reversals-and-investor-clientele/",
+    "supports": "期刊作者说明支持A/B股客户差异与A股月度反转；用于持有期/投资者结构分层，不能排除所有短线动量或2026后结构变化。",
+    "reading_level": "publisher_summary",
+    "evidence_file": "research/reference_papers_v32.json#R32-P32"
+  },
+  {
+    "id": "R32-P33",
+    "title": "Daily Price Limits and Destructive Market Behavior",
+    "url": "https://www.nber.org/papers/w24014",
+    "supports": "账户级历史证据支持大户涨停买入次日卖出机制；旧样本ST5%是当时规则，不应用于2026-07-06后的主板ST。采纳机制候选而非席位身份必然行为。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P33"
+  },
+  {
+    "id": "R32-P34",
+    "title": "T plus 1 trading mechanism causes negative overnight return",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0264999319307023",
+    "supports": "采用隔夜与日内收益分解及T+1真实库存约束；历史均值负不等于每股每天必跌，也不自动构成可实施T策略。文中旧制度背景不得覆盖现行交易规则。",
+    "reading_level": "targeted_publisher_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P34"
+  },
+  {
+    "id": "R32-P35",
+    "title": "Dissecting the lottery like anomaly Evidence from China",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1111/acfi.13354",
+    "supports": "采纳彩票型、隔夜/日内与套利限制的交互假设；不是全部股票隔夜规律或该用户主板小市值池已经验证。",
+    "reading_level": "publisher_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P35"
+  },
+  {
+    "id": "R32-P36",
+    "title": "Homemade Foreign Trading",
+    "url": "https://www.nber.org/papers/w35095",
+    "supports": "明确研究2018北向投资者识别改革后的可预测性变化，不是2024北向披露调整。保留制度分段与托管构成研究，实时北向不可得问题另依港交所通知处理。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P36"
+  },
+  {
+    "id": "R32-P37",
+    "title": "Machine Learning Enhanced Multi Factor Quantitative Trading A Cross Sectional Portfolio Optimization Approach with Bias Correction",
+    "url": "https://arxiv.org/abs/2507.07107",
+    "supports": "18% IC、0.44 Sharpe和213因子均为作者v2自报，真实数据专有；采用动作可交易性评估，拒绝把不可成交价格从所有历史特征中统一抹除，观察/动作/标签掩码应分开。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P37"
+  },
+  {
+    "id": "R32-P38",
+    "title": "AlphaAgent: LLM-Driven Alpha Mining with Regularized Exploration to Counteract Alpha Decay",
+    "url": "https://arxiv.org/html/2502.16789v2",
+    "supports": "原文支持AST相似约束、假设与表达式语义一致性、复杂度控制。采用研究去重与形式化机制；AST相似不是经济等价，也不能把改错或符号反转的新候选自动删除。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P38"
+  },
+  {
+    "id": "R32-P39",
+    "title": "R&D-Agent-Quant: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization",
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2025/hash/ac5c2b6e423883cbcacbcccf88491b78-Abstract-Datasets_and_Benchmarks_Track.html",
+    "supports": "官方会论文页明确Research提出假设、Development由Co-STEER生成代码、真实市场回测反馈和bandit方向调度；支持Agent参与开发与研究闭环，不支持禁止Agent写实现代码。",
+    "reading_level": "official_proceedings_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P39"
+  },
+  {
+    "id": "R32-P40",
+    "title": "AlphaMemo: Structured Search-Process Memory for Self-Evolving Alpha Mining Agents",
+    "url": "https://arxiv.org/html/2606.20625v2",
+    "supports": "“失败记忆”方向正确但原文更细：记录parent-context下AST差分编辑模式，置信门控残差记忆，并对重复失败作有限惩罚；原文明确单次失败不足形成可复用否决。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P40"
+  },
+  {
+    "id": "R32-P41",
+    "title": "Agora 原始身份待核",
+    "url": "https://arxiv.org/abs/2606.29194",
+    "supports": "原始abs、v1 abs、PDF、HTML与export入口均未成功获取；第三方索引指向题名AI Trading’s Alpha Singularity与Agora/SJS、单种子、91日持出，但不能把索引转述冒充已读原文。封存评估思想可由其它已核原文独立支持。",
+    "reading_level": "primary_fetch_failed_secondary_discovery_only",
+    "evidence_file": "research/reference_papers_v32.json#R32-P41"
+  },
+  {
+    "id": "R32-P42",
+    "title": "AQuA: Recursively Self-Improving Quantitative Trading Research Agents",
+    "url": "https://arxiv.org/html/2608.12841v3",
+    "supports": "原文明确固定数据切分、特征、标签和评估器，Agent只能提交受限表达式或配置差异；适合研究沙盒与证据闭环。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P42"
+  },
+  {
+    "id": "R32-P43",
+    "title": "AlphaEval: A Comprehensive and Efficient Evaluation Framework for Formula Alpha Mining",
+    "url": "https://arxiv.org/html/2508.13174v2",
+    "supports": "原文确有无需组合回测的并行评价，考察预测能力、稳定、扰动稳健性、金融逻辑、多样性，覆盖生成的因子集合；作为预筛比仅IC更完整。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P43"
+  },
+  {
+    "id": "R32-P44",
+    "title": "Kronos: A Foundation Model for the Language of Financial Markets",
+    "url": "https://arxiv.org/html/2508.02739v1",
+    "supports": "K线基础模型身份正确；“官方回测不含成本”与原文D.3 Parameters and Costs直接矛盾：CSI300/CSI800每笔应用0.15%成本。README要求更高保真建模成本/滑点/冲击，不能被转述为论文零成本。",
+    "reading_level": "targeted_full_text_and_official_repository",
+    "evidence_file": "research/reference_papers_v32.json#R32-P44"
+  },
+  {
+    "id": "R32-P45",
+    "title": "Re(Visiting) Time Series Foundation Models in Finance",
+    "url": "https://arxiv.org/abs/2511.18578",
+    "supports": "输入只保留了负结论。摘要还明确从金融数据从头预训练可显著改善预测和经济表现；因此应采用领域适配与强基线比较，不能把现成模型表现差推广为整个基础模型路线无效。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P45"
+  },
+  {
+    "id": "R32-P46",
+    "title": "Benchmarking Robustness of Deep Reinforcement Learning approaches to Online Portfolio Management",
+    "url": "https://arxiv.org/html/2306.10950v1",
+    "supports": "正文提出多种子必要性，但Results实际报告多数方法跨5 seeds表现相近、spread较低。实测主要问题是验证到回测下降、随时间退化和记住训练期赢家；“多数算法换种子结果就变”不能作为该文主结果。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P46"
+  },
+  {
+    "id": "R32-P47",
+    "title": "Deep Reinforcement Learning for Cryptocurrency Trading: Practical Approach to Address Backtest Overfitting",
+    "url": "https://arxiv.org/abs/2209.05559",
+    "supports": "摘要支持把回测过拟合检测形式化为假设检验、估计过拟合概率并过滤Agent。用作研究流程候选有依据。",
+    "reading_level": "primary_abstract",
+    "evidence_file": "research/reference_papers_v32.json#R32-P47"
+  },
+  {
+    "id": "R32-P48",
+    "title": "Dynamic Grid Trading Strategy: From Zero Expectation to Market Outperformance",
+    "url": "https://arxiv.org/html/2506.11921v1",
+    "supports": "零期望结论依赖等概率上下移动、有限等比网格、特定边界终止清仓且理论推导不计费用。原文随后提出动态重设网格，并报告BTC/ETH分钟数据收益；不能抽掉这些假设后写成所有网格无收益来源。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P48"
+  },
+  {
+    "id": "R32-P49",
+    "title": "Good and bad properties of the Kelly criterion",
+    "url": "https://www.stat.berkeley.edu/~aldous/157/Papers/Good_Bad_Kelly.pdf",
+    "supports": "原文支持Kelly短期风险与参数误差敏感、fractional Kelly的增长/安全权衡。它指出某连续时间近似中押到两倍Kelly的增长降至无风险率；不是“存在估计误差时全Kelly增长必为零”。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P49"
+  },
+  {
+    "id": "R32-P50",
+    "title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+    "url": "https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf",
+    "supports": "DSR不是普通“收缩夏普”。原文将其定义为经试验选择门槛修正的PSR，使用样本长度、偏度/峰度、各试验Sharpe方差及有效独立试验数，处理多重选择与非正态造成的膨胀。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P50"
+  },
+  {
+    "id": "R32-P51",
+    "title": "The Probability of Backtest Overfitting",
+    "url": "https://carmamaths.org/resources/jon/backtest2.pdf",
+    "supports": "PBO衡量样本内选中的最优策略在样本外低于候选中位数的概率，CSCV是论文具体非参数实现；“过拟合概率”简写可保留，但不能解释成下一期亏损概率。",
+    "reading_level": "targeted_full_text",
+    "evidence_file": "research/reference_papers_v32.json#R32-P51"
+  },
+  {
+    "id": "R32-P52",
+    "title": "NautilusTrader: Fill Models",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/fill-models/",
+    "supports": "官方文档支持limit触价成交概率、L1一tick滑点和random_seed复现随机抽取；L2/L3直接走可见簿层，prob_slippage不生效。不能把“概率成交”误读为真实排队的已知概率。",
+    "reading_level": "official_documentation_targeted",
+    "evidence_file": "research/reference_papers_v32.json#R32-P52"
+  },
+  {
+    "id": "R32-P53",
+    "title": "RQAlpha / RQAlphaPlus simulation configuration",
+    "url": "https://www.ricequant.com/doc/rqalpha-plus/api/config",
+    "supports": "原始raw GitHub及blob入口未成功读取；官方RQAlphaPlus配置文档直接给price_limit、volume_limit及volume_percent=.25，官方教程解释其为每bar/tick累计参与率配置，因此机制可确认。",
+    "reading_level": "official_documentation_original_source_fetch_failed",
+    "evidence_file": "research/reference_papers_v32.json#R32-P53"
+  },
+  {
+    "id": "R32-P54",
+    "title": "Microsoft Qlib: qlib/backtest/exchange.py",
+    "url": "https://github.com/microsoft/qlib/blob/main/qlib/backtest/exchange.py",
+    "supports": "直接核读_update_limit：float阈值分别用涨幅>=阈值限制buy、跌幅<=负阈值限制sell，或tuple表达式；另有min_cost与trade_unit处理，输入所称机制有依据。",
+    "reading_level": "official_source_targeted",
+    "evidence_file": "research/reference_papers_v32.json#R32-P54"
+  },
+  {
+    "id": "R32-P55",
+    "title": "Overview of the Global Investment Performance Standards",
+    "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards",
+    "supports": "官方导读明确通常采用TWR、合格特定情形可MWR、不足一年收益不得年化、包含现金、扣交易成本以及不得把模拟与实际绩效链接。输入核心主张可确认。",
+    "reading_level": "official_documentation_targeted",
+    "evidence_file": "research/reference_papers_v32.json#R32-P55"
+  },
+  {
+    "id": "R32-S01",
+    "title": "Tushare积分价格与独立权限",
+    "url": "https://tushare.pro/document/2?doc_id=290",
+    "supports": "5000积分约500元每年；不等于全部接口权限"
+  },
+  {
+    "id": "R32-S02",
+    "title": "Tushare历史ST列表",
+    "url": "https://tushare.pro/document/2?doc_id=397",
+    "supports": "3000积分起、按日列表及历史无法全部补齐说明"
+  },
+  {
+    "id": "R32-S03",
+    "title": "Tushare开盘啦题材成分",
+    "url": "https://tushare.pro/document/2?doc_id=351",
+    "supports": "5000积分及日期/成分字段"
+  },
+  {
+    "id": "R32-S04",
+    "title": "Tushare盘前股本",
+    "url": "https://tushare.pro/document/2?doc_id=329",
+    "supports": "明确需要独立权限；2024-05-01起数据与更新时间"
+  },
+  {
+    "id": "R32-S05",
+    "title": "深交所风险警示板业务指南2026",
+    "url": "https://docs.static.szse.cn/www/lawrules/service/member/W020260630577988348432.pdf",
+    "supports": "退市整理期及可能未能卖出的业务说明"
+  },
+  {
+    "id": "R32-S06",
+    "title": "PostgreSQL Windows安装器",
+    "url": "https://www.postgresql.org/download/windows/",
+    "supports": "PG18安装器测试平台含Server2025/2022；扩展兼容另验"
+  },
+  {
+    "id": "R32-S07",
+    "title": "Python官方版本下载",
+    "url": "https://www.python.org/getit/",
+    "supports": "检索时3.15.2已发布；非项目依赖兼容保证"
+  },
+  {
+    "id": "R32-S08",
+    "title": "SQLite发布历史",
+    "url": "https://www.sqlite.org/chronology.html",
+    "supports": "3.54.1等2026版本发布日期；精度语义不因版本号自动改变"
+  },
+  {
+    "id": "R32-S09",
+    "title": "DuckDB发布日历",
+    "url": "https://duckdb.org/release_calendar",
+    "supports": "2.0.0 LTS发布与维护窗口"
+  },
+  {
+    "id": "R32-S10",
+    "title": "Pydantic官方2.14.3发布",
+    "url": "https://github.com/pydantic/pydantic/releases/tag/v2.14.3",
+    "supports": "2.14.3发布身份，不能将计划中的V3当已发布"
+  },
+  {
+    "id": "R32-S11",
+    "title": "uv官方0.13.7发布",
+    "url": "https://github.com/astral-sh/uv/releases/tag/0.13.7",
+    "supports": "版本身份；兼容性按锁文件测试"
+  },
+  {
+    "id": "R32-S12",
+    "title": "Ruff官方发布页",
+    "url": "https://github.com/astral-sh/ruff/releases",
+    "supports": "官方列表检索到0.17.3；不把缓存最新等于永久最新"
+  },
+  {
+    "id": "R32-S13",
+    "title": "React官方版本页",
+    "url": "https://react.dev/versions",
+    "supports": "React19.3发布身份"
+  },
+  {
+    "id": "R32-S14",
+    "title": "Vite官方8.3.7发布",
+    "url": "https://github.com/vitejs/vite/releases/tag/v8.3.7",
+    "supports": "Vite8.3系列版本身份"
+  },
+  {
+    "id": "R32-S15",
+    "title": "Tailwind官方4.3.5发布",
+    "url": "https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.3.5",
+    "supports": "Tailwind4.3系列版本身份"
+  },
+  {
+    "id": "R32-S16",
+    "title": "Lightweight Charts官方5.3.0发布",
+    "url": "https://github.com/tradingview/lightweight-charts/releases/tag/v5.3.0",
+    "supports": "最新入口指向5.3.0，附件5.2.1不再称最新"
+  },
+  {
+    "id": "R32-S17",
+    "title": "MCP协议版本",
+    "url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/versioning",
+    "supports": "当前协议2026-07-28；应用API不因此必须MCP化"
+  },
+  {
+    "id": "R32-S18",
+    "title": "上交所融资保证金比例2026通知",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/specific/margin/c/c_20260114_10805174.shtml",
+    "supports": "新合约2026-01-19起最低100%；存续合约及展期保留旧规定"
+  }
+]

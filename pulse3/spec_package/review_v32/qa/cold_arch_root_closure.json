@@ -1,0 +1,100 @@
+{
+  "scope": "CR-A01/CR-A02/CR-A05/CR-A06及相关字段/API/owner映射的定向复核；不重新审金融外部事实或论文结论",
+  "status": "passed_specification_and_static_binding_closure",
+  "counts": {
+    "subfeatures": 21,
+    "resource_mappings": 16,
+    "dataset_job_page_mappings": 20,
+    "root_decisions": 137,
+    "root_units": 475,
+    "resource_cards": 16,
+    "proposed_operations": 41,
+    "proposed_types": 40,
+    "persistence_definitions": 27,
+    "proposed_new_sql_tables": 14,
+    "verified_existing_column_bindings": 24,
+    "existing_public_operation_count": 31,
+    "existing_sql_table_count": 80
+  },
+  "findings": [
+    {
+      "id": "CR-A01",
+      "status": "closed_at_specification_level",
+      "binding": [
+        "spec/REFERENCE_RECONCILIATION_V32.md#6",
+        "review_v32/product_extension_cards.json#PEX01",
+        "review_v32/dataset_job_page_mapping.json#DJ17"
+      ],
+      "evidence": "baseline自身不可用不发新READY；旧版只读stale；获准替代基线须新stage；不能让候选填满预算。"
+    },
+    {
+      "id": "CR-A02",
+      "status": "closed_at_specification_level",
+      "binding": [
+        "review_v32/product_subfeature_mapping.json#PF01-PF21"
+      ],
+      "evidence": "两段21子功能各有独立决定/理由/owner/动作/验收；covered明确只是目录或合同可复用。"
+    },
+    {
+      "id": "CR-A05",
+      "status": "closed_at_contract_design_level",
+      "binding": [
+        "review_v32/product_api_mapping.json",
+        "review_v32/product_extension_cards.json"
+      ],
+      "evidence": "16资源均有typed input/output、读取/命令、幂等、版本冲突、权限、真实存储owner、持久化缺口、验收；新增操作明确未入公共3.0.0。"
+    },
+    {
+      "id": "CR-A06",
+      "status": "closed_at_specification_level",
+      "binding": [
+        "spec/REFERENCE_RECONCILIATION_V32.md#4",
+        "review_v32/dataset_job_page_mapping.json#DJ07"
+      ],
+      "evidence": "CNY元/股限定A股规范域；跨市场保留原币种、单位、合约乘数与版本化汇率。"
+    },
+    {
+      "id": "CR-A08",
+      "status": "clarified_in_this_review_mapping",
+      "binding": [
+        "research_v5/qa/cold_arch_root_closure.md#运行职责映射"
+      ],
+      "evidence": "原collector/stream/worker/api/watchdog到新职责可逐一追踪；不强制多个常驻进程。"
+    },
+    {
+      "id": "CR-A03/CR-A04/CR-A07",
+      "status": "outside_this_narrow_review",
+      "evidence": "论文/旧实验标识、证据分类、固定免责声明由主审收口，本报告不代替其验收。"
+    }
+  ],
+  "public_contract_and_sql_equal_to_v31_baseline": {
+    "contracts/openapi.json": true,
+    "contracts/v3.schema.json": true,
+    "contracts/api_bindings.json": true,
+    "database/core_schema.sql": true,
+    "execution/ledger_schema.sql": true,
+    "sources_sectors/sources_sectors_schema.sql": true,
+    "integration/integration_schema.sql": true
+  },
+  "root_unit_coverage": {
+    "required": 475,
+    "covered": 475,
+    "missing": [],
+    "duplicates": []
+  },
+  "files": {
+    "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/product_subfeature_mapping.json": "921435c478c1dd71ec3145d995de763a6c3d923d3cd834cd598422583c78bbe3",
+    "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/product_api_mapping.json": "e881cf69c8f18caeae4b625be6549afd8e49773b2944d8b110cc44973c3ef289",
+    "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/dataset_job_page_mapping.json": "c006ac4fea36e719b7a92ee39ab7ff4b07ab32436444874ce4d86c7f94ae863b",
+    "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/product_extension_cards.json": "2e2ad27908429e24f9ecf7d43adf36c352fe7fecb192ad10383f6fd17375b45e",
+    "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/product_extension_cards_validation.json": "dbb37c7a00aa629554d77079349546b0c2e322972783ccb2dd4365ca45b2e66b",
+    "deliverables/Pulse_Rewrite_Package_v32_build/spec/REFERENCE_RECONCILIATION_V32.md": "ac270b7ca9bc18337330d9724f2a5ed5337cabd5b14f7919f2b3947f3baf52ad",
+    "research_v5/reviews/root_final.json": "46b16f1d3300be9f1b9636102823e19385b38f96dc82af5a66acbfc60ebb9526"
+  },
+  "limits": [
+    "规格层闭环不等于新增41操作已运行",
+    "未新增SQL迁移或更改公共3.0.0",
+    "未连接目标Windows服务器/数据库或真实券商",
+    "尚需实现每卡列出的验收；本次不重复无关性能测试"
+  ]
+}

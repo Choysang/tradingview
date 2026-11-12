@@ -1,0 +1,660 @@
+[
+  {
+    "feature_id": "PF01",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "画线挂告警",
+    "decision": "adopt_post_cutover_optional",
+    "reason": "图形锚点需转换成有版本的时间/价格条件，共用告警引擎，避免前端像素触发与复权变化导致重复。",
+    "current_operations": [
+      "saveAnnotation",
+      "pollUpdates"
+    ],
+    "implementation_action": "新增AlertRule写命令及通知投影；条件编译引用annotation版本。",
+    "acceptance": "相同annotation版本与重复行情只产生一次业务告警；修改画线后显式新rule版本，原锚点和原告警仍可重放。",
+    "work_package_owners": [
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA13",
+      "PA14"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。",
+    "input_decision": "adopt_phase_m6",
+    "input_phase_basis": "原参考路线的M6表示后续增强，不是v3.2的M6切换。",
+    "target_phase": "post-cutover",
+    "cutover_gate": false,
+    "target_phase_reason": "保留此功能的设计与验收，排在核心数据、唯一账本、排名、产品、并行对账和M6切换之后；不要求此增强完成才能切换。"
+  },
+  {
+    "feature_id": "PF02",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "多图布局保存与联动",
+    "decision": "covered",
+    "reason": "现有workspace_layout保存组件、证券、周期与联动组；共享证券UUID和Release即可避免重采集。",
+    "current_operations": [
+      "getLayout",
+      "saveLayout"
+    ],
+    "implementation_action": "补多图联动和会话回归场景。",
+    "acceptance": "跨设备恢复同一layout版本；联动组统一证券和时间窗，独立图仍保留各自周期/复权，版本冲突不覆盖。",
+    "work_package_owners": [
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA14"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF03",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "K线回放",
+    "decision": "adopt_post_cutover_optional",
+    "reason": "使用不可变快照及真实可得时间推进；日/分钟/采样能力不同，不能以动画模拟真实可成交路径。",
+    "current_operations": [
+      "getStockBars",
+      "createExperiment"
+    ],
+    "implementation_action": "回放游标与实验类型扩展，收益仍走唯一账本。",
+    "acceptance": "回放在每个游标只读取当时可得行；采样近似不获得真实分钟可成交能力；账户结果与同输入唯一内核一致。",
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA04",
+      "PA06"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。",
+    "input_decision": "adopt_phase_m6",
+    "input_phase_basis": "原参考路线的M6表示后续增强，不是v3.2的M6切换。",
+    "target_phase": "post-cutover",
+    "cutover_gate": false,
+    "target_phase_reason": "保留此功能的设计与验收，排在核心数据、唯一账本、排名、产品、并行对账和M6切换之后；不要求此增强完成才能切换。"
+  },
+  {
+    "feature_id": "PF04",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "自然语言选股",
+    "decision": "adopt",
+    "reason": "模型只将问句解析为白名单字段和单位明确的筛选DSL，用户可看条件；不得运行任意SQL或从模型记忆输出股票名单。",
+    "current_operations": [
+      "getMarketRanking"
+    ],
+    "implementation_action": "定义ScreenParse/ScreenRun应用命令，输出解析条件、歧义及capability缺口。",
+    "acceptance": "含未知字段、单位歧义和不支持条件的问句返回原文跨度；完整AST可展示，未解决条件不得静默删除后运行。",
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA10"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF05",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "策略作为全市场筛选条件",
+    "decision": "adopt",
+    "reason": "复用策略版本和特征缓存，在冻结母集上扫描，避免每页面再算同一信号。",
+    "current_operations": [
+      "listStrategies",
+      "getMarketRanking"
+    ],
+    "implementation_action": "筛选运行保存universe和strategy版本，不能改变策略生产许可。",
+    "acceptance": "全市场筛选固定母集/策略实例/快照；不改变生产资格，同分和unknown分别有确定行为。",
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA10",
+      "PA11"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF06",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "自动形态与趋势线识别",
+    "decision": "adopt_as_candidate",
+    "reason": "需记录识别时点和确认延迟，未来确认分型不得回填到过去作信号。",
+    "current_operations": [
+      "getStockWorkspace",
+      "saveAnnotation"
+    ],
+    "implementation_action": "新增有证据范围的图形候选标注，初始仅解释展示。",
+    "acceptance": "右侧确认需要未来K线的形态只从确认时刻可见；标注含识别版本和证据区间，初始不参与生产权重。",
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA04"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF07",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "参数敏感性扫描",
+    "decision": "adopt_research",
+    "reason": "参数网格所有试验进入试验族，避免只显示最佳热图造成选择偏差。",
+    "current_operations": [
+      "createExperiment",
+      "getEvaluation"
+    ],
+    "implementation_action": "运行预算、参数manifest、全网格结果与封存窗口。",
+    "acceptance": "完整参数网格、失败试验和选择规则均入同一试验族；热图可复核且封存样本不被调参重新读取。",
+    "work_package_owners": [
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA06",
+      "PA11"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF08",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "无代码策略积木",
+    "decision": "adopt_post_cutover_optional",
+    "reason": "积木必须编译到同一策略DSL和类型系统，不能另造一套执行器。",
+    "current_operations": [
+      "listStrategies",
+      "createExperiment"
+    ],
+    "implementation_action": "新增策略登记命令；编译前后golden输入输出一致。",
+    "acceptance": "图形积木与等价DSL在golden输入上输出一致；不支持节点拒绝并定位，不创建第二执行器。",
+    "work_package_owners": [
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA11"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。",
+    "input_decision": "adopt_phase_m6",
+    "input_phase_basis": "原参考路线的M6表示后续增强，不是v3.2的M6切换。",
+    "target_phase": "post-cutover",
+    "cutover_gate": false,
+    "target_phase_reason": "保留此功能的设计与验收，排在核心数据、唯一账本、排名、产品、并行对账和M6切换之后；不要求此增强完成才能切换。"
+  },
+  {
+    "feature_id": "PF09",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "区间统计",
+    "decision": "adopt",
+    "reason": "明确区间端点、复权、样本和现金流；用户事后选区间属于探索结果，不能冒充前向证据。",
+    "current_operations": [
+      "getStockBars",
+      "getEvaluation"
+    ],
+    "implementation_action": "固定区间统计查询/报告，含研究标签。",
+    "acceptance": "端点、复权、现金流和样本分母可重放；用户事后圈选标为探索，不能自动升级前向证据。",
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA04",
+      "PA06"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF10",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "图表快照",
+    "decision": "adopt",
+    "reason": "导出要包含证券、周期、复权、as_of、数据版本和组件署名，让图可复核。",
+    "current_operations": [
+      "getStockWorkspace",
+      "getStockBars"
+    ],
+    "implementation_action": "客户端或报告服务导出不改变业务事实。",
+    "acceptance": "PNG导出含证券/周期/复权/as_of/数据版本与署名；同快照重复导出不会偷偷换latest。",
+    "work_package_owners": [
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA14"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF11",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "财经日历与异动提醒",
+    "decision": "adopt",
+    "reason": "事前公布日程、实际公布及突发事件分开；异动阈值不自动变成买卖结论。",
+    "current_operations": [
+      "getStockEvidence",
+      "pollUpdates"
+    ],
+    "implementation_action": "新增跨证券事件/日历读模型与AlertRule。",
+    "acceptance": "延期/取消/修订按版本展示；只有日期的日程不伪造秒级时刻；异动提醒与买卖建议类型分开。",
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      },
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA07",
+      "PA13"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF12",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "命令面板与快捷键",
+    "decision": "covered",
+    "reason": "这是导航和用户效率能力，调用已有应用命令即可，不新增业务数据库口径。",
+    "current_operations": [
+      "getLayout",
+      "listWatchlists"
+    ],
+    "implementation_action": "按视图注册表生成命令；写操作保留明确动作。",
+    "acceptance": "命令面板与按钮调用相同应用操作和权限；快捷键不绕过写命令幂等与版本检查。",
+    "work_package_owners": [
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA14"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF13",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "模拟交易",
+    "decision": "covered",
+    "reason": "所有计划和策略使用同一现金/库存内核；独立策略实验与正式组合预算区分。",
+    "current_operations": [
+      "createExperiment",
+      "getEvaluation",
+      "getAccountProjection"
+    ],
+    "implementation_action": "统一execution事件，不复制每卡资金。",
+    "acceptance": "重复成交回报、分笔成交、T+1和部分未成交对同一账本结果一致；策略卡片不各自复制完整账户资本。",
+    "work_package_owners": [
+      {
+        "id": "W07",
+        "role": "执行与账本"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA06",
+      "PA12"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF14",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "市场宽度",
+    "decision": "covered",
+    "reason": "F067等按点时母集、停牌和涨跌幅规则计算，保持分母和交易阶段一致。",
+    "current_operations": [
+      "getMarketRanking",
+      "getSectorOverview"
+    ],
+    "implementation_action": "完成市场读模型及数据覆盖展示。",
+    "acceptance": "市场宽度固定PIT母集、停牌和涨跌停规则；缺失股票不记为零值/无涨停，分母与研究一致。",
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA01",
+      "PA09"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF15",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-073",
+    "input_line": 117,
+    "feature": "外部Agent能力接口",
+    "decision": "adopt_optional_adapter",
+    "reason": "开发或分析客户端可通过同一应用服务读取；MCP不是第二业务内核，也不默认获得发送/交易权限。",
+    "current_operations": [
+      "createExperiment",
+      "getAccountActionability",
+      "getAccountProjection",
+      "getCandidatePool",
+      "getCurrentRelease",
+      "getDataStatus",
+      "getEvaluation",
+      "getJobRun",
+      "getLayout",
+      "getLeague",
+      "getMarketRanking",
+      "getModelRun",
+      "getRelease",
+      "getSectorOverview",
+      "getSectorRanking",
+      "getStockBars",
+      "getStockCommunity",
+      "getStockEvidence",
+      "getStockFundFlow",
+      "getStockQuote",
+      "getStockSeats",
+      "getStockWorkspace",
+      "getTradePlan",
+      "listAnnotations",
+      "listPapers",
+      "listStrategies",
+      "listWatchlists",
+      "pollUpdates",
+      "saveAnnotation",
+      "saveLayout",
+      "saveWatchlist"
+    ],
+    "implementation_action": "按OpenAPI生成适配器，变更操作复用幂等和授权。",
+    "acceptance": "适配器操作目录由实际已发布OpenAPI生成；未经批准的扩展不可调用，账户权限和写幂等与网页一致。",
+    "work_package_owners": [
+      {
+        "id": "W01",
+        "role": "契约与集成"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA16"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF16",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "更多K线类型",
+    "decision": "adopt_optional_display",
+    "reason": "Heikin-Ashi/Renko等合成价格只能展示，不能作为真实成交价或替代原始OHLC。",
+    "current_operations": [
+      "getStockBars"
+    ],
+    "implementation_action": "新增展示转换类型及derived标识，策略使用另建特征定义。",
+    "acceptance": "Heikin-Ashi/Renko标derived并保留原始OHLC引用；成交内核拒绝把合成价冒充市场成交价。",
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA04"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF17",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "基本面筛选",
+    "decision": "covered_extend_ui",
+    "reason": "目录F049–F054已登记相关研究方向，实际数据接入仍待实施；筛选需点时财报版本与会计单位，不能用最新修订数据回填历史。",
+    "current_operations": [
+      "getMarketRanking"
+    ],
+    "implementation_action": "接入ScreenDSL，保留财报期间和实际可得时间。",
+    "acceptance": "财报修订、报告期与实际可得时刻分别存档；同一历史截止不得读到后来修订值，未接通字段显式capability缺口。",
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      },
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA10"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF18",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "对外推送钩子",
+    "decision": "adopt_optional_adapter",
+    "reason": "可用同一通知意图和outbox，不建立额外结论源；实际发送须用户配置目的地和授权。",
+    "current_operations": [
+      "pollUpdates"
+    ],
+    "implementation_action": "新增通知通道适配器和投递记录，当前不执行外发。",
+    "acceptance": "目的地由用户配置；同告警重试只新增delivery_attempt；网络超时保持unknown，不声称外部exactly-once。",
+    "work_package_owners": [
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA13"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF19",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "互动平台问答检索",
+    "decision": "adopt_optional_source",
+    "reason": "提问、公司答复和事实证明不同；保留提问/回复时点及主体，防止宣传性答复直接改变排序。",
+    "current_operations": [
+      "getStockEvidence"
+    ],
+    "implementation_action": "新增SourceCapability及跨文档检索读模型。",
+    "acceptance": "公司提问/回复保留各自时间与主体；宣传性答复不自动成为已证实主张；来源停供显示缺口。",
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA07"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF20",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "数据导出",
+    "decision": "adopt",
+    "reason": "导出固定快照、字段合同和许可范围；大任务异步，避免API扫全库。",
+    "current_operations": [
+      "getJobRun",
+      "getStockBars"
+    ],
+    "implementation_action": "导出命令绑定manifest、选择字段与访问范围。",
+    "acceptance": "导出引用固定manifest和字段合同；异步收据可找到产物；权限撤销与到期下载不能绕过检查。",
+    "work_package_owners": [
+      {
+        "id": "W02",
+        "role": "数据库"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA14"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  },
+  {
+    "feature_id": "PF21",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-075",
+    "input_line": 121,
+    "feature": "外部脚本语言兼容",
+    "decision": "adopt_research_import_only",
+    "reason": "不承诺Pine或其他语言完全语义兼容；逐实现核许可，不能无来源声称所有兼容方案都是强传染许可。",
+    "current_operations": [
+      "listStrategies",
+      "createExperiment"
+    ],
+    "implementation_action": "只导入白名单DSL子集，保留翻译差异、原始许可与拒绝节点。",
+    "acceptance": "导入清单记录来源许可、支持节点和语义差异；不兼容节点明确拒绝；翻译后fixture与声明语义一致。",
+    "work_package_owners": [
+      {
+        "id": "W01",
+        "role": "契约与集成"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "extension_card_resource_ids": [
+      "PA11"
+    ],
+    "status": "specified_not_claimed_implemented",
+    "coverage_semantics": "covered仅指已有合同/目录可复用，不代表对应页面、数据作业或生产能力已实现。"
+  }
+]

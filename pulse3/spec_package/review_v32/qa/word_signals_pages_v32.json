@@ -1,0 +1,560 @@
+{
+  "reviewer": "v32_signals_strategy",
+  "review_date": "2026-11-11",
+  "scope": {
+    "render_directory": "report_render_v32_01",
+    "page_start": 87,
+    "page_end": 128,
+    "page_count": 42,
+    "method": "Opened every original page PNG at native output dimensions; no montage, thumbnails or text-only substitution.",
+    "max_images_per_call": 2,
+    "read_only": true
+  },
+  "overall_status": "revision_recommended",
+  "counts": {
+    "pass": 40,
+    "revision_recommended": 1,
+    "pass_with_note": 1
+  },
+  "findings": [
+    {
+      "severity": "medium",
+      "kind": "near_empty_chapter_tail",
+      "description": "v3.2 交付矩阵与入口独占一页，内容面积约20%，下一页另起第十四部分。",
+      "recommendation": "将小节并入相邻章节或局部压缩上一章间距，避免整页短尾；修订后检查相邻跨页。",
+      "page": 99
+    },
+    {
+      "severity": "low",
+      "kind": "short_chapter_tail",
+      "description": "续页包含第2–6项验收及收束段，其后约三分之二页面留白。",
+      "recommendation": "若进行局部版式压缩，可连同前页调整；不构成阅读阻断。",
+      "page": 104
+    }
+  ],
+  "limits": [
+    "结论只适用于 report_render_v32_01 的这 42 页；未代替其他页的审阅。",
+    "本次为渲染版式检查，不构成新增事实、引文或财务策略实证核验。",
+    "第 99 页建议修正后需复查受影响跨页；本报告没有修改 Word 或正文。"
+  ],
+  "pages": [
+    {
+      "page": 87,
+      "status": "pass",
+      "notes": "C11–C13 正文、代码路径、标点清晰，无裁切；C13 核实方法续到下一页。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-87.png",
+      "image_sha256": "a931fcd5ea1ddd09352052088081e7021c40c4d605a0c4686f90be3141be0147",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 88,
+      "status": "pass",
+      "notes": "页首承接 C13 两行核实方法，随后 C14–C16；长路径正常换行，无溢出。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-88.png",
+      "image_sha256": "7365c9065eb050867184e9199107d33c694682fc5688718f13f5905e424aeb0a",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 89,
+      "status": "pass",
+      "notes": "C16 续段、C17 与 C18 排版完整；页底正文仍在内容区内，无裁切。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-89.png",
+      "image_sha256": "f1bc2c683b533765ab3c9f584a622e429c7762f8c9b9142beef650b8c5119574",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 90,
+      "status": "pass",
+      "notes": "C18 续段后六文件补丁表完整，双列路径正确换行；验证结果和命令可读，无溢出。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-90.png",
+      "image_sha256": "86c54b96dda7c896e3c7bb8f713764b8d8460d8d4307adc58e3fa1f273456c32",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 91,
+      "status": "pass",
+      "notes": "补丁边界与迁移约束完整；章末留白约四分之一，下一页另起大章，属正常章节分隔。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-91.png",
+      "image_sha256": "6befd4f16df0f93ce9b1981d51d44943489f1a7f30e82c044aada25f8c873095",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 92,
+      "status": "pass",
+      "notes": "第十二部分章首页、C19–C21 清晰；C21 正文续页，不存在独立悬空标题。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-92.png",
+      "image_sha256": "da7fe1985db0761a527c7b2d88f9752219bb697b8b80502388b897e8db3f2deb",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 93,
+      "status": "pass",
+      "notes": "C21 续段及 C22–C25 代码标识、英文长词均可读；页尾 C25 带充分正文后续页。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-93.png",
+      "image_sha256": "7444494c8d92e65b51dcc481d4fc58fe24e7ff206121a3dccbc4e476b58833af",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 94,
+      "status": "pass",
+      "notes": "承接 C25，C26–C28 段落、算式与箭头完整；无异常短尾或表格裁切。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-94.png",
+      "image_sha256": "f0797ca3f54f599211e19b3b3332e61ff0e029f2fbfcb4e549791f25bc2d6031",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 95,
+      "status": "pass",
+      "notes": "C29/C30 和审计进入开发的说明完整；章末正常留白，无孤立标题。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-95.png",
+      "image_sha256": "ca3995088becb093c988258eef55c8089e74294c39e017428f9d7a648848ad62",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 96,
+      "status": "pass",
+      "notes": "第十三部分章首页；十工作包三列表完整放在一页，所有行和右侧验收列均可读。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-96.png",
+      "image_sha256": "6212a06d4ba7e27d21e6296d29167d3e4b318222791131aea73d1cf5c4b69cc5",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 97,
+      "status": "pass",
+      "notes": "输入输出合同、迁移路径、事务语义和来源清单完整；长字段及 SQL 路径正常折行。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-97.png",
+      "image_sha256": "41e123a3458e462d9121c8a8824e3904b09cebcbefa58d223eb5e099ac055582",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 98,
+      "status": "pass",
+      "notes": "基线、里程碑、运行与开发约束四节完整；页眉页脚不侵入正文，英文名称和标点正常。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-98.png",
+      "image_sha256": "7bf5b8630e456f2acfda61f891d9db3a35b690232098ff2bce7eb10e0e636f3f",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 99,
+      "status": "revision_recommended",
+      "notes": "章末独立短尾页，标题与约五行正文后下方约四分之三页面留白；文字本身完整可读。",
+      "issues": [
+        {
+          "severity": "medium",
+          "kind": "near_empty_chapter_tail",
+          "description": "v3.2 交付矩阵与入口独占一页，内容面积约20%，下一页另起第十四部分。",
+          "recommendation": "将小节并入相邻章节或局部压缩上一章间距，避免整页短尾；修订后检查相邻跨页。"
+        }
+      ],
+      "image_path": "report_render_v32_01/page-99.png",
+      "image_sha256": "45a48276d56195fe5394e1e029904fb6cf432065d1c015f0613f1a5594e85141",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 100,
+      "status": "pass",
+      "notes": "已交付结构三列表完整；多行单元格正常包裹，最末行与页脚有间隔。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-100.png",
+      "image_sha256": "c03d723e6c6adbc79e45d04f156a4e7614cb14a2c5875d3f30c671f796a3d49e",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 101,
+      "status": "pass",
+      "notes": "已运行验证长表第一段整行排版；数字、英文和中文均完整，页底无被截行。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-101.png",
+      "image_sha256": "a2796b78d2ce2b8396b483fdfad193b29043c2f1f69454dddcb1ecc0dcbebe88",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 102,
+      "status": "pass",
+      "notes": "跨页验证表重复表头，续行完整；183 用例说明及独立复核小节不被截断。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-102.png",
+      "image_sha256": "6bbf74aaedce311e9a411204914dc4cd9d85114b2e4532f12598cf5355585cfc",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 103,
+      "status": "pass",
+      "notes": "独立复核、旧仓库范围与生产验收条目完整；页底标题后有首项完整正文，无悬空标题。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-103.png",
+      "image_sha256": "96789b0cba1baa83d5f4140245a6e9485ab5015192ffae8bfc60bf4e7fda6dfb",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 104,
+      "status": "pass_with_note",
+      "notes": "验收清单续页完整，正文约占三分之一，章末留白较大；无裁切或缺失。",
+      "issues": [
+        {
+          "severity": "low",
+          "kind": "short_chapter_tail",
+          "description": "续页包含第2–6项验收及收束段，其后约三分之二页面留白。",
+          "recommendation": "若进行局部版式压缩，可连同前页调整；不构成阅读阻断。"
+        }
+      ],
+      "image_path": "report_render_v32_01/page-104.png",
+      "image_sha256": "5c2f76812dbed78379095def5ff3a6e3a23231b2e73ca5b23cfe35795d221af8",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 105,
+      "status": "pass",
+      "notes": "资料索引章首页及 A01–A10 清晰，原始文档链接样式统一，无字符缺失。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-105.png",
+      "image_sha256": "44f549d4b48507e0a69f13033324fc0f5235e7efcda00361175daaad78170015",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 106,
+      "status": "pass",
+      "notes": "A11–A25 条目均与说明同页；英文字段、百分号和下划线无乱码，末项未裁切。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-106.png",
+      "image_sha256": "0155d5c9b4e141a2059e60b994073c1411858c473abece339a8f758cce107c9e",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 107,
+      "status": "pass",
+      "notes": "A26–A30 后接架构研究索引 T01–T09；标题与说明连续，重音字符 López 正常。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-107.png",
+      "image_sha256": "057a8d27c6545d7b42b746fe9f460e59f9391fe691fdf4f18a07c37fc40d24f5",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 108,
+      "status": "pass",
+      "notes": "T10–T20 及共享资料 X01/X02 清晰；底部 X02 说明正常换成两行，未触及页脚。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-108.png",
+      "image_sha256": "fb28845ac2e86c842b4872d434c9ffd06985f5f9fc544918c82119832a6ea554",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 109,
+      "status": "pass",
+      "notes": "X03–X07 和 DB01–DB05 索引，中英混排长段落正常折行；无右侧越界。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-109.png",
+      "image_sha256": "8d8883b86c229fc90af191b887d545fdfe1697ab94610c03416b48f460e9d4a8",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 110,
+      "status": "pass",
+      "notes": "数据库资料英文描述逐段完整，API 下划线与括号清晰，末条说明未裁切。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-110.png",
+      "image_sha256": "a94be9d06819597d6ac35135adcdf45459c4446b30a7a8e83a8ff63b81c7ab03",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 111,
+      "status": "pass",
+      "notes": "EXS01–EXS08 长英文标题与说明均在边界内；加粗标题、连字符及百分号呈现正常。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-111.png",
+      "image_sha256": "c813634df8c0b3163ae476e3fe324a06c4a2378afff0c149d9566c738ab8e5fc",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 112,
+      "status": "pass",
+      "notes": "收费来源接消息社区索引，多个中英混排段落完整；末项 NS07 两行说明正常保留。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-112.png",
+      "image_sha256": "74214588f020934155fd3fccf569a838930ab2d983a9717919db392cb2afa497",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 113,
+      "status": "pass",
+      "notes": "NS08–NS18 条目与中文主张完整；无孤立标题、缺字或链接样式异常。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-113.png",
+      "image_sha256": "7eb58bcf9cb177c33cd567d2ee97a4dca668c4bcd7789554ecddd086b9949802",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 114,
+      "status": "pass",
+      "notes": "CS01–CS08 长论文题目自然换行；下方新索引组与 CR01/CR02 均有完整说明，无页脚碰撞。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-114.png",
+      "image_sha256": "9e8f07e40454759414eed3b857f9995721159d6b9de104c72d51f258b4c43029",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 115,
+      "status": "pass",
+      "notes": "架构资料与补充论文索引连接自然；段前段后间距统一，所有标题带完整用途说明。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-115.png",
+      "image_sha256": "3b705b11a5319ac72b90f5deaeb4d9d12c8f23bcfe96d528bff7acb972f59a9a",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 116,
+      "status": "pass",
+      "notes": "VM-S05–VM-S15 资料条目清晰，长英文标题未溢出，底部 SciPy 说明完整。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-116.png",
+      "image_sha256": "367753b7359047794918f20175deb9f4ed34c249c4a1fbf30863d7b21ba81754",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 117,
+      "status": "pass",
+      "notes": "补充来源索引与十一卷文献核验衔接完整；R32-P02 标题和两行说明同页，未孤立。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-117.png",
+      "image_sha256": "f6113a793df22adb67d6fa050dcc9dba29238a918b4e0b6b7262a66111bb9474",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 118,
+      "status": "pass",
+      "notes": "R32-P03–P11 文献卡完整；长题目分行自然，P08/P09 修订说明清晰，无溢出。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-118.png",
+      "image_sha256": "a426560e2a5234fd17cd2a77c48366bf42debc14e083a6b4915be92fad085ab1",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 119,
+      "status": "pass",
+      "notes": "R32-P12–P21 标题、摘要边界说明完整；双行长题目清晰，不出现缺字或越界。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-119.png",
+      "image_sha256": "65d28f9f4a24c881cbda6dfbc3e34c812e6ad42eb0eb5c4347af16850f7c7210",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 120,
+      "status": "pass",
+      "notes": "R32-P22–P32 多行文本完整；统计数字、小于/大于符号和连字符均清晰。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-120.png",
+      "image_sha256": "b7ed71613dabc6f89e61e84e33ab6a6c3b76a7aa5f5160656c178cb13459c969",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 121,
+      "status": "pass",
+      "notes": "R32-P33–P42 多个双行长题目和中文说明完整；底部 AQuA 说明未裁切。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-121.png",
+      "image_sha256": "a5bbf4bcdc55d98eafd10776f2a26d7dbf5afd856181bd0b310ffa04d5dc37a6",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 122,
+      "status": "pass",
+      "notes": "Kronos、DRL、网格、Kelly、DSR 等较长修订说明均完整；标题与正文无重叠。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-122.png",
+      "image_sha256": "38ecebb2ea51914dfdb36d5c2703ba72353e40626672d822691adcdc5a54412f",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 123,
+      "status": "pass",
+      "notes": "R32-P52–P55 与规则组件来源索引连续清楚；长英文标题、下划线、数字参数和页脚均完整。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-123.png",
+      "image_sha256": "fe8a433c2aa62d65d60fdd169170ce7daeceab6a0ba7afa7379e6333837eec45",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 124,
+      "status": "pass",
+      "notes": "规则组件来源索引末页，9 条条目清楚；章末正常留白，无单独标题、裁切或乱码。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-124.png",
+      "image_sha256": "2fdd7ec4fb4c5e8d4024b146ee74521edf854b62a6b56b99eaa199d27609f01b",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 125,
+      "status": "pass",
+      "notes": "补充方案主标题与三列表完整；最后一行 S061 位于正文边界内，与页脚保持分离。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-125.png",
+      "image_sha256": "f04397c5af8bde98270c4793cb57f703038c7896816844d43017575939fc8804",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 126,
+      "status": "pass",
+      "notes": "较长等宽字段名、公式和中英混排均未超出行宽；第二节与第三节的标题正文衔接清晰。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-126.png",
+      "image_sha256": "8854821f93a76610eb3dc20de1094a992c05058d3641b10822de3edb3b74ce42",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 127,
+      "status": "pass",
+      "notes": "F098–F104、锚定价格、MACD 和社区章节布局完整；页底小节保留完整首段，无悬空标题。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-127.png",
+      "image_sha256": "353337c32c57aae5c5ec4745e5efeaee0fe6d2a0e1d85ab517441c4f1da1bf95",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 128,
+      "status": "pass",
+      "notes": "社区证据定位、席位及 ETF/债股章节的长字段和粗体结论完整；无裁切、乱码或异常跨页。",
+      "issues": [],
+      "image_path": "report_render_v32_01/page-128.png",
+      "image_sha256": "86a451a5461653643c04ce10fd0f4b7010d5d4c6a04e9672178eb9735d041e56",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    }
+  ]
+}

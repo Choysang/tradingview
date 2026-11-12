@@ -1,0 +1,911 @@
+[
+  {
+    "id": "A01",
+    "title": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "supports": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓"
+  },
+  {
+    "id": "A02",
+    "title": "官方说明ST 5%改10% 盘后固定价扩容",
+    "url": "https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20260424_10816474.shtml",
+    "supports": "官方说明ST 5%改10% 盘后固定价扩容"
+  },
+  {
+    "id": "A03",
+    "title": "深证上〔2026〕551号 2026-07-06生效",
+    "url": "https://investor.szse.cn/lawrules/rule/trade/t20260424_620190.html",
+    "supports": "深证上〔2026〕551号 2026-07-06生效"
+  },
+  {
+    "id": "A04",
+    "title": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "supports": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后"
+  },
+  {
+    "id": "A05",
+    "title": "现行交易时段 主板10% 创业板20%",
+    "url": "https://www.szse.cn/English/services/trading/tradOverview/",
+    "supports": "现行交易时段 主板10% 创业板20%"
+  },
+  {
+    "id": "A06",
+    "title": "沪市A股盘后固定价15:05–15:30",
+    "url": "https://one.sse.com.cn/onething/gptz/",
+    "supports": "沪市A股盘后固定价15:05–15:30"
+  },
+  {
+    "id": "A07",
+    "title": "北向实时买卖及总成交不再提供 季度持股披露",
+    "url": "https://www.hkex.com.hk/News/Market-Communications/2024/2404122news?sc_lang=en",
+    "supports": "北向实时买卖及总成交不再提供 季度持股披露"
+  },
+  {
+    "id": "A08",
+    "title": "2024披露调整实际生效日期",
+    "url": "https://www.hkex.com.hk/-/media/HKEX-Market/News/News-Release/2025/250227news/250227_FY-Results_e.pdf",
+    "supports": "2024披露调整实际生效日期"
+  },
+  {
+    "id": "A09",
+    "title": "L2包含逐笔/订单关联等 专网协议",
+    "url": "https://www.sseinfo.com/services/assortment/level2/",
+    "supports": "L2包含逐笔/订单关联等 专网协议"
+  },
+  {
+    "id": "A10",
+    "title": "news来源 最大1500条 需独立新闻权限",
+    "url": "https://tushare.pro/document/2?doc_id=143",
+    "supports": "news来源 最大1500条 需独立新闻权限"
+  },
+  {
+    "id": "A11",
+    "title": "积分与独立权限分离 分钟/公告/新闻非同一权限",
+    "url": "https://tushare.pro/document/1?doc_id=290",
+    "supports": "积分与独立权限分离 分钟/公告/新闻非同一权限"
+  },
+  {
+    "id": "A12",
+    "title": "2026发布日程 数据库更新与新闻首发有时差",
+    "url": "https://www.stats.gov.cn/sj/fbrc/bnxxfb/",
+    "supports": "2026发布日程 数据库更新与新闻首发有时差"
+  },
+  {
+    "id": "A13",
+    "title": "官方货币政策/讲话/统计RSS",
+    "url": "https://www.federalreserve.gov/feeds/feeds.htm",
+    "supports": "官方货币政策/讲话/统计RSS"
+  },
+  {
+    "id": "A14",
+    "title": "ALFRED当时已知版本 realtime_start/end",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/realtime_period.html",
+    "supports": "ALFRED当时已知版本 realtime_start/end"
+  },
+  {
+    "id": "A15",
+    "title": "FRED API key和参数",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/series.html",
+    "supports": "FRED API key和参数"
+  },
+  {
+    "id": "A16",
+    "title": "BLS官方HTTPS GET/POST JSON数据API",
+    "url": "https://www.bls.gov/audience/developers.htm",
+    "supports": "BLS官方HTTPS GET/POST JSON数据API"
+  },
+  {
+    "id": "A17",
+    "title": "BLS API限制和API可用延迟说明",
+    "url": "https://www.bls.gov/bls/api_features.htm",
+    "supports": "BLS API限制和API可用延迟说明"
+  },
+  {
+    "id": "A18",
+    "title": "EIA APIv2 免费key及接口结构",
+    "url": "https://www.eia.gov/opendata/documentation.php",
+    "supports": "EIA APIv2 免费key及接口结构"
+  },
+  {
+    "id": "A19",
+    "title": "EIA库存报告API可能滞后至两小时 秒级首发另有服务",
+    "url": "https://www.eia.gov/opendata/faqs.php",
+    "supports": "EIA库存报告API可能滞后至两小时 秒级首发另有服务"
+  },
+  {
+    "id": "A20",
+    "title": "GDELT2.0 65语言 15分钟更新",
+    "url": "https://gdeltproject.org/data.html",
+    "supports": "GDELT2.0 65语言 15分钟更新"
+  },
+  {
+    "id": "A21",
+    "title": "YouTube官方API配额机制",
+    "url": "https://developers.google.com/youtube/data/getting-started",
+    "supports": "YouTube官方API配额机制"
+  },
+  {
+    "id": "A22",
+    "title": "Reddit数据API须批准/认证 商业需对应权限",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/14945211791892-Developer-Platform-Accessing-Reddit-Data",
+    "supports": "Reddit数据API须批准/认证 商业需对应权限"
+  },
+  {
+    "id": "A23",
+    "title": "Reddit开发者批准和使用条件",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/16471395473812-Moderation-Bots-Tooling",
+    "supports": "Reddit开发者批准和使用条件"
+  },
+  {
+    "id": "A24",
+    "title": "巨潮公开数据/API/商城入口",
+    "url": "https://www.cninfo.com.cn/new/index?lang=en",
+    "supports": "巨潮公开数据/API/商城入口"
+  },
+  {
+    "id": "A25",
+    "title": "抖音视频搜索接口与scope",
+    "url": "https://developer.open-douyin.com/docs/resource/zh-CN/dop/develop/openapi/douyin-search-capability/",
+    "supports": "抖音视频搜索接口与scope"
+  },
+  {
+    "id": "A26",
+    "title": "抖音搜索能力页面仍标实验不对外开放",
+    "url": "https://partner.open-douyin.com/docs/resource/zh-CN/dop/ability/search-management/item-search",
+    "supports": "抖音搜索能力页面仍标实验不对外开放"
+  },
+  {
+    "id": "A27",
+    "title": "CFFEX 2020沪深300股指期货交易细则 历史背景",
+    "url": "https://www.cffex.com.cn/u/cms/www/202003/27165505w3j5.pdf",
+    "supports": "仅支持历史规则背景；2026现行合约日历和规则仍须另行核实"
+  },
+  {
+    "id": "A28",
+    "title": "财政部政策发布和政策解读栏目",
+    "url": "https://www.mof.gov.cn/zhengwuxinxi/",
+    "supports": "财政部政策发布和政策解读栏目"
+  },
+  {
+    "id": "A29",
+    "title": "发改委政策通知栏目",
+    "url": "https://www.ndrc.gov.cn/xxgk/zcfb/tz/wap_index.html",
+    "supports": "发改委政策通知栏目"
+  },
+  {
+    "id": "A30",
+    "title": "BLS发布日历 美国东部时区 可订阅ICS",
+    "url": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+    "supports": "BLS发布日历 美国东部时区 可订阅ICS"
+  },
+  {
+    "id": "T01",
+    "title": "Temporal Workflow Definition",
+    "url": "https://docs.temporal.io/workflow-definition",
+    "supports": "Workflow须确定性；外部API/LLM/DB交互应放Activity"
+  },
+  {
+    "id": "T02",
+    "title": "Temporal Activity Definition",
+    "url": "https://docs.temporal.io/activity-definition",
+    "supports": "Activity会重试、多次执行；幂等由业务端实现"
+  },
+  {
+    "id": "T03",
+    "title": "NATS JetStream",
+    "url": "https://docs.nats.io/concepts/jetstream",
+    "supports": "持久化、回放、至少一次交付、消费者独立进度"
+  },
+  {
+    "id": "T04",
+    "title": "Polars Lazy API",
+    "url": "https://docs.pola.rs/user-guide/lazy/using/",
+    "supports": "整体查询优化、流式与schema检查"
+  },
+  {
+    "id": "T05",
+    "title": "DuckDB Parquet",
+    "url": "https://duckdb.org/docs/stable/data/parquet/overview",
+    "supports": "直接读写Parquet，按列/过滤扫描"
+  },
+  {
+    "id": "T06",
+    "title": "TradingView Product Comparison",
+    "url": "https://www.tradingview.com/charting-library-docs/latest/getting_started/product-comparison/",
+    "supports": "Lightweight Charts不自带行情或指标"
+  },
+  {
+    "id": "T07",
+    "title": "Qlib PIT",
+    "url": "https://qlib.readthedocs.io/en/latest/advanced/PIT.html",
+    "supports": "修订财报版本的时点读取；当前主要季/年因子"
+  },
+  {
+    "id": "T08",
+    "title": "Bailey & López de Prado DSR paper",
+    "url": "https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf",
+    "supports": "多重试验选择偏差与非正态修正"
+  },
+  {
+    "id": "T09",
+    "title": "Bailey et al PBO paper",
+    "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+    "supports": "回测过拟合概率与CSCV方法"
+  },
+  {
+    "id": "T10",
+    "title": "Microsoft Qlib",
+    "url": "https://github.com/microsoft/qlib",
+    "supports": "ML量化研究管线与模型/数据/回测组织"
+  },
+  {
+    "id": "T11",
+    "title": "Microsoft RD-Agent",
+    "url": "https://github.com/microsoft/RD-Agent",
+    "supports": "因子/模型提出、实现与联合研究流程"
+  },
+  {
+    "id": "T12",
+    "title": "vectorbt",
+    "url": "https://vectorbt.dev/",
+    "supports": "数组化批量策略与参数研究；注意免费和PRO能力差别"
+  },
+  {
+    "id": "T13",
+    "title": "LEAN Trade Fills",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+    "supports": "fill与slippage职责；默认完全成交、部分成交自定义"
+  },
+  {
+    "id": "T14",
+    "title": "NautilusTrader Backtesting",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/",
+    "supports": "回测共享核心组件，流数据驱动"
+  },
+  {
+    "id": "T15",
+    "title": "NautilusTrader Fill Models",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/fill-models/",
+    "supports": "book type、触价成交概率、滑点、流动性消耗约束"
+  },
+  {
+    "id": "T16",
+    "title": "FinRL Training Testing Trading",
+    "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/master/docs/source/finrl_meta/overview.rst",
+    "supports": "DRL训练、测试、交易的阶段分离"
+  },
+  {
+    "id": "T17",
+    "title": "MCP Tools Specification",
+    "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx",
+    "supports": "工具定义有inputSchema/outputSchema，稳定工具顺序有利缓存"
+  },
+  {
+    "id": "T18",
+    "title": "A2A Specification",
+    "url": "https://github.com/a2aproject/A2A/blob/main/docs/specification.md",
+    "supports": "Agent Card、任务、跨独立Agent系统交互"
+  },
+  {
+    "id": "T19",
+    "title": "QuantConnect Research Guide",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/research-guide",
+    "supports": "财务发布日期、复权价格、动态股票池与生存偏差"
+  },
+  {
+    "id": "T20",
+    "title": "PostgreSQL Transaction Isolation",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "supports": "事务隔离含义；作为交易与版本状态库的基础"
+  },
+  {
+    "id": "X01",
+    "title": "NATS JetStream事件持久化与独立消费者",
+    "url": "https://docs.nats.io/concepts/jetstream",
+    "supports": "区分Core NATS与JetStream；独立消费游标、至少一次投递和回放。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X02",
+    "title": "DuckLake官方FAQ",
+    "url": "https://ducklake.select/faq",
+    "supports": "2026年1.0生产可用声明、多实例共享Parquet和SQL目录；业务表不提供主外键约束。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X03",
+    "title": "DuckLake事务与快照",
+    "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/transactions",
+    "supports": "数据及目录快照隔离、多表事务；不能推导与业务数据库天然跨库原子。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X04",
+    "title": "上交所2026交易规则发布与正式附件",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "supports": "2026年7月6日生效，按品种与规则版本处理交易。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X05",
+    "title": "深交所2026交易规则正式PDF",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "supports": "交收前卖出限制及回转例外、会话和盘后交易规则。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X06",
+    "title": "恒生A股通服务常见问题",
+    "url": "https://www.hangseng.com/zh-cn/investment/securities-services/stock-connect/faq-stock-connect/",
+    "supports": "该服务未交收卖款不可再买A股；只用于特定渠道，不能推广全部账户。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "X07",
+    "title": "东方财富证券投资者教育基础知识",
+    "url": "https://edu.18.cn/CaiFuShuYuan/JiChuZhiShi",
+    "supports": "官方索引片段说明国内卖出款可交易使用与可取不同；正文打开遇重定向，接入账户时仍须核对券商政策。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP01",
+    "title": "AlphaBench: Benchmarking Large Language Models in Formulaic Alpha Factor Mining",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4f3820576130a8f796ddbf204c841487-Abstract-Conference.html",
+    "supports": "把因子生成、因子质量判断、迭代搜索分开评测；以可执行金融 DSL 和统一回测比较提示、推理配置及搜索范式。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP02",
+    "title": "Reasoning on Time-Series for Financial Technical Analysis",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/68c1b9784d982fa5575bb45ace7bd64e-Abstract-Conference.html",
+    "supports": "将价格序列转为文字标注，训练语言推理，再把推理属性作为时间序列骨干的条件；推理奖励与预测误差相关。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP03",
+    "title": "FinSearchComp: Towards a Realistic, Expert-Level Evaluation of Financial Search and Reasoning",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d42358702dff82e1436550a05ade260-Abstract-Conference.html",
+    "supports": "用实时数据获取、简单历史检索、复杂历史调查三类任务测金融搜索与推理。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP04",
+    "title": "AlphaSAGE: Structure-Aware Alpha Mining via GFlowNets for Robust Exploration",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/06115011841a8d500050261c0ac4b1e4-Abstract-Conference.html",
+    "supports": "RGCN 编码因子表达式图，GFlowNet 探索多个有价值表达式区域，密集多目标奖励同时考虑预测与多样性。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP05",
+    "title": "AlphaMaster: Dual-Chain Feedback for Scalable and Diverse Alpha Factor Discovery",
+    "url": "https://doi.org/10.1145/3770855.3818120",
+    "supports": "生成链与优化链分工，联合 RL、GFlowNet、LLM 符号生成和 GP；用相关性约束减少同质因子。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP06",
+    "title": "FactorMiner: A Self-Evolving Agent with Skills and Experience Memory for Financial Alpha Discovery",
+    "url": "https://kdd2026.kdd.org/papers/",
+    "supports": "可执行研究技能加成功/失败经验库；快速 IC 筛选、池内相关性检查、批内去重、完整验证和近邻因子替换。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP07",
+    "title": "Fin-RATE: A Real-world Financial Analytics and Tracking Evaluation Benchmark for LLMs on SEC Filings",
+    "url": "https://doi.org/10.1145/3770855.3817528",
+    "supports": "区分单文档细节推理、跨企业比较、跨期追踪，并把检索、实体、时间与推理错误拆开。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP08",
+    "title": "FinRAQ: Financial News Reasoning through Importance Ranking and Socratic Questioning",
+    "url": "https://aclanthology.org/2026.findings-emnlp.1432/",
+    "supports": "NewsRank 以时间图的语义/时间双通道聚合新闻重要性；多空视角使用结构化 Socratic 提问相互检查假设。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP09",
+    "title": "FinEvo: Financial Language Agents Shape the Markets That Evaluate Them",
+    "url": "https://aclanthology.org/2026.finnlp-1.5/",
+    "supports": "把新闻驱动的异质金融 Agent 放入连续双向拍卖市场，并通过资本重分配使参与者种群变化。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP10",
+    "title": "From Knowing to Doing: A Memory-Controlled Benchmark for LLM Trading Agents on Stock Markets",
+    "url": "https://arxiv.org/abs/2605.28359",
+    "supports": "股票标识和日期匿名化控制历史记忆，再用 Barra 风格归因区分市场、风格和选股贡献。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP11",
+    "title": "AlphaForgeBench: Benchmarking End-to-End Trading Strategy Design with Large Language Models",
+    "url": "https://kdd2026.kdd.org/papers/",
+    "supports": "把可执行因子与组合策略代码作为研究结果，固定执行环境来区分研究能力与逐次动作波动。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP12",
+    "title": "AgenticFinBench: Benchmarking Financial Agents on Diverse Tasks from Real-World Requests",
+    "url": "https://arxiv.org/abs/2611.04813",
+    "supports": "问题专属 rubric 加两阶段原子声明核验，区分缺少轨迹证据与被外部证据反驳。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP13",
+    "title": "Vector-Quantized Discrete Latent Factors Meet Financial Priors: Dynamic Cross-Sectional Stock Ranking Prediction for Portfolio Construction",
+    "url": "https://ijcai.org/proceedings/2026/492",
+    "supports": "金融先验因子与 VQ 离散潜变量结合，结构条件 MoE 动态生成因子载荷。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP14",
+    "title": "TransAlpha: Lightweight Design Empowers Stock Return Forecasting",
+    "url": "https://ijcai.org/proceedings/2026/580",
+    "supports": "横截面去噪、时间注意力门控、聚合与混合损失，降低日内高维因子预测计算量。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP15",
+    "title": "Kronos: A Foundation Model for the Language of Financial Markets",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/39730",
+    "supports": "把金融 K 线离散为同时表达价量的 token，使用自回归预训练支撑价格、波动与生成任务。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP16",
+    "title": "FinRpt: Dataset, Evaluation System and LLM-based Multi-agent Framework for Equity Research Report Generation",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/37014",
+    "supports": "聚合公司、财报、公告、新闻及行情等资料生成研究报告，配套报告评价与专用 Agent 训练。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP17",
+    "title": "Trade in Minutes! Rationality-Driven Agentic System for Quantitative Financial Trading",
+    "url": "https://iclr.cc/Downloads/2026",
+    "supports": "语义分析、编程与数学推理 Agent 生成并优化交易程序，降低每次执行对连续大模型推理的依赖。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP18",
+    "title": "Joint-Embedding Predictive Learning of Latent Market States in U.S. Equities",
+    "url": "https://proceedings.mlr.press/v306/mahns26a.html",
+    "supports": "把每日无序资产特征编码为一组因子 token，时序 JEPA 学习紧凑市场状态。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP19",
+    "title": "Emergence of Biased Consensus in Multi-Agent LLM Debates",
+    "url": "https://proceedings.mlr.press/v306/okawa26a.html",
+    "supports": "用受控实验与社会动力学模型研究偏差、从众和采样噪声怎样形成多 Agent 共识，并测试异质性。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP20",
+    "title": "Market Regime Council for Dynamic Credit Assignment in Multi-Agent LLM Decision Systems",
+    "url": "https://neurips.cc/Downloads/2026",
+    "supports": "三个专家的单体/双体/全体输出用于 Shapley 贡献估计，配合指数加权历史、贝叶斯冷启动和状态权重。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP21",
+    "title": "FinAuditing: A Financial Taxonomy-Structured Multi-Document Benchmark for Evaluating LLMs",
+    "url": "https://doi.org/10.1145/3805712.3808578",
+    "supports": "用 XBRL/会计分类结构评测语义匹配、关系抽取和数值一致性，跨文档核对财务事实。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP22",
+    "title": "Data-Driven Function Calling Improvements in Large Language Model for Online Financial QA",
+    "url": "https://www2026.thewebconf.org/accepted/industry",
+    "supports": "从真实查询构建工具调用样本，用 AugFC 补参数分布盲点，再 SFT/RL 训练函数选择与参数提取。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "AP23",
+    "title": "Can ChatGPT forecast stock price movements? Return predictability and large language models",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0304405X26001066",
+    "supports": "用 LLM 新闻标题评分研究初始价格反应与后续漂移，并分析模型规模、消息类型和收益随普及变化。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP01",
+    "title": "AlphaQuanter: An End-to-End Tool-Augmented Agentic Reinforcement Learning Framework for Stock Trading",
+    "url": "https://aclanthology.org/2026.findings-acl.456/",
+    "supports": "以 GRPO 训练单个工具调用型语言模型，按需查询行情、基本面、新闻及宏观工具后输出日频买入/卖出/持有。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP02",
+    "title": "STABLE: Shift-Tolerant Allocation via Black-Litterman Using Conditional Diffusion Estimates",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d4dbc5c955c5d273eed12d565335068-Abstract-Conference.html",
+    "supports": "宏观与个股条件扩散生成收益轨迹，估计联合收益分布，再将均值/协方差信息送入 Black–Litterman 配置。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP03",
+    "title": "Decision-focused Sparse Tangent Portfolio Optimization",
+    "url": "https://proceedings.mlr.press/v306/jeon26a.html",
+    "supports": "将可微稀疏 Sharpe 优化层接入预测模型，以决策损失与预测误差混合训练，并用可微 top-k 选择持股。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP04",
+    "title": "A Linearly Convergent Proximal Subgradient Algorithm for Sparse Portfolio Optimization with Transaction Cost",
+    "url": "https://proceedings.mlr.press/v306/yao26s.html",
+    "supports": "以稀疏持股与交易成本构造优化问题，采用差分凸松弛和近端次梯度算法；理论给出特定条件下的线性收敛。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP05",
+    "title": "Regime-Adaptive Continual Learning for Portfolio Management",
+    "url": "https://arxiv.org/abs/2606.00143",
+    "supports": "ReCAP 用在线状态变化检测器维护市场阶段，保存 PPO 的策略参数增量；门控混合阶段经验，适配新阶段并合并相似增量。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP06",
+    "title": "FineFT: Efficient and Risk-Aware Ensemble Reinforcement Learning for Futures Trading",
+    "url": "https://arxiv.org/abs/2512.23773",
+    "supports": "以选择性 TD 更新训练专家，筛选各状态中表现较好的策略，再用能力/分布外状态路由决定采用哪个专家。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP07",
+    "title": "Controllable Financial Market Generation with Diffusion Guided Meta Agent",
+    "url": "https://ojs.aaai.org/index.php/AAAI/article/view/37009",
+    "supports": "条件扩散生成中间价收益和订单到达参数，再由带经济先验的元 Agent 生成订单流。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP08",
+    "title": "Dynamic Action Space Reinforcement Learning for Optimal Trading Execution",
+    "url": "https://ifaamas.org/Proceedings/aamas2026/pdfs/GFLB4392.pdf",
+    "supports": "根据当前市场状态缩减执行动作集合，结合自适应探索与经验回放重整，学习大额卖出母单的拆分执行。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP09",
+    "title": "Reinforcement learning for continuous-time optimal execution: actor–critic algorithm and error analysis",
+    "url": "https://link.springer.com/article/10.1007/s00780-026-00589-5",
+    "supports": "在熵正则的均值—二次变差执行控制下构造可解析的策略/价值参数化，通过 actor–critic 与重校准学习执行路径。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP10",
+    "title": "LOB-Impact Benchmark: Emergent Market Impact in Generative Limit Order Book Models",
+    "url": "https://arxiv.org/abs/2610.27100",
+    "supports": "通过向生成订单簿注入母单，并比较可见/隐藏订单干预，测量自身市场冲击和执行后的恢复。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP11",
+    "title": "Can We Stop the Backtest Yet? Anytime-Valid Promotion Tests for Adaptive Financial Research Agents",
+    "url": "https://arxiv.org/abs/2611.03384",
+    "supports": "PROMOTE 给新候选登记不可返还的检验预算，只用出生后净收益的有界分数更新 e-process，以控制持续搜索中的错误晋级概率。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP12",
+    "title": "Realistic Market Impact Modeling for Reinforcement Learning Trading Environments",
+    "url": "https://arxiv.org/abs/2603.29086",
+    "supports": "MACE 以可替换执行成本模块比较固定比例费用、Almgren–Chriss 类冲击和衰减冲击，记录交易参与率与换手。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP13",
+    "title": "Machine Learning and the Implementable Efficient Frontier",
+    "url": "https://academic.oup.com/rfs/article/39/10/3035/8524346",
+    "supports": "把机器学习收益预测放入含交易成本与多期持有决策的组合问题，评价可实施有效前沿及经济意义上的特征贡献。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP14",
+    "title": "Volatility Harvesting or Inventory Risk? Market-Wide Evidence on Grid Trading in China's Equity ETF Market",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7429819",
+    "supports": "将网格交易和相同初始风险敞口的静态组合比较，重点区分波动收益与额外库存风险。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "EP15",
+    "title": "Decoupling Grid Triggers from Trade Decisions: A Constrained Event-Driven Reinforcement Learning Architecture for ETF Trading",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7313639",
+    "supports": "EDGMGT 将网格越界作为事件，之后由有动作掩码的 PPO 选择买/卖/持有；不要求每次越界都成交。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV01",
+    "title": "多图同步",
+    "url": "https://www.tradingview.com/support/solutions/43000629992-how-to-sync-the-charts-of-my-layout/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV02",
+    "title": "布局保存、事件、图形同步",
+    "url": "https://www.tradingview.com/support/solutions/43000746975-tradingview-layouts-a-quick-guide/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV03",
+    "title": "Pine Screener 功能及限制",
+    "url": "https://www.tradingview.com/support/solutions/43000742436-tradingview-pine-screener-key-features-and-requirements/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV04",
+    "title": "Pine v6 策略与模拟成交",
+    "url": "https://www.tradingview.com/pine-script-docs/concepts/strategies/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV05",
+    "title": "Pine 策略 FAQ",
+    "url": "https://www.tradingview.com/pine-script-docs/faq/strategies",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV06",
+    "title": "历史回放交易",
+    "url": "https://www.tradingview.com/support/solutions/43000691889-learn-to-trade-on-historical-data/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV07",
+    "title": "Pine 警报 FAQ",
+    "url": "https://tradingview.com/pine-script-docs/faq/alerts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV08",
+    "title": "Webhook 警报",
+    "url": "https://www.tradingview.com/support/solutions/43000529348-how-to-configure-webhook-alerts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV09",
+    "title": "投资组合",
+    "url": "https://www.tradingview.com/support/solutions/43000760937-tradingview-portfolios-track-your-assets-know-your-trades/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV10",
+    "title": "自选列表",
+    "url": "https://www.tradingview.com/support/solutions/43000745825-mastering-the-tradingview-watchlists/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TV11",
+    "title": "Supercharts 工作区",
+    "url": "https://www.tradingview.com/support/solutions/43000746464-getting-started-with-supercharts/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TS01",
+    "title": "界面、MTFA、规则共用与扫描",
+    "url": "https://help.trendspider.com/kb/interface/interface-overview",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TS02",
+    "title": "产品功能",
+    "url": "https://trendspider.com/product/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC01",
+    "title": "Algorithm Framework",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/overview",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC02",
+    "title": "多 Alpha 与 Insight",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/alpha/key-concepts",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC03",
+    "title": "算法引擎",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/algorithm-engine",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "QC04",
+    "title": "实盘关键概念",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/key-concepts",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB01",
+    "title": "Mosaic 布局",
+    "url": "https://www.ibkrguides.com/traderworkstation/mosaic-layout.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB02",
+    "title": "Risk Navigator",
+    "url": "https://www.ibkrguides.com/traderworkstation/open-risk-navigator.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB03",
+    "title": "API 条件订单类型",
+    "url": "https://www.interactivebrokers.com/docs/tws-api/protobuf/order-condition",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IB04",
+    "title": "颜色联动面板",
+    "url": "https://ibkrguides.com/traderworkstation/color-grouping-linked-panels.htm",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD01",
+    "title": "公式分类",
+    "url": "https://help.tdx.com.cn/gspt/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD02",
+    "title": "条件选股",
+    "url": "https://help.tdx.com.cn/gspt/docs/markdown/tdxgs-gsxt/tdxgs-1d1kngjqe0gck.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD03",
+    "title": "V7.66 产品更新",
+    "url": "https://www.tdx.com.cn/article/soft_7_66.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "TD04",
+    "title": "量化通用接口",
+    "url": "https://help.tdx.com.cn/quant/docs/markdown/ctx.stock.md/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IF01",
+    "title": "iFinD 数据接口",
+    "url": "https://quantapi.5ifind.cn/gwstatic/static/ds_web/quantapi-web/",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "IF02",
+    "title": "数据接口与数据库差别",
+    "url": "https://quantapi.10jqka.com.cn/gwstatic/static/ds_web/quantapi-web/help-center/faq.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH01",
+    "title": "数据量化接口目录",
+    "url": "https://quantapi.eastmoney.com/Manual/CSharp?from=client",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH02",
+    "title": "资讯函数",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Csharp.html?_=639277105644042728",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH03",
+    "title": "交易日历",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Python.html?_=637077181105957032",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH04",
+    "title": "条件选股接口",
+    "url": "https://quantapi.eastmoney.com/Upload/EMQuantAPI_Java.pdf?_=637592694454980342",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "CH05",
+    "title": "数据浏览器",
+    "url": "https://choice.eastmoney.com/School/Help",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU01",
+    "title": "网格策略教程",
+    "url": "https://www.futunn.com/learn/grid-trading-strategy",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU02",
+    "title": "交易 API 总览",
+    "url": "https://openapi.futunn.com/futu-api-doc/trade/overview.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU03",
+    "title": "行情 API 总览",
+    "url": "https://openapi.futunn.com/futu-api-doc/quote/overview.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU04",
+    "title": "行情订阅与异步回调",
+    "url": "https://openapi.futunn.com/futu-api-doc/qa/quote.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "FU05",
+    "title": "实时 K 线参数",
+    "url": "https://openapi.futunn.com/futu-api-doc/quote/get-kl.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI01",
+    "title": "数据服务",
+    "url": "https://www.wind.com.cn/portal/zh/WDS/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI02",
+    "title": "ClientAPI",
+    "url": "https://www.wind.com.cn/portal/zh/ClientApi/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "WI03",
+    "title": "金融终端",
+    "url": "https://www.wind.com.cn/portal/zh/WFT/index.html",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "XQ01",
+    "title": "雪球组合 FAQ",
+    "url": "https://xueqiu.com/p/faq",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  },
+  {
+    "id": "XQ02",
+    "title": "官方功能 FAQ",
+    "url": "https://www.xueqiu.com/about/faq",
+    "supports": "对应平台功能的公开文档事实；本站设计推断独立标注。",
+    "checked_at": "2026-11-10"
+  }
+]

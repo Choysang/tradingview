@@ -1,0 +1,69 @@
+{
+ "captured_by": "workers/intel recorder, <=1 req/s",
+ "files": [
+  {
+   "file": "eastmoney_news_p1.json",
+   "url": "https://np-listapi.eastmoney.com/comm/web/getFastNewsList?client=web&biz=web_724&fastColumn=102&sortEnd=&pageSize=50&req_trace=1794400928213",
+   "status": 200,
+   "bytes": 27981,
+   "sha256": "01bad5ff82567e28270f69798f3ffc64fbeacbdbf23dc32fb747cb4f38031358",
+   "fetched_at": "2026-11-11T12:42:09.899986+00:00"
+  },
+  {
+   "file": "cls_roll_p1.json",
+   "url": "https://www.cls.cn/v1/roll/get_roll_list?app=CailianpressWeb&category=&last_time=&os=web&refresh_type=1&rn=50&sv=8.4.6&sign=3bf279ac3a69396d15ce1505fba47254",
+   "status": 200,
+   "bytes": 124712,
+   "sha256": "0f6d86befc6e56bc1c1bb6f949a2eeec2d15be48009a192bb432488cd22b0062",
+   "fetched_at": "2026-11-11T12:42:10.863118+00:00"
+  },
+  {
+   "file": "guba_list_000001_f.html",
+   "url": "https://guba.eastmoney.com/list,000001,f.html",
+   "status": 200,
+   "bytes": 145497,
+   "sha256": "a1fe520f844dad4efc810ad6236f5bd655d46f8d6388c73f8b3d2481fbabe6f4",
+   "fetched_at": "2026-11-11T12:42:11.628290+00:00"
+  },
+  {
+   "file": "lhb_daily_list_20261110.json",
+   "url": "https://datacenter-web.eastmoney.com/api/data/v1/get?reportName=RPT_DAILYBILLBOARD_DETAILSNEW&columns=ALL&source=WEB&client=WEB&pageNumber=1&pageSize=200&sortColumns=SECURITY_CODE&sortTypes=1&filter=(TRADE_DATE%3D%272026-11-10%27)",
+   "status": 200,
+   "bytes": 66209,
+   "sha256": "b1e7948af8a8d99bd385d54feb4fe33833e967fca21b50f5be7d35ea934a76dd",
+   "fetched_at": "2026-11-11T12:42:13.899463+00:00"
+  },
+  {
+   "file": "lhb_seat_buy_20261110.json",
+   "url": "https://datacenter-web.eastmoney.com/api/data/v1/get?reportName=RPT_BILLBOARD_DAILYDETAILSBUY&columns=ALL&source=WEB&client=WEB&pageNumber=1&pageSize=500&sortColumns=SECURITY_CODE&sortTypes=1&filter=(TRADE_DATE%3D%272026-11-10%27)",
+   "status": 200,
+   "bytes": 175311,
+   "sha256": "6121c97602846024043e67e92f2ace6716ff865d4e611ff03904a25ccbb478fe",
+   "fetched_at": "2026-11-11T12:42:15.961293+00:00"
+  },
+  {
+   "file": "lhb_seat_sell_20261110.json",
+   "url": "https://datacenter-web.eastmoney.com/api/data/v1/get?reportName=RPT_BILLBOARD_DAILYDETAILSSELL&columns=ALL&source=WEB&client=WEB&pageNumber=1&pageSize=500&sortColumns=SECURITY_CODE&sortTypes=1&filter=(TRADE_DATE%3D%272026-11-10%27)",
+   "status": 200,
+   "bytes": 175711,
+   "sha256": "a2f3e61f941a908e778365ae1c1202d7948522dcc4b891781429fadb31996f1f",
+   "fetched_at": "2026-11-11T12:42:19.419282+00:00"
+  },
+  {
+   "file": "lhb_daily_list_empty_20261108.json",
+   "url": "https://datacenter-web.eastmoney.com/api/data/v1/get?reportName=RPT_DAILYBILLBOARD_DETAILSNEW&columns=ALL&source=WEB&client=WEB&pageNumber=1&pageSize=200&sortColumns=SECURITY_CODE&sortTypes=1&filter=(TRADE_DATE%3D%272026-11-08%27)",
+   "status": 200,
+   "bytes": 89,
+   "sha256": "ea6528a2204b61a7ee34683a73ca00f8afdc86aadf3f765d4dae39bbfb19dbe7",
+   "fetched_at": "2026-11-11T12:42:20.092442+00:00"
+  },
+  {
+   "file": "fundflow_000001.json",
+   "url": "http://push2his.eastmoney.com/api/qt/stock/fflow/daykline/get?lmt=10&klt=101&secid=0.000001&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65&ut=b2884a393a59ad64002292a3e90d46a5",
+   "status": 200,
+   "bytes": 1348,
+   "sha256": "5feddfc29079569aa957709da19c9096bef509a85e4e4a974d47d4f3e5a0481f",
+   "fetched_at": "2026-11-11T12:42:22.117310+00:00"
+  }
+ ]
+}

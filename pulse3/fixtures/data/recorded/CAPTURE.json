@@ -1,0 +1,146 @@
+[
+ {
+  "file": "sina_hq.txt",
+  "url": "https://hq.sinajs.cn/list=sz000001,sh600000,sz002415",
+  "method": "GET",
+  "status": 200,
+  "bytes": 657,
+  "captured_at": "2026-11-11T07:11:54.175829Z",
+  "form": null
+ },
+ {
+  "file": "sina_kline_240_sz000001.json",
+  "url": "https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz000001&scale=240&ma=no&datalen=30",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3173,
+  "captured_at": "2026-11-11T07:11:55.918237Z",
+  "form": null
+ },
+ {
+  "file": "sina_kline_240_sh600000.json",
+  "url": "https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sh600000&scale=240&ma=no&datalen=30",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3057,
+  "captured_at": "2026-11-11T07:11:57.864901Z",
+  "form": null
+ },
+ {
+  "file": "sina_kline_240_sz002415.json",
+  "url": "https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz002415&scale=240&ma=no&datalen=30",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3151,
+  "captured_at": "2026-11-11T07:11:59.972882Z",
+  "form": null
+ },
+ {
+  "file": "sina_kline_5_sz000001.json",
+  "url": "https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz000001&scale=5&ma=no&datalen=96",
+  "method": "GET",
+  "status": 200,
+  "bytes": 10826,
+  "captured_at": "2026-11-11T07:12:02.207583Z",
+  "form": null
+ },
+ {
+  "file": "tencent_qt.txt",
+  "url": "https://qt.gtimg.cn/q=sz000001,sh600000,sz002415",
+  "method": "GET",
+  "status": 200,
+  "bytes": 1450,
+  "captured_at": "2026-11-11T07:12:03.852347Z",
+  "form": null
+ },
+ {
+  "file": "tencent_day_raw_sz000001.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz000001,day,,,30,&_var=x",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3709,
+  "captured_at": "2026-11-11T07:12:06.148691Z",
+  "form": null
+ },
+ {
+  "file": "tencent_day_raw_sh600000.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh600000,day,,,30,&_var=x",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3491,
+  "captured_at": "2026-11-11T07:12:07.658793Z",
+  "form": null
+ },
+ {
+  "file": "tencent_day_raw_sz002415.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz002415,day,,,30,&_var=x",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3587,
+  "captured_at": "2026-11-11T07:12:09.167246Z",
+  "form": null
+ },
+ {
+  "file": "tencent_day_raw_sz000001_long.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz000001,day,,,640,&_var=x",
+  "method": "GET",
+  "status": 200,
+  "bytes": 43478,
+  "captured_at": "2026-11-11T07:12:10.749622Z",
+  "form": null
+ },
+ {
+  "file": "tencent_day_qfq_sz000001_long.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz000001,day,,,640,qfq&_var=x",
+  "method": "GET",
+  "status": 200,
+  "bytes": 42937,
+  "captured_at": "2026-11-11T07:12:12.411661Z",
+  "form": null
+ },
+ {
+  "file": "tencent_mkline_m1_sz000001.json",
+  "url": "https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=sz000001,m1,,240",
+  "method": "GET",
+  "status": 200,
+  "bytes": 18106,
+  "captured_at": "2026-11-11T07:12:14.652389Z",
+  "form": null
+ },
+ {
+  "file": "tencent_mkline_m5_sz000001.json",
+  "url": "https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=sz000001,m5,,96",
+  "method": "GET",
+  "status": 200,
+  "bytes": 8363,
+  "captured_at": "2026-11-11T07:12:16.125507Z",
+  "form": null
+ },
+ {
+  "file": "tencent_minute_query_sz000001.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=sz000001",
+  "method": "GET",
+  "status": 200,
+  "bytes": 9886,
+  "captured_at": "2026-11-11T07:12:17.618383Z",
+  "form": null
+ },
+ {
+  "file": "cninfo_page1.json",
+  "url": "http://www.cninfo.com.cn/new/hisAnnouncement/query",
+  "method": "POST",
+  "status": 200,
+  "bytes": 23734,
+  "captured_at": "2026-11-11T07:12:19.269031Z",
+  "form": "pageNum=1&pageSize=30&column=szse&tabName=fulltext&plate=&stock=&searchkey=&secid=&category=&trade=&seDate=2026-11-10~2026-11-10&sortName=&sortType=&isHLtitle=true"
+ },
+ {
+  "file": "cninfo_page2.json",
+  "url": "http://www.cninfo.com.cn/new/hisAnnouncement/query",
+  "method": "POST",
+  "status": 200,
+  "bytes": 24922,
+  "captured_at": "2026-11-11T07:12:20.632415Z",
+  "form": "pageNum=2&pageSize=30&column=szse&tabName=fulltext&plate=&stock=&searchkey=&secid=&category=&trade=&seDate=2026-11-10~2026-11-10&sortName=&sortType=&isHLtitle=true"
+ }
+]

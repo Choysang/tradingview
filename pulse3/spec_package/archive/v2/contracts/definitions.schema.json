@@ -1,0 +1,2109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/pulse/contracts/definitions.schema.json",
+  "title": "Pulse contract seeds",
+  "description": "Seed contract version 1.0.0-seed.1. Root validates the hypothetical fixture; individual contracts are in $defs. This is not a trading engine.",
+  "$ref": "#/$defs/Fixture",
+  "$defs": {
+    "CommonObject": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0-seed.1"
+        },
+        "object_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "producer_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        }
+      },
+      "required": [
+        "schema_version",
+        "object_id",
+        "created_at",
+        "as_of",
+        "producer_version",
+        "causation_id",
+        "correlation_id",
+        "idempotency_key"
+      ]
+    },
+    "VersionRef": {
+      "type": "object",
+      "properties": {
+        "object_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "object_id",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "PlanRef": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "plan_id",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "Money": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "const": "CNY"
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+        }
+      },
+      "required": [
+        "currency",
+        "amount"
+      ],
+      "additionalProperties": false
+    },
+    "Unit": {
+      "type": "string",
+      "enum": [
+        "CNY_per_share",
+        "CNY",
+        "shares",
+        "ratio",
+        "percent",
+        "count",
+        "seconds",
+        "dimensionless"
+      ]
+    },
+    "Clock": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "quote"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "bar_close"
+            },
+            "timeframe": {
+              "type": "string",
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "60m",
+                "day",
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "timeframe"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "session_open"
+            },
+            "session_kind": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "session_kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "event_available"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "scheduled"
+            },
+            "schedule_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            }
+          },
+          "required": [
+            "kind",
+            "schedule_id"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "FeatureRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "feature"
+        },
+        "feature_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "definition_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "instrument_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "unit": {
+          "$ref": "#/$defs/Unit"
+        },
+        "timeframe": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "feature_id",
+        "definition_version",
+        "instrument_id",
+        "unit",
+        "timeframe"
+      ],
+      "additionalProperties": false
+    },
+    "Constant": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "constant"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+        },
+        "unit": {
+          "$ref": "#/$defs/Unit"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "Operand": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FeatureRef"
+        },
+        {
+          "$ref": "#/$defs/Constant"
+        }
+      ]
+    },
+    "AllCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "all"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "children"
+      ],
+      "additionalProperties": false
+    },
+    "AnyCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "any"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "children"
+      ],
+      "additionalProperties": false
+    },
+    "NotCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "not"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "child": {
+          "$ref": "#/$defs/Condition"
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "child"
+      ],
+      "additionalProperties": false
+    },
+    "CompareCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "compare"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "lt",
+            "lte",
+            "gt",
+            "gte",
+            "eq"
+          ]
+        },
+        "left": {
+          "$ref": "#/$defs/Operand"
+        },
+        "right": {
+          "$ref": "#/$defs/Operand"
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "operator",
+        "left",
+        "right"
+      ],
+      "additionalProperties": false
+    },
+    "CrossesCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "crosses"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "above",
+            "below"
+          ]
+        },
+        "left": {
+          "$ref": "#/$defs/Operand"
+        },
+        "right": {
+          "$ref": "#/$defs/Operand"
+        },
+        "previous_observation": {
+          "type": "object",
+          "properties": {
+            "selection": {
+              "const": "previous_valid"
+            },
+            "max_age_ms": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "selection",
+            "max_age_ms"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "direction",
+        "left",
+        "right",
+        "previous_observation"
+      ],
+      "additionalProperties": false
+    },
+    "WithinSessionCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "within_session"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "session_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "session_kinds"
+      ],
+      "additionalProperties": false
+    },
+    "EventStateCondition": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "const": "event_state"
+        },
+        "clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "event_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "minimum_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "node",
+        "clock",
+        "event_id",
+        "minimum_revision",
+        "states"
+      ],
+      "additionalProperties": false
+    },
+    "Condition": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AllCondition"
+        },
+        {
+          "$ref": "#/$defs/AnyCondition"
+        },
+        {
+          "$ref": "#/$defs/NotCondition"
+        },
+        {
+          "$ref": "#/$defs/CompareCondition"
+        },
+        {
+          "$ref": "#/$defs/CrossesCondition"
+        },
+        {
+          "$ref": "#/$defs/WithinSessionCondition"
+        },
+        {
+          "$ref": "#/$defs/EventStateCondition"
+        }
+      ],
+      "description": "Three-valued semantics: true, false, unknown. Unknown never means trigger satisfied. No SQL, Python or eval strings."
+    },
+    "HoldingHorizon": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "unit": {
+              "const": "trading_sessions"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "counting_rule": {
+              "type": "string",
+              "enum": [
+                "after_first_fill_session",
+                "entry_session_inclusive"
+              ]
+            },
+            "holding_anchor": {
+              "type": "string",
+              "enum": [
+                "first_fill_at",
+                "latest_fill_at",
+                "per_lot_first_fill_at"
+              ]
+            }
+          },
+          "required": [
+            "unit",
+            "count",
+            "counting_rule",
+            "holding_anchor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "unit": {
+              "const": "duration"
+            },
+            "seconds": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "holding_anchor": {
+              "type": "string",
+              "enum": [
+                "first_fill_at",
+                "latest_fill_at",
+                "per_lot_first_fill_at"
+              ]
+            }
+          },
+          "required": [
+            "unit",
+            "seconds",
+            "holding_anchor"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "SizingSpec": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "fixed_quantity"
+            },
+            "quantity_shares": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "mode",
+            "quantity_shares"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "cash_budget"
+            },
+            "budget": {
+              "$ref": "#/$defs/Money"
+            },
+            "lot_size_shares": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "mode",
+            "budget",
+            "lot_size_shares"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "PriceZone": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "const": "CNY"
+        },
+        "price_basis": {
+          "const": "raw"
+        },
+        "lower": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "description": "Decimal raw-market price; positivity and tick size are semantic checks."
+        },
+        "upper": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "description": "Decimal raw-market price; positivity and tick size are semantic checks."
+        }
+      },
+      "required": [
+        "currency",
+        "price_basis",
+        "lower",
+        "upper"
+      ],
+      "additionalProperties": false
+    },
+    "TriggerPolicy": {
+      "type": "object",
+      "properties": {
+        "trigger_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "fire_mode": {
+          "type": "string",
+          "enum": [
+            "on_transition_to_true",
+            "repeated_while_true"
+          ]
+        },
+        "unknown_policy": {
+          "const": "do_not_fire"
+        },
+        "rearm": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "never",
+                "after_false",
+                "after_cooldown"
+              ]
+            },
+            "cooldown_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "mode",
+            "cooldown_ms"
+          ],
+          "additionalProperties": false
+        },
+        "max_fires": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_interval_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "trigger_id",
+        "fire_mode",
+        "unknown_policy",
+        "rearm",
+        "max_fires",
+        "min_interval_ms"
+      ],
+      "additionalProperties": false,
+      "description": "Transition key: plan_id, plan_version, trigger_id, account_id, transition_sequence. A condition becoming true does not imply a fill."
+    },
+    "HardDependency": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "plan",
+                "account"
+              ]
+            },
+            "object_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            "expected_version": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "object_id",
+            "expected_version"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "instrument_state",
+                "market_rules",
+                "evidence_revision",
+                "strategy",
+                "model_policy",
+                "universe_policy",
+                "cost_profile",
+                "execution_policy"
+              ]
+            },
+            "object_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            "expected_version": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "object_id",
+            "expected_version"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "SoftDependency": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "quote"
+            },
+            "object_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            "expected_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "observed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reference_price": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "description": "Decimal raw-market price; positivity and tick size are semantic checks."
+            }
+          },
+          "required": [
+            "kind",
+            "object_id",
+            "expected_version",
+            "observed_at",
+            "reference_price"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "rank"
+            },
+            "object_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            "expected_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "observed_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "kind",
+            "object_id",
+            "expected_version",
+            "observed_at"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "FeatureRequirement": {
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "definition_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "$ref": "#/$defs/Unit"
+        }
+      },
+      "required": [
+        "feature_id",
+        "definition_version",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "Provenance": {
+      "type": "object",
+      "properties": {
+        "source_uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "source_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_kind": {
+          "type": "string",
+          "enum": [
+            "hypothetical_fixture",
+            "paper",
+            "article",
+            "video",
+            "code",
+            "user_hypothesis"
+          ]
+        }
+      },
+      "required": [
+        "source_uri",
+        "source_version",
+        "source_kind"
+      ],
+      "additionalProperties": false
+    },
+    "StrategySpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "model_policy"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "model_policy_ref": {
+                "$ref": "#/$defs/VersionRef"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "model_policy_ref": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "strategy_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "rule",
+            "model_policy"
+          ]
+        },
+        "hypothesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Provenance"
+          },
+          "minItems": 1
+        },
+        "universe_policy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "required_features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FeatureRequirement"
+          },
+          "minItems": 1
+        },
+        "decision_clock": {
+          "$ref": "#/$defs/Clock"
+        },
+        "entry_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "exit_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "sizing": {
+          "$ref": "#/$defs/SizingSpec"
+        },
+        "holding_horizon": {
+          "$ref": "#/$defs/HoldingHorizon"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Constant"
+          }
+        },
+        "execution_requirements": {
+          "type": "object",
+          "properties": {
+            "minimum_data_grade": {
+              "type": "string",
+              "enum": [
+                "D1",
+                "M1",
+                "T1",
+                "L2"
+              ]
+            },
+            "market_rules_ref": {
+              "$ref": "#/$defs/VersionRef"
+            },
+            "execution_policy_ref": {
+              "$ref": "#/$defs/VersionRef"
+            },
+            "buy_lot_size_shares": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "minimum_data_grade",
+            "market_rules_ref",
+            "execution_policy_ref",
+            "buy_lot_size_shares"
+          ],
+          "additionalProperties": false
+        },
+        "model_policy_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VersionRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "strategy_id",
+        "version",
+        "kind",
+        "hypothesis",
+        "provenance",
+        "universe_policy_ref",
+        "required_features",
+        "decision_clock",
+        "entry_conditions",
+        "exit_conditions",
+        "sizing",
+        "holding_horizon",
+        "parameters",
+        "execution_requirements",
+        "model_policy_ref"
+      ],
+      "unevaluatedProperties": false
+    },
+    "PlanProposal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "proposal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "proposed_plan_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "analysis_as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expected_plan_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "instrument_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "account_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "strategy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "model_run_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "position_side": {
+          "const": "long"
+        },
+        "entry_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "entry_price_zone": {
+          "$ref": "#/$defs/PriceZone"
+        },
+        "sizing": {
+          "$ref": "#/$defs/SizingSpec"
+        },
+        "exit_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "holding_horizon": {
+          "$ref": "#/$defs/HoldingHorizon"
+        },
+        "invalidation": {
+          "$ref": "#/$defs/Condition"
+        },
+        "trigger_policy": {
+          "$ref": "#/$defs/TriggerPolicy"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "replace_policy": {
+          "type": "string",
+          "enum": [
+            "cancel_remaining_and_reconcile",
+            "keep_existing"
+          ]
+        },
+        "hard_dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HardDependency"
+          },
+          "minItems": 1
+        },
+        "soft_dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SoftDependency"
+          },
+          "minItems": 0
+        },
+        "max_price_deviation_bps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_revalidation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "plan_version",
+              "account_inventory",
+              "instrument_status",
+              "market_rules",
+              "evidence_revision",
+              "price",
+              "fees",
+              "signal"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "proposal_id",
+        "proposed_plan_id",
+        "analysis_as_of",
+        "expected_plan_version",
+        "instrument_id",
+        "account_id",
+        "strategy_ref",
+        "model_run_id",
+        "evidence_ids",
+        "position_side",
+        "entry_conditions",
+        "entry_price_zone",
+        "sizing",
+        "exit_conditions",
+        "holding_horizon",
+        "invalidation",
+        "trigger_policy",
+        "expires_at",
+        "replace_policy",
+        "hard_dependencies",
+        "soft_dependencies",
+        "max_price_deviation_bps",
+        "required_revalidation",
+        "rationale"
+      ],
+      "unevaluatedProperties": false
+    },
+    "TradePlan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        },
+        {
+          "if": {
+            "properties": {
+              "version": {
+                "const": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "supersedes": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "supersedes": {
+                "$ref": "#/$defs/PlanRef"
+              }
+            }
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "proposal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "decision_snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "run_manifest_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "instrument_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "account_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "strategy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "model_run_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "position_side": {
+          "const": "long"
+        },
+        "entry_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "entry_price_zone": {
+          "$ref": "#/$defs/PriceZone"
+        },
+        "sizing": {
+          "$ref": "#/$defs/SizingSpec"
+        },
+        "exit_conditions": {
+          "$ref": "#/$defs/Condition"
+        },
+        "holding_horizon": {
+          "$ref": "#/$defs/HoldingHorizon"
+        },
+        "invalidation": {
+          "$ref": "#/$defs/Condition"
+        },
+        "trigger_policy": {
+          "$ref": "#/$defs/TriggerPolicy"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "replace_policy": {
+          "type": "string",
+          "enum": [
+            "cancel_remaining_and_reconcile",
+            "keep_existing"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "watching",
+            "actionable",
+            "holding",
+            "superseded",
+            "expired"
+          ]
+        },
+        "execution_mode": {
+          "type": "string",
+          "enum": [
+            "paper",
+            "backtest",
+            "system_replay"
+          ]
+        },
+        "compiled_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "quantity_shares": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sellable_quantity_shares": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_fees": {
+          "$ref": "#/$defs/Money"
+        },
+        "validated_hard_dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HardDependency"
+          },
+          "minItems": 1
+        },
+        "revalidated_soft_dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SoftDependency"
+          },
+          "minItems": 0
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "plan_id",
+        "version",
+        "proposal_id",
+        "decision_snapshot_id",
+        "run_manifest_id",
+        "instrument_id",
+        "account_id",
+        "strategy_ref",
+        "model_run_id",
+        "evidence_ids",
+        "position_side",
+        "entry_conditions",
+        "entry_price_zone",
+        "sizing",
+        "exit_conditions",
+        "holding_horizon",
+        "invalidation",
+        "trigger_policy",
+        "expires_at",
+        "replace_policy",
+        "state",
+        "execution_mode",
+        "compiled_at",
+        "valid_from",
+        "quantity_shares",
+        "sellable_quantity_shares",
+        "estimated_fees",
+        "validated_hard_dependencies",
+        "revalidated_soft_dependencies",
+        "supersedes"
+      ],
+      "unevaluatedProperties": false,
+      "description": "Canonical contract. A PlanVersion is one (plan_id, version) instance of TradePlan, not a second schema. A valid plan is not a Fill."
+    },
+    "RunManifest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "model_analysis",
+            "decision_compile",
+            "backtest"
+          ]
+        },
+        "execution_mode": {
+          "type": "string",
+          "enum": [
+            "paper",
+            "backtest",
+            "system_replay"
+          ]
+        },
+        "time_basis": {
+          "type": "string",
+          "enum": [
+            "system_observed",
+            "historical_reconstruction",
+            "hypothetical"
+          ]
+        },
+        "code_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameter_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "random_seed": {
+          "type": "integer"
+        },
+        "input_manifest_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "strategy_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VersionRef"
+          },
+          "minItems": 1
+        },
+        "model_policy_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VersionRef"
+          },
+          "minItems": 0
+        },
+        "input_model_run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 0
+        },
+        "universe_policy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "market_rules_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "cost_profile_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "execution_policy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        }
+      },
+      "required": [
+        "run_id",
+        "purpose",
+        "execution_mode",
+        "time_basis",
+        "code_version",
+        "parameter_sha256",
+        "random_seed",
+        "input_manifest_ids",
+        "strategy_refs",
+        "model_policy_refs",
+        "input_model_run_ids",
+        "universe_policy_ref",
+        "market_rules_ref",
+        "cost_profile_ref",
+        "execution_policy_ref"
+      ],
+      "unevaluatedProperties": false
+    },
+    "ModelRun": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "model_run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "run_manifest_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exact_model_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_policy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "prompt_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_catalog_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_manifest_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "status": {
+          "const": "completed"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sampling": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": "number",
+              "minimum": 0
+            },
+            "seed": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "temperature",
+            "seed"
+          ],
+          "additionalProperties": false
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "input_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "output_tokens": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "input_tokens",
+            "output_tokens"
+          ],
+          "additionalProperties": false
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": [
+            "schema_only",
+            "compiled",
+            "rejected"
+          ]
+        },
+        "structured_output": {
+          "$ref": "#/$defs/PlanProposal"
+        }
+      },
+      "required": [
+        "model_run_id",
+        "run_manifest_id",
+        "provider",
+        "exact_model_id",
+        "model_policy_ref",
+        "prompt_version",
+        "tool_catalog_version",
+        "input_manifest_id",
+        "evidence_ids",
+        "request_id",
+        "status",
+        "started_at",
+        "completed_at",
+        "latency_ms",
+        "sampling",
+        "usage",
+        "validation_status",
+        "structured_output"
+      ],
+      "unevaluatedProperties": false,
+      "description": "Minimal completed-run shape for this seed. Structured output is preserved, not regenerated during replay. Add explicit pending/failed variants before implementing the runtime."
+    },
+    "RankedCandidate": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "alpha_rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "action_rank": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "score_kind": {
+          "const": "relative_rank"
+        },
+        "relative_rank_score": {
+          "type": "number"
+        },
+        "calibrated_probability": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actionability": {
+          "type": "string",
+          "enum": [
+            "waiting_for_trigger",
+            "actionable",
+            "unexecutable",
+            "holding"
+          ]
+        },
+        "plan_ref": {
+          "$ref": "#/$defs/PlanRef"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "rank_change_reason": {
+          "type": "string",
+          "enum": [
+            "new_event",
+            "price_condition",
+            "market_state",
+            "strategy_version",
+            "data_completed"
+          ]
+        }
+      },
+      "required": [
+        "instrument_id",
+        "alpha_rank",
+        "action_rank",
+        "score_kind",
+        "relative_rank_score",
+        "calibrated_probability",
+        "actionability",
+        "plan_ref",
+        "evidence_ids",
+        "rank_change_reason"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionSnapshot": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "decision_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "run_manifest_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "universe_policy_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "market_state_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "bundle_ref": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "ranking_horizon": {
+          "$ref": "#/$defs/HoldingHorizon"
+        },
+        "data_status": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "partial",
+            "stale",
+            "unavailable"
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RankedCandidate"
+          },
+          "minItems": 1
+        },
+        "plan_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanRef"
+          },
+          "minItems": 1
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 1
+        },
+        "model_run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "decision_at",
+        "run_manifest_id",
+        "universe_policy_ref",
+        "market_state_ref",
+        "bundle_ref",
+        "ranking_horizon",
+        "data_status",
+        "candidates",
+        "plan_refs",
+        "evidence_ids",
+        "model_run_ids"
+      ],
+      "unevaluatedProperties": false
+    },
+    "DecisionPublishedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "event_type": {
+          "const": "decision.published"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "snapshot_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            }
+          },
+          "required": [
+            "snapshot_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "event_id",
+        "aggregate_id",
+        "aggregate_version",
+        "occurred_at",
+        "recorded_at",
+        "event_type",
+        "payload"
+      ],
+      "unevaluatedProperties": false
+    },
+    "PlanRevisedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CommonObject"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "event_type": {
+          "const": "plan.revised"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "plan_ref": {
+              "$ref": "#/$defs/PlanRef"
+            },
+            "snapshot_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            "supersedes": {
+              "$ref": "#/$defs/PlanRef"
+            }
+          },
+          "required": [
+            "plan_ref",
+            "snapshot_id",
+            "supersedes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "event_id",
+        "aggregate_id",
+        "aggregate_version",
+        "occurred_at",
+        "recorded_at",
+        "event_type",
+        "payload"
+      ],
+      "unevaluatedProperties": false
+    },
+    "EventEnvelope": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DecisionPublishedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlanRevisedEvent"
+        }
+      ],
+      "description": "Seed payload variants only; expand with a typed branch for each new domain event."
+    },
+    "ExternalReference": {
+      "type": "object",
+      "properties": {
+        "object_type": {
+          "type": "string",
+          "enum": [
+            "dataset_manifest",
+            "evidence_manifest",
+            "evidence_revision",
+            "universe_policy",
+            "market_state",
+            "bundle",
+            "model_policy",
+            "instrument_state",
+            "account",
+            "market_rules",
+            "cost_profile",
+            "execution_policy",
+            "quote"
+          ]
+        },
+        "object_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+        },
+        "version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
+        "available_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "object_type",
+        "object_id",
+        "version",
+        "available_at",
+        "description"
+      ],
+      "additionalProperties": false,
+      "description": "Hypothetical fixture catalogue, not the production schema for these external domains."
+    },
+    "Fixture": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0-seed.1"
+        },
+        "fixture_kind": {
+          "const": "hypothetical"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExternalReference"
+          },
+          "minItems": 1
+        },
+        "strategies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StrategySpec"
+          },
+          "minItems": 1
+        },
+        "run_manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RunManifest"
+          },
+          "minItems": 1
+        },
+        "model_runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelRun"
+          },
+          "minItems": 1
+        },
+        "trade_plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TradePlan"
+          },
+          "minItems": 1
+        },
+        "decision_snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DecisionSnapshot"
+          },
+          "minItems": 1
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EventEnvelope"
+          },
+          "minItems": 1
+        },
+        "expected_behavior": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "schema_version",
+        "fixture_kind",
+        "description",
+        "external_references",
+        "strategies",
+        "run_manifests",
+        "model_runs",
+        "trade_plans",
+        "decision_snapshots",
+        "events",
+        "expected_behavior"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

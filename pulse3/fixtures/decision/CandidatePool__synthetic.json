@@ -1,0 +1,23 @@
+{
+ "items": [
+  {
+   "available_at": "2026-11-10T02:00:01Z",
+   "current_state": "qualified",
+   "event_sequence": 2,
+   "instrument_id": "0c820176-c9ad-53aa-9587-e56231cc4b4d",
+   "membership_snapshot_id": "74558117-ca10-5812-81ea-67d5bd30d814",
+   "plan_ref": null,
+   "pool_event_id": "ea017095-6c91-51b7-ac2c-c20ba00d12ad",
+   "taxonomy_node": {
+    "node_id": "ai",
+    "taxonomy_id": "fixture.concept",
+    "taxonomy_version": 1
+   },
+   "trigger_code": "score_above_enter_threshold"
+  }
+ ],
+ "policy_id": "heat-fixture",
+ "policy_version": "v1",
+ "pool_id": "aa84962e-cd94-5f53-a72f-71f3636d3352",
+ "release_id": "6aa1a225-6252-526f-8306-85ffc1891b29"
+}

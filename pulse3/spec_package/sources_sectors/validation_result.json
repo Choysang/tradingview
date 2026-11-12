@@ -1,0 +1,100 @@
+{
+  "checked_at": "2026-11-10",
+  "data_kind": "synthetic_only",
+  "passed_checks": 21,
+  "checks": [
+    {
+      "check": "duplicate delivery preserves exact version payload",
+      "passed": true
+    },
+    {
+      "check": "push/poll dedupe and late correction preserved",
+      "passed": true
+    },
+    {
+      "check": "republication count does not inflate independent origins",
+      "passed": true
+    },
+    {
+      "check": "yuan and ten-thousand yuan reconcile exactly",
+      "passed": true
+    },
+    {
+      "check": "same display name does not merge funding methodologies",
+      "passed": true
+    },
+    {
+      "check": "after-close disclosure unavailable to earlier intraday decision",
+      "passed": true
+    },
+    {
+      "check": "next-day decision may use already available disclosure",
+      "passed": true
+    },
+    {
+      "check": "same seat buy and sell rows both contribute within one report",
+      "passed": true
+    },
+    {
+      "check": "future engagement excluded despite old post creation date",
+      "passed": true
+    },
+    {
+      "check": "historical membership requires knowledge time as well as effective time",
+      "passed": true
+    },
+    {
+      "check": "separate entry and exit thresholds prevent boundary churning",
+      "passed": true
+    },
+    {
+      "check": "unknown seat is not silently corrected",
+      "passed": true
+    },
+    {
+      "check": "community defaults to read-only",
+      "passed": true
+    },
+    {
+      "check": "conflicting official refresh claims remain disputed",
+      "passed": true
+    },
+    {
+      "check": "research catalog does not fabricate active connections",
+      "passed": true
+    },
+    {
+      "check": "all catalog evidence references resolve",
+      "passed": true
+    },
+    {
+      "check": "source health and freshness include independent calendar semantics",
+      "passed": true
+    },
+    {
+      "check": "PostgreSQL migration parses",
+      "passed": true
+    },
+    {
+      "check": "sector rank guard PLpgSQL bodies parse",
+      "passed": true
+    },
+    {
+      "check": "12 domain tables have complete field descriptions",
+      "passed": true
+    },
+    {
+      "check": "sector overview uses sector objects, not instrument ranking rows",
+      "passed": true
+    }
+  ],
+  "sql_parser": "pglast v8.7",
+  "sql_statements": 30,
+  "plpgsql_function_bodies_parsed": 2,
+  "sql_sha256": "71f36e99075a7ccd26fcc1ec06afc2c256157ec36e336d3178705c1052e2b354",
+  "postgres_migration_executed": false,
+  "trigger_bodies_executed": false,
+  "live_source_connection_tested": false,
+  "real_return_backtest_executed": false,
+  "external_posts_sent": false
+}

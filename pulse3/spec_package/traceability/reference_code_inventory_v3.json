@@ -1,0 +1,1426 @@
+{
+  "scope": "active delivered Python reference inventory, not old-site code and not every line independently audited",
+  "files": [
+    {
+      "path": "catalogs/validate_catalogs.py",
+      "lines": 68,
+      "declarations": [
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 29
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/build_golden_fixtures.py",
+      "lines": 38,
+      "declarations": [
+        {
+          "name": "event_list",
+          "kind": "FunctionDef",
+          "line": 7
+        },
+        {
+          "name": "reserve",
+          "kind": "FunctionDef",
+          "line": 15
+        },
+        {
+          "name": "fill",
+          "kind": "FunctionDef",
+          "line": 17
+        },
+        {
+          "name": "initial",
+          "kind": "FunctionDef",
+          "line": 19
+        },
+        {
+          "name": "case",
+          "kind": "FunctionDef",
+          "line": 21
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/review_contracts_static.py",
+      "lines": 186,
+      "declarations": [
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 15
+        },
+        {
+          "name": "emit",
+          "kind": "FunctionDef",
+          "line": 24
+        },
+        {
+          "name": "table_name",
+          "kind": "FunctionDef",
+          "line": 27
+        },
+        {
+          "name": "strings",
+          "kind": "FunctionDef",
+          "line": 30
+        },
+        {
+          "name": "constraint",
+          "kind": "FunctionDef",
+          "line": 33
+        },
+        {
+          "name": "refs",
+          "kind": "FunctionDef",
+          "line": 110
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/run_benchmark.py",
+      "lines": 64,
+      "declarations": [
+        {
+          "name": "compare",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 26
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/synthetic_vertical_slice.py",
+      "lines": 458,
+      "declarations": [
+        {
+          "name": "uid",
+          "kind": "FunctionDef",
+          "line": 26
+        },
+        {
+          "name": "canonical",
+          "kind": "FunctionDef",
+          "line": 30
+        },
+        {
+          "name": "digest",
+          "kind": "FunctionDef",
+          "line": 34
+        },
+        {
+          "name": "text_decimal",
+          "kind": "FunctionDef",
+          "line": 38
+        },
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 43
+        },
+        {
+          "name": "build_quote_fixture",
+          "kind": "FunctionDef",
+          "line": 434
+        },
+        {
+          "name": "validate",
+          "kind": "FunctionDef",
+          "line": 54
+        },
+        {
+          "name": "artifact",
+          "kind": "FunctionDef",
+          "line": 89
+        },
+        {
+          "name": "condition",
+          "kind": "FunctionDef",
+          "line": 142
+        },
+        {
+          "name": "account_projection",
+          "kind": "FunctionDef",
+          "line": 259
+        },
+        {
+          "name": "metric",
+          "kind": "FunctionDef",
+          "line": 313
+        },
+        {
+          "name": "meta",
+          "kind": "FunctionDef",
+          "line": 336
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/test_unified_ledger.py",
+      "lines": 283,
+      "declarations": [
+        {
+          "name": "event",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "reserve",
+          "kind": "FunctionDef",
+          "line": 20
+        },
+        {
+          "name": "fill",
+          "kind": "FunctionDef",
+          "line": 24
+        },
+        {
+          "name": "assert_expected",
+          "kind": "FunctionDef",
+          "line": 28
+        },
+        {
+          "name": "GoldenTests",
+          "kind": "ClassDef",
+          "line": 35
+        },
+        {
+          "name": "make_golden",
+          "kind": "FunctionDef",
+          "line": 39
+        },
+        {
+          "name": "InvariantTests",
+          "kind": "ClassDef",
+          "line": 56
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 40
+        },
+        {
+          "name": "opening",
+          "kind": "FunctionDef",
+          "line": 57
+        },
+        {
+          "name": "assert_rejected_without_mutation",
+          "kind": "FunctionDef",
+          "line": 62
+        },
+        {
+          "name": "test_three_transport_harnesses_have_identical_journals",
+          "kind": "FunctionDef",
+          "line": 67
+        },
+        {
+          "name": "test_every_entry_balances_and_quantity_cost_reconciles",
+          "kind": "FunctionDef",
+          "line": 73
+        },
+        {
+          "name": "test_independent_cash_and_share_identity_matches_nav",
+          "kind": "FunctionDef",
+          "line": 82
+        },
+        {
+          "name": "test_exact_redelivery_is_idempotent_and_conflict_is_rejected",
+          "kind": "FunctionDef",
+          "line": 104
+        },
+        {
+          "name": "test_sequence_gap_is_rejected",
+          "kind": "FunctionDef",
+          "line": 110
+        },
+        {
+          "name": "test_timezone_and_reconciled_time_order_required",
+          "kind": "FunctionDef",
+          "line": 114
+        },
+        {
+          "name": "test_session_date_cannot_unlock_inventory_before_effective_day",
+          "kind": "FunctionDef",
+          "line": 120
+        },
+        {
+          "name": "test_public_amount_reads_ignore_callers_decimal_context",
+          "kind": "FunctionDef",
+          "line": 133
+        },
+        {
+          "name": "test_two_buy_strategies_cannot_reserve_same_cash",
+          "kind": "FunctionDef",
+          "line": 146
+        },
+        {
+          "name": "test_two_sell_strategies_cannot_reserve_same_inventory",
+          "kind": "FunctionDef",
+          "line": 152
+        },
+        {
+          "name": "test_today_buy_has_no_today_sellable_inventory",
+          "kind": "FunctionDef",
+          "line": 157
+        },
+        {
+          "name": "test_buy_cannot_declare_same_day_unlock",
+          "kind": "FunctionDef",
+          "line": 164
+        },
+        {
+          "name": "test_cancel_with_missing_fills_preserves_reservation",
+          "kind": "FunctionDef",
+          "line": 169
+        },
+        {
+          "name": "test_overfill_and_fill_after_cancel_do_not_mutate",
+          "kind": "FunctionDef",
+          "line": 177
+        },
+        {
+          "name": "test_sale_cash_policy_changes_availability_not_wealth",
+          "kind": "FunctionDef",
+          "line": 183
+        },
+        {
+          "name": "test_non_reusable_proceeds_cannot_fund_same_day_buy",
+          "kind": "FunctionDef",
+          "line": 189
+        },
+        {
+          "name": "test_settlement_changes_no_nav_or_income",
+          "kind": "FunctionDef",
+          "line": 194
+        },
+        {
+          "name": "test_same_partial_fills_with_cumulative_fee_match_one_fill",
+          "kind": "FunctionDef",
+          "line": 201
+        },
+        {
+          "name": "test_negative_zero_float_and_nonfinite_inputs_rejected",
+          "kind": "FunctionDef",
+          "line": 207
+        },
+        {
+          "name": "test_database_numeric_and_quantity_bounds_apply_to_aggregates",
+          "kind": "FunctionDef",
+          "line": 213
+        },
+        {
+          "name": "test_unknown_fields_fail_instead_of_silently_changing_semantics",
+          "kind": "FunctionDef",
+          "line": 220
+        },
+        {
+          "name": "test_fill_price_limit_is_checked",
+          "kind": "FunctionDef",
+          "line": 224
+        },
+        {
+          "name": "test_dividend_entitlement_is_not_recomputed_from_current_holding",
+          "kind": "FunctionDef",
+          "line": 228
+        },
+        {
+          "name": "test_dividend_payment_is_not_second_income",
+          "kind": "FunctionDef",
+          "line": 232
+        },
+        {
+          "name": "test_split_replay_cannot_double_quantity",
+          "kind": "FunctionDef",
+          "line": 237
+        },
+        {
+          "name": "test_split_with_pending_order_or_fraction_requires_explicit_policy",
+          "kind": "FunctionDef",
+          "line": 242
+        },
+        {
+          "name": "test_missing_mark_is_not_zero",
+          "kind": "FunctionDef",
+          "line": 249
+        },
+        {
+          "name": "test_external_flow_twr_uses_pre_and_post_flow_nav",
+          "kind": "FunctionDef",
+          "line": 253
+        },
+        {
+          "name": "test_twr_rejects_missing_or_nonpositive_capital",
+          "kind": "FunctionDef",
+          "line": 259
+        },
+        {
+          "name": "test_numeric_policy_is_independent_of_callers_decimal_context",
+          "kind": "FunctionDef",
+          "line": 263
+        },
+        {
+          "name": "test_adjustment_does_not_overwrite_prior_journal",
+          "kind": "FunctionDef",
+          "line": 270
+        },
+        {
+          "name": "test_unsupported_trade_bust_is_explicit_and_atomic",
+          "kind": "FunctionDef",
+          "line": 274
+        },
+        {
+          "name": "test_snapshot_caller_mutation_cannot_change_book",
+          "kind": "FunctionDef",
+          "line": 278
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "execution/unified_ledger.py",
+      "lines": 528,
+      "declarations": [
+        {
+          "name": "decimal",
+          "kind": "FunctionDef",
+          "line": 27
+        },
+        {
+          "name": "quantity",
+          "kind": "FunctionDef",
+          "line": 43
+        },
+        {
+          "name": "identity",
+          "kind": "FunctionDef",
+          "line": 49
+        },
+        {
+          "name": "quantize",
+          "kind": "FunctionDef",
+          "line": 55
+        },
+        {
+          "name": "canonical",
+          "kind": "FunctionDef",
+          "line": 59
+        },
+        {
+          "name": "display",
+          "kind": "FunctionDef",
+          "line": 63
+        },
+        {
+          "name": "Posting",
+          "kind": "ClassDef",
+          "line": 68
+        },
+        {
+          "name": "Entry",
+          "kind": "ClassDef",
+          "line": 75
+        },
+        {
+          "name": "Lot",
+          "kind": "ClassDef",
+          "line": 85
+        },
+        {
+          "name": "Holding",
+          "kind": "ClassDef",
+          "line": 91
+        },
+        {
+          "name": "Order",
+          "kind": "ClassDef",
+          "line": 101
+        },
+        {
+          "name": "Ledger",
+          "kind": "ClassDef",
+          "line": 125
+        },
+        {
+          "name": "true_time_weighted_return",
+          "kind": "FunctionDef",
+          "line": 494
+        },
+        {
+          "name": "replay_fixture",
+          "kind": "FunctionDef",
+          "line": 514
+        },
+        {
+          "name": "quantity",
+          "kind": "FunctionDef",
+          "line": 96
+        },
+        {
+          "name": "remaining",
+          "kind": "FunctionDef",
+          "line": 112
+        },
+        {
+          "name": "reserved_cash",
+          "kind": "FunctionDef",
+          "line": 116
+        },
+        {
+          "name": "__init__",
+          "kind": "FunctionDef",
+          "line": 127
+        },
+        {
+          "name": "_initialize",
+          "kind": "FunctionDef",
+          "line": 135
+        },
+        {
+          "name": "balance",
+          "kind": "FunctionDef",
+          "line": 166
+        },
+        {
+          "name": "_post",
+          "kind": "FunctionDef",
+          "line": 169
+        },
+        {
+          "name": "_trade_cash_post",
+          "kind": "FunctionDef",
+          "line": 181
+        },
+        {
+          "name": "settled_cash",
+          "kind": "FunctionDef",
+          "line": 186
+        },
+        {
+          "name": "receivable",
+          "kind": "FunctionDef",
+          "line": 189
+        },
+        {
+          "name": "payable",
+          "kind": "FunctionDef",
+          "line": 192
+        },
+        {
+          "name": "cash_available",
+          "kind": "FunctionDef",
+          "line": 195
+        },
+        {
+          "name": "sellable",
+          "kind": "FunctionDef",
+          "line": 203
+        },
+        {
+          "name": "reserved_sell",
+          "kind": "FunctionDef",
+          "line": 207
+        },
+        {
+          "name": "available_to_sell",
+          "kind": "FunctionDef",
+          "line": 211
+        },
+        {
+          "name": "apply",
+          "kind": "FunctionDef",
+          "line": 214
+        },
+        {
+          "name": "_keys",
+          "kind": "FunctionDef",
+          "line": 262
+        },
+        {
+          "name": "_reduce",
+          "kind": "FunctionDef",
+          "line": 266
+        },
+        {
+          "name": "_check",
+          "kind": "FunctionDef",
+          "line": 429
+        },
+        {
+          "name": "snapshot",
+          "kind": "FunctionDef",
+          "line": 458
+        },
+        {
+          "name": "journal_digest",
+          "kind": "FunctionDef",
+          "line": 487
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "integration/build_contracts.py",
+      "lines": 220,
+      "declarations": [
+        {
+          "name": "ref",
+          "kind": "FunctionDef",
+          "line": 13
+        },
+        {
+          "name": "obj",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "arr",
+          "kind": "FunctionDef",
+          "line": 18
+        },
+        {
+          "name": "nullable",
+          "kind": "FunctionDef",
+          "line": 19
+        },
+        {
+          "name": "text",
+          "kind": "FunctionDef",
+          "line": 20
+        },
+        {
+          "name": "enum",
+          "kind": "FunctionDef",
+          "line": 21
+        },
+        {
+          "name": "integer",
+          "kind": "FunctionDef",
+          "line": 22
+        },
+        {
+          "name": "const",
+          "kind": "FunctionDef",
+          "line": 23
+        },
+        {
+          "name": "seed_object",
+          "kind": "FunctionDef",
+          "line": 24
+        },
+        {
+          "name": "add",
+          "kind": "FunctionDef",
+          "line": 143
+        },
+        {
+          "name": "oas_refs",
+          "kind": "FunctionDef",
+          "line": 188
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "integration/validate_integration.py",
+      "lines": 202,
+      "declarations": [
+        {
+          "name": "emit",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "walk",
+          "kind": "FunctionDef",
+          "line": 15
+        },
+        {
+          "name": "primary_columns",
+          "kind": "FunctionDef",
+          "line": 86
+        },
+        {
+          "name": "record_fk",
+          "kind": "FunctionDef",
+          "line": 93
+        },
+        {
+          "name": "check_refs",
+          "kind": "FunctionDef",
+          "line": 156
+        },
+        {
+          "name": "validator",
+          "kind": "FunctionDef",
+          "line": 187
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 188
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_features/feature_store.py",
+      "lines": 206,
+      "declarations": [
+        {
+          "name": "parameter_digest",
+          "kind": "FunctionDef",
+          "line": 21
+        },
+        {
+          "name": "FeatureKey",
+          "kind": "ClassDef",
+          "line": 44
+        },
+        {
+          "name": "CacheStats",
+          "kind": "ClassDef",
+          "line": 94
+        },
+        {
+          "name": "SingleFlightFeatureStore",
+          "kind": "ClassDef",
+          "line": 102
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 23
+        },
+        {
+          "name": "__post_init__",
+          "kind": "FunctionDef",
+          "line": 75
+        },
+        {
+          "name": "__init__",
+          "kind": "FunctionDef",
+          "line": 110
+        },
+        {
+          "name": "_bind_loop",
+          "kind": "FunctionDef",
+          "line": 122
+        },
+        {
+          "name": "get",
+          "kind": "AsyncFunctionDef",
+          "line": 129
+        },
+        {
+          "name": "_observe_completion",
+          "kind": "FunctionDef",
+          "line": 153
+        },
+        {
+          "name": "_run",
+          "kind": "AsyncFunctionDef",
+          "line": 157
+        },
+        {
+          "name": "stats",
+          "kind": "AsyncFunctionDef",
+          "line": 176
+        },
+        {
+          "name": "aclose",
+          "kind": "AsyncFunctionDef",
+          "line": 182
+        },
+        {
+          "name": "_shutdown",
+          "kind": "AsyncFunctionDef",
+          "line": 194
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_features/test_feature_store.py",
+      "lines": 371,
+      "declarations": [
+        {
+          "name": "key",
+          "kind": "FunctionDef",
+          "line": 10
+        },
+        {
+          "name": "FeatureKeyTests",
+          "kind": "ClassDef",
+          "line": 24
+        },
+        {
+          "name": "SingleFlightTests",
+          "kind": "ClassDef",
+          "line": 83
+        },
+        {
+          "name": "test_canonical_parameters_and_parameter_change",
+          "kind": "FunctionDef",
+          "line": 25
+        },
+        {
+          "name": "test_parameter_digest_rejects_ambiguous_or_nonfinite_parameters",
+          "kind": "FunctionDef",
+          "line": 30
+        },
+        {
+          "name": "test_every_version_dimension_changes_the_key",
+          "kind": "FunctionDef",
+          "line": 36
+        },
+        {
+          "name": "test_no_implicit_or_mutable_key_dimensions",
+          "kind": "FunctionDef",
+          "line": 52
+        },
+        {
+          "name": "test_parameter_mutation_cannot_mutate_existing_key_identity",
+          "kind": "FunctionDef",
+          "line": 58
+        },
+        {
+          "name": "test_decision_time_requires_timezone_and_normalizes_same_instant",
+          "kind": "FunctionDef",
+          "line": 72
+        },
+        {
+          "name": "asyncSetUp",
+          "kind": "AsyncFunctionDef",
+          "line": 84
+        },
+        {
+          "name": "asyncTearDown",
+          "kind": "AsyncFunctionDef",
+          "line": 87
+        },
+        {
+          "name": "wait_joined",
+          "kind": "AsyncFunctionDef",
+          "line": 90
+        },
+        {
+          "name": "test_100_concurrent_same_key_compute_once",
+          "kind": "AsyncFunctionDef",
+          "line": 96
+        },
+        {
+          "name": "test_cancelling_creator_waiter_does_not_cancel_other_waiter",
+          "kind": "AsyncFunctionDef",
+          "line": 117
+        },
+        {
+          "name": "test_all_waiters_cancel_but_later_waiter_joins_original_work",
+          "kind": "AsyncFunctionDef",
+          "line": 142
+        },
+        {
+          "name": "test_shared_failure_is_not_cached_and_retry_succeeds",
+          "kind": "AsyncFunctionDef",
+          "line": 164
+        },
+        {
+          "name": "test_failure_after_all_waiters_cancel_has_no_unobserved_exception",
+          "kind": "AsyncFunctionDef",
+          "line": 185
+        },
+        {
+          "name": "test_different_snapshots_compute_independently",
+          "kind": "AsyncFunctionDef",
+          "line": 218
+        },
+        {
+          "name": "test_same_snapshot_different_decision_time_does_not_reuse_future_result",
+          "kind": "AsyncFunctionDef",
+          "line": 236
+        },
+        {
+          "name": "test_none_is_a_cached_success",
+          "kind": "AsyncFunctionDef",
+          "line": 250
+        },
+        {
+          "name": "test_mutable_results_are_isolated_from_producer_waiters_and_cache",
+          "kind": "AsyncFunctionDef",
+          "line": 262
+        },
+        {
+          "name": "test_bounded_lru_evicts_least_recently_used_result",
+          "kind": "AsyncFunctionDef",
+          "line": 281
+        },
+        {
+          "name": "test_shutdown_cancels_producer_and_rejects_new_work",
+          "kind": "AsyncFunctionDef",
+          "line": 298
+        },
+        {
+          "name": "test_concurrent_shutdowns_do_not_interrupt_producer_cleanup",
+          "kind": "AsyncFunctionDef",
+          "line": 314
+        },
+        {
+          "name": "test_cancelling_shutdown_waiter_does_not_abort_shutdown",
+          "kind": "AsyncFunctionDef",
+          "line": 341
+        },
+        {
+          "name": "poll",
+          "kind": "AsyncFunctionDef",
+          "line": 91
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 100
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 121
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 146
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 168
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 192
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 222
+        },
+        {
+          "name": "later",
+          "kind": "AsyncFunctionDef",
+          "line": 240
+        },
+        {
+          "name": "earlier",
+          "kind": "AsyncFunctionDef",
+          "line": 243
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 253
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 266
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 285
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 301
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 318
+        },
+        {
+          "name": "compute",
+          "kind": "AsyncFunctionDef",
+          "line": 345
+        },
+        {
+          "name": "finished",
+          "kind": "AsyncFunctionDef",
+          "line": 205
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_system/normalization.py",
+      "lines": 222,
+      "declarations": [
+        {
+          "name": "MappingDrift",
+          "kind": "ClassDef",
+          "line": 16
+        },
+        {
+          "name": "json_scalar",
+          "kind": "FunctionDef",
+          "line": 20
+        },
+        {
+          "name": "digest",
+          "kind": "FunctionDef",
+          "line": 26
+        },
+        {
+          "name": "exact",
+          "kind": "FunctionDef",
+          "line": 32
+        },
+        {
+          "name": "transform_number",
+          "kind": "FunctionDef",
+          "line": 46
+        },
+        {
+          "name": "require_storage_precision",
+          "kind": "FunctionDef",
+          "line": 62
+        },
+        {
+          "name": "aware",
+          "kind": "FunctionDef",
+          "line": 76
+        },
+        {
+          "name": "normalize",
+          "kind": "FunctionDef",
+          "line": 83
+        },
+        {
+          "name": "comparable",
+          "kind": "FunctionDef",
+          "line": 217
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_system/release_store.py",
+      "lines": 170,
+      "declarations": [
+        {
+          "name": "encoded",
+          "kind": "FunctionDef",
+          "line": 15
+        },
+        {
+          "name": "hash_value",
+          "kind": "FunctionDef",
+          "line": 19
+        },
+        {
+          "name": "time_value",
+          "kind": "FunctionDef",
+          "line": 23
+        },
+        {
+          "name": "ReleaseStore",
+          "kind": "ClassDef",
+          "line": 30
+        },
+        {
+          "name": "__init__",
+          "kind": "FunctionDef",
+          "line": 31
+        },
+        {
+          "name": "transaction",
+          "kind": "FunctionDef",
+          "line": 56
+        },
+        {
+          "name": "stage",
+          "kind": "FunctionDef",
+          "line": 65
+        },
+        {
+          "name": "put_view",
+          "kind": "FunctionDef",
+          "line": 83
+        },
+        {
+          "name": "active",
+          "kind": "FunctionDef",
+          "line": 105
+        },
+        {
+          "name": "publish",
+          "kind": "FunctionDef",
+          "line": 109
+        },
+        {
+          "name": "changes_after",
+          "kind": "FunctionDef",
+          "line": 142
+        },
+        {
+          "name": "consume",
+          "kind": "FunctionDef",
+          "line": 146
+        },
+        {
+          "name": "read_view",
+          "kind": "FunctionDef",
+          "line": 163
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_system/source_health.py",
+      "lines": 63,
+      "declarations": [
+        {
+          "name": "SourceHealth",
+          "kind": "ClassDef",
+          "line": 6
+        },
+        {
+          "name": "DurableCursor",
+          "kind": "ClassDef",
+          "line": 49
+        },
+        {
+          "name": "transport_success",
+          "kind": "FunctionDef",
+          "line": 15
+        },
+        {
+          "name": "state",
+          "kind": "FunctionDef",
+          "line": 23
+        },
+        {
+          "name": "commit",
+          "kind": "FunctionDef",
+          "line": 53
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "reference_system/test_data_plane.py",
+      "lines": 309,
+      "declarations": [
+        {
+          "name": "resolver",
+          "kind": "FunctionDef",
+          "line": 17
+        },
+        {
+          "name": "ctx",
+          "kind": "FunctionDef",
+          "line": 25
+        },
+        {
+          "name": "NormalizationCases",
+          "kind": "ClassDef",
+          "line": 32
+        },
+        {
+          "name": "PublicationCases",
+          "kind": "ClassDef",
+          "line": 149
+        },
+        {
+          "name": "HealthCases",
+          "kind": "ClassDef",
+          "line": 256
+        },
+        {
+          "name": "run_profile",
+          "kind": "FunctionDef",
+          "line": 33
+        },
+        {
+          "name": "test_all_official_mapping_fixture_expectations",
+          "kind": "FunctionDef",
+          "line": 37
+        },
+        {
+          "name": "test_same_field_name_different_endpoint_units",
+          "kind": "FunctionDef",
+          "line": 45
+        },
+        {
+          "name": "test_fractional_shares_not_rounded",
+          "kind": "FunctionDef",
+          "line": 53
+        },
+        {
+          "name": "test_null_and_zero_are_distinct",
+          "kind": "FunctionDef",
+          "line": 59
+        },
+        {
+          "name": "test_zero_volume_with_nonzero_amount_is_not_valid_observation",
+          "kind": "FunctionDef",
+          "line": 66
+        },
+        {
+          "name": "test_nonfinite_negative_and_float_inputs_are_not_precise_facts",
+          "kind": "FunctionDef",
+          "line": 71
+        },
+        {
+          "name": "test_large_exact_amount_no_float_roundtrip",
+          "kind": "FunctionDef",
+          "line": 77
+        },
+        {
+          "name": "test_external_decimal_context_cannot_silently_round_unit_conversion",
+          "kind": "FunctionDef",
+          "line": 81
+        },
+        {
+          "name": "test_excess_precision_and_unsafe_integer_are_explicitly_rejected",
+          "kind": "FunctionDef",
+          "line": 88
+        },
+        {
+          "name": "test_adjusted_prices_cannot_enter_raw_mapping",
+          "kind": "FunctionDef",
+          "line": 94
+        },
+        {
+          "name": "test_required_field_rename_pauses_mapping",
+          "kind": "FunctionDef",
+          "line": 99
+        },
+        {
+          "name": "test_new_field_is_retained_without_schema_invention",
+          "kind": "FunctionDef",
+          "line": 105
+        },
+        {
+          "name": "test_missing_bare_code_market_is_unresolved",
+          "kind": "FunctionDef",
+          "line": 111
+        },
+        {
+          "name": "test_ohlc_contradiction_is_invalid",
+          "kind": "FunctionDef",
+          "line": 117
+        },
+        {
+          "name": "test_times_and_finality_are_not_invented",
+          "kind": "FunctionDef",
+          "line": 121
+        },
+        {
+          "name": "test_availability_and_date_contradictions_rejected",
+          "kind": "FunctionDef",
+          "line": 129
+        },
+        {
+          "name": "test_same_units_different_observation_scope_not_cross_validated",
+          "kind": "FunctionDef",
+          "line": 135
+        },
+        {
+          "name": "test_revised_observation_preserves_prior_lineage",
+          "kind": "FunctionDef",
+          "line": 142
+        },
+        {
+          "name": "setUp",
+          "kind": "FunctionDef",
+          "line": 150
+        },
+        {
+          "name": "tearDown",
+          "kind": "FunctionDef",
+          "line": 155
+        },
+        {
+          "name": "prepared",
+          "kind": "FunctionDef",
+          "line": 158
+        },
+        {
+          "name": "test_partial_ranking_set_cannot_become_active",
+          "kind": "FunctionDef",
+          "line": 163
+        },
+        {
+          "name": "test_pointer_and_outbox_rollback_together",
+          "kind": "FunctionDef",
+          "line": 170
+        },
+        {
+          "name": "test_all_read_models_share_explicit_release",
+          "kind": "FunctionDef",
+          "line": 178
+        },
+        {
+          "name": "test_newer_active_release_not_overwritten_by_late_job",
+          "kind": "FunctionDef",
+          "line": 183
+        },
+        {
+          "name": "test_compare_and_swap_detects_concurrent_publication",
+          "kind": "FunctionDef",
+          "line": 192
+        },
+        {
+          "name": "test_same_cutoff_older_job_cannot_refresh_expected_pointer_to_win",
+          "kind": "FunctionDef",
+          "line": 198
+        },
+        {
+          "name": "test_retry_is_idempotent_and_changed_content_is_not",
+          "kind": "FunctionDef",
+          "line": 207
+        },
+        {
+          "name": "test_projection_from_different_input_snapshot_rejected",
+          "kind": "FunctionDef",
+          "line": 215
+        },
+        {
+          "name": "test_consumer_effect_and_receipt_rollback_together",
+          "kind": "FunctionDef",
+          "line": 220
+        },
+        {
+          "name": "test_same_event_id_with_changed_content_is_not_silent_dedupe",
+          "kind": "FunctionDef",
+          "line": 231
+        },
+        {
+          "name": "test_missed_push_can_be_replayed_by_cursor",
+          "kind": "FunctionDef",
+          "line": 238
+        },
+        {
+          "name": "test_staged_or_wrong_context_view_not_exposed",
+          "kind": "FunctionDef",
+          "line": 247
+        },
+        {
+          "name": "test_quiet_news_can_have_healthy_transport",
+          "kind": "FunctionDef",
+          "line": 257
+        },
+        {
+          "name": "test_http_success_does_not_make_old_quotes_fresh",
+          "kind": "FunctionDef",
+          "line": 261
+        },
+        {
+          "name": "test_calendar_closed_market_is_not_a_missing_quote",
+          "kind": "FunctionDef",
+          "line": 265
+        },
+        {
+          "name": "test_push_silence_triggers_poll_and_recovery_keeps_content_clock",
+          "kind": "FunctionDef",
+          "line": 269
+        },
+        {
+          "name": "test_disabled_source_is_not_claimed_as_running",
+          "kind": "FunctionDef",
+          "line": 277
+        },
+        {
+          "name": "test_failed_raw_write_never_advances_checkpoint",
+          "kind": "FunctionDef",
+          "line": 281
+        },
+        {
+          "name": "test_gap_requires_backfill_before_checkpoint_advance",
+          "kind": "FunctionDef",
+          "line": 289
+        },
+        {
+          "name": "test_invalid_clock_does_not_mutate_health",
+          "kind": "FunctionDef",
+          "line": 296
+        },
+        {
+          "name": "test_future_push_heartbeat_cannot_mask_silence",
+          "kind": "FunctionDef",
+          "line": 302
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "run_verification.py",
+      "lines": 33,
+      "declarations": [],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "sources_sectors/validate_fixtures.py",
+      "lines": 113,
+      "declarations": [
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 14
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 17
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "traceability/ledger_negative_input_repro.py",
+      "lines": 19,
+      "declarations": [],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    },
+    {
+      "path": "validate_package.py",
+      "lines": 72,
+      "declarations": [
+        {
+          "name": "main",
+          "kind": "FunctionDef",
+          "line": 6
+        },
+        {
+          "name": "check",
+          "kind": "FunctionDef",
+          "line": 11
+        },
+        {
+          "name": "load",
+          "kind": "FunctionDef",
+          "line": 14
+        }
+      ],
+      "review_status": "delivered_reference_static_inventory; scope-specific reviews and actual tests are separately recorded"
+    }
+  ]
+}

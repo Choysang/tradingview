@@ -1,0 +1,44 @@
+{
+  "schema_version": "3.0.0",
+  "production_schema": "v3.schema.json",
+  "legacy_contract_status": "historical_only",
+  "aliases": [
+    {
+      "old": "TradePlan.version",
+      "new": "TradePlan.plan_version"
+    },
+    {
+      "old": "StrategySpec.version",
+      "new": "Strategy.strategy_version"
+    },
+    {
+      "old": "symbol-like instrument_id",
+      "new": "UUID instrument_id; resolve through core.instrument_alias with source and PIT context"
+    },
+    {
+      "old": "price_mode / adjustment_basis",
+      "new": "adjustment_mode"
+    },
+    {
+      "old": "FeatureKey.instruments",
+      "new": "FeatureKey.instrument_ids"
+    },
+    {
+      "old": "FeatureKey.interval",
+      "new": "FeatureKey.timeframe"
+    },
+    {
+      "old": "FeatureKey.universe_version",
+      "new": "FeatureKey.universe_policy_version"
+    },
+    {
+      "old": "quality_state / value_status",
+      "new": "quality_status; field_quality is separate"
+    },
+    {
+      "old": "implicit latest ranking during pagination",
+      "new": "fixed ranking_id + release_id + cursor; separate fixed actionability_id for live account ordering"
+    }
+  ],
+  "rule": "Migration is explicit and validated; production JSON does not accept both old and new spellings."
+}

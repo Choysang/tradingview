@@ -1,0 +1,32 @@
+/* ext group B: screening, playbooks, factor / pattern lab. Uses the shell's tokens only (light/dark follow --surface etc.). */
+.extb .askbar { display: flex; gap: 8px; margin: 8px 0; }
+.extb .askbar input { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: inherit; font-size: 1rem; }
+.extb .presets { margin-bottom: 8px; }
+.extb .chip-x { border: 0; background: transparent; cursor: pointer; color: var(--muted); padding: 0 2px; font-size: 1rem; line-height: 1; }
+.extb .chip-x:hover { color: var(--bad, #c0392b); }
+.extb .rail, .extb .saved { margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; background: var(--surface); }
+.extb summary { cursor: pointer; font-weight: 600; }
+.extb .rail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin: 8px 0; }
+.extb .rail-grid label, .extb .stack, .extb .form label { display: flex; flex-direction: column; gap: 3px; font-size: 0.85rem; color: var(--muted); }
+.extb .rail-grid small { margin-left: 4px; opacity: 0.7; }
+.extb .pair { display: flex; gap: 4px; } .extb .pair input { width: 100%; min-width: 0; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: inherit; }
+.extb .check { display: inline-flex; align-items: center; gap: 4px; font-size: 0.88rem; color: inherit; flex-direction: row; }
+.extb .runbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
+.extb .counts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.extb .scroll { overflow: auto; max-height: 70vh; outline: none; border: 1px solid var(--border); border-radius: 8px; }
+.extb .scroll:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.extb table.results.dense td, .extb table.results.dense th { padding: 2px 6px; }
+.extb table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.extb tr.sel { background: var(--surface-2); }
+.extb tr.detail td { background: var(--surface-2); }
+.extb .linklike { background: none; border: 0; cursor: pointer; color: var(--accent); padding: 0; font: inherit; text-align: left; }
+.extb .filters { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; } .extb .filters label { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--muted); gap: 3px; }
+.extb .exps { display: grid; gap: 8px; margin-top: 8px; } .extb .exp { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; background: var(--surface); }
+.extb .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 10px 0; }
+.extb .card { display: flex; flex-direction: column; gap: 4px; text-align: left; border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--surface); cursor: pointer; color: inherit; }
+.extb .card.on { border-color: var(--accent); } .extb .card .count { font-size: 1.3rem; font-weight: 700; }
+.extb .factor { border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin: 10px 0; background: var(--surface); }
+.extb .bars { display: inline-flex; gap: 3px; align-items: flex-end; height: 30px; }
+.extb .bars i { display: inline-block; width: 8px; border-radius: 2px; background: var(--muted); } .extb .bars i.up { background: var(--good, #1a7f37); } .extb .bars i.dn { background: var(--bad, #c0392b); } .extb .bars i.na { opacity: 0.4; }
+.extb ul.plain { list-style: none; margin: 4px 0; padding: 0; }
+@media (max-width: 640px) { .extb .askbar { flex-direction: column; } .extb .rail-grid { grid-template-columns: 1fr 1fr; } }

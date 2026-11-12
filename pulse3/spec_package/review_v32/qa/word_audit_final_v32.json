@@ -1,0 +1,693 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "review_kind": "final_render_assigned_range_visual_qa",
+  "reviewed_at_utc": "2026-11-11T03:12:47.468667+00:00",
+  "source": {
+    "docx": "/workspace/scratch/5ac6aa9eb6c9/deliverables/Pulse_Ashare_Rewrite_2026_v32_build.docx",
+    "render_directory": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02",
+    "render_page_count": 170,
+    "render_pdf": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/Pulse_Ashare_Rewrite_2026_v32_build.pdf",
+    "render_pdf_sha256_at_report": "3c41656cac4896716c4bb9a59ba2099bce7841b18688d1446e7484341fe37405",
+    "docx_sha256_at_start": "94be0115c4a341df9616d50ee570587f380b69d90a1d96ce06db02de9fa17e47",
+    "docx_sha256_at_report": "78a105451465af49aac1dcb829503b4af4965a7e84fb8bbab9b9c61df7d46f7f",
+    "docx_unchanged_during_review": false
+  },
+  "scope": {
+    "assigned_start": 1,
+    "assigned_end": 43,
+    "assigned_page_count": 43,
+    "visually_opened_page_count": 43,
+    "coverage": "43/43",
+    "claim_limited_to_assigned_pages": true,
+    "max_images_per_tool_call": 2,
+    "inspection_method": "每页通过 view_image 原尺寸打开；仅末页单张，其余每批最多两张。没有用文本抽取或缩略图替代视觉检查。"
+  },
+  "checks": [
+    "裁切与越界",
+    "文字或表格重叠",
+    "乱码与缺字",
+    "表格跨页、表头与列宽",
+    "异常近空白页",
+    "孤立短尾",
+    "标题与正文跟随",
+    "页眉页脚及正文间距"
+  ],
+  "summary": {
+    "layout_pass_pages": 41,
+    "needs_revision_pages": [
+      14,
+      43
+    ],
+    "required_issue_count": 2,
+    "overall_result": "needs_layout_revision",
+    "cropping_overlap_or_garbled_text_observed": false,
+    "broken_table_rows_observed": false,
+    "further_pages_not_reviewed": "44–170 未在本次分配范围内，不作通过声明。"
+  },
+  "issues": [
+    {
+      "issue_id": "FWQA01",
+      "severity": "required_layout_fix",
+      "pages": [
+        14
+      ],
+      "context_pages": [
+        13
+      ],
+      "observation": "第 14 页仅两行整合说明，其余正文区域近乎全空。上轮附加标题虽已删除，孤立短尾仍存在。",
+      "suggested_action": "把十一卷整合说明并入第 13 页现有段落或调整前页局部段距，保留全部语义；重新渲染确认不再单独占页。",
+      "status": "open",
+      "prior_issue": "WQA01"
+    },
+    {
+      "issue_id": "FWQA02",
+      "severity": "required_layout_fix",
+      "pages": [
+        43
+      ],
+      "context_pages": [
+        42
+      ],
+      "observation": "第 43 页仅两行第 42 页尾段的续文与文件引用，正文区域近乎全空。",
+      "suggested_action": "将引用与修订结论保留在同一收尾块，合入第 42 页或调整该节局部排版；重新渲染确认不再有两行独占页。",
+      "status": "open",
+      "prior_issue": "WQA02"
+    }
+  ],
+  "narrow_closures": [
+    {
+      "prior_issue": "WQC01",
+      "status": "closed_in_this_render",
+      "pages": [
+        15,
+        22
+      ],
+      "basis": "第 15 页模块通知表明确 PG 事务 outbox 轮询、扩展时可接 JetStream；第 22 页明确首发本地消费与启用 broker 时的确认分支。",
+      "limits": "只核对本轮已指明的两处旧内容冲突；未外扩为整份规范的新内容审计。"
+    }
+  ],
+  "observations": [
+    {
+      "pages": [
+        13
+      ],
+      "observation": "统一 M0–M6 已正确呈现。"
+    },
+    {
+      "pages": [
+        24
+      ],
+      "observation": "包含多个完整收尾块的正常章节末页；没有按机械页面占比误列为必修短尾。"
+    },
+    {
+      "pages": [
+        19,
+        20,
+        25,
+        26,
+        38,
+        39
+      ],
+      "observation": "跨页表重复表头，列宽稳定，未见断行截断。"
+    },
+    {
+      "pages": [
+        41
+      ],
+      "observation": "分段 TWR 算例完整可读。"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "status": "pass",
+      "notes": "封面标题、版本与交付边界说明完整，字体清楚；页眉页脚正常，无裁切或重叠。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-1.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "33c76ef3de15b30c4c9ce8cdd4effbc009ded67be20188fece4d061ce2f8a15b"
+    },
+    {
+      "page": 2,
+      "status": "pass",
+      "notes": "阅读导航二十部分与底部说明完整可读，链接颜色及段距一致，无标题孤立或页脚碰撞。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-2.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "c4a31a19c8e1596fba9189e9b12313787761414e178ef4a3d38ffdf463609476"
+    },
+    {
+      "page": 3,
+      "status": "pass",
+      "notes": "第一部分标题与正文层级清楚，底部 1.2 标题随三行正文，未形成孤立标题；长路径正常换行。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-3.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "228329d48ef923ad4ba7b0bff0f8cd0bc4aa765e5c8f5a588c99811075f5fbad"
+    },
+    {
+      "page": 4,
+      "status": "pass",
+      "notes": "模块职责表列宽与行高稳定，单元格完整；首发组件与可选 JetStream 文字均可读，无溢出。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-4.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "07e7d8a34022a14df9279ec686b379e62b50bb0ac49a9412d799c97b617951f1"
+    },
+    {
+      "page": 5,
+      "status": "pass",
+      "notes": "闭环与数据标准两节排版连续，引用和代码名可辨，底部正文留在页边距内。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-5.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "26502add2af78160496de7f16779c32cf0adfe9787003b3fc03db7b9b3d075e5"
+    },
+    {
+      "page": 6,
+      "status": "pass",
+      "notes": "原始价、多周期、缓存与四维融合标题层级一致；跨页正文自然延续，无孤立短尾或重叠。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-6.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "766d5b537b2bcceb14360297097e035523f2b397f61624d32d90f72e1fb8ad10"
+    },
+    {
+      "page": 7,
+      "status": "pass",
+      "notes": "四维来源、主张核对及龙虎榜段落清楚，中文与英文标识无乱码；页末正常收束。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-7.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "f867f290835725a3f2912475e195994ee26a66c35c7c9c3f19ad0d82d690f583"
+    },
+    {
+      "page": 8,
+      "status": "pass",
+      "notes": "排名与个股计划章节完整排布，较长账户版本标识正常换行；标题跟随正文，无越界。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-8.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "06d4ac9b55e84e846b773dbb6895f186a9db6329cba200ba97370e785f383797"
+    },
+    {
+      "page": 9,
+      "status": "pass",
+      "notes": "多策略、做 T/网格及统一账本标题与正文完整；脚注式来源标签可读，页底无裁切。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-9.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "1268dc0659e1e5881a8e6b32bb3c18ccc494164829e33963cf5b81ae5ad792f9"
+    },
+    {
+      "page": 10,
+      "status": "pass",
+      "notes": "Benchmark 与联赛正文清楚，生命周期箭头序列完整可辨；没有表格/行间重叠或异常留白。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-10.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "7865a5a14bf66b2dd6d58aa7d6de92180b0501db98c7aeabee5243d6d8e341c4"
+    },
+    {
+      "page": 11,
+      "status": "pass",
+      "notes": "论文发现与接口闭环两节完整，来源标记、API 标识与长路径换行清晰。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-11.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "febdd7299c2a96755d0b1562e9209bc37116783a92789005603473573d951920"
+    },
+    {
+      "page": 12,
+      "status": "pass",
+      "notes": "来源、调度和并行开发层级正常；14 节标题带多行正文跨页，未悬空，P95 数值和符号清楚。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-12.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "59363cd8befd758428e9e0d4fa52b77f7edf406f201acb13f48b1c6cdf0f464c"
+    },
+    {
+      "page": 13,
+      "status": "pass",
+      "notes": "统一 M0–M6 段落及最终验收章节完整清楚，未见截断；章节尾段溢至下一页的问题记录在第 14 页。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-13.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "2a141b5ac96b3493b412f0f41f49b73bf632d0e131ba4eb7f6be51998e41d610"
+    },
+    {
+      "page": 14,
+      "status": "needs_revision",
+      "issue_ids": [
+        "FWQA01"
+      ],
+      "notes": "仅顶部两行十一卷整合与 31 公共操作说明，正文区域绝大部分空白；独立短尾页仍存在，需并入前页或重排。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-14.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "c569e18ad0b54d4d7d22f8741bfb8e6fcbb46662ae3fbd6c233516362bf82b78"
+    },
+    {
+      "page": 15,
+      "status": "pass",
+      "notes": "数据库职责表完整、列宽稳定；模块通知单元格已写 PG outbox 轮询，扩展时可接 JetStream，旧内容矛盾在此关闭。末尾物理部署标题有引导正文。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-15.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "0a10fd51a7968056554970664f5ce7a11150ce63097100f3df32e10d70542eef"
+    },
+    {
+      "page": 16,
+      "status": "pass",
+      "notes": "物理部署列表、容量公式与三行容量表完整，数字列对齐；跨页正文自然延续。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-16.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "e8e6742280946551b328b56a0614d69e3875a3e291945e58a688770215d57cd1"
+    },
+    {
+      "page": 17,
+      "status": "pass",
+      "notes": "数据库读写与扩展条件段落、项目符号和长索引键均完整；页末字段规范标题带首条内容。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-17.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "c373cf5ea8a8b6235eb13f68334fad53e280b2f06af61d6fb902a6413463a7a3"
+    },
+    {
+      "page": 18,
+      "status": "pass",
+      "notes": "数字/时间规范清楚，单位转换表所有行与公式均在单元格内，长接口名换行可读。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-18.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "5d4a689248f423475827114578c07a56756971f7b13841154d5c0c91d6d5c21a"
+    },
+    {
+      "page": 19,
+      "status": "pass",
+      "notes": "缺失与冲突编号列表清楚，接口映射表在页末以完整表头和两行开始，无拆断单元格。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-19.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "00d30e33969e713243ae67c4132e96ac4a02fb94e19c39652c4e0821a801a758"
+    },
+    {
+      "page": 20,
+      "status": "pass",
+      "notes": "续表重复表头、列宽一致，长路由自动换行且完整；表下说明与页脚分离。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-20.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "abc7afa9936bb7f267ec2adbe2894e85c77cd7e232e19d31e35c92d3172aad26"
+    },
+    {
+      "page": 21,
+      "status": "pass",
+      "notes": "恢复发布多级标题与编号完整，pin/lease、GC 和版本状态等长标识可读；没有页底裁切。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-21.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "df25ec943c649f0833db914643f150993f54f3633f3ac1d901841ee84026208e"
+    },
+    {
+      "page": 22,
+      "status": "pass",
+      "notes": "Outbox 段已区分首发轮询与可选 broker 确认；正文、缓存列表和轮询标题均完整，旧 JetStream 内容冲突关闭。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-22.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "ec4812e931733e825d8d9289639ca4351c248ef9683be2bb3a6ca8dc4d8345d4"
+    },
+    {
+      "page": 23,
+      "status": "pass",
+      "notes": "来源健康、分类链接和迁移验收段落可读，底部正常跨页接续，没有孤立标题。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-23.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "05aa0d46a0f2269b83e60cdd3d0fc6aebe8149dea2698da0cde47d75c3d43b0c"
+    },
+    {
+      "page": 24,
+      "status": "pass",
+      "notes": "章节收尾包含完整结果、官方索引与 v3.2 输入核对三个内容块；下部留白属合理章末，不是两三行孤立短尾。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-24.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "91e3448bfd68e206b165d39132078c72c8da2f393b03a5d1b77ee4b8e74b77af"
+    },
+    {
+      "page": 25,
+      "status": "pass",
+      "notes": "第三部分开篇、五条核心决定与来源表布局清楚；表行未被截断。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-25.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "9d95a7a1f27c5771412052a6a57758fb79b5cbe0a1fd370d65fd2ad18e463d77"
+    },
+    {
+      "page": 26,
+      "status": "pass",
+      "notes": "来源续表表头重复、全列一致，细长中文与英文内容可读；下方公共字段标题有多行正文。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-26.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "654e3e91c70dfc4bb4e17c561f6be07faeac714abb55e63844d84062ce188ab4"
+    },
+    {
+      "page": 27,
+      "status": "pass",
+      "notes": "时间语义表完整，各字段和约束清楚，表后可得性说明及缺失规则无裁切。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-27.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "cf0667d576c15cc25ddfd48bd53d25e219e671778609363369b7c2a7c0ff4f39"
+    },
+    {
+      "page": 28,
+      "status": "pass",
+      "notes": "最小逻辑表跨整页但所有行完整，表头与三列稳定；表后说明正常跨页，不与页脚碰撞。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-28.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "216fde784b66681a8e1bdd17c7a33c2471cfbe733e84244c4f56099dbbd1f491"
+    },
+    {
+      "page": 29,
+      "status": "pass",
+      "notes": "来源状态与完整写入列表逐项可读，长状态标识正确换行；页尾完整性说明未越界。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-29.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "28b82284880e030f24715a57945979a7c31b1fe3bfc38f6c5820ed836c024511"
+    },
+    {
+      "page": 30,
+      "status": "pass",
+      "notes": "轮询与交易会话表完整，所有阶段行清楚；4.5 标题后有两行正文再跨页，无悬空标题。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-30.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "459065b2df4ac85d294378130e005ac20e61655071165d3f6d15c1155c56bc95"
+    },
+    {
+      "page": 31,
+      "status": "pass",
+      "notes": "消息分类与主张验证章节清楚，箭头、标识和引用正常；无文字层覆盖。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-31.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "4d3fb9b6039b8c1391d7dd3ac43666abf349e35784a3b934344b2a371aceb49a"
+    },
+    {
+      "page": 32,
+      "status": "pass",
+      "notes": "社区指标表完整，长字段自动换行可辨；资金面标题带三项说明，未出现孤立短尾。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-32.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "8149844886835378c8763ddac892e346c6fe26a71a610a641fed88a86656fdf9"
+    },
+    {
+      "page": 33,
+      "status": "pass",
+      "notes": "资金字段与龙虎榜模型/实体解析清楚，8.3 标题带完整引导段；未见乱码或页底截断。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-33.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "c1866d209e6794c835f8f80798d4494e8eec088a49ddbc407ce9cb4d1428a407"
+    },
+    {
+      "page": 34,
+      "status": "pass",
+      "notes": "板块时点规则与三种排名表完整，表格列内换行正常；下方长字段标识不溢出。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-34.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "3798893e11b6a71ca5d7e1f4f9832606589d1140a351ff1cf92f2d329a552659"
+    },
+    {
+      "page": 35,
+      "status": "pass",
+      "notes": "候选池状态机、项目符号与发布一致性段落排列正常；第 10 节有完整正文，页面密度合理。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-35.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "e479e5cf3f0547312696fcbd9583c3bc7f2d0572cebb828dfc55a161f0f608c1"
+    },
+    {
+      "page": 36,
+      "status": "pass",
+      "notes": "迁移、事务约束及工程验收段落完整；SQL/文件名与引用在页边距内，页脚有足够间距。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-36.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "7a2fa2eb3de31d09578cbe6accd2606af61263aa6a819124966139ee729324c6"
+    },
+    {
+      "page": 37,
+      "status": "pass",
+      "notes": "第四部分开篇与标准职责表完整，金额/业绩术语和来源标签正常，无表格裁切。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-37.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "4cdd9069d50025108ff008026f7872506fdc9e757f000fd3aa79fd6807bd803f"
+    },
+    {
+      "page": 38,
+      "status": "pass",
+      "notes": "统一调用链、入口表和共同接口表可读；末尾接口表保留完整首行，续表待下一页核对。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-38.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "244751bc5ea0a67d0173c99a0f2747a1b740d2da99e9dea949f6f8555f881633"
+    },
+    {
+      "page": 39,
+      "status": "pass",
+      "notes": "共同接口续表重复表头，行内容完整；规则和费用段落至页底仍清晰，无表格跨页破损。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-39.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "2cbf2ff8276a16883444fd7ec90d875adbd864835fe0b52542c9448135b45dee"
+    },
+    {
+      "page": 40,
+      "status": "pass",
+      "notes": "weighted_average_gross 段落与借贷分录表完整；不等式、货币字段和库存说明显示正常。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-40.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "3d3a0f0a71d4fafe78e74a3e54a55e9053a26177961bdbb8b25218b1f991310d"
+    },
+    {
+      "page": 41,
+      "status": "pass",
+      "notes": "TWR 分段示例 1.1 × 1.1 − 1 = 21% 完整清楚，取消/更正与数量子账段落无裁切。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-41.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "5bf11b246185d9df571f9e2c00165e53bc8c40201c439f2b02f2bc304fa5998c"
+    },
+    {
+      "page": 42,
+      "status": "pass",
+      "notes": "四层 Benchmark 表与参考实现边界段落完整可读；本轮修订说明末段继续到第 43 页，需结合下一页判断短尾。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-42.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "62f8fd3b82bbeba52fdce96ac96ad652077f2ab85d29e2f523a4f6a8f97753f5"
+    },
+    {
+      "page": 43,
+      "status": "needs_revision",
+      "issue_ids": [
+        "FWQA02"
+      ],
+      "notes": "仅两行上一页修订说明的续文及路径引用，正文几乎全空；需与第 42 页末段合并重排。",
+      "visually_opened": true,
+      "view_mode": "original_png_no_thumbnail_or_text_substitution",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_02/page-43.png",
+      "dimensions_px": [
+        1547,
+        2002
+      ],
+      "image_sha256_at_report": "9dfc6ad6381dfe4fe461d04dc1678e85ca153593d41104ee187bfeeabe9e1cac"
+    }
+  ],
+  "limitations": [
+    "这是渲染版式 QA，不重跑数据库、策略或论文实验。",
+    "本报告证明看见所列页面，不证明尚未检查的其余页面通过。",
+    "每页图像哈希记录于出具报告时；所见渲染图像是版式判断的直接依据。",
+    "本轮未修改 DOCX、渲染图或其他正式规范文件。"
+  ]
+}

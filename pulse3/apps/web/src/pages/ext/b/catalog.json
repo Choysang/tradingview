@@ -1,0 +1,1815 @@
+{
+ "catalog_version": "screen-fields-v1",
+ "exit_variants": [
+  {
+   "key": "default",
+   "label": "默认卖法"
+  },
+  {
+   "key": "stop_tight",
+   "label": "紧止损 5%"
+  },
+  {
+   "key": "stop_wide",
+   "label": "宽止损 15%"
+  },
+  {
+   "key": "below_ma5",
+   "label": "跌破 5 日线卖"
+  },
+  {
+   "key": "stall",
+   "label": "放量滞涨卖"
+  },
+  {
+   "key": "chandelier",
+   "label": "吊灯止损（3×ATR）"
+  },
+  {
+   "key": "chandelier_tight",
+   "label": "紧吊灯止损（2×ATR）"
+  },
+  {
+   "key": "chandelier_wide",
+   "label": "宽吊灯止损（5×ATR）"
+  },
+  {
+   "key": "bias",
+   "label": "乖离过大卖（高于 20 日线 15%）"
+  },
+  {
+   "key": "shadow",
+   "label": "高位放量长上影卖"
+  },
+  {
+   "key": "scale_half",
+   "label": "涨 5% 先卖一半"
+  }
+ ],
+ "factors": [
+  {
+   "description": "收盘 / 20 日前收盘 - 1，追强势",
+   "id": "momentum_20",
+   "name": "20日动量"
+  },
+  {
+   "description": "-(收盘 / 5 日前收盘 - 1)，近 5 日跌得多的预期反弹",
+   "id": "reversal_5",
+   "name": "5日反转"
+  },
+  {
+   "description": "-(近 20 日日收益率标准差)，低波动异象",
+   "id": "lowvol_20",
+   "name": "20日低波"
+  },
+  {
+   "description": "今日成交量 / 前 20 日平均成交量",
+   "id": "volume_surge",
+   "name": "放量倍数"
+  },
+  {
+   "description": "收盘 / 近 60 日最高价 - 1，越接近新高越高",
+   "id": "dist_high_60",
+   "name": "距60日高点"
+  },
+  {
+   "description": "收盘 / 20 日均价 - 1",
+   "id": "ma_gap_20",
+   "name": "MA20乖离"
+  }
+ ],
+ "families": {
+  "academic_factor": "学术因子",
+  "crowd": "抱团与联动",
+  "factor_composite": "因子复合",
+  "limit_relay": "连板接力",
+  "oversold": "超跌与震荡",
+  "sentiment_cycle": "情绪周期与择时",
+  "technical": "技术分析",
+  "trend_breakout": "趋势与突破"
+ },
+ "field_version": "v1",
+ "fields": [
+  {
+   "description": "最新完成交易日收盘（前复权研究序列；最新一根等于不复权价，历史价位为复权值）",
+   "group": "price",
+   "id": "close",
+   "label": "最新价",
+   "needs": "bars",
+   "unit": "CNY"
+  },
+  {
+   "description": "当日涨跌幅（%）",
+   "group": "price",
+   "id": "pct_chg",
+   "label": "涨幅",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "收盘较 5 根前（%）",
+   "group": "price",
+   "id": "ret_5d",
+   "label": "5日涨幅",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "收盘较 20 根前（%）",
+   "group": "price",
+   "id": "ret_20d",
+   "label": "20日涨幅",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "收盘较 60 根前（%）",
+   "group": "price",
+   "id": "ret_60d",
+   "label": "60日涨幅",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "收盘较 250 根前（%）",
+   "group": "price",
+   "id": "ret_250d",
+   "label": "250日涨幅",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "当日成交量 / 前 5 日均量",
+   "group": "volume",
+   "id": "volume_ratio_5",
+   "label": "量比",
+   "needs": "bars",
+   "unit": "ratio"
+  },
+  {
+   "description": "近 20 日 收盘×成交量 均值（亿元，估算：来源无成交额，收盘为复权价）",
+   "group": "volume",
+   "id": "turnover_proxy_20",
+   "label": "估算日均成交额",
+   "needs": "bars",
+   "unit": "100m_cny"
+  },
+  {
+   "description": "当前连续涨停收盘天数（按板块涨跌幅，容差 0.5pp）",
+   "group": "limit",
+   "id": "limit_streak",
+   "label": "连板数",
+   "needs": "bars",
+   "unit": "count"
+  },
+  {
+   "description": "当前连续上涨收盘天数",
+   "group": "limit",
+   "id": "growth_streak",
+   "label": "连阳天数",
+   "needs": "bars",
+   "unit": "count"
+  },
+  {
+   "description": "近 250 根内涨停收盘次数",
+   "group": "limit",
+   "id": "limit_count_250",
+   "label": "近一年涨停次数",
+   "needs": "bars",
+   "unit": "count"
+  },
+  {
+   "description": "收盘 / 近 60 日最高价 - 1（%）；≥0 即创 60 日新高",
+   "group": "trend",
+   "id": "dist_60d_high",
+   "label": "距60日新高",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "收盘 / MA20 - 1（%）",
+   "group": "trend",
+   "id": "ma_gap_20",
+   "label": "20日乖离",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "Wilder RSI(14)",
+   "group": "trend",
+   "id": "rsi_14",
+   "label": "RSI14",
+   "needs": "bars",
+   "unit": "index"
+  },
+  {
+   "description": "KDJ(9,3,3) 的 J 值",
+   "group": "trend",
+   "id": "kdj_j",
+   "label": "KDJ-J",
+   "needs": "bars",
+   "unit": "index"
+  },
+  {
+   "description": "ATR14 / 收盘（%）",
+   "group": "trend",
+   "id": "atr_ratio_14",
+   "label": "ATR占比",
+   "needs": "bars",
+   "unit": "pct"
+  },
+  {
+   "description": "流通市值（亿元）：最新快照流通市值 × 当日收盘 / 最新收盘（股本固定近似）",
+   "group": "cap",
+   "id": "float_cap",
+   "label": "流通市值",
+   "needs": "float_cap",
+   "unit": "100m_cny"
+  },
+  {
+   "description": "研究序列中已有的交易日数（下限）",
+   "group": "instrument",
+   "id": "listed_sessions",
+   "label": "已交易天数",
+   "needs": "bars",
+   "unit": "count"
+  },
+  {
+   "description": "已交易天数 < 60 为 1",
+   "group": "instrument",
+   "id": "is_new",
+   "label": "次新股",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "ST/*ST 为 1（取实例状态 is_risk_warning）",
+   "group": "instrument",
+   "id": "is_st",
+   "label": "ST",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "主板为 1",
+   "group": "instrument",
+   "id": "board_main",
+   "label": "沪深主板",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "创业板为 1",
+   "group": "instrument",
+   "id": "board_chinext",
+   "label": "创业板",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "科创板为 1",
+   "group": "instrument",
+   "id": "board_star",
+   "label": "科创板",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "北交所为 1",
+   "group": "instrument",
+   "id": "board_bse",
+   "label": "北交所",
+   "needs": "instrument",
+   "unit": "flag"
+  },
+  {
+   "description": "最新一根 MA5 > MA10 > MA20 > MA60，且 MA20 高于 5 根前的 MA20。",
+   "group": "pattern",
+   "id": "pattern.ma_bull",
+   "label": "均线多头",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "涨幅 ≥ 2%，收盘不低于开盘，成交量 ≥ 前 5 日均量 2 倍。",
+   "group": "pattern",
+   "id": "pattern.volume_surge",
+   "label": "放量上涨",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "跌幅达到跌停线（板块涨跌幅 - 0.5pp），成交量 ≥ 前 5 日均量 4 倍。",
+   "group": "pattern",
+   "id": "pattern.climax_limitdown",
+   "label": "放量跌停",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "近 15 根内涨停日 d 且 d 收盘不低于其前 15 根最高收盘；d+1..d+3 开收均高于 d 收盘、波幅 < 3%，d+2、d+3 涨跌幅在 ±5% 内；命中日 d+3 在最近 3 根内。",
+   "group": "pattern",
+   "id": "pattern.parking_apron",
+   "label": "停机坪",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "至少 250 根；最近 60 根中峰前首根收盘 < MA250 且末根 > MA250，峰后收盘均 ≥ MA250，最低收盘在峰后 10–50 根，峰量/谷量 > 2，谷/峰收盘 < 0.8。",
+   "group": "pattern",
+   "id": "pattern.yearline_pullback",
+   "label": "回踩年线",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "最近 60 根内某日 b：开盘 < MA60 ≤ 收盘，量比 ≥ 2；窗口内 b 之前每日 -0.05 < (MA60-收盘)/MA60 < 0.2。",
+   "group": "pattern",
+   "id": "pattern.platform_breakout",
+   "label": "突破平台",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "近 60 根涨幅 ≥ 60%；其间无单日 < -7%、无收开 < -7%、无连续两日累计 < -10%（收盘或开到收）。",
+   "group": "pattern",
+   "id": "pattern.low_drawdown",
+   "label": "无大幅回撤",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "收盘 ≥ 最近 60 根（含当日）最高收盘。",
+   "group": "pattern",
+   "id": "pattern.turtle_breakout",
+   "label": "海龟突破",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "24 根前至 10 根前窗口：最高收盘/最低价 ≥ 1.9 且出现连续两日涨停。",
+   "group": "pattern",
+   "id": "pattern.high_tight_flag",
+   "label": "高而窄旗形",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "ATR14/收盘 ≤ 2.5%，近 60 根涨幅 ≥ 15%，收盘 ≥ MA20。",
+   "group": "pattern",
+   "id": "pattern.low_atr_growth",
+   "label": "低波成长",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "DIF 上穿 DEA（前一根 DIF ≤ DEA），且 DIF 与 DEA 均 < 0。",
+   "group": "pattern",
+   "id": "pattern.macd_bottom_cross",
+   "label": "MACD 零轴下金叉",
+   "needs": "bars",
+   "unit": "flag"
+  },
+  {
+   "description": "K 上穿 D（前一根 K ≤ D），且 D < 25 或前一根 J < 0。",
+   "group": "pattern",
+   "id": "pattern.kdj_oversold",
+   "label": "KDJ 超卖金叉",
+   "needs": "bars",
+   "unit": "flag"
+  }
+ ],
+ "patterns": [
+  {
+   "family": "trend",
+   "id": "ma_bull",
+   "min_bars": 66,
+   "name": "均线多头",
+   "omitted": "",
+   "rule": "最新一根 MA5 > MA10 > MA20 > MA60，且 MA20 高于 5 根前的 MA20。"
+  },
+  {
+   "family": "volume",
+   "id": "volume_surge",
+   "min_bars": 7,
+   "name": "放量上涨",
+   "omitted": "原规则另需成交额 ≥ 2 亿：日线无成交额字段，省略",
+   "rule": "涨幅 ≥ 2%，收盘不低于开盘，成交量 ≥ 前 5 日均量 2 倍。"
+  },
+  {
+   "family": "volume",
+   "id": "climax_limitdown",
+   "min_bars": 7,
+   "name": "放量跌停",
+   "omitted": "成交额条件省略",
+   "rule": "跌幅达到跌停线（板块涨跌幅 - 0.5pp），成交量 ≥ 前 5 日均量 4 倍。"
+  },
+  {
+   "family": "breakout",
+   "id": "parking_apron",
+   "min_bars": 20,
+   "name": "停机坪",
+   "omitted": "",
+   "rule": "近 15 根内涨停日 d 且 d 收盘不低于其前 15 根最高收盘；d+1..d+3 开收均高于 d 收盘、波幅 < 3%，d+2、d+3 涨跌幅在 ±5% 内；命中日 d+3 在最近 3 根内。"
+  },
+  {
+   "family": "reversal",
+   "id": "yearline_pullback",
+   "min_bars": 250,
+   "name": "回踩年线",
+   "omitted": "",
+   "rule": "至少 250 根；最近 60 根中峰前首根收盘 < MA250 且末根 > MA250，峰后收盘均 ≥ MA250，最低收盘在峰后 10–50 根，峰量/谷量 > 2，谷/峰收盘 < 0.8。"
+  },
+  {
+   "family": "breakout",
+   "id": "platform_breakout",
+   "min_bars": 66,
+   "name": "突破平台",
+   "omitted": "",
+   "rule": "最近 60 根内某日 b：开盘 < MA60 ≤ 收盘，量比 ≥ 2；窗口内 b 之前每日 -0.05 < (MA60-收盘)/MA60 < 0.2。"
+  },
+  {
+   "family": "trend",
+   "id": "low_drawdown",
+   "min_bars": 61,
+   "name": "无大幅回撤",
+   "omitted": "",
+   "rule": "近 60 根涨幅 ≥ 60%；其间无单日 < -7%、无收开 < -7%、无连续两日累计 < -10%（收盘或开到收）。"
+  },
+  {
+   "family": "breakout",
+   "id": "turtle_breakout",
+   "min_bars": 61,
+   "name": "海龟突破",
+   "omitted": "",
+   "rule": "收盘 ≥ 最近 60 根（含当日）最高收盘。"
+  },
+  {
+   "family": "breakout",
+   "id": "high_tight_flag",
+   "min_bars": 25,
+   "name": "高而窄旗形",
+   "omitted": "原规则另需龙虎榜机构席位，省略",
+   "rule": "24 根前至 10 根前窗口：最高收盘/最低价 ≥ 1.9 且出现连续两日涨停。"
+  },
+  {
+   "family": "volatility",
+   "id": "low_atr_growth",
+   "min_bars": 61,
+   "name": "低波成长",
+   "omitted": "",
+   "rule": "ATR14/收盘 ≤ 2.5%，近 60 根涨幅 ≥ 15%，收盘 ≥ MA20。"
+  },
+  {
+   "family": "reversal",
+   "id": "macd_bottom_cross",
+   "min_bars": 36,
+   "name": "MACD 零轴下金叉",
+   "omitted": "",
+   "rule": "DIF 上穿 DEA（前一根 DIF ≤ DEA），且 DIF 与 DEA 均 < 0。"
+  },
+  {
+   "family": "reversal",
+   "id": "kdj_oversold",
+   "min_bars": 11,
+   "name": "KDJ 超卖金叉",
+   "omitted": "",
+   "rule": "K 上穿 D（前一根 K ≤ D），且 D < 25 或前一根 J < 0。"
+  }
+ ],
+ "playbooks": [
+  {
+   "family": "limit_relay",
+   "holding_days": 3,
+   "horizon": "short",
+   "id": "first_board_relay",
+   "max_positions": 5,
+   "name": "首板接力",
+   "params": [
+    {
+     "key": "vol_min",
+     "label": "量比下限",
+     "value": 1.5
+    },
+    {
+     "key": "vol_max",
+     "label": "量比上限",
+     "value": 6
+    }
+   ],
+   "requires": [],
+   "rule": "首次涨停（连板数=1）、非一字板；量比 ∈ [1.5, 6]；收盘 ≥ 前 60 日最高价。次日开盘买入，持有 3 日，收盘跌 7% 次日止损。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "limit_relay",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "two_to_three",
+   "max_positions": 4,
+   "name": "二进三",
+   "params": [
+    {
+     "key": "streak",
+     "label": "连板数",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "连板数=2（可调）且非一字板；得分=估算成交额。次日开盘买入，持有 2 日，止损 8%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 8,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "limit_relay",
+   "holding_days": 3,
+   "horizon": "short",
+   "id": "broken_board_reflex",
+   "max_positions": 4,
+   "name": "断板反包",
+   "params": [
+    {
+     "key": "min_streak",
+     "label": "断板前连板数",
+     "value": 2
+    },
+    {
+     "key": "min_pct",
+     "label": "反包涨幅下限(%)",
+     "value": 3
+    }
+   ],
+   "requires": [],
+   "rule": "前天连板数≥2 且昨日未涨停；今日收盘>昨日最高价且涨幅>3%。次日开盘买入，持有 3 日，止损 8%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 8,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "limit_relay",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "limit_pullback",
+   "max_positions": 5,
+   "name": "涨停回踩",
+   "params": [
+    {
+     "key": "tolerance",
+     "label": "距最低价容忍(%)",
+     "value": 3
+    },
+    {
+     "key": "max_volume",
+     "label": "缩量比上限",
+     "value": 0.6
+    }
+   ],
+   "requires": [],
+   "rule": "3–8 日前有涨停；今日收盘∈[该日最低价, ×1.03]；成交量<0.6×涨停日；收盘≥MA10。次日开盘买入，持有 5 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "limit_relay",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "dragon_return",
+   "max_positions": 3,
+   "name": "龙回头",
+   "params": [
+    {
+     "key": "min_streak",
+     "label": "峰值连板数",
+     "value": 4
+    },
+    {
+     "key": "pullback",
+     "label": "回撤下限(%)",
+     "value": 20
+    }
+   ],
+   "requires": [],
+   "rule": "前 20 日内最高连板数≥4；昨日收盘较期间最高价回撤≥20%；今日上涨、量>前 5 日均量、收盘>MA5。次日开盘买入，持有 5 日，止损 8%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 8,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 60,
+   "horizon": "swing",
+   "id": "turtle_55",
+   "max_positions": 8,
+   "name": "海龟突破",
+   "params": [
+    {
+     "key": "min_margin",
+     "label": "最小突破幅度(%)",
+     "value": 0
+    }
+   ],
+   "requires": [],
+   "rule": "收盘>前 55 日最高价。次日开盘买入，最长持有 60 日，止损 10%，追踪止损 10%（收盘判定）。",
+   "source": "Richard Dennis 海龟交易法则（Faith, 2007），A 股适用性未验证",
+   "stop_loss_pct": 10,
+   "style": "trend",
+   "trailing_stop_pct": 10,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 15,
+   "horizon": "swing",
+   "id": "platform_breakout",
+   "max_positions": 6,
+   "name": "平台突破",
+   "params": [
+    {
+     "key": "max_range",
+     "label": "平台振幅上限(%)",
+     "value": 15
+    },
+    {
+     "key": "vol_mult",
+     "label": "放量倍数",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "前 20 日振幅<15%；收盘>前 20 日最高价；量>2×前 20 日均量。次日开盘买入，持有 15 日，止损 8%，追踪 10%。",
+   "source": "Sequoia/InStock 开源选股器思路（社区经验）",
+   "stop_loss_pct": 8,
+   "style": "breakout",
+   "trailing_stop_pct": 10,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "ma_bull_pullback",
+   "max_positions": 6,
+   "name": "均线多头回踩",
+   "params": [
+    {
+     "key": "touch",
+     "label": "触及 MA20 容忍(%)",
+     "value": 1.5
+    }
+   ],
+   "requires": [],
+   "rule": "MA10>MA20>MA60 且 MA60 较 10 日前上升；最低价≤MA20×1.015；收盘≥MA20 且收阳。次日开盘买入，持有 10 日，止损 6%，追踪 8%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "trend",
+   "trailing_stop_pct": 8,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 30,
+   "horizon": "swing",
+   "id": "golden_cross_20_60",
+   "max_positions": 8,
+   "name": "双均线金叉",
+   "params": [],
+   "requires": [],
+   "rule": "MA20 上穿 MA60 且收盘>MA60。次日开盘买入，持有 30 日，止损 8%，追踪 12%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 8,
+   "style": "trend",
+   "trailing_stop_pct": 12,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 15,
+   "horizon": "swing",
+   "id": "macd_above_zero_cross",
+   "max_positions": 8,
+   "name": "MACD 零轴上金叉",
+   "params": [],
+   "requires": [],
+   "rule": "DIF、DEA 均>0 时 DIF 上穿 DEA（12/26/9，v1 内核为 SMA 种子）。次日开盘买入，持有 15 日，止损 7%，追踪 10%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "trend",
+   "trailing_stop_pct": 10,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 15,
+   "horizon": "swing",
+   "id": "boll_squeeze_breakout",
+   "max_positions": 6,
+   "name": "布林收口突破",
+   "params": [
+    {
+     "key": "squeeze",
+     "label": "带宽分位(%)",
+     "value": 10
+    }
+   ],
+   "requires": [],
+   "rule": "昨日带宽处于最近 120 日分布最低 10%；今日收盘>布林上轨（20,2）。次日开盘买入，持有 15 日，止损 7%，追踪 10%。",
+   "source": "John Bollinger squeeze 概念（2001），阈值为社区经验",
+   "stop_loss_pct": 7,
+   "style": "volatility",
+   "trailing_stop_pct": 10,
+   "unavailable_reason": null
+  },
+  {
+   "family": "trend_breakout",
+   "holding_days": 40,
+   "horizon": "swing",
+   "id": "new_high_250",
+   "max_positions": 8,
+   "name": "一年新高",
+   "params": [
+    {
+     "key": "cooldown",
+     "label": "冷却期(交易日)",
+     "value": 5
+    }
+   ],
+   "requires": [],
+   "rule": "收盘>前 250 日最高价，且此前 5 日内无同样新高。次日开盘买入，持有 40 日，止损 10%，追踪 12%。",
+   "source": "George & Hwang (2004), The 52-Week High and Momentum Investing, Journal of Finance",
+   "stop_loss_pct": 10,
+   "style": "momentum",
+   "trailing_stop_pct": 12,
+   "unavailable_reason": null
+  },
+  {
+   "family": "academic_factor",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "momentum_12_1",
+   "max_positions": 20,
+   "name": "截面动量 12-1",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [],
+   "rule": "每月第一个交易日；20 日均成交额估算≥1 亿；指标=ret_250−ret_20，取截面最高 10%。持有 20 日，无价格止损。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。（研究序列仅约 1 年：250 日动量窗口多数日期无值。）",
+   "source": "Jegadeesh & Titman (1993), Journal of Finance",
+   "stop_loss_pct": null,
+   "style": "momentum",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "academic_factor",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "low_volatility",
+   "max_positions": 20,
+   "name": "低波动",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [],
+   "rule": "每月第一个交易日；成交额估算≥1 亿；指标=近 60 日日收益标准差，取截面最低 10%。持有 20 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Ang, Hodrick, Xing & Zhang (2006), Journal of Finance",
+   "stop_loss_pct": null,
+   "style": "volatility",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "academic_factor",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "short_reversal",
+   "max_positions": 20,
+   "name": "短期反转",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [],
+   "rule": "每周第一个交易日；成交额估算≥1 亿；指标=ret_5，取截面最低 10%。持有 5 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Jegadeesh (1990), Journal of Finance",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "academic_factor",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "small_cap",
+   "max_positions": 20,
+   "name": "小市值",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [
+    "float_cap"
+   ],
+   "rule": "每月第一个交易日；成交额估算≥0.5 亿；已有≥250 根日线；指标=当日流通市值（最新快照×当日收盘/最新收盘，股本固定近似），取截面最小 10%。持有 20 日。",
+   "source": "Banz (1981), Journal of Financial Economics",
+   "stop_loss_pct": null,
+   "style": "value",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "academic_factor",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "value_pe_pb",
+   "max_positions": 20,
+   "name": "低估值 PE+PB",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [
+    "fundamentals_pit"
+   ],
+   "rule": "按 1/PE 与 1/PB 的截面排名之和选最便宜的 10%。需要历史时点基本面，pulse3 当前没有 PIT 财务数据，故无法检验。",
+   "source": "Fama & French (1992), Journal of Finance",
+   "stop_loss_pct": null,
+   "style": "value",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "没有按财报发布时点保存的 PE/PB（PIT 基本面）"
+  },
+  {
+   "family": "oversold",
+   "holding_days": 4,
+   "horizon": "short",
+   "id": "rsi_oversold",
+   "max_positions": 6,
+   "name": "RSI 超卖反弹",
+   "params": [
+    {
+     "key": "threshold",
+     "label": "超卖阈值",
+     "value": 20
+    }
+   ],
+   "requires": [],
+   "rule": "昨日 RSI(6)<20；今日 RSI(6) 回升且收阳。次日开盘买入，持有 4 日，止损 6%。",
+   "source": "Wilder (1978)；阈值为社区经验",
+   "stop_loss_pct": 6,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "oversold",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "kdj_golden_low",
+   "max_positions": 6,
+   "name": "KDJ 低位金叉",
+   "params": [
+    {
+     "key": "zone",
+     "label": "低位区(K 上限)",
+     "value": 30
+    }
+   ],
+   "requires": [],
+   "rule": "K 上穿 D 且 K<30（KDJ 9/3/3，K/D 以 50 为种子）。次日开盘买入，持有 5 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "oversold",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "boll_lower_rebound",
+   "max_positions": 6,
+   "name": "布林下轨反弹",
+   "params": [],
+   "requires": [],
+   "rule": "昨日收盘<下轨；今日收盘>下轨且收阳。次日开盘买入，持有 5 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "oversold",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "volume_dry_pullback",
+   "max_positions": 6,
+   "name": "缩量回调",
+   "params": [
+    {
+     "key": "pullback",
+     "label": "3 日跌幅下限(%)",
+     "value": 3
+    },
+    {
+     "key": "shrink",
+     "label": "缩量比上限",
+     "value": 0.6
+    }
+   ],
+   "requires": [],
+   "rule": "MA20>MA60 且收盘>MA60；3 日累计跌幅≥3%；成交量≤0.6×前 20 日均量。次日开盘买入，持有 5 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "volume",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "oversold",
+   "holding_days": 20,
+   "horizon": "swing",
+   "id": "low_volume_surge",
+   "max_positions": 6,
+   "name": "底部放量",
+   "params": [
+    {
+     "key": "far",
+     "label": "距高点比例上限",
+     "value": 0.7
+    },
+    {
+     "key": "vol_mult",
+     "label": "放量倍数",
+     "value": 3
+    },
+    {
+     "key": "min_pct",
+     "label": "涨幅下限(%)",
+     "value": 4
+    }
+   ],
+   "requires": [],
+   "rule": "收盘≤0.7×前 250 日最高价（研究序列不足 250 日则无信号）；量≥3×前 20 日均量；涨幅>4%。次日开盘买入，持有 20 日，止损 8%，追踪 12%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 8,
+   "style": "volume",
+   "trailing_stop_pct": 12,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "ice_point_reflex",
+   "max_positions": 5,
+   "name": "冰点反包",
+   "params": [
+    {
+     "key": "ice_pct",
+     "label": "跌停家数分位(%)",
+     "value": 90
+    },
+    {
+     "key": "min_history",
+     "label": "最少历史天数",
+     "value": 60
+    }
+   ],
+   "requires": [],
+   "rule": "昨日全市场跌停家数≥其近 250 日（至少 60 日）90% 分位且>0，今日涨停家数>昨日；满足时当日首板且非一字板入选。次日开盘买入，持有 2 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "divergence_to_consensus",
+   "max_positions": 4,
+   "name": "分歧转一致",
+   "params": [
+    {
+     "key": "div_mult",
+     "label": "分歧放量倍数",
+     "value": 1.5
+    },
+    {
+     "key": "shrink",
+     "label": "缩量比上限",
+     "value": 0.7
+    }
+   ],
+   "requires": [],
+   "rule": "昨日涨停非一字且量≥1.5×昨日 5 日均量；今日再涨停且量<0.7×昨日。次日开盘买入，持有 2 日，止损 7%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 3,
+   "horizon": "short",
+   "id": "first_negative",
+   "max_positions": 4,
+   "name": "首阴反抽",
+   "params": [
+    {
+     "key": "min_streak",
+     "label": "连板数下限",
+     "value": 3
+    }
+   ],
+   "requires": [],
+   "rule": "昨日连板数≥3；今日收阴、未跌停、收盘≥MA5。次日开盘买入，持有 3 日，止损 7%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "high_low_switch",
+   "max_positions": 5,
+   "name": "高低切换",
+   "params": [
+    {
+     "key": "high_streak",
+     "label": "高标连板数",
+     "value": 5
+    }
+   ],
+   "requires": [
+    "float_cap"
+   ],
+   "rule": "今日全市场最高连板<5 且昨日≥5；首板家数≥昨日；当日首板、非一字、流通市值≤同类首板中位数者入选。次日开盘买入，持有 2 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "volume_price_divergence",
+   "max_positions": 20,
+   "name": "量价背离反转",
+   "params": [
+    {
+     "key": "corr_pct",
+     "label": "相关系数入选比例(%)",
+     "value": 10
+    },
+    {
+     "key": "ret_pct",
+     "label": "ret_5 入选比例(%)",
+     "value": 20
+    }
+   ],
+   "requires": [],
+   "rule": "每周第一个交易日；成交额估算≥1 亿；近 10 日收盘与成交量相关系数处截面最低 10% 且 ret_5 处最低 20%。持有 5 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "low_amplitude",
+   "max_positions": 20,
+   "name": "低振幅",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    },
+    {
+     "key": "pos_max",
+     "label": "区间位置上限(%)",
+     "value": 30
+    }
+   ],
+   "requires": [],
+   "rule": "每周第一个交易日；成交额估算≥1 亿；近 10 日平均振幅处截面最低 10%，且收盘位于近 20 日区间最低 30% 以内。持有 5 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "volatility",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "overnight_gap_reversal",
+   "max_positions": 20,
+   "name": "隔夜收益反转",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 10
+    }
+   ],
+   "requires": [],
+   "rule": "每周第一个交易日；成交额估算≥1 亿；隔夜收益(开盘/前收−1)近 20 日之和，取截面最低 10%。持有 10 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "low_turnover_low_vol",
+   "max_positions": 20,
+   "name": "低换手低波动",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 30
+    }
+   ],
+   "requires": [
+    "float_cap"
+   ],
+   "rule": "每月第一个交易日；换手代理=成交量×收盘/流通市值(近 20 日均值)处截面最低 30%，同时 20 日波动率处最低 30%。持有 20 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "volatility",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "sentiment_cycle",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "microcap_timed",
+   "max_positions": 20,
+   "name": "微盘择时",
+   "params": [
+    {
+     "key": "top_pct",
+     "label": "入选比例(%)",
+     "value": 5
+    }
+   ],
+   "requires": [
+    "float_cap"
+   ],
+   "rule": "开关=当日流通市值最小 10% 的 ret_20 均值−最大 10% 的 ret_20 均值≥0（在可交易集合内计算）；仅当月第一个交易日开关为开时取最小 5%。持有 20 日。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "value",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "crowd",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "industry_follower",
+   "max_positions": 5,
+   "name": "板块跟风",
+   "params": [],
+   "requires": [
+    "sector_membership_history"
+   ],
+   "rule": "当日所属行业涨停≥3 只；本股未涨停、涨幅≥涨停幅度的 50%、量≥5 日均量 1.5 倍。持有 2 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "没有按时点保存的行业/板块成员关系"
+  },
+  {
+   "family": "crowd",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "industry_first_board",
+   "max_positions": 5,
+   "name": "板块首板",
+   "params": [],
+   "requires": [
+    "sector_membership_history"
+   ],
+   "rule": "当日所属行业涨停≥3 只；本股首板、非一字。持有 2 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "没有按时点保存的行业/板块成员关系"
+  },
+  {
+   "family": "crowd",
+   "holding_days": 2,
+   "horizon": "short",
+   "id": "name_cluster_follower",
+   "max_positions": 5,
+   "name": "名称联动",
+   "params": [],
+   "requires": [
+    "instrument_name_history"
+   ],
+   "rule": "名称中少见汉字的同字股票当日已有≥2 只涨停；本股未涨停且涨幅≥3%。持有 2 日，止损 6%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 6,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "没有按时点保存的证券简称历史"
+  },
+  {
+   "family": "crowd",
+   "holding_days": 3,
+   "horizon": "short",
+   "id": "smart_seat_follow",
+   "max_positions": 5,
+   "name": "强势席位合力",
+   "params": [],
+   "requires": [
+    "lhb_seat_trades_history"
+   ],
+   "rule": "当日上龙虎榜；买方前五席位中强势席位≥2 个且一日游席位为 0。持有 3 日，止损 7%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "龙虎榜席位成交未规范化入库"
+  },
+  {
+   "family": "crowd",
+   "holding_days": 5,
+   "horizon": "swing",
+   "id": "institution_net_buy",
+   "max_positions": 5,
+   "name": "机构净买入",
+   "params": [],
+   "requires": [
+    "lhb_seat_trades_history"
+   ],
+   "rule": "当日上龙虎榜；机构专用席位净买入≥成交额 3%；涨幅低于涨停幅度的 95%。持有 5 日，止损 7%。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": 7,
+   "style": "sentiment",
+   "trailing_stop_pct": null,
+   "unavailable_reason": "龙虎榜席位成交未规范化入库"
+  },
+  {
+   "family": "factor_composite",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "low_risk_combo",
+   "max_positions": 20,
+   "name": "低风险复合",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    },
+    {
+     "key": "offer",
+     "label": "每日候选数",
+     "value": 40
+    }
+   ],
+   "requires": [
+    "float_cap"
+   ],
+   "rule": "三个因子逐日排百分位取平均：近 5 日换手(成交额/流通市值)越低、近 20 日最大单日涨幅越小、近 60 日波动越小越好；每天取得分前 offer 名补仓，持有 20 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Bali, Cakici & Whitelaw (2011) MAX 效应；Ang et al. (2006) 低波动；Liu, Stambaugh & Yuan (2019)",
+   "stop_loss_pct": null,
+   "style": "volatility",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "factor_composite",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "shrink_oversold",
+   "max_positions": 20,
+   "name": "缩量超跌",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    },
+    {
+     "key": "offer",
+     "label": "每日候选数",
+     "value": 40
+    }
+   ],
+   "requires": [],
+   "rule": "三个因子逐日排百分位取平均：5日/60日成交额之比越低、收盘相对 MA60 越负、RSI14 越低越好；每天取得分前 offer 名补仓，持有 10 日。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Jegadeesh (1990) 短期反转；缩量止跌为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_hammer",
+   "max_positions": 20,
+   "name": "锤子线",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "近 5 日跌幅≥5%且收盘在 20 日最低收盘 3% 内；下影线≥2×实体，上影线不超过实体。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_engulfing",
+   "max_positions": 20,
+   "name": "阳包阴",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "昨日阴线且此前 5 日跌≥5%；今日阳线开盘≤昨收、收盘≥昨开。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_morning_star",
+   "max_positions": 20,
+   "name": "早晨之星",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "近 10 日跌≥8%；前天大跌≥3%，昨天小实体，今天阳线收复前天实体中点。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_three_soldiers",
+   "max_positions": 20,
+   "name": "红三兵",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "此前 10 日跌≥8%；连续三根逐步抬高阳线，今日涨幅<6%。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_doji_low",
+   "max_positions": 20,
+   "name": "低位十字星",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "近 5 日跌≥5%且在 20 日低位 3% 内；振幅>3%，实体≤振幅 10%。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "k_lower_shadow_volume",
+   "max_positions": 20,
+   "name": "低位放量长下影",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "低位 3% 内；下影线≥振幅 60%，振幅>4%，量≥5 日均量 1.5 倍。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "Steve Nison《日本蜡烛图技术》(1991) 常见定义量化为日线规则；阈值为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "macd_bottom_divergence",
+   "max_positions": 20,
+   "name": "MACD 底背离",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "收盘低于 10–40 日前最低收盘而 DIF 更高且<0，MACD 柱回升。次日开盘买入，持有 10 日，无价格止损；最多 20 只，每天最多新开 2 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "MACD 由 Gerald Appel 提出；背离/零轴/多周期用法为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "macd_golden_below_zero",
+   "max_positions": 20,
+   "name": "MACD 零轴下金叉",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "DIF 在零轴下上穿 DEA。次日开盘买入，持有 10 日，无价格止损；最多 20 只，每天最多新开 2 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "MACD 由 Gerald Appel 提出；背离/零轴/多周期用法为社区经验",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "kdj_j_oversold_turn",
+   "max_positions": 20,
+   "name": "KDJ J 值超卖拐头",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "J<0 且高于昨日，收盘在 20 日低位 3% 内。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 5,
+   "horizon": "short",
+   "id": "boll_lower_rsi6",
+   "max_positions": 20,
+   "name": "下轨超卖下影",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "收盘<布林下轨、RSI(6)<20、下影线长于实体。次日开盘买入，持有 5 日，无价格止损；最多 20 只，每天最多新开 4 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "reversal",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "w_macd_golden",
+   "max_positions": 20,
+   "name": "周线 MACD 金叉",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "上一根完成的周线 DIF 上穿 DEA（至少 35 周），下一周首个交易日且收盘>MA20 时发出。次日开盘买入，持有 10 日，无价格止损；最多 20 只，每天最多新开 2 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "MACD 由 Gerald Appel 提出；背离/零轴/多周期用法为社区经验",
+   "stop_loss_pct": null,
+   "style": "trend",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "m_macd_golden",
+   "max_positions": 20,
+   "name": "月线 MACD 金叉",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "上一根完成的月线 DIF 上穿 DEA（至少 12 月）；研究序列仅约一年，几乎不会有信号。次日开盘买入，持有 20 日，无价格止损；最多 20 只，每天最多新开 1 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "MACD 由 Gerald Appel 提出；背离/零轴/多周期用法为社区经验",
+   "stop_loss_pct": null,
+   "style": "trend",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 20,
+   "horizon": "long",
+   "id": "m_ma_golden",
+   "max_positions": 20,
+   "name": "月线均线金叉",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "上一根完成的月线 MA5 上穿 MA10；研究序列仅约一年，几乎不会有信号。次日开盘买入，持有 20 日，无价格止损；最多 20 只，每天最多新开 1 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "社区经验（未经学术验证）",
+   "stop_loss_pct": null,
+   "style": "trend",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  },
+  {
+   "family": "technical",
+   "holding_days": 10,
+   "horizon": "swing",
+   "id": "mtf_resonance",
+   "max_positions": 20,
+   "name": "日周月共振",
+   "params": [
+    {
+     "key": "min_amount",
+     "label": "最低20日均成交额估算(亿)",
+     "value": 0.5
+    },
+    {
+     "key": "min_price",
+     "label": "最低股价(元)",
+     "value": 2
+    }
+   ],
+   "requires": [],
+   "rule": "日线 MACD 金叉，且最近完成的周线、月线 MACD 均多头。次日开盘买入，持有 10 日，无价格止损；最多 20 只，每天最多新开 2 只。股票池：成交额估算≥0.5 亿、已有≥120 根、股价≥2。未剔除 ST（无可靠来源）；成交额以 收盘×成交量 估算（来源无成交额）；价格为前复权研究价。",
+   "source": "MACD 由 Gerald Appel 提出；背离/零轴/多周期用法为社区经验",
+   "stop_loss_pct": null,
+   "style": "trend",
+   "trailing_stop_pct": null,
+   "unavailable_reason": null
+  }
+ ],
+ "presets": [
+  {
+   "id": "first_board_accel",
+   "name": "首板加速",
+   "note": "旧版另要求封成比与缩量换手；日线无封单/换手数据，改用量比。",
+   "subtitle": "首板 + 放量",
+   "text": "首板，量比大于1.5，剔除ST，剔除次新"
+  },
+  {
+   "id": "ladder_leader",
+   "name": "梯队龙头",
+   "note": "旧版另按封板时间/炸板次数/封板成功率筛选；这些字段暂无来源，只保留连板高度。",
+   "subtitle": "三板以上",
+   "text": "3连板以上，剔除ST"
+  },
+  {
+   "id": "breakout_volume",
+   "name": "放量突破",
+   "note": "旧版用昨换比判断放量；改用量比（当日量/前5日均量）。",
+   "subtitle": "创60日新高 + 放量",
+   "text": "创60日新高，量比大于2，剔除ST"
+  },
+  {
+   "id": "shrink_pullback",
+   "name": "缩量回踩",
+   "note": "旧版取炸板池；改为均线多头趋势中的缩量小幅回落。",
+   "subtitle": "多头排列中的缩量回落",
+   "text": "均线多头，量比小于0.7，5日涨幅小于0"
+  },
+  {
+   "id": "growth_climb",
+   "name": "连阳爬坡",
+   "note": "旧版用温和换手；改用乖离率防止追高。",
+   "subtitle": "五连阳以上",
+   "text": "5连阳以上，20日乖离小于15%，剔除ST"
+  }
+ ],
+ "subject_id": "00000000-0000-0000-0000-000000000000",
+ "unsupported_terms": [
+  "换手",
+  "换手率",
+  "昨换比",
+  "成交额",
+  "封单",
+  "封成比",
+  "封流比",
+  "封板",
+  "炸板",
+  "首封",
+  "秒板",
+  "一字板",
+  "市盈率",
+  "市净率",
+  "pe",
+  "pb",
+  "估值",
+  "题材",
+  "概念",
+  "板块",
+  "行业",
+  "龙虎榜",
+  "机构",
+  "席位",
+  "自由流通"
+ ]
+}

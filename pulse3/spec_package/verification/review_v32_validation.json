@@ -1,0 +1,397 @@
+{
+  "checked_at": "2026-11-11T06:32:47.929981+00:00",
+  "scope": "Static original-byte, review coverage, citation identity and contract-link validation; no business algorithm or live service execution.",
+  "checks_total": 80,
+  "checks_passed": 80,
+  "checks_failed": 0,
+  "passed": true,
+  "input_files": 11,
+  "input_lines": 2836,
+  "structural_units": 1984,
+  "substantive_units": 1524,
+  "decision_count": 590,
+  "covered_units": 1524,
+  "uncovered_units": [],
+  "duplicate_assignments": [],
+  "dispositions": {
+    "revise": 459,
+    "covered": 41,
+    "adopt": 69,
+    "reject": 19,
+    "unresolved": 2
+  },
+  "factor_named_clauses": 159,
+  "source_named_clauses": 56,
+  "event_named_clauses": 70,
+  "product_subfeatures": 21,
+  "product_resource_mappings": 16,
+  "dataset_job_page_rows": 20,
+  "paper_reference_items": 55,
+  "source_records": 304,
+  "unique_source_urls": 288,
+  "extension_counts": {
+    "resource_cards": 16,
+    "proposed_operations": 41,
+    "proposed_types": 40,
+    "persistence_definitions": 27,
+    "proposed_new_sql_tables": 14,
+    "existing_public_operation_count": 31,
+    "existing_sql_table_count": 80,
+    "verified_existing_column_bindings": 24
+  },
+  "unchanged_baseline_files": 8,
+  "checks": [
+    {
+      "check": "eight_file_baseline_matches_existing_v31_validator",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/contracts/v3.schema.json",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/contracts/openapi.json",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/contracts/api_bindings.json",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/database/core_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/execution/ledger_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/sources_sectors/sources_sectors_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/integration/integration_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "unchanged_baseline/execution/unified_ledger.py",
+      "passed": true
+    },
+    {
+      "check": "eleven_original_files_have_exact_manifest_membership",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/README.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/01-audit.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/02-product.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/03-architecture.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/04-data.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/05-signals.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/06-strategy.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/07-sim-ledger.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/08-build-plan.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/09-evidence.md",
+      "passed": true
+    },
+    {
+      "check": "original_hash_bytes_and_lines/10-decisions.md",
+      "passed": true
+    },
+    {
+      "check": "unit_ids_unique_and_declared_counts_exact",
+      "passed": true
+    },
+    {
+      "check": "every_unit_matches_its_exact_original_text_and_line_span",
+      "passed": true,
+      "detail": {
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    {
+      "check": "original_nonblank_coverage/README.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/01-audit.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/02-product.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/03-architecture.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/04-data.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/05-signals.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/06-strategy.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/07-sim-ledger.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/08-build-plan.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/09-evidence.md",
+      "passed": true
+    },
+    {
+      "check": "original_nonblank_coverage/10-decisions.md",
+      "passed": true
+    },
+    {
+      "check": "590_unique_nonempty_decisions",
+      "passed": true
+    },
+    {
+      "check": "1524_substantive_units_assigned_exactly_once",
+      "passed": true,
+      "detail": {
+        "missing": [],
+        "extra": [],
+        "duplicates": []
+      }
+    },
+    {
+      "check": "every_decision_has_reason_action_acceptance_and_existing_bindings",
+      "passed": true,
+      "detail": {
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    {
+      "check": "unit_decision_map_exactly_matches_decisions_and_original_spans",
+      "passed": true
+    },
+    {
+      "check": "coverage_and_summary_recomputed_counts_agree",
+      "passed": true
+    },
+    {
+      "check": "per_file_coverage_matches_original_manifest",
+      "passed": true
+    },
+    {
+      "check": "304_unique_source_records_and_288_distinct_urls",
+      "passed": true
+    },
+    {
+      "check": "authority_count/source_records",
+      "passed": true
+    },
+    {
+      "check": "authority_count/unique_source_urls",
+      "passed": true
+    },
+    {
+      "check": "authority_count/reference_v32_items",
+      "passed": true
+    },
+    {
+      "check": "authority_count/review_v32_substantive_units",
+      "passed": true
+    },
+    {
+      "check": "authority_count/review_v32_decisions",
+      "passed": true
+    },
+    {
+      "check": "55_input_paper_rows_have_one_to_one_reference_cards",
+      "passed": true
+    },
+    {
+      "check": "paper_input_identity_reading_scope_bindings_and_unimplemented_status",
+      "passed": true,
+      "detail": {
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    {
+      "check": "paper_reading_summary_derived_from_actual_cards",
+      "passed": true
+    },
+    {
+      "check": "primary_unresolved_summary_matches_explicit_review_classification",
+      "passed": true
+    },
+    {
+      "check": "appendix_exact_named_clause_coverage/factor_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_each_item_has_a_reason/factor_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_exact_named_clause_coverage/source_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_each_item_has_a_reason/source_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_exact_named_clause_coverage/event_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_each_item_has_a_reason/event_items",
+      "passed": true
+    },
+    {
+      "check": "appendix_candidates_do_not_claim_connected_validated_or_automatic_trading",
+      "passed": true
+    },
+    {
+      "check": "appendix_count_labels_match_content",
+      "passed": true
+    },
+    {
+      "check": "current_operations_match_actual_public_api_and_binding_registry",
+      "passed": true
+    },
+    {
+      "check": "actual_sql_table_and_column_counts_match_preserved_authority",
+      "passed": true
+    },
+    {
+      "check": "mapping_count_and_identity/subfeatures",
+      "passed": true
+    },
+    {
+      "check": "mapping_input_spans_resolve/subfeatures",
+      "passed": true
+    },
+    {
+      "check": "mapping_count_and_identity/resources",
+      "passed": true
+    },
+    {
+      "check": "mapping_input_spans_resolve/resources",
+      "passed": true
+    },
+    {
+      "check": "mapping_count_and_identity/dataset_jobs",
+      "passed": true
+    },
+    {
+      "check": "mapping_input_spans_resolve/dataset_jobs",
+      "passed": true
+    },
+    {
+      "check": "subfeature_operations_owners_acceptance_and_extension_links_resolve",
+      "passed": true
+    },
+    {
+      "check": "resource_operations_actual_tables_and_owners_resolve",
+      "passed": true
+    },
+    {
+      "check": "dataset_job_page_operations_actual_tables_owners_and_failure_policy_resolve",
+      "passed": true
+    },
+    {
+      "check": "sixteen_cards_are_one_to_one_with_resources",
+      "passed": true
+    },
+    {
+      "check": "extension_type_references_fields_required_and_nullable_are_closed",
+      "passed": true,
+      "detail": {
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    {
+      "check": "extension_cards_have_valid_resources_owners_storage_permissions_and_acceptance",
+      "passed": true,
+      "detail": {
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    {
+      "check": "proposed_operations_unique_and_absent_from_current_public_api",
+      "passed": true
+    },
+    {
+      "check": "proposed_types_and_cards_explicitly_remain_unimplemented_design",
+      "passed": true
+    },
+    {
+      "check": "proposed_persistence_is_linked_owned_and_not_an_existing_table",
+      "passed": true
+    },
+    {
+      "check": "extension_existing_column_bindings_resolve_to_actual_sql_definitions",
+      "passed": true
+    },
+    {
+      "check": "extension_async_receipts_link_to_current_or_proposed_operations",
+      "passed": true
+    },
+    {
+      "check": "extension_summary_counts_come_from_current_cards",
+      "passed": true
+    },
+    {
+      "check": "extension_hash_summary_agrees_with_unchanged_public_sql_baseline",
+      "passed": true
+    },
+    {
+      "check": "review_summary_matches_all_cross_file_counts",
+      "passed": true
+    }
+  ],
+  "production_behavior_validated": false,
+  "paper_results_reproduced": false,
+  "limits": [
+    "Coverage means each input unit has a decision, not that every decision is empirically true.",
+    "Named API/table/type bindings are checked against the shipped artifacts; proposed extensions are not implemented services.",
+    "No provider, PostgreSQL runtime, web server, training or investment return is validated here."
+  ]
+}

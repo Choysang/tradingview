@@ -1,0 +1,667 @@
+{
+  "schema_version": "1.0",
+  "run_at": "2026-11-11T06:32:40.379547+00:00",
+  "python_version": "3.13.15",
+  "kind": "synthetic_accounting_conformance",
+  "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+  "numeric_policy_version": "decimal50-scale12-half-even-v1",
+  "fixture_sha256": "0866c0c988adb2dd39222c48432e65f048d6ca81228524cac5b839d688d7f39f",
+  "code_sha256": "fe5f086a84ed61c9d0eb0cfded50d25416c94f5621ec54927b1710fe40b320dc",
+  "passed_cases": 10,
+  "transport_passes": 30,
+  "independent_engines": 1,
+  "scope": "10 manually specified cases, 3 transports feeding ONE reducer; not real broker, matching, SQL, latency or strategy alpha validation",
+  "rows": [
+    {
+      "case_id": "B01",
+      "title": "买卖完整往返",
+      "passed": true,
+      "manual_derivation": "10000 - 100×10 - 5 + 100×11 - 5 = 10090；毛已实现100，费用10。",
+      "expected": {
+        "cash_settled": "10090",
+        "nav": "10090",
+        "cost_basis": "0",
+        "realized_gross": "100",
+        "fees": "10",
+        "pnl_from_cost_origin": "90",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 0,
+            "sellable": 0,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 8,
+        "trading_day": "2026-11-12",
+        "cash_settled": "10090.000000000000",
+        "trade_receivable": "0.000000000000",
+        "trade_payable": "-0.000000000000",
+        "dividend_receivable": "0",
+        "cash_available": "10090.000000000000",
+        "cost_basis": "0.000000000000",
+        "realized_gross": "100.000000000000",
+        "unrealized": "0.000000000000",
+        "dividend_income": "0",
+        "fees": "10",
+        "withholding_tax": "0",
+        "net_external_capital": "10000",
+        "nav": "10090.000000000000",
+        "pnl_from_cost_origin": "90.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 0,
+            "sellable": 0,
+            "reserved_sell": 0,
+            "cost": "0.000000000000"
+          }
+        },
+        "journal_entry_count": 5
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "81b3586ba5409e1a2e7fcbdab4afd969d3b6f5ca7407064815563ae0b5ec9e42",
+          "account_sequence": 8
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "81b3586ba5409e1a2e7fcbdab4afd969d3b6f5ca7407064815563ae0b5ec9e42",
+          "account_sequence": 8
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "81b3586ba5409e1a2e7fcbdab4afd969d3b6f5ca7407064815563ae0b5ec9e42",
+          "account_sequence": 8
+        }
+      }
+    },
+    {
+      "case_id": "B02",
+      "title": "部分成交后确认撤单",
+      "passed": true,
+      "manual_derivation": "卖100股净应收100×10.5-5=1045；剩900股按10计值9000；撤单不产生盈亏。",
+      "expected": {
+        "cash_settled": "10000",
+        "trade_receivable": "1045",
+        "cash_available": "11045",
+        "nav": "20045",
+        "cost_basis": "9000",
+        "realized_gross": "50",
+        "fees": "5",
+        "pnl_from_cost_origin": "45",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 900,
+            "sellable": 900,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 3,
+        "trading_day": "2026-11-10",
+        "cash_settled": "10000",
+        "trade_receivable": "1045.000000000000",
+        "trade_payable": "-0",
+        "dividend_receivable": "0",
+        "cash_available": "11045.000000000000",
+        "cost_basis": "9000.000000000000",
+        "realized_gross": "50.000000000000",
+        "unrealized": "0.000000000000",
+        "dividend_income": "0",
+        "fees": "5",
+        "withholding_tax": "0",
+        "net_external_capital": "20000",
+        "nav": "20045.000000000000",
+        "pnl_from_cost_origin": "45.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 900,
+            "sellable": 900,
+            "reserved_sell": 0,
+            "cost": "9000.000000000000"
+          }
+        },
+        "journal_entry_count": 2
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "2dc62f07e9fabdd55ec5f4d7032c97cd75348fba4819e2b05f945fd4a22be416",
+          "account_sequence": 3
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "2dc62f07e9fabdd55ec5f4d7032c97cd75348fba4819e2b05f945fd4a22be416",
+          "account_sequence": 3
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "2dc62f07e9fabdd55ec5f4d7032c97cd75348fba4819e2b05f945fd4a22be416",
+          "account_sequence": 3
+        }
+      }
+    },
+    {
+      "case_id": "B03",
+      "title": "做T卖出后未买回",
+      "passed": true,
+      "manual_derivation": "主动净值10000+200×10.5-5+800×12=21695；持续持有净值10000+1000×12=22000；增量-305。",
+      "expected": {
+        "nav": "21695",
+        "realized_gross": "100",
+        "unrealized": "1600",
+        "fees": "5",
+        "cost_basis": "8000",
+        "pnl_from_cost_origin": "1695",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 800,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 2,
+        "trading_day": "2026-11-10",
+        "cash_settled": "10000",
+        "trade_receivable": "2095.000000000000",
+        "trade_payable": "-0",
+        "dividend_receivable": "0",
+        "cash_available": "12095.000000000000",
+        "cost_basis": "8000.000000000000",
+        "realized_gross": "100.000000000000",
+        "unrealized": "1600.000000000000",
+        "dividend_income": "0",
+        "fees": "5",
+        "withholding_tax": "0",
+        "net_external_capital": "20000",
+        "nav": "21695.000000000000",
+        "pnl_from_cost_origin": "1695.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 800,
+            "sellable": 800,
+            "reserved_sell": 0,
+            "cost": "8000.000000000000"
+          }
+        },
+        "journal_entry_count": 2
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "2e0496a47866402299faa65cc2bc086b6b4c04190525a4e183380c55528c1d24",
+          "account_sequence": 2
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "2e0496a47866402299faa65cc2bc086b6b4c04190525a4e183380c55528c1d24",
+          "account_sequence": 2
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "2e0496a47866402299faa65cc2bc086b6b4c04190525a4e183380c55528c1d24",
+          "account_sequence": 2
+        }
+      }
+    },
+    {
+      "case_id": "B04",
+      "title": "复用卖出款完成一次T",
+      "passed": true,
+      "manual_derivation": "经济净现金2095-2005=90；老底仓可卖量从1000降为800，新买200当日不恢复可卖额度。",
+      "expected": {
+        "cash_settled": "0",
+        "trade_receivable": "2095",
+        "trade_payable": "2005",
+        "cash_available": "90",
+        "nav": "10090",
+        "cost_basis": "10000",
+        "realized_gross": "100",
+        "fees": "10",
+        "pnl_from_cost_origin": "90",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 4,
+        "trading_day": "2026-11-10",
+        "cash_settled": "0",
+        "trade_receivable": "2095.000000000000",
+        "trade_payable": "2005.000000000000",
+        "dividend_receivable": "0",
+        "cash_available": "90.000000000000",
+        "cost_basis": "10000.000000000000",
+        "realized_gross": "100.000000000000",
+        "unrealized": "0.000000000000",
+        "dividend_income": "0",
+        "fees": "10",
+        "withholding_tax": "0",
+        "net_external_capital": "10000",
+        "nav": "10090.000000000000",
+        "pnl_from_cost_origin": "90.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0,
+            "cost": "10000.000000000000"
+          }
+        },
+        "journal_entry_count": 3
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "39466be8cc8b45b1c6f654e5ea3639d70fa29794ebd9e483c62e9abedbb899c9",
+          "account_sequence": 4
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "39466be8cc8b45b1c6f654e5ea3639d70fa29794ebd9e483c62e9abedbb899c9",
+          "account_sequence": 4
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "39466be8cc8b45b1c6f654e5ea3639d70fa29794ebd9e483c62e9abedbb899c9",
+          "account_sequence": 4
+        }
+      }
+    },
+    {
+      "case_id": "B05",
+      "title": "分红应收到账与税款",
+      "passed": true,
+      "manual_derivation": "价格从10降为9.8，市值少200；应收红利200到账仅变资产形态；税款20使总净值少20。税率仅为假设输入。",
+      "expected": {
+        "cash_settled": "10180",
+        "dividend_receivable": "0",
+        "dividend_income": "200",
+        "withholding_tax": "20",
+        "unrealized": "-200",
+        "nav": "19980",
+        "pnl_from_cost_origin": "-20"
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 3,
+        "trading_day": "2026-11-10",
+        "cash_settled": "10180.000000000000",
+        "trade_receivable": "0",
+        "trade_payable": "-0",
+        "dividend_receivable": "0.000000000000",
+        "cash_available": "10180.000000000000",
+        "cost_basis": "10000",
+        "realized_gross": "0",
+        "unrealized": "-200.0",
+        "dividend_income": "200.000000000000",
+        "fees": "0",
+        "withholding_tax": "20",
+        "net_external_capital": "20000",
+        "nav": "19980.000000000000",
+        "pnl_from_cost_origin": "-20.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 1000,
+            "reserved_sell": 0,
+            "cost": "10000"
+          }
+        },
+        "journal_entry_count": 4
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "78e0cae054d40d5e1bdfbe52844331e9f94c786e3f61f63ad42bcccd8ece1ae2",
+          "account_sequence": 3
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "78e0cae054d40d5e1bdfbe52844331e9f94c786e3f61f63ad42bcccd8ece1ae2",
+          "account_sequence": 3
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "78e0cae054d40d5e1bdfbe52844331e9f94c786e3f61f63ad42bcccd8ece1ae2",
+          "account_sequence": 3
+        }
+      }
+    },
+    {
+      "case_id": "B06",
+      "title": "纯拆股不制造收益",
+      "passed": true,
+      "manual_derivation": "100股×10拆成200股×5，成本总额1000和净值1000不变；是纯拆股样例，A股送转股上市日另定。",
+      "expected": {
+        "cost_basis": "1000",
+        "nav": "1000",
+        "pnl_from_cost_origin": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 200,
+            "sellable": 200,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 1,
+        "trading_day": "2026-11-10",
+        "cash_settled": "0",
+        "trade_receivable": "0",
+        "trade_payable": "-0",
+        "dividend_receivable": "0",
+        "cash_available": "0",
+        "cost_basis": "1000",
+        "realized_gross": "0",
+        "unrealized": "0",
+        "dividend_income": "0",
+        "fees": "0",
+        "withholding_tax": "0",
+        "net_external_capital": "1000",
+        "nav": "1000",
+        "pnl_from_cost_origin": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 200,
+            "sellable": 200,
+            "reserved_sell": 0,
+            "cost": "1000"
+          }
+        },
+        "journal_entry_count": 2
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "26c89824251ac8fae5aa67d8422c7f04ad212f64c633a0bf43cbfe6a7ea49b3d",
+          "account_sequence": 1
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "26c89824251ac8fae5aa67d8422c7f04ad212f64c633a0bf43cbfe6a7ea49b3d",
+          "account_sequence": 1
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "26c89824251ac8fae5aa67d8422c7f04ad212f64c633a0bf43cbfe6a7ea49b3d",
+          "account_sequence": 1
+        }
+      }
+    },
+    {
+      "case_id": "B07",
+      "title": "外部入金与时间加权收益分开",
+      "passed": true,
+      "manual_derivation": "入金前1000股从10涨到11，NAV11000；入金9000后NAV20000；期末股价13，NAV22000。TWR=(11000/10000)×(22000/20000)-1=21%，不能把入金算收益。",
+      "expected": {
+        "cash_settled": "9000",
+        "net_external_capital": "19000",
+        "nav": "22000",
+        "unrealized": "3000",
+        "pnl_from_cost_origin": "3000"
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 1,
+        "trading_day": "2026-11-10",
+        "cash_settled": "9000",
+        "trade_receivable": "0",
+        "trade_payable": "-0",
+        "dividend_receivable": "0",
+        "cash_available": "9000",
+        "cost_basis": "10000",
+        "realized_gross": "0",
+        "unrealized": "3000",
+        "dividend_income": "0",
+        "fees": "0",
+        "withholding_tax": "0",
+        "net_external_capital": "19000",
+        "nav": "22000",
+        "pnl_from_cost_origin": "3000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 1000,
+            "reserved_sell": 0,
+            "cost": "10000"
+          }
+        },
+        "journal_entry_count": 2
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "37f657a05ce31fe811e9fac607c3c26cf0a8d957e5ff665c9ff8d54562b1a88a",
+          "account_sequence": 1
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "37f657a05ce31fe811e9fac607c3c26cf0a8d957e5ff665c9ff8d54562b1a88a",
+          "account_sequence": 1
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "37f657a05ce31fe811e9fac607c3c26cf0a8d957e5ff665c9ff8d54562b1a88a",
+          "account_sequence": 1
+        }
+      }
+    },
+    {
+      "case_id": "B08",
+      "title": "先买后卖使用旧可卖库存",
+      "passed": true,
+      "manual_derivation": "净现金变化200×(10.1-9.8)-10=50；加权平均成本只改变已实现/未实现拆分，不改变总利润50。",
+      "expected": {
+        "cash_available": "10050",
+        "nav": "20050",
+        "cost_basis": "9966.666666666667",
+        "realized_gross": "26.666666666667",
+        "unrealized": "33.333333333333",
+        "fees": "10",
+        "pnl_from_cost_origin": "50",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 4,
+        "trading_day": "2026-11-10",
+        "cash_settled": "10000",
+        "trade_receivable": "2015.000000000000",
+        "trade_payable": "1965.000000000000",
+        "dividend_receivable": "0",
+        "cash_available": "10050.000000000000",
+        "cost_basis": "9966.666666666667",
+        "realized_gross": "26.666666666667",
+        "unrealized": "33.333333333333",
+        "dividend_income": "0",
+        "fees": "10",
+        "withholding_tax": "0",
+        "net_external_capital": "20000",
+        "nav": "20050.000000000000",
+        "pnl_from_cost_origin": "50.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0,
+            "cost": "9966.666666666667"
+          }
+        },
+        "journal_entry_count": 3
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "8327a2a5c1c2cf9d1334ea2c1f167264c920aa0b16c8c4fa68546a479f27f451",
+          "account_sequence": 4
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "8327a2a5c1c2cf9d1334ea2c1f167264c920aa0b16c8c4fa68546a479f27f451",
+          "account_sequence": 4
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "8327a2a5c1c2cf9d1334ea2c1f167264c920aa0b16c8c4fa68546a479f27f451",
+          "account_sequence": 4
+        }
+      }
+    },
+    {
+      "case_id": "B09",
+      "title": "同订单三次成交累计费用一次",
+      "passed": true,
+      "manual_derivation": "同一订单100股成交拆30/30/40，已由费用策略产生增量费用5/0/0；总成本1005，不对每笔成交再扣最低佣金。此样例不实现费用策略本身。",
+      "expected": {
+        "cash_available": "8995",
+        "trade_payable": "1005",
+        "cost_basis": "1000",
+        "fees": "5",
+        "nav": "9995",
+        "pnl_from_cost_origin": "-5",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 100,
+            "sellable": 0,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 4,
+        "trading_day": "2026-11-10",
+        "cash_settled": "10000",
+        "trade_receivable": "0",
+        "trade_payable": "1005.000000000000",
+        "dividend_receivable": "0",
+        "cash_available": "8995.000000000000",
+        "cost_basis": "1000.000000000000",
+        "realized_gross": "0",
+        "unrealized": "0.000000000000",
+        "dividend_income": "0",
+        "fees": "5",
+        "withholding_tax": "0",
+        "net_external_capital": "10000",
+        "nav": "9995.000000000000",
+        "pnl_from_cost_origin": "-5.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 100,
+            "sellable": 0,
+            "reserved_sell": 0,
+            "cost": "1000.000000000000"
+          }
+        },
+        "journal_entry_count": 4
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "1e9053748164c2430eef81d8c4a603c4987e9fdf89ca07055067619736610916",
+          "account_sequence": 4
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "1e9053748164c2430eef81d8c4a603c4987e9fdf89ca07055067619736610916",
+          "account_sequence": 4
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "1e9053748164c2430eef81d8c4a603c4987e9fdf89ca07055067619736610916",
+          "account_sequence": 4
+        }
+      }
+    },
+    {
+      "case_id": "B10",
+      "title": "追加费用退款保留旧分录",
+      "passed": true,
+      "manual_derivation": "原往返利润90，费用退款1通过新分录使净值10091；原Fill和分录不覆写。",
+      "expected": {
+        "cash_settled": "10091",
+        "fees": "9",
+        "realized_gross": "100",
+        "nav": "10091",
+        "pnl_from_cost_origin": "91"
+      },
+      "actual": {
+        "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+        "numeric_policy_version": "decimal50-scale12-half-even-v1",
+        "sequence": 9,
+        "trading_day": "2026-11-12",
+        "cash_settled": "10091.000000000000",
+        "trade_receivable": "0.000000000000",
+        "trade_payable": "-0.000000000000",
+        "dividend_receivable": "0",
+        "cash_available": "10091.000000000000",
+        "cost_basis": "0.000000000000",
+        "realized_gross": "100.000000000000",
+        "unrealized": "0.000000000000",
+        "dividend_income": "0",
+        "fees": "9",
+        "withholding_tax": "0",
+        "net_external_capital": "10000",
+        "nav": "10091.000000000000",
+        "pnl_from_cost_origin": "91.000000000000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 0,
+            "sellable": 0,
+            "reserved_sell": 0,
+            "cost": "0.000000000000"
+          }
+        },
+        "journal_entry_count": 6
+      },
+      "transports": {
+        "historical": {
+          "passed": true,
+          "journal_sha256": "7080706a8665bf9d15bd9771c87e67a3a9098c1e8ab5523b93e493091c1c8199",
+          "account_sequence": 9
+        },
+        "paper": {
+          "passed": true,
+          "journal_sha256": "7080706a8665bf9d15bd9771c87e67a3a9098c1e8ab5523b93e493091c1c8199",
+          "account_sequence": 9
+        },
+        "broker_report_fixture": {
+          "passed": true,
+          "journal_sha256": "7080706a8665bf9d15bd9771c87e67a3a9098c1e8ab5523b93e493091c1c8199",
+          "account_sequence": 9
+        }
+      }
+    }
+  ]
+}

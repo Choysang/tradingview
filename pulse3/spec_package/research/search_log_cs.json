@@ -1,0 +1,64 @@
+{
+  "cutoff_date": "2026-11-10",
+  "engines": [
+    "system1_search_query",
+    "system2_search_query"
+  ],
+  "venues": [
+    "ICML 2026",
+    "COLT 2026",
+    "AISTATS 2026",
+    "ICLR 2026",
+    "NeurIPS 2026"
+  ],
+  "queries": [
+    "site:proceedings.mlr.press/v306/ 2026 portfolio reinforcement learning",
+    "site:iclr.cc/virtual/2026 reinforcement learning financial trading portfolio",
+    "site:neurips.cc/virtual/2026 trading portfolio reinforcement learning",
+    "\"Learning-Augmented Online Portfolio Selection\" 2026",
+    "site:proceedings.mlr.press/v306/ \"non-stationary\" bandits",
+    "site:openreview.net \"2026\" \"offline reinforcement learning\" \"evaluation\" portfolio",
+    "\"Trade in Minutes\" 2026 rationality trading",
+    "\"Learning-Augmented Online Portfolio Selection\" \"2026\" \"NeurIPS\"",
+    "site:proceedings.mlr.press/v306 \"offline\" \"evaluation\" \"reinforcement\"",
+    "site:proceedings.iclr.cc/paper_files/paper/2026 \"offline reinforcement learning\" \"uncertainty\"",
+    "\"Designing Observation and Action Models\" arxiv",
+    "\"DAL\" \"Piecewise Stationary Bandits\" arxiv",
+    "\"Test-time Offline Reinforcement Learning on Goal-related Experience\" arxiv",
+    "\"Catoni-Style Change Point Detection\" arxiv"
+  ],
+  "included": [
+    "CS01",
+    "CS02",
+    "CS03",
+    "CS04",
+    "CS05",
+    "CS06",
+    "CS07",
+    "CS08"
+  ],
+  "discovery_only": [
+    {
+      "title": "Learning-Augmented Online Portfolio Selection: Optimal Robustness-Consistency Tradeoffs",
+      "url": "https://neurips.cc/Downloads/2026",
+      "status": "official_catalog_title_only",
+      "fulltext_read": false
+    }
+  ],
+  "excluded_or_deduplicated": [
+    {
+      "title": "Online Portfolio Selection with ML Predictions",
+      "reason": "official_NeurIPS_2025_year_mismatch",
+      "url": "https://papers.neurips.cc/paper_files/paper/2025/hash/76981cb7a06b5ad53639f5bbe9924388-Abstract-Conference.html"
+    },
+    {
+      "title": "Trade in Minutes / TiMi",
+      "reason": "already_in_previous_core_registry"
+    }
+  ],
+  "limitations": [
+    "搜索不等于全部论文覆盖；未涵盖尚未发表和不可访问全文。",
+    "下载PMLR官方GitHub全文成功不等于运行代码。",
+    "未将作者论文PDF复制进交付包。"
+  ]
+}

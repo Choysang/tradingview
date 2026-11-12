@@ -1,0 +1,198 @@
+{
+  "reviewer": "v32_signals_strategy",
+  "reviewed_file": "research_v5/evidence/papers_root.json",
+  "read_as_of": "2026-11-11",
+  "scope": "Independent cold review of seven consequential citations. Existing primary URLs were reopened; no new literature search and no replication were performed. The parent file was not modified.",
+  "summary": {
+    "items": 7,
+    "primary_pages_independently_read": 6,
+    "publisher_page_unavailable": 1,
+    "required_scope_corrections": ["R32-P08", "R32-P09"],
+    "precision_clarifications": ["R32-P16", "R32-P22"],
+    "substantively_supported_at_declared_level": ["R32-P25", "R32-P37"],
+    "independently_reproduced": false,
+    "production_efficacy_verified": false,
+    "conclusion": "The reviewed root decisions already avoid universal bans and distinguish papers from production proof. Two additional experimental boundaries materially affect adoption: KTD-Fin excludes news inputs and its Common attribution is not an external market-index return; Quant-Arena compares net strategies with a gross-of-costs equal-weight reference. A publisher access failure for P31 is recorded as a limit of this cold review, not evidence that the parent's earlier retrieval was invalid."
+  },
+  "reviews": [
+    {
+      "reference_id": "R32-P08",
+      "verdict": "revise_scope_and_metadata",
+      "verified_title": "From Knowing to Doing: A Memory-Controlled Benchmark for LLM Trading Agents on Stock Markets",
+      "primary_url": "https://arxiv.org/html/2605.28359v1",
+      "web_refs": ["turn238view1", "turn238view2", "turn240view0"],
+      "actual_cold_reading_level": "targeted_full_text_attribution_table_and_limitations",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "The root title is a shorthand, not the paper's exact title.",
+          "correction": "Replace verified_title with the exact title supplied here; retain KTD-Fin as the short benchmark name."
+        },
+        {
+          "severity": "high",
+          "issue": "The original setting has a price-only observation channel: OHLCV and technical factors, excluding archived news, filings, and macroeconomic series. This is especially material for the proposed news-driven platform.",
+          "correction": "Keep the 9-of-10 negative selection-contribution result scoped to its masked CSI300 price-only experiment, evaluation period, model versions and attribution procedure. Do not use it to reject news-enabled selection or future model capability."
+        },
+        {
+          "severity": "medium",
+          "issue": "Common is the unit-exposure intercept return of the cross-sectional factor regression, not a directly observed external market-index return; residual selection attribution is conditional on that factor specification.",
+          "correction": "Name the components common/intercept, style and residual-selection contribution. Treat the result as model-based attribution, not proof of a uniquely identified causal alpha."
+        }
+      ],
+      "supported_claim": "The table reports nine negative selection contributions and one near-zero positive contribution, approximately +0.2%, for the ten tested models.",
+      "proposed_decision_reason": "原文表格支持十个模型九个负选择贡献、一个约 +0.2%；范围为其 CSI300、2024-01-01 至 2026-04-10、匿名化和 price-only 实验，未输入归档新闻、公告及宏观。Common 是截面回归单位暴露截距，并非外部市场指数收益；选择残差依赖所用风格模型。采纳遮蔽与归因方法，不能据此否定本项目消息面选股或未来模型。",
+      "implementation_action": "Update the paper registry title and experiment schema with observation_modalities, excluded_modalities, sample_window, attribution_model and attribution_component_definition. Keep these constraints in any strategy-league evidence card.",
+      "acceptance": "A news-enabled strategy is not rejected by this citation alone; a UI attribution label cannot silently call Common an index return. The source table, period, model roster and residual-model dependence remain visible.",
+      "remaining_uncertainty": "No independent rerun, no proof that masking removes every possible memorization path, and no extrapolation beyond the specified experiment."
+    },
+    {
+      "reference_id": "R32-P09",
+      "verdict": "revise_benchmark_cost_boundary",
+      "primary_url": "https://arxiv.org/html/2610.30113v1",
+      "web_refs": ["turn237view0", "turn240view1"],
+      "actual_cold_reading_level": "primary_abstract_plus_targeted_full_text_evaluation_protocol",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "high",
+          "issue": "The strategies bear trading costs and impact generated from a simulated order book, while the full-market equal-weight reference is explicitly gross of costs. The current root summary does not state this asymmetry.",
+          "correction": "State that no tested model beat that paper's gross equal-weight reference during the sealed 2024 evaluation. Do not describe the comparison as a matched-cost, equally implementable benchmark."
+        },
+        {
+          "severity": "medium",
+          "issue": "The feedback/research protocol and implementable policy are constrained: up to five research evaluations, 2022–2023 feedback, fixed 3,042-stock release, top-75 equal-weight long-only holdings and 100-share lots. Simulated order-book impact is an execution assumption, not an observed actual-fill oracle.",
+          "correction": "Preserve the sealed evaluation and common account ideas, while rerunning both product and reference through the project's common execution/ledger kernel with stated costs and capacities."
+        }
+      ],
+      "supported_claim": "The abstract's no-model-beats-equal-weight result is supported for its tested models and sealed 2024 experiment; it does not establish all LLM selection research fails.",
+      "proposed_decision_reason": "确认 2026 年 10 月预印本、2022–2023 反馈和封存 2024；论文参赛策略计入成本和模拟订单簿冲击，全文明确全市场等权参照不扣成本。故只能说未跑赢该文毛等权参照，不能声称同成本可执行等权下全部失败。采纳封存年度与统一账户评估，在本项目用同一执行、费用、现金和容量口径重测双方。",
+      "implementation_action": "Record strategy_cost_basis and benchmark_cost_basis separately. A benchmark report must expose gross, net and cost-matched reference variants, rather than treating an equity curve label as a complete specification.",
+      "acceptance": "Any quoted comparison identifies the benchmark as gross and the strategy as net. The imported benchmark protocol cannot bypass the sole execution and accounting environment.",
+      "remaining_uncertainty": "No source-code execution or reproduction was performed. Generalization from one sealed year, tested model versions and this particular research budget remains unestablished."
+    },
+    {
+      "reference_id": "R32-P16",
+      "verdict": "clarify_measurement_unit",
+      "verified_title": "Can ChatGPT Forecast Stock Price Movements? Return Predictability and Large Language Models",
+      "primary_url": "https://arxiv.org/abs/2304.07619",
+      "web_refs": ["turn237view1"],
+      "actual_cold_reading_level": "primary_abstract_v6_last_revised_2025_10_28",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "The phrase '约90%命中是不可交易的初始反应' can be read as 90% of signals or returns belonging to the nontradable part. The abstract instead gives an approximately 90% portfolio-day hit rate for initial price reactions.",
+          "correction": "Name the metric as portfolio-day hit rate, and separate this target from subsequent drift. It is neither a 90% per-stock success rate nor a 90% share of total trading profits."
+        },
+        {
+          "severity": "low",
+          "issue": "Declining strategy returns alongside wider LLM adoption are described as consistent with improving market efficiency, not a causal identification of adoption's effect.",
+          "correction": "Preserve the association language and avoid causal certainty."
+        }
+      ],
+      "supported_claim": "The abstract supports initial-response versus subsequent-drift separation, with later predictability especially in small stocks and negative news.",
+      "proposed_decision_reason": "v6 摘要报告不可直接交易的初始反应之组合—日命中率约 90%；该数字不是逐只股票胜率，也不是获利贡献占比。随后漂移是另一个可检验目标，尤其涉及小股票和负面消息。策略收益随模型普及下降与效率改善相一致，不能写成已识别的因果效应。采纳首发、价格已反应区间和可交易漂移三者分离。",
+      "implementation_action": "Add metric_unit and prediction_target to the evidence record; keep publication time, system availability, first reaction and action time separate in event labels.",
+      "acceptance": "The product cannot display a generic '90%预测准确率' from this citation. The event study must state which interval is tradable at the model's actual availability time.",
+      "remaining_uncertainty": "Abstract-level review does not independently verify target construction, costs or robustness tables."
+    },
+    {
+      "reference_id": "R32-P22",
+      "verdict": "retain_with_abstract_scope",
+      "primary_url": "https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/abs/retail-trading-and-return-predictability-in-china/37449FE025B0DA87A92A9BF9D30ED0FF",
+      "web_refs": ["turn239view0"],
+      "actual_cold_reading_level": "publisher_abstract_and_bibliographic_metadata",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "The supplied input claim says small-account trades negatively predict returns. The abstract supports inability to predict correctly and poor selection, but this reading alone does not establish the exact regression sign, magnitude, horizon and significance needed for an executable contrarian signal.",
+          "correction": "Keep the root decision's account-group heterogeneity and cost qualifications. Do not mark the input's exact negative-prediction formulation as fully verified from the abstract alone."
+        },
+        {
+          "severity": "medium",
+          "issue": "The study uses comprehensive account-level data and five size groups. Public comments, page views and business-branch names cannot identify those same account groups.",
+          "correction": "Treat community sentiment and account-level trade direction as different observed variables; require a validated mapping before using the paper for a community contrarian rule."
+        }
+      ],
+      "supported_claim": "The abstract reports heterogeneous small- and large-account behavior, weak selection by small accounts, and costs offsetting large-account selection ability. The root's refusal to reverse all retail opinions is justified.",
+      "implementation_action": "Keep the existing root adoption reason. Split input_claim verification into supported account heterogeneity and unverified quantitative contrarian claim; add observed_population and data_granularity fields.",
+      "acceptance": "No deterministic '散户热度高即卖出' rule or public-comment-to-account-size conversion is licensed by this source. Exact predictive coefficients require reading the relevant full-text tables.",
+      "remaining_uncertainty": "No full-text empirical tables or raw account-level data were independently checked; online publication in 2024 and journal issue in 2025 are distinct dates."
+    },
+    {
+      "reference_id": "R32-P25",
+      "verdict": "supported_at_declared_level",
+      "primary_url": "https://research.polyu.edu.hk/en/publications/replicating-and-digesting-anomalies-in-the-chinese-a-share-market/",
+      "web_refs": ["turn238view0"],
+      "actual_cold_reading_level": "author_institution_abstract",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "informational",
+          "issue": "The root correctly replaces a generic 84–87% failure rate with separate raw-return, CAPM and FF3 nonsignificance percentages.",
+          "correction": "Retain 83.37%, 84.22% and 86.99% respectively, and specify that the construction uses mainboard breakpoints and value-weighted high-minus-low quintile spreads."
+        },
+        {
+          "severity": "informational",
+          "issue": "Nonsignificance under these portfolio and model choices is not a universal falsification rate for all factors or all stock-selection implementations.",
+          "correction": "Keep the root's capacity and weighting sensitivity interpretation; preserve statistical nonsignificance as distinct from proof of zero effect."
+        }
+      ],
+      "supported_claim": "The institutional abstract directly supports the three percentages and the concern that conventional equal weighting with all-A-share breakpoints overweights low-capacity microcaps.",
+      "implementation_action": "Keep the existing decision and bind the result to anomaly count, breakpoint universe, weighting, spread construction and risk model in the registry.",
+      "acceptance": "A strategy's research card cannot inherit a blanket 84–87% chance of failure from this article. Any replication explicitly chooses mainboard or all-A-share breakpoints and value or equal weights.",
+      "remaining_uncertainty": "Only the institutional abstract was read; no individual anomaly replication or raw empirical tables were rerun."
+    },
+    {
+      "reference_id": "R32-P31",
+      "verdict": "independent_read_unavailable",
+      "primary_url": "https://www.sciencedirect.com/science/article/pii/S0304405X21003743",
+      "web_refs": ["turn239view1", "turn244view0"],
+      "parent_previous_web_ref": "turn213search0",
+      "actual_cold_reading_level": "publisher_access_attempt_failed_403",
+      "identity_confirmed_in_cold_review": false,
+      "findings": [
+        {
+          "severity": "limitation",
+          "issue": "The exact primary URL and the parent's prior source reference both returned publisher 403 to this reviewer. This reviewer did not independently re-read the claimed sample and net long-only results.",
+          "correction": "Preserve the parent's earlier targeted reading as its evidence, and mark this cold review as unavailable instead of representing it as a second successful verification."
+        },
+        {
+          "severity": "informational",
+          "issue": "The root's methodological conclusion is sound independently of a numerical claim: a short, different-universe project backtest cannot by itself refute a paper from another sample, implementation and cost basis.",
+          "correction": "Keep the proposed same-universe, same-period, same-cost reconciliation, while withholding any new empirical confirmation from this cold review."
+        }
+      ],
+      "supported_claim": "Only the methodological reconciliation was assessed here; the original study's empirical claim is not newly verified by this cold review.",
+      "implementation_action": "Attach cold_review_status=source_access_failed without overwriting the parent's actual_reading_level or evidence reference. If a second independent reading becomes necessary, retain a lawful publisher or author copy and inspect the relevant table.",
+      "acceptance": "The final report never counts this access attempt as two-source verification or a replication. A 403 is not called evidence that the paper or prior retrieval was false.",
+      "remaining_uncertainty": "The sample interval, cost specification and net long-only result could not be independently inspected in this cold pass."
+    },
+    {
+      "reference_id": "R32-P37",
+      "verdict": "supported_with_explicit_method_disagreement",
+      "primary_url": "https://arxiv.org/abs/2507.07107",
+      "web_refs": ["turn237view2"],
+      "actual_cold_reading_level": "primary_abstract_v2_last_revised_2026_05_09",
+      "identity_confirmed_in_cold_review": true,
+      "findings": [
+        {
+          "severity": "informational",
+          "issue": "The abstract supports the author's reported 18% IC inflation and 0.44 Sharpe change, with proprietary real data. These are not independent measurements made by this project.",
+          "correction": "Retain the root's author-reported and proprietary-data qualifications."
+        },
+        {
+          "severity": "medium",
+          "issue": "The paper advocates an upstream Boolean tradability mask through every rolling operator so that windows do not read nontradable prices. The root deliberately rejects that universal implementation. This is a reasoned engineering disagreement, not a faithful implementation of the paper.",
+          "correction": "Explicitly label the adopted component as action/label feasibility and the rejected component as blanket erasure of all observed but unfillable prices. Limit-up price observations can still be legitimate known information for future decisions."
+        }
+      ],
+      "supported_claim": "The root correctly keeps observation, action and label masks distinct, while treating the paper as a research proposal rather than a canonical execution standard.",
+      "implementation_action": "Maintain separate observation_validity, order_fillability and target_executability fields, with scope and timestamp. Include a counterexample where a known limit-up close remains an observable signal even when the simulated buy cannot fill.",
+      "acceptance": "A nonfillable order is rejected by execution logic without automatically deleting its known market observation from every past feature window. The registry records which paper component is retained and which is changed.",
+      "remaining_uncertainty": "Abstract-only review and proprietary data do not establish the reported magnitudes or prove superiority of the proposed masked feature pipeline."
+    }
+  ]
+}

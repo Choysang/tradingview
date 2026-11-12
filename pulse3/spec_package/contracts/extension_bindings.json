@@ -1,0 +1,123 @@
+{
+  "version": "3.1",
+  "base_contract": "urn:pulse:contracts:v3",
+  "new_http_operations": 0,
+  "new_sql_tables": 0,
+  "claim_schema_dispatch": {
+    "storage_column": "intelligence.claim_revision.claim_schema_version",
+    "encoding": "Exact qualified wire_schema_token declared by the binding; never an unqualified version such as 1.0.",
+    "registry_target": "core.contract_version(contract_id,schema_version)",
+    "unknown_token_policy": "reject; no guessed predicate-only or latest-version fallback"
+  },
+  "bindings": [
+    {
+      "definition": "CommunityForecastPayload",
+      "contract_id": "pulse.community_forecast",
+      "schema_version": "1.0",
+      "storage_table": "intelligence.claim_revision",
+      "storage_column": "object_payload",
+      "version_column": "claim_schema_version",
+      "public_path": "getStockEvidence.data.claims[].object_payload",
+      "base_definition": "EvidenceClaim",
+      "base_property": "object_payload",
+      "repository_checks": [
+        "qualified claim_schema_version resolves exactly to this contract_id and schema_version",
+        "subject_kind instrument and subject_key matches payload.instrument_id",
+        "predicate community_binary_forecast and assertion_type forecast",
+        "use complete claim_revision_id + source_document_revision_id + source_evidence_ordinal to resolve evidence",
+        "source publication and immutable version evidence support the original forecast_as_of and explicit probability",
+        "actual document and claim available_at remain actual completion times; filter both at the platform decision_as_of",
+        "late-discovered historical forecasts are retained in an explicitly separate retrospective evaluation cohort, never backfilled as forward-collected observations",
+        "registered target artifact content hash and binary-target semantics"
+      ],
+      "wire_schema_token": "pulse.community_forecast@1.0",
+      "required_subject_kind": "instrument",
+      "required_predicate": "community_binary_forecast",
+      "allowed_assertion_types": [
+        "forecast"
+      ]
+    },
+    {
+      "definition": "CommunityOutcomePayload",
+      "contract_id": "pulse.community_outcome",
+      "schema_version": "1.0",
+      "storage_table": "market.feature_result",
+      "storage_column": "result_uri",
+      "version_column": "definition_version",
+      "public_path": "getStockWorkspace.data.features[].artifact",
+      "base_definition": "FeatureResult",
+      "base_property": "artifact",
+      "repository_checks": [
+        "claim_revision_id resolves to the exact stored forecast",
+        "forecast hash verifies the saved project-canonical JSON payload bytes; target hash verifies the referenced artifact bytes under its registered content policy",
+        "actual label source and snapshot/coverage resolve",
+        "label maturity and horizon boundaries verified"
+      ]
+    },
+    {
+      "definition": "ConvertibleRelationPayload",
+      "contract_id": "pulse.convertible_relation",
+      "schema_version": "1.0",
+      "storage_table": "intelligence.claim_revision",
+      "storage_column": "object_payload",
+      "version_column": "claim_schema_version",
+      "public_path": "getStockEvidence.data.claims[].object_payload",
+      "base_definition": "EvidenceClaim",
+      "base_property": "object_payload",
+      "repository_checks": [
+        "qualified claim_schema_version resolves exactly to this contract_id and schema_version; predicate and assertion type match the registered binding",
+        "subject_kind instrument and predicate convertible_underlying_of",
+        "source subject exists as convertible_bond",
+        "underlying exists as equity and differs from subject",
+        "effective interval and available_at enforced",
+        "claim evidence supports the relationship; terms/conversion price use separate versioned claims"
+      ],
+      "wire_schema_token": "pulse.convertible_relation@1.0",
+      "required_subject_kind": "instrument",
+      "required_predicate": "convertible_underlying_of",
+      "allowed_assertion_types": [
+        "official_disclosure",
+        "independently_reported",
+        "attributed_statement"
+      ]
+    },
+    {
+      "definition": "ChartLayerDescriptor",
+      "contract_id": "pulse.chart_layer_descriptor",
+      "schema_version": "1.0",
+      "storage_table": "decision.workspace_projection",
+      "storage_column": "projection_payload",
+      "version_column": "projection_version",
+      "public_path": "getStockWorkspace.data.chart_window_refs[]",
+      "base_definition": "Workspace",
+      "base_property": "chart_window_refs",
+      "repository_checks": [
+        "the chart_window_refs ArtifactRef resolves to this exact descriptor hash",
+        "capabilities derived from actual dataset coverage and endpoint contracts",
+        "all input hashes and availability verified",
+        "replay cannot query observations beyond cutoff",
+        "bind capabilities to each actual input artifact, not a global capability set",
+        "verify each artifact contract_id/schema_version, instrument_ids, window coverage and decision cutoff",
+        "price_basis reuses base AdjustmentMode values; no unregistered qfq/hfq aliases"
+      ]
+    },
+    {
+      "definition": "MacdProfile",
+      "contract_id": "pulse.macd_profile",
+      "schema_version": "1.0",
+      "storage_table": "market.feature_result",
+      "storage_column": "full_key",
+      "version_column": "definition_version",
+      "public_path": "getStockWorkspace.data.features[].key.parameter_digest",
+      "base_definition": "FeatureKey",
+      "base_property": "parameter_digest",
+      "repository_checks": [
+        "parameters are persisted as an immutable artifact; full_key contains their digest only",
+        "definition registry resolves digest to exact parameter artifact",
+        "canonical bars/price basis/timeframe/numeric policy match full FeatureKey",
+        "computed pivot available only after right side bars are closed"
+      ]
+    }
+  ],
+  "status": "specified_and_fixture_validated; runtime registration and handlers not implemented"
+}

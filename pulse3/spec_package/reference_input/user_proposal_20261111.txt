@@ -1,0 +1,553 @@
+**彻底抛弃历史包袱、基于统一契约从零重写（Clean-Slate Rewrite）是当前最优且唯一正确的工程决策。** 现有仓库（Pulse / Sequoia-X / `Choysang/tradingview`）虽然沉淀了极具实战价值的 52 套战法剧本（`playbooks/picks.py`）、盘口触发器（`triggers-v2.1`）、四维事件映射与 61 条证伪账本（E001–E061），但在演进过程中形成了**多套回测记账口径割裂、数据源字段未归一化、单点脚本与前端个股工作台状态脱节、缺乏龙虎榜席位与股吧散户情绪量化闭环**四大结构性技术债。
+
+以下交付物为 **《A-Share OmniPulse 2026 下一代全维选股与盘中博弈平台：教科书级重写总架构规范（v4.0）》**。本规范专为 **人类架构师 + 超级编码智能体集群（Opus 5.5 / GPT-6.1 Aster / Claude Fable 5.1）多路并行极速开发** 设计，同时明确界定：**Agent 仅作为代码并行研发范式与底层非结构化情报（新闻/股吧/席位）的特征提取算子，平台本体是一套工业级、高确定性的全维量化选股与个股交易执行系统**。
+
+---
+
+## 一、 存量代码深度尸检与十大核心漏洞诊断（Legacy Audit & Fix Matrix）
+
+在推倒重写前，必须将现有代码库中的思想精华与结构缺陷剥离，确保重写后每一行新代码都有据可查：
+
+| 漏洞编号 | 存量代码病灶位置 | 核心工程/金融逻辑漏洞 | 2026 终极重写根治方案 |
+| --- | --- | --- | --- |
+| **V-01** | `forward_book.py` vs `paper_replay.py` vs `screener` | **记账与撮合口径分裂**：三套入口各自计算滑点、手续费与涨跌停成交，导致回测夏普与实盘重放偏差显著 | 建立唯一 **`CanonicalLedgerEngine`（GIPS 国际标准复式记账内核）**，全平台共享同一撮合与清算算子 |
+| **V-02** | 腾讯/东财/新浪拉取脚本（如 `15:33:33` WAF 断流） | **单源脆弱性与字段异构**：不同接口单位（手/股、元/万元）、代码前缀（`sz000001` vs `000001.SZ`）混用，断流无无缝切换 | 建立 **三源仲裁网关（Quorum Ingestion Gateway）** + 统一契约 schema，毫秒级心跳轮询与自动故障转移 |
+| **V-03** | 个股工作台前端状态（Local State / 零散 JSON） | **前后端与数据库三端割裂**：个股画线、做T底仓成本、自选标签、盘中预警未落库，刷新即丢失或无法联动策略 | 采用 **PostgreSQL 17 + DuckDB 2.0 + Redis 8** 三位一体持久化，工作台状态与策略引擎 100% 双向实时绑定 |
+| **V-04** | `playbooks/picks.py`（52 套剧本平铺） | **策略孤岛与同质化拥挤**：52 套战法缺乏正交分类与路由标签，牛熊切换时同质动量策略集体回撤 | 建立 **多维策略标签路由树（Taxonomy Router）** + **瑞士轮（Swiss-System）晋升淘汰池** + **MoE 动态集成** |
+| **V-05** | 消息面同步脚本（`calendar_sync.ps1` / 单一财联社） | **缺乏多源交叉核验与传导图谱**：未对新华社、东财、同花顺、外媒做交叉去伪，缺乏国际宏观对 A 股的量化传导权重 | 构建 **权威多源交叉核验管线（Multi-Source Consensus）** + **全球宏观-申万三级行业动态因果矩阵** |
+| **V-06** | 情绪面与龙虎榜模块缺失 | **忽视散户股吧共振与营业部席位博弈**：未量化“拉萨天团”接盘散户化率、“一日游”砸盘席位（如上塘路/前东路）次日溢价折价 | 内置 **龙虎榜席位画像图谱库（Seat Knowledge Graph）** + **盘前/盘中/午休/盘后四时段股吧评论反身性分析器** |
+| **V-07** | 选股与个股操作脱节 | **重选股、轻持仓执行**：选出标的后缺乏针对该股波动特征的日内做T（正T/倒T）、动态网格降本及分批止盈止损计划 | 打通 **Stage 1（板块/全市场选股）→ Stage 2（个股全周期诊断 + 做T/网格持有计划）** 闭环 |
+| **V-08** | 板块轮动滞后 | **缺乏“火速晋升板块”毫秒级捕获**：等板块涨幅榜排第一时往往已高潮，缺乏斜率加速期的备选池预筛机制 | 增设 **板块动量二阶导（Velocity & Acceleration）监控器**，自动生成 **【火速晋升板块备选池】** |
+
+---
+
+## 二、 2026 教科书级系统总架构（Agent-Ready Monorepo Blueprint）
+
+为了让 **GPT-6.1 Aster / Claude Fable 5.1 / Opus 5.5** 等超级编码 Agent 能够以 10+ 并发子代理（Sub-Agents）无冲突协同开发，系统采用 **“契约驱动（Contract-First）+ 零拷贝列式总线（Arrow Flight / IPC）+ 六边形模块化单体（Hexagonal Modular Monorepo）”** 架构。任何模块严禁跨层读写私有状态，所有通信必须通过 `packages/contracts` 中的强类型 Protobuf / Pydantic v3 / TypeScript Zod 契约。
+
+```
+omnipulse-tradingview/
+├── AGENTS.md                        # 超级智能体并行开发宪章：模块边界、契约锁、测试门禁
+├── packages/
+│   ├── contracts/                   # 【核心宪法】唯一数据源：Protobuf/Arrow Schema + OpenAPI 3.1 + Zod
+│   └── quant-math-rs/               # Rust (PyO3 + WebAssembly) 高性能算子：指标计算、筹码分布CYQ、撮合内核
+├── services/
+│   ├── 01-ingestion-gateway/        # 多源高可用采集网关：行情(L1/L2)、权威新闻、股吧评论、龙虎榜、全球宏观
+│   ├── 02-data-normalizer/          # 数据清洗、字段对齐、三源交叉校验、缺失插补、复权因子计算
+│   ├── 03-factor-panorama/          # 四维全景因子工厂：消息面(LLM结构化)、情绪面(散户/席位)、资金面、全周期技术面
+│   ├── 04-sector-screener/          # 板块推荐榜 + 火速晋升板块备选池 + 全市场多策略融合选股排序引擎
+│   ├── 05-stock-workbench/          # 个股深度工作台引擎：K线/MACD/量能/筹码共振 + 做T/网格/持有计划生成器
+│   ├── 06-strategy-tournament/      # 策略分类路由库 + 瑞士轮(Swiss-System)优胜劣汰晋升池 + 顶会论文算法集成
+│   ├── 07-canonical-ledger/         # 国际标准(GIPS)统一回测与模拟撮合记账内核（唯一成交与净值清算点）
+│   └── 08-api-orchestrator/         # FastAPI + GraphQL + WebSocket 毫秒级全双工推送网关
+└── apps/
+    └── web-terminal/                # React 19 + Vite + TradingView Lightweight Charts v5 + Canvas 2D 极速终端
+
+```
+
+---
+
+## 三、 数据库顶层设计：海量存储、统一命名规范与多源校验补齐
+
+面对全市场 5,300+ 只 A 股的全周期 K 线（Tick/1m/5m/15m/30m/60m/日/周/月/年）、逐笔委托成交、每日数万条财经快讯与股吧热帖、龙虎榜历史席位明细，单一数据库必然产生 I/O 阻塞。系统采用 **2026 OLTP + OLAP + Stream 三层混合存储架构**：
+
+1. **热态流与总线层（Redis 8 / DragonflyDB + NATS JetStream）**：承载盘中实时快照、多源轮询心跳锁、WebSocket 增量广播，保证策略层零阻塞读取（延迟小于 1 毫秒）。
+2. **关系与业务状态层（PostgreSQL 17 + TimescaleDB）**：存储统一数据字典、策略分类标签树、瑞士轮比赛积分账本、个股工作台持久化配置（画线、底仓、做T计划、网格参数）、GIPS 标准复式记账流水。
+3. **海量列式分析与回测层（DuckDB 2.0 + Polars 2.1 + Apache Parquet / Arrow IPC）**：按 `year/month/symbol_group` 分区的 ZSTD 压缩 Parquet 湖。Polars 2.1 与 DuckDB 2.0 通过 Apache Arrow C Data Interface 实现内存零拷贝互操作，10 年全市场分钟线回测扫描仅需数百毫秒，内存占用控制在 500 MB 以内。
+
+### 3.1 全局统一字段命名规范（Canonical Naming Standard）
+
+严禁在入库后出现 `vol`/`volume`、`code`/`symbol`、`amt`/`turnover` 混用的情况。所有表强制执行以下命名宪法：
+
+* **标的主键**：统一为 `symbol_id`（格式：`{EXCHANGE}.{CODE}`，如 `SH.600519`、`SZ.000001`、`BJ.830799`）。
+* **时间戳规范**：所有表必须包含双时间戳——`ts_event_utc`（事件实际发生/交易所撮合微秒时间戳 `INT64`）与 `ts_ingested_utc`（系统落库时间戳 `INT64`），彻底杜绝回测中的未来函数（Look-ahead Bias）。交易日统一为 `trade_date`（`DATE`, `YYYY-MM-DD`）。
+* **量价与金额精度**：
+* 价格统一以 **`DECIMAL(12, 4)`**（或回测内存中 `FLOAT64` 配合 `adj_factor` 前后复权因子）存储，命名强制带后缀：`_raw`（不复权）、`_hfq`（后复权，用于回测计算真实收益率）、`_qfq`（前复权，用于前端 K 线展示）。
+* 成交量统一换算为 **股数（Shares，非“手”）**，字段名为 `volume_shares`（`INT64`）。
+* 成交额统一换算为 **人民币元（CNY，非“万元/亿元”）**，字段名为 `turnover_cny`（`DECIMAL(20, 2)`）。
+
+
+
+### 3.2 多源异构数据校验、补齐与故障轮询自愈机制
+
+当东方财富、腾讯行情、新浪财经、同花顺、Tushare/AkShare 传回字段不一致或局部缺失时，由 `02-data-normalizer` 执行 **四步清洗与仲裁协议（Quorum Reconciliation Protocol）**：
+
+1. **Schema 适配器映射（Adapter Mapping）**：每个数据源配置声明式映射表（如将腾讯 `f58` 盘后固定价格成交量自动乘以 100 映射为 `post_volume_shares`；将东财单位“万元”乘以 `10000` 映射为 `_cny`）。
+2. **三源多数派投票仲裁（3-Way Quorum Validation）**：
+* 实时拉取主源（Primary: 东财/Level-2）、备源 A（Secondary: 腾讯行情）、备源 B（Tertiary: 新浪/同花顺）。
+* 若三源最新价满足 $\vert{}\text{Price}_A - \text{Price}_B\vert{} / \text{Price}_A \le 0.0001$，直接采信；若某源偏离超过阈值或时间戳停滞超过 3 秒，立即触发 **数据源降级熔断（Circuit Breaker）** 并剔除异常值。
+
+
+3. **缺失字段智能补齐（Deterministic & ASOF Imputation）**：
+* **可推导字段确定性回填**：若某源缺失 `vwap_cny`（均价），由 `turnover_cny / NULLIF(volume_shares, 0)` 精确计算；若缺失 `turnover_rate_pct`（换手率），结合本地缓存的最新 `float_shares`（流通股本）实时补齐。
+* **时序断点插补**：使用 Polars 2.1 原生 `join_asof` 与前向状态保持（Forward-Fill with staleness flag `is_imputed = true`）对齐不同频率的数据流。
+
+
+4. **自适应多级轮询与健康巡检守护进程（Adaptive Watchdog Polling）**：
+* 针对消息面与行情源中断风险，系统内置 `SourceHealthDaemon`：采用 **WebSocket 优先 + 令牌桶自适应 HTTP 轮询（Token-Bucket Polling，盘中 1–3 秒动态抖动防 WAF 封禁，配置多 IP 代理池与 Header 轮换）**。一旦检测到推送延迟大于 5 秒或口径校验失败，前端状态栏实时亮起黄/红灯告警，后台自动无缝切换至备用通道并触发差异补录（Gap Backfill）。
+
+
+
+### 3.3 核心数据库表结构设计（PostgreSQL 17 + DuckDB 核心 DDL）
+
+```sql
+-- 1. 统一多周期行情与技术特征宽表 (DuckDB / Parquet 分区表)
+CREATE TABLE market_bars_canonical (
+    symbol_id           VARCHAR(12) NOT NULL,   -- 如 'SH.600519'
+    timeframe           VARCHAR(6)  NOT NULL,   -- '1m','5m','15m','30m','60m','1D','1W','1M','1Y'
+    ts_event_utc        BIGINT      NOT NULL,   -- K线闭合毫秒时间戳
+    trade_date          DATE        NOT NULL,
+    open_raw            DOUBLE, high_raw DOUBLE, low_raw DOUBLE, close_raw DOUBLE,
+    adj_factor          DOUBLE      NOT NULL DEFAULT 1.0, -- 累积复权因子
+    volume_shares       BIGINT      NOT NULL,   -- 统一为股数
+    turnover_cny        DOUBLE      NOT NULL,   -- 统一为元
+    vwap_cny            DOUBLE      NOT NULL,   -- 当周期成交均价
+    turnover_rate_pct   DOUBLE,                 -- 换手率(%)
+    volume_ratio        DOUBLE,                 -- 量比
+    limit_up_price      DOUBLE,                 -- 涨停价
+    limit_down_price    DOUBLE,                 -- 跌停价
+    seal_buy_cny        DOUBLE      DEFAULT 0,  -- 涨停封单金额(元)
+    seal_sell_cny       DOUBLE      DEFAULT 0,  -- 跌停封单金额(元)
+    -- 预计算核心技术算子快照
+    ma_5 DOUBLE, ma_10 DOUBLE, ma_20 DOUBLE, ma_60 DOUBLE, ma_120 DOUBLE, ma_250 DOUBLE,
+    macd_dif DOUBLE, macd_dea DOUBLE, macd_hist DOUBLE,
+    macd_divergence_flag SMALLINT DEFAULT 0,    -- 1:底背离, -1:顶背离, 0:无
+    cyq_winner_rate_pct DOUBLE,                 -- 筹码获利盘比例(%)
+    cyq_cost_90_conc    DOUBLE,                 -- 90%筹码集中度
+    source_quorum_score SMALLINT    NOT NULL,   -- 1~3: 校验通过的数据源数量
+    is_imputed          BOOLEAN     DEFAULT FALSE,
+    PRIMARY KEY (symbol_id, timeframe, ts_event_utc)
+);
+
+-- 2. 权威消息面多源交叉验证与传导事件表 (PostgreSQL 17)
+CREATE TABLE news_events_verified (
+    event_id            UUID PRIMARY KEY,
+    ts_pub_utc          BIGINT NOT NULL,
+    canonical_title     TEXT NOT NULL,
+    canonical_summary   TEXT NOT NULL,
+    -- 多源交叉验证明细: [{"source":"XINHUA","url":"...","ts":...},{"source":"CLS","url":"..."},{"source":"EASTMONEY","url":"..."}]
+    verified_sources    JSONB NOT NULL,
+    credibility_tier    SMALLINT NOT NULL,      -- 5:新华社/部委官方, 4:财联社/东财多源共振, 3:单一主流财经, 1:未经证实传闻
+    macro_domain        VARCHAR(32),            -- 'DOMESTIC_POLICY','GEOPOLITICS','FED_MACRO','INDUSTRY_CHAIN','CORP_ACTION'
+    sentiment_score     NUMERIC(5,4) NOT NULL,  -- [-1.0000, +1.0000]
+    decay_half_life_min INTEGER NOT NULL,       -- 影响力半衰期(分钟)
+    impacted_sectors    JSONB NOT NULL,         -- [{"sector_id":"SW.801750","weight":0.85,"logic":"算力国产替代"}]
+    impacted_symbols    JSONB NOT NULL          -- [{"symbol_id":"SZ.002230","directness":0.92}]
+);
+
+-- 3. 龙虎榜营业部席位画像与历史博弈统计表 (PostgreSQL 17)
+CREATE TABLE dragon_tiger_seat_profiles (
+    seat_id             VARCHAR(64) PRIMARY KEY, -- 标准席位哈希ID
+    seat_standard_name  VARCHAR(128) NOT NULL,   -- 如 '东方财富证券拉萨团结路第二证券营业部'
+    seat_camp_tag       VARCHAR(32) NOT NULL,    -- 'RETAIL_LASA'(拉萨天团), 'DUMP_NEXT_DAY'(一日游砸盘/上塘路/前东路), 'PATTERN_LEADER'(格局游资/六一中路/呼家楼), 'QUANT_HFT'(量化席位/华泰总部), 'INSTITUTION'(机构专用)
+    style_alias         VARCHAR(64),             -- 如 '拉萨天团', '上塘路/前东路', '呼家楼', '陈小群', '量化打板'
+    sample_count_1y     INTEGER NOT NULL,
+    t1_open_premium_avg NUMERIC(6,3),            -- 上榜次日平均开盘溢价率(%)
+    t1_close_win_rate   NUMERIC(5,2),            -- 上榜次日收盘上涨胜率(%)
+    t1_intraday_dump_prob NUMERIC(5,2),          -- 次日冲高回落(>4%)砸盘概率(%)
+    coop_seats_json     JSONB,                   -- 常驻协同/关联席位图谱
+    counter_strategy    TEXT                     -- 系统自动生成的针对性博弈指令
+);
+
+-- 4. 个股工作台持久化与持有计划/做T/网格状态表 (PostgreSQL 17 - 彻底打通前后端与数据库)
+CREATE TABLE stock_workbench_states (
+    workbench_id        UUID PRIMARY KEY,
+    symbol_id           VARCHAR(12) NOT NULL UNIQUE,
+    current_regime_tag  VARCHAR(32) NOT NULL,    -- 'MAIN_UPWAVE','BOX_CONSOLIDATION','HIGH_DIVERGENCE','DOWNTREND'
+    composite_alpha_score NUMERIC(6,2) NOT NULL,
+    -- 持仓与底仓成本状态
+    base_position_shares BIGINT DEFAULT 0,
+    available_t0_shares  BIGINT DEFAULT 0,       -- 今日可用于做T的昨仓股数(严格遵守A股T+1)
+    avg_cost_cny        NUMERIC(12,4) DEFAULT 0,
+    -- AI + 量化生成的最新买卖点与持有计划
+    execution_plan_json JSONB NOT NULL,          -- 包含短/中长线买点区间、止损位、分批止盈位、持有周期
+    intraday_t0_plan    JSONB NOT NULL,          -- 正T/倒T触发阈值、分时MACD背离锚点、单笔做T股数
+    grid_trading_config JSONB NOT NULL,          -- ATR自适应网格步长、委托价格档位、资金占用上限
+    chart_drawings_json JSONB DEFAULT '[]',      -- 用户/系统在TradingView画布上的趋势线、箱体、标注持久化
+    updated_at_utc      BIGINT NOT NULL
+);
+
+```
+
+---
+
+## 四、 全维影响因子挖掘体系：A股微观现实 + 国际宏观 + 消息/情绪/席位/技术四维融合
+
+系统摒弃单一指标选股，建立 **四维实时张量（4D Alpha Tensor）**，通过实时守护进程拉取并经由大模型结构化算子与量化算子联合打分：
+
+### 4.1 第一维：消息面与全球宏观跨市场传导引擎（News & Global Macro Engine）
+
+1. **权威信源多级交叉校验（Multi-Source Cross-Verification）**：
+* **Tier-1（定调级，权重 1.0）**：新华社、央行（PBOC）、证监会（CSRC）、发改委/工信部官网、国务院政策吹风会。
+* **Tier-2（闪电级，权重 0.85）**：财联社电报（CLS）、东方财富全球快讯、同花顺 7×24、证券时报、上证报。
+* **Tier-3（国际映射级，权重 0.80）**：Reuters、Bloomberg、美联储议息声明、美股盘后财报（如英伟达/特斯拉对 A 股算力/果链/机器人板块的直接映射）。
+* **去伪与共振校验算法**：任何单一来源的突发利好，在 180 秒内若未获得至少 2 个独立信源交叉印证，标记为 `UNVERIFIED_RUMOR`（权重折半，防小作文诱多）；一旦新华社 + 财联社 + 东财三源共振，立即触发 **毫秒级策略重算中断（Event-Driven Strategy Re-evaluation）**。
+
+
+2. **A股全天候影响因子全景矩阵（系统内置实时采集因子库）**：
+* **国际宏观与跨市场联动因子**：离岸人民币汇率（USD/CNH 突破关键点位对北向与核心资产的压制/提振）、富时中国 A50 期指夜盘与盘中基差、纳斯达克中国金龙指数（HXC）隔夜涨跌幅、10 年期美债收益率、大宗商品夜盘（COMEX 黄金/铜、SC 原油对有色化工周期股的开盘锚定）。
+* **国内流动性与制度日历因子**：央行每日逆回购净投放/MLF/LPR、两融余额增速、ETF 盘中申赎净流入（沪深 300 / 中证 1000 / 科创 50 ETF 护盘脉冲检测）、大股东减持/增持公告、限售股解禁日历（解禁前 5 日负向因子惩罚）、财报披露期业绩暴雷规避锁。
+
+
+
+### 4.2 第二维：情绪面、股吧散户四时段共振与龙虎榜营业部席位博弈（Sentiment & Seat Game Theory）
+
+这是本系统区别于传统量化平台的核心杀手锏——**将 A 股特有的散户群聚效应与游资席位生态完全数学化**：
+
+1. **股吧与各大财经评论区“盘前-盘中-午休-盘后”四时段闭环共研机制**：
+* 系统实时抓取 **东方财富股吧、同花顺评论区、淘股吧热帖、雪球讨论区** 的发帖流速、看多/看空情绪比、高频词云与核心逻辑帖。
+* **绝不盲从评论区，而是做“评论区观点真伪审计 + 资金背离度交叉验证”**：
+* **盘前（08:00–09:25）**：采集股吧隔夜热议点与开盘预期，结合 9:15–9:25 集合竞价真实封单/撤单率，验证股吧吹捧的逻辑是否得到主力真金白银认可在竞价抢筹。
+* **盘中（09:30–11:30, 13:00–15:00）**：实时计算 **【散户热度背离因子（Retail-Flow Divergence, RFD）】**：
+
+
+
+
+
+$$\text{RFD}_{i,t} = \text{Z-Score}(\text{CommentVelocity}_{i,t} \times \text{BullishRatio}_{i,t}) - \text{Z-Score}(\text{NetMainForceInflow}_{i,t})$$
+
+```
+   当股吧评论区沸腾、散户一致高喊“满仓抄底/格局锁仓”（\(\text{RFD} \gg +2.0\)），但 L2 盘口超大单持续隐蔽净流出（大单拆小单买、挂单被动砸卖）时，系统判定为 **“散户接盘陷阱（Retail Distribution Trap）”**，立即下调推荐评级并发出卖出预警；反之，当股吧还在争吵分歧（分歧度高）或逻辑帖切中产业核心，且主力大单持续吃进时，判定为 **“分歧转一致买点”**。
+ * **午间休盘（11:30–13:00）**：汇总上午热门评论区的争议焦点，由大模型结合上午分时量价结构给出《午间评论区观点证伪与下午应对修正指令》。
+ * **盘后复盘（15:00–22:00）**：将当日龙虎榜数据、晚间公告与股吧盘后复盘神帖交叉比对，提取有效产业逻辑反哺次日选股池，同时支持生成结构化深度复盘观点供用户参与社区讨论。
+
+```
+
+2. **龙虎榜营业部席位知识图谱与对手盘博弈引擎（Dragon & Tiger Seat Engine）**：
+每日盘后龙虎榜揭晓及盘中异动股追踪时，系统自动扫描历史席位库，识别主导资金底牌并触发对应战术：
+* **拉萨天团（散户大本营）**——*东方财富拉萨团结路第一/第二、东环路第一/第二、金融城南环路、山南香曲东路*：
+* **量化定性**：代表东财 App 散户跟风盘。定义 **拉萨浓度指标** $\text{LasaRatio} = \frac{\sum \text{Buy}_{\text{Lasa}}}{\sum \text{Buy}_{\text{Top5}}}$。
+ * **博弈铁律**：当某股高位放量，买方前五出现 **3 个及以上拉萨席位**（或 $\text{LasaRatio}$ 大于 45%）且卖方为知名游资/机构净卖出时，说明筹码已彻底派发给散户，**次日低开/砸盘概率高达 78%+**。系统强制触发 **【拉萨接盘一票否决（Veto）】**，严禁追高，持仓者次日竞价/早盘冲高无条件清仓。
+
+
+* **一日游/砸盘收割席位**——*财通证券杭州上塘路、前东路/佛山系、宁波桑田路（高位阶段）等*：
+* **量化定性**：典型“板上扫货/独食造势，次日集合竞价或早盘拉高 2%~5% 后核按钮瀑布式砸盘出货”风格。
+* **博弈铁律**：若目标股处于选股池且买一为该类席位一家独大（占比大于买五总额 50%），系统自动将其次日操作策略切换为 **【严禁接力 / 持仓者早盘脉冲挂单抢跑（Front-Run Exit）】**。
+
+
+* **格局主升/顶级合力游资**——*华泰天津东丽开发区二纬路（六一中路）、中信北京总部（呼家楼）、银河大连黄河路（陈小群）、国泰君安上海江苏路（章盟主）*：
+* **量化定性**：具备板块号召力与溢价效应，若多路顶级游资买五均衡合力（单席位不独食，买五集中度适中）且处于主线板块一进二/二进三节点，赋予 **次日高溢价加分项（Seat Synergy Boost）**。
+
+
+* **量化打板/高频助涨助跌席位**——*华泰证券总部、中金上海分公司、中信上海分公司、国泰君安总部*：
+* **量化定性**：算法驱动的平铺打板与日内做T资金。若买五全为量化席位，次日分时极易出现“开盘秒拉或秒砸”的剧烈双边波动，系统自动在个股工作台启用 **【宽幅倒T/正T高频网格模式】** 利用其波动降本。
+
+
+
+
+
+---
+
+## 五、 核心业务双阶段闭环：板块/个股推荐榜 → 个股全维工作台与操作计划
+
+系统界面与核心数据流严格围绕 **“选股（Stage 1） → 个股深加工与买卖执行（Stage 2）”** 展开：
+
+### 5.1 Stage 1：板块推荐榜、火速晋升板块备选池与全市场推荐排序
+
+1. **任意板块点入即享【板块个股推荐榜】**：
+* 覆盖申万一级/二级/三级行业及 300+ 实时概念板块。点进任意板块，系统按 **板块内综合推荐分（Sector-Internal Alpha Rank）** 实时排列 Top 10 必看个股，并标注其在板块内的生态位角色：**【空间龙（最高连板）】、【中军容量核心（成交额最大+机构主导）】、【弹性先锋（20cm 创业板/科创板领涨）】、【低位补涨潜伏（技术面突破+估值安全）】**。
+
+
+2. **【火速晋升板块（Rapidly Rising Sectors）】先手备选池**：
+* 传统软件按板块当日涨幅排序，看到时往往已涨停潮无法买入。本系统以 10 秒为步长计算全市场板块的 **资金流入一阶速度 $v_S(t)$ 与二阶加速度 $a_S(t)$**：
+
+
+
+$$\text{SurgeScore}_S(t) = w_1 \cdot \frac{\Delta \text{Rank}_S(t, t-5\text{min})}{5} + w_2 \cdot \frac{d^2(\text{NetInflow}_S)}{dt^2} + w_3 \cdot \text{LeadStockLimitUpSpeed}_S$$
+
+* 一旦某板块在 3~5 分钟内排名跃升超过 15 位且龙头股出现倍量点火，系统立即将其置顶推入 **【火速晋升板块备选池】**，并提前毫秒级挑出板块内尚未涨停但盘口异动最强的 3~5 只核心股，供用户第一时间先手介入。
+
+3. **全市场选股总榜（多周期赛道分层）**：
+* 选股池按策略属性清晰划分为三大赛道：**超短捉妖池（1~3 日博弈）**、**短线波段池（3~15 日趋势）**、**中长线配置池（1~6 个月产业景气+基本面拐点）**，每只推荐个股均附带四维得分雷达图与推荐证据链。
+
+
+
+### 5.2 Stage 2：个股全维深度工作台（Stock Workbench）与做T/网格/持有计划
+
+点击任意推荐个股进入 **个股工作台**（所有数据与状态实时同步至 `stock_workbench_states` 表），工作台一次性完成四大核心任务：
+
+1. **全周期技术面共振透视（Multi-Timeframe Technical Matrix）**：
+* **周期联动**：同屏/一键穿透 **分时、1m、5m、15m、30m、60m、日线、周线、月线、年线**。计算 **多周期共振指数（MTF Alignment Score）**——例如月线/周线处于多头主升、日线回踩 20 日均线缩量企稳、30m/5m 出现 MACD 底背离金叉，判定为 **“S级多周期共振买点”**。
+* **全量技术算子**：K线形态识别（早晨之星、仙人指路、箱体突破、揉搓线）、MACD（DIF/DEA 斜率、红绿柱面积比、跨峰顶底背离自动连线）、均线缠绕与发散度、量能结构（倍量柱、地量群、分时攻击量比）、筹码分布 CYQ（单峰密集突破、上方套牢峰阻力位、获利盘比例）。
+
+
+2. **实时消息/情绪/席位联动重算（Live Event-Driven Recalculation）**：
+* 盘中后台脚本一旦拉取到与该股或其所属板块相关的最新消息、股吧热度突变或大单异动，自动触发大模型与量化算子重算，**3 秒内刷新工作台上的买卖点价格区间与持有计划**。
+
+
+3. **动态买卖点与结构化持有计划（Actionable Execution & Holding Plan）**：
+* 拒绝模糊的“逢低关注”，直接输出精确到分位的四档执行指令：
+* **理想建仓区（Buy Zone）** 与 **突破追击点（Breakout Trigger）**
+* **建议仓位上限（Kelly / 波动率目标仓位）**
+* **移动止盈目标（TP1 减半仓锁利位 / TP2 清仓目标位）** 与 **硬性止损红线（Stop-Loss，跌破关键筹码峰或 ATR 止损位无条件离场）**
+* **预计持有周期与失效条件（Time-Stop & Thesis Invalidation）**
+
+
+
+
+4. **个股专属降本增利引擎：日内做T（Intraday T+0）与自适应网格（Dynamic Grid）**：
+* **日内做T引擎（正T / 倒T 实时信号）**：针对已持有底仓（`available_t0_shares` 大于 0）的个股，结合 **1m/5m 箱体上下轨 + 分时 VWAP 偏离度 + 1m MACD 顶底背离 + L2 委买委卖失衡度（Order Book Imbalance）**：
+* **正T（先买后卖）**：早盘急跌触及日内支撑位且出现缩量恐慌承接、1m 底背离时，提示利用可用资金买入等量底仓；午后反抽 VWAP 或箱体上沿时卖出原底仓，保持总股数不变，直接降低持仓成本。
+* **倒T（先卖后买）**：早盘受消息刺激脉冲冲高偏离分时均线大于 $2.5 \times \text{ATR}_{5m}$ 且伴随股吧高潮、上档大单压盘时，提示先卖出 30%~50% 昨仓，待尾盘或盘中回踩均线时接回。
+
+
+* **ATR 自适应波动率网格交易（Adaptive Volatility Grid）**：
+* 针对震荡上行或箱体盘整股，自动以过去 20 日平均真实波幅（$\text{ATR}_{20}$）与筹码密集峰中枢 $P_{\text{anchor}}$ 构建非对称网格：
+
+
+
+
+
+$$\text{GridStep}_{\text{buy}} = \max(0.015, 0.35 \times \text{ATR}_{20}/P), \quad \text{GridStep}_{\text{sell}} = \max(0.018, 0.45 \times \text{ATR}_{20}/P)$$
+
+趋势向上时自动放大卖出步长、缩小买入步长（多攒筹码）；严守 A 股 T+1 可用底仓约束，每完成一格配对自动核算已实现降本金额（`realized_cost_reduction_cny`）。
+
+---
+
+## 六、 策略分类路由、瑞士轮（Swiss-System）优胜劣汰与 2026 顶会论文算法集成
+
+为了解决“策略繁多难以管理、单一策略易失效”的痛点，系统构建 **策略分类学（Strategy Taxonomy） + 瑞士轮竞技场 + 动态 MoE 集成器**，并将 2025–2026 年计算机与金融顶会最新算法转化为标准算子：
+
+### 6.1 策略与股票多维分类标签体系（Standard Taxonomy & Tagging）
+
+所有入库策略与股票必须携带标准 6 维标签向量，由路由引擎按当前市场状态（Regime）自动调度：
+
+* `strategy_paradigm`：`TRADITIONAL_PLAYBOOK`（传统游资/技术战法） / `STAT_FACTOR`（统计多因子） / `DEEP_RL`（深度强化学习） / `LLM_EVENT_DRIVEN`（大模型事件驱动） / `HYBRID_ENSEMBLE`（混合集成）
+* `horizon_tier`：`INTRADAY_T0`（日内做T/网格） / `ULTRA_SHORT`（1~3日打板接力） / `SHORT_SWING`（3~15日波段） / `MID_LONG_TREND`（中长线趋势价值）
+* `regime_affinity`：`BULL_MOMENTUM`（主升牛市） / `STRUCTURAL_ROTATION`（结构性轮动） / `BEAR_DEFENSIVE`（弱势防御） / `HIGH_VOL_CHOP`（高波震荡）
+* `signal_orthogonality_cluster`：`CLUSTER_MOMENTUM` / `CLUSTER_REVERSAL` / `CLUSTER_LIQUIDITY` / `CLUSTER_SENTIMENT_SEAT` / `CLUSTER_FUNDAMENTAL`（严禁同一特征簇内策略权重之和超过 35%，从根源消除同质化拥挤）
+
+### 6.2 2025–2026 计算机与金融顶会核心论文算法集成表
+
+系统不是简单堆砌传统指标，而是将最新顶会（KDD / NeurIPS / WWW / AAAI / ICAIF / ICASSP）经实证有效的核心架构直接工程化入库：
+
+| 顶会来源与论文算法 | 核心学术思想 | 在本平台中的具体工程化落地模块与作用 |
+| --- | --- | --- |
+| **WWW 2025: MERA** (*Mixture of Experts with Retrieval-Augmented Representation*) | 检索增强门控混合专家模型：从历史相似市场状态中检索表征，动态分配不同专家策略的权重 | **【多策略取精华去糟粕集成器】**：不再每次只用一个策略，而是通过 RAG 检索历史最相似的 5 个 A 股交易日（成交额、涨跌停比、主线集中度），动态加权融合当前表现最优的多套子策略 |
+| **KDD 2025: Market Irrationality Factors** (*Learning Universal Multi-level Market Irrationality Factors*) | 多层级市场非理性因子学习：将散户彩票偏好、处置效应（赚小钱跑、亏大钱死扛）、过度反应量化为可预测超额收益的因子 | **【A股散户行为与情绪面因子算子】**：量化计算个股的“处置效应锁定筹码比例（Disposition Overhang）”与“散户彩票追高拥挤度”，精准识别主力洗盘完毕点与散户踩踏点 |
+| **ICASSP 2025 / KDD 2025: Graph-Mamba & Stock-Pretrain** | 图状态空间模型（Graph-Mamba）结合股票预训练表征：以线性复杂度捕捉长序列时序依赖与板块个股间的动态领涨-跟风图传导 | **【板块轮动与火速晋升补涨挖掘器】**：构建龙头股向同板块二线股、上下游供应链个股的毫秒级动量溢出图（Lead-Lag Spillover Graph），龙头封板瞬间自动锁定最优补涨标的 |
+| **WWW 2025: HRFT** (*Mining High-Frequency Risk Factor Collections End-to-End via Transformer*) | 端到端高频风险因子挖掘：从分钟级/逐笔高频序列中提取尾部崩盘风险与流动性枯竭信号 | **【盘中炸板与闪崩预警算子】**：实时扫描个股 1m/5m 量价微观结构，提前识别“诱多拉高出货”与“封单虚挂即将炸板”风险 |
+| **ICAIF 2026 / CIKM: Hawkes-RL & DeepScalper** | 霍克斯过程结构化强化学习（Hawkes-Structured RL）与风险感知日内剥头皮框架：捕捉成簇到达的订单流脉冲并进行微观买卖定价 | **【个股工作台做T（T+0）与动态网格执行器】**：利用强化学习 Q-Ensemble 与分位数回归预测未来 15~30 分钟的日内高低点分布，自动给出最优正T/倒T挂单点位 |
+| **NeurIPS 2025: Online Portfolio Selection with ML Predictions** | 带机器学习预测的在线组合选择：在利用模型预测提升收益的同时，严格保证最坏情况下的最大回撤理论下界 | **【组合仓位分配与风控熔断器】**：将选股总榜的 Alpha 评分转化为具有最坏回撤保护的仓位权重，防止极端黑天鹅行情下净值大幅回撤 |
+| **2025–2026: TradingAgents & FinMem** | 多角色红蓝对抗辩论（Bullish vs Bearish Debate）与分层记忆衰减机制（短/中/长期事件记忆层） | **【消息面与股吧评论多空辩论核验器】**：针对每条重大消息或个股热议，强制内置看多与看空双算子提取正反证据链，输出校准后的净置信度（Net Conviction Score） |
+
+### 6.3 策略池“瑞士轮（Swiss-System）”优胜劣汰与全网新策略反哺闭环
+
+系统告别静态策略库，构建 **7×24 自治进化的达尔文闭环**：
+
+1. **全网策略自动猎手（Strategy Harvester Daemon）**：定时巡检 arXiv (`q-fin` / `cs.LG`)、GitHub 热门量化仓库、聚宽/米筐/TradingView 社区高赞策略脚本，解析其核心买卖逻辑并编译为标准 `StrategyPlugin` 沙盒实例。
+2. **瑞士轮多轮同台竞技（Swiss-System Tournament）**：
+* 所有存量策略与新挖掘策略进入统一竞技池（分为 *超短组、波段组、做T网格组*）。
+* 每个交易周为一轮瑞士轮积分赛：积分相近的策略在完全相同的市场行情、完全相同的 **国际标准记账内核（`CanonicalLedgerEngine`）** 下进行前向模拟对决（Out-of-Sample Forward Battle）。
+* **胜负判定标准（Multi-Metric Composite）**：不仅看收益率，综合考核 **扣除真实摩擦成本后的净夏普比率（Net Sharpe）、信息比率（ICIR）、最大回撤比（Calmar）、以及与同风格随机基线（1000 次蒙特卡洛抽样）的显著性 $p$-value**。
+
+
+3. **晋升、集成与末位淘汰**：
+* **瑞士轮前 20%（Swiss Champions）**：晋升至 **【实盘核心推荐引擎（Live Production Pool）】**，获得最高选股与买卖点投票权重。
+* **瑞士轮中游（20%–70%）**：保留在 **【影子观察池（Shadow Pool）】**，仅当市场状态（Regime）切换至其擅长象限时由 MERA 门控唤醒。
+* **连续 3 轮垫底或滚动 20 日 IC 转负（Bottom 30%）**：自动移入 **【证伪隔离库（Falsified Graveyard）】**，冻结其线上投票权，并将失败归因报告写回特征工程层，反哺选股与个股分析权重。
+
+
+
+---
+
+## 七、 国际公认统一记账标准与多基准验证内核（Canonical Accounting & Benchmark Standard）
+
+彻底废除过去不同脚本各自算账的做法。全系统所有回测、模拟盘重放（Paper Replay）、瑞士轮竞赛、做T降本核算，**必须且只能调用 `07-canonical-ledger` 提供的唯一记账内核**：
+
+1. **符合 GIPS（全球投资业绩标准）与 FIFO 复式记账法则**：
+* 每一笔模拟或实盘委托必须经过统一的 **订单生命周期状态机**：`PENDING_NEW -> ACCEPTED -> PARTIALLY_FILLED / FILLED / REJECTED_LIMIT_LOCK / EXPIRED`。
+* 每日收盘执行 **逐日盯市清算（Mark-to-Market NAV Settlement）**，精确拆分：现金账户（`cash_cny`）、持仓市值（`market_value_cny`）、冻结资金、已实现盈亏（`realized_pnl`）、未实现浮动盈亏（`unrealized_pnl`）与累计摩擦成本（`total_friction_cny`）。
+
+
+2. **A股真实微观摩擦与制度刚性约束（零妥协仿真）**：
+* **全口径税费**：卖出印花税 `0.05%`（万分之五）+ 双边券商佣金 `0.015%`（万1.5，单笔最低 5 元人民币）+ 过户费 `0.001%` + 冲击滑点（按委托金额占当分钟成交额比例动态计算 $\text{Slippage} = \text{Spread}/2 + \eta \cdot \sigma \sqrt{V_{\text{order}}/V_{\text{bar}}}$）。
+* **T+1 锁仓铁律**：当日买入的股数记入 `locked_t1_shares`，当日 `available_sell_shares` 严禁包含今日新开仓部分；日内做T卖出量严禁超过昨日结转底仓。
+* **涨跌停与停牌流动性锁**：当个股处于一字涨停（`ask_vol_1 == 0` 且封单比大于阈值）时，买单进入排队队列，按真实成交量消耗模型判定能否排单成交，严禁“见涨停价即 100% 买入成交”的虚假回测；跌停板同理严禁虚假卖出止损。
+
+
+3. **三重基准验证门禁（Triple-Benchmark Gate）**：
+任何策略要从回测晋升至前台推荐，必须同时击败：
+* **Benchmark 1（宽基基准）**：沪深 300 / 中证 500 / 中证 1000 同期超额收益（Alpha 大于 0）。
+* **Benchmark 2（同板块等权基准）**：证明选股能力优于单纯买板块 ETF。
+* **Benchmark 3（1000 次同市值/同换手率随机抽样基准 Matched Monte Carlo Baseline）**：剔除运气成分，确保策略盈利率位于随机分布前 5% 分位（$p$ 小于 0.05）。
+
+
+
+---
+
+## 八、 对标逆向解析：融合 TradingView 全球顶尖特性与本土游资实战神器
+
+重写后的前端终端（`apps/web-terminal`）基于 **TradingView Lightweight Charts v5 + 自定义 WebGL/Canvas 2D 渲染层**，将国际顶级图表工具与国内同花顺/东方财富/通达信的实战精华融为一体：
+
+1. **逆向集成 TradingView Pro+ 级核心能力**：
+* **多周期同屏网格（Multi-Chart Sync Layout）**：支持 1/2/4/6 屏联动（如左上日线看大势、右上 30m 看波段、左下 5m 看做T买点、右下 1m 看分时量能），十字光标（Crosshair）跨周期毫秒级同步。
+* **可视范围成交量分布图（VPVR / Volume Profile Visible Range）与锚定 VWAP（Anchored VWAP）**：从任意重要消息发布日、涨停启动日或龙虎榜上榜日锚定 VWAP 均价线，直观透视当前主力资金与游资的平均持仓成本线。
+* **K线历史逐Bar沉浸式回放（Bar-by-Bar Replay Mode）**：支持按任意历史交易日、任意分钟切入，同步回放当时的 K 线、L2 盘口、当刻突发快讯与股吧热帖，用于人工复盘与策略检验。
+
+
+2. **逆向融合本土 A 股实战核心视图**：
+* **9:15–9:25 集合竞价红绿柱未匹配量专属副图**：清晰展示 9:20 前诱多撤单与 9:20 后真实抢筹封单变化。
+* **动态火焰山筹码分布（CYQ Flame Chart）**：右侧侧边栏随十字光标滑动，动态渲染历史每一天的筹码峰迁移、获利盘比例与 90%/70% 筹码集中度。
+* **K线图内嵌【消息/席位/买卖点】智能图层（Smart Event Overlays）**：在 K 线对应位置直接渲染“新华社/财联社利好锚点”、“拉萨天团进场警告图标”、“六一中路/呼家楼买入标记”以及系统给出的“正T买/正T卖/波段建仓”精确箭头。
+
+
+
+---
+
+## 九、 查缺补漏：为你额外补齐的 5 大高价值实战增强模块
+
+除了你提到的所有需求，结合 A 股 2026 年最新量化博弈生态，我在架构中为你额外补齐以下 5 个关键模块，确保系统真正做到无死角闭环：
+
+1. **【真假机构席位与量化伪装识别器（Fake-Institution Detector）】**：
+* 当前龙虎榜存在大量游资租用通道伪装“机构专用”诱多的现象。系统通过比对 **该股近期研报覆盖密度 + 机构席位当日双向对倒比例（既在买五又在卖五）+ 历史该通道上榜个股市值特征**，自动识别“真公募配置”与“假机构通道党一日游”。
+
+
+2. **【ETF 申赎脉冲与国家队/被动资金护盘雷达】**：
+* 实时监控沪深 300、中证 500、中证 1000、中证 A500 核心宽基 ETF 的分钟级成交额激增（大于均值 5 倍），提前 30~60 秒预判大盘指数探底回升拐点，联动指导个股工作台的日内做T抄底时机。
+
+
+3. **【题材生命周期状态机（Theme Lifecycle State Machine）】**：
+* 自动判定当前每个热门板块处于 **① 初生潜伏期 → ② 分歧晋升期（最佳买点） → ③ 一致高潮期（持仓锁利） → ④ 龙头断板退潮期（严禁接飞刀） → ⑤ 冰点反抽期**，防止在板块高潮次日高位站岗。
+
+
+4. **【可转债-正股联动套利与情绪先行指标】**：
+* 许多 A 股人气妖股配有可转债（T+0 交易）。系统实时监控对应可转债的盘中脉冲抢筹，将其作为正股即将拉升或封板的领先 1~3 分钟先行指标。
+
+
+5. **【大模型防幻觉数字围栏（Deterministic Guardrail for LLM）】**：
+* 严禁大模型直接编造任何价格、涨跌幅或技术指标数值。所有 K 线、MACD、筹码、席位胜率均由 Rust/Polars 确定性引擎算出并组装为结构化 JSON 注入上下文，大模型仅负责对非结构化新闻/股吧文本做语义提纯与多空逻辑合成，输出必须通过 JSON Schema 强校验。
+
+
+
+---
+
+## 十、 面向超级智能体（GPT-6.1 / Claude 5.1 / Opus 5.5）并行极速重写执行蓝图
+
+将以下代码直接保存为新仓库根目录下的 `AGENTS.md` 与核心接口契约，即可启动 **8 个编码 Sub-Agent 零冲突并行重写**：
+
+```yaml
+# AGENTS.md — OmniPulse 2026 Parallel Agent Execution Topology
+project: omnipulse-tradingview-v4
+architecture: hexagonal-contract-first-monorepo
+storage_stack:
+  oltp_state: PostgreSQL 17 (TimescaleDB)
+  olap_backtest: DuckDB 2.0 + Polars 2.1 + Apache Arrow IPC / Parquet
+  realtime_bus: Redis 8 + NATS JetStream
+  compute_core: Rust (PyO3) + Python 3.13 (FastAPI)
+  frontend: React 19 + TypeScript 5.8 + TradingView Lightweight Charts v5
+
+parallel_sub_agents:
+  - agent_id: SA-01-Contracts-And-Storage
+    scope: packages/contracts, migrations/, DuckDB+PG17 schema, canonical field validators
+    dependency: NONE (Phase 0 Lock — Must complete first in 15 mins)
+
+  - agent_id: SA-02-MultiSource-Ingestion
+    scope: services/01-ingestion-gateway, services/02-data-normalizer
+    responsibilities:
+      - Eastmoney/Tencent/Sina/Xinhua/CLS/Guba multi-source quorum polling
+      - 3-way price/volume cross-validation, ASOF imputation, WAF failover watchdog
+
+  - agent_id: SA-03-Panorama-Factor-Engine
+    scope: services/03-factor-panorama
+    responsibilities:
+      - Multi-timeframe (1m~1Y) K-line, MACD divergence, MA ribbon, CYQ chip distribution
+      - Dragon-Tiger seat profiling (Lasa ratio, Shangtang/Qiandong dump prob, Quant seats)
+      - Guba 4-session (Pre/Intra/Midday/Post) retail sentiment vs main-force flow divergence
+
+  - agent_id: SA-04-Sector-And-Stock-Screener
+    scope: services/04-sector-screener
+    responsibilities:
+      - Per-sector top recommended stock leaderboard
+      - Rapidly Rising Sector (SurgeScore 2nd-derivative) pre-selection watchlist
+      - Global multi-horizon stock ranking (Ultra-Short / Swing / Mid-Long)
+
+  - agent_id: SA-05-Stock-Workbench-And-Execution
+    scope: services/05-stock-workbench
+    responsibilities:
+      - DB-persisted individual stock workspace
+      - Dynamic Buy/Sell/Stop-Loss/Holding plan generator triggered by live news
+      - Intraday T+0 (Positive-T / Inverted-T) & ATR Adaptive Grid cost-reduction calculator
+
+  - agent_id: SA-06-Tournament-And-TopPapers
+    scope: services/06-strategy-tournament
+    responsibilities:
+      - 6-dimensional strategy taxonomy tagger & router
+      - Swiss-System multi-round pairing tournament & Darwinian promotion/pruning
+      - MERA (WWW'25) MoE gating, Graph-Mamba (KDD'25) spillover, Hawkes-RL (ICAIF'26)
+
+  - agent_id: SA-07-Canonical-GIPS-Ledger
+    scope: services/07-canonical-ledger
+    responsibilities:
+      - Single unified backtest & paper-replay matching engine
+      - A-share T+1 lock, 10%/20%/30% limit lock, stamp duty + commission + L2 slippage
+      - Triple-benchmark validation gate (Index + Sector EW + 1000x Monte Carlo Random)
+
+  - agent_id: SA-08-TradingView-Pro-Terminal
+    scope: apps/web-terminal
+    responsibilities:
+      - Multi-timeframe linked canvas, VPVR, CYQ flame chart, Call Auction red/green bars
+      - Sector leaderboard + Rapidly Rising Sector drawer + Stock Workbench T+0/Grid panel
+
+```
+
+### 核心统一接口契约示例（`packages/contracts/src/omnipulse_contract.py`）
+
+以下契约确保选股引擎、个股工作台、策略瑞士轮与统一记账内核之间 **100% 字段对齐、零歧义通信**：
+
+```python
+from enum import StrEnum
+from typing import Literal
+from pydantic import BaseModel, Field
+
+class HorizonTier(StrEnum):
+    INTRADAY_T0 = "INTRADAY_T0"         # 日内做T与网格降本
+    ULTRA_SHORT = "ULTRA_SHORT"         # 1~3日超短打板/接力
+    SHORT_SWING = "SHORT_SWING"         # 3~15日短线波段
+    MID_LONG_TREND = "MID_LONG_TREND"   # 中长线产业趋势
+
+class SeatCampTag(StrEnum):
+    RETAIL_LASA = "RETAIL_LASA"         # 拉萨天团(散户接盘预警)
+    DUMP_NEXT_DAY = "DUMP_NEXT_DAY"     # 上塘路/前东路等一日游砸盘席位
+    PATTERN_LEADER = "PATTERN_LEADER"   # 六一中路/呼家楼等格局主升游资
+    QUANT_HFT = "QUANT_HFT"             # 华泰总部/中金上海等量化助涨助跌席位
+    INSTITUTION = "INSTITUTION"         # 机构专用(含真伪校验分)
+
+class IntradayT0Instruction(BaseModel):
+    mode: Literal["POSITIVE_T_BUY_FIRST", "INVERTED_T_SELL_FIRST", "HOLD_NO_T"]
+    trigger_price_cny: float = Field(..., description="做T触发价格(元)")
+    target_cover_price_cny: float = Field(..., description="做T平仓回补目标价(元)")
+    suggested_shares: int = Field(..., description="受限于昨日可用底仓的单笔做T股数(100股整数倍)")
+    expected_cost_reduction_per_share: float = Field(..., description="预计每股降低持仓成本(元)")
+    technical_rationale: str = Field(..., description="如: 5m箱体下沿+1m MACD底背离+L2委买失衡度>0.65")
+
+class StockWorkbenchSnapshot(BaseModel):
+    symbol_id: str = Field(..., pattern=r"^(SH|SZ|BJ)\.\d{6}$")
+    ts_updated_utc: int
+    sector_id: str
+    is_in_rapid_rising_sector_pool: bool
+    composite_alpha_score: float = Field(..., ge=0.0, le=100.0)
+    horizon_recommendation: HorizonTier
+    # 四维子评分 (0~100)
+    score_news_macro: float
+    score_sentiment_seat: float
+    score_capital_flow: float
+    score_technical_mtf: float
+    # 龙虎榜与散户股吧审计结论
+    lasa_retail_ratio_pct: float
+    seat_risk_flag: SeatCampTag | None
+    guba_retail_flow_divergence: float = Field(..., description="RFD>2.0代表散户狂热但主力出货")
+    # 精确买卖点与做T/网格持有计划
+    buy_zone_low_cny: float
+    buy_zone_high_cny: float
+    hard_stop_loss_cny: float
+    take_profit_tier1_cny: float
+    take_profit_tier2_cny: float
+    intraday_t0_plan: IntradayT0Instruction
+    grid_step_buy_pct: float
+    grid_step_sell_pct: float
+    active_ensemble_strategies: list[str] = Field(..., description="当前瑞士轮胜出并参与投票的策略ID列表")
+
+```
+
+整套架构将**权威多源消息交叉校验、全球宏观映射、股吧散户四时段情绪背离审计、龙虎榜营业部席位博弈、板块火速晋升预筛、全周期技术面共振、个股工作台做T/网格降本、2026 顶会论文算法算子、瑞士轮策略优胜劣汰与 GIPS 国际统一记账标准**严丝合缝地收敛于同一套强类型数据契约之下，可直接作为新仓库的唯一工程蓝图启动全量重写。

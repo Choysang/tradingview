@@ -1,0 +1,13 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T03:01:21.368016+00:00",
+  "document": "deliverables/Pulse_Rewrite_Package_v32_build/review_v32/product_extension_cards.json",
+  "sha256": "2e2ad27908429e24f9ecf7d43adf36c352fe7fecb192ad10383f6fd17375b45e",
+  "closure": {
+    "PX-C01": "closed_at_design_level",
+    "PX-C02": "closed_at_design_level",
+    "PX-C03": "closed_at_design_level",
+    "PX-C04": "closed_at_design_level"
+  },
+  "limits": "仅窄回读字段、约束和回执绑定；未实现或运行提案；公共合同未修改。"
+}

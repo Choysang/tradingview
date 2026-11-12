@@ -1,0 +1,183 @@
+{
+  "schema_version": "3.0-acceptance.1",
+  "checked_at": "2026-11-10",
+  "execution_status": "specified; the SQL syntax parser and JSON structural validation are separate recorded checks, not evidence that these integration scenarios ran",
+  "scenarios": [
+    {
+      "id": "DB-A01",
+      "title": "endpoint-specific units",
+      "given_or_action": "Same synthetic quantity/amount through Tushare daily and rt_k mapping.",
+      "expected": "100.25 hands / 100.25 thousand yuan and 10025 shares / 100250 yuan normalize to 10025 shares / 100250.00 CNY; same-provider universal multiplier fails.",
+      "required_validation": "normalization unit/property tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A02",
+      "title": "null versus zero",
+      "given_or_action": "Feed null volume, explicit valid zero and NaN/Infinity text.",
+      "expected": "missing remains null; supported zero remains 0; invalid preserves raw value and cannot enter valid canonical observations.",
+      "required_validation": "normalization fixtures",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A03",
+      "title": "session and adjustment alignment",
+      "given_or_action": "Compare adjusted historical output against raw; compare 15:00 with postclose data.",
+      "expected": "Reject raw/adjusted mixing; produce unverifiable until source/session scope is aligned.",
+      "required_validation": "cross-source reconciliation",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A04",
+      "title": "mapping evolution",
+      "given_or_action": "Rename a required source field and add an unrelated optional field.",
+      "expected": "Optional field retained as raw drift; required semantic break pauses only this endpoint canonical publication; corrected mapping replays the same raw evidence.",
+      "required_validation": "connector contract test",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A05",
+      "title": "cursor commit order",
+      "given_or_action": "Crash after object upload before metadata commit; crash after metadata commit before cursor CAS.",
+      "expected": "Replay uses immutable object and batch idempotency; cursor never advances beyond durable raw objects and the last continuous source position.",
+      "required_validation": "fault injection integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A06",
+      "title": "HTTP200 stale content",
+      "given_or_action": "Return the same yesterday payload repeatedly while polling succeeds.",
+      "expected": "last_transport_ok_at advances; last_new_record_at and canonical freshness do not; expected trading-session input becomes stale.",
+      "required_validation": "scheduler/health integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A07",
+      "title": "source recovery and gaps",
+      "given_or_action": "Disconnect a stream; restore with a replay window containing duplicates and revisions.",
+      "expected": "Resume committed cursor, preserve duplicate receipt provenance, append revisions and record unrecoverable gaps rather than pretending complete coverage.",
+      "required_validation": "connector recovery integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A08",
+      "title": "multi-store publish recovery",
+      "given_or_action": "Crash after DuckLake commit with batch_id metadata but before PG READY manifest.",
+      "expected": "Recovery locates the exact committed catalog snapshot and publishes once; no second duplicate batch append; unregistered snapshot never appears as latest.",
+      "required_validation": "database/object-store fault injection",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A09",
+      "title": "PIT revisions",
+      "given_or_action": "Publish observation revision 2 after historical decision_as_of.",
+      "expected": "Historical observed-policy decision uses revision available at that time; new release may use revision 2; existing release and evidence unchanged.",
+      "required_validation": "PIT integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A10",
+      "title": "outbox ack loss",
+      "given_or_action": "Publish event, lose producer confirmation/status write, redeliver to consumer.",
+      "expected": "One inbox row and one business effect per logical consumer; same ID with different hash raises conflict; commit precedes ack.",
+      "required_validation": "two-store messaging fault injection",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A11",
+      "title": "parallel holes",
+      "given_or_action": "Process stream sequence 10 and 12 while 11 is pending; also delay a transaction with an earlier sequence-generated identifier.",
+      "expected": "Continuous checkpoint remains 10; no max(id) commit-watermark query skips delayed events.",
+      "required_validation": "concurrent integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A12",
+      "title": "release coherence",
+      "given_or_action": "Attempt READY with missing required plans or stale bars; attempt modifying components of a READY release.",
+      "expected": "Commit rejected; page remains on previous complete bundle; new release changes whole page coherently.",
+      "required_validation": "PostgreSQL deferred trigger and API integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A13",
+      "title": "release concurrency",
+      "given_or_action": "Race component update with BUILDING→READY publication in two DB sessions.",
+      "expected": "Release row locking and immutable guards prevent READY package mutation; successful publication is hash-consistent and includes one outbox event.",
+      "required_validation": "two-session PostgreSQL integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A14",
+      "title": "scope-sensitive cache",
+      "given_or_action": "Same instrument/parameters queried for two accounts and for two availability or adjustment policies.",
+      "expected": "Different full keys and correct scope; no account position/plan leaks through a public or shared key.",
+      "required_validation": "cache contract integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A15",
+      "title": "layout persistence and lost update",
+      "given_or_action": "Save layout, evict all derived caches, then race two updates against same layout_version.",
+      "expected": "Layout survives eviction; only one matching optimistic version update wins; second receives VERSION_CONFLICT.",
+      "required_validation": "API/DB integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A16",
+      "title": "taxonomy PIT and sector ranking",
+      "given_or_action": "Change sector membership after a historical selection and regenerate report.",
+      "expected": "Original membership snapshot retained; sector ranking scope, classification owner/version and horizon remain explicit.",
+      "required_validation": "PIT ranking integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A17",
+      "title": "ranking-plan identity",
+      "given_or_action": "Link ranking for instrument A/release X to plan for B/release Y.",
+      "expected": "Core trigger rejects identity/release mismatch; a mere FK to any plan is insufficient. Validate the trigger with a real PostgreSQL transaction.",
+      "required_validation": "cross-domain PostgreSQL trigger invariant",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A18",
+      "title": "hot window completeness",
+      "given_or_action": "Store a partial bar range without marking the matching bars.window result READY.",
+      "expected": "API rebuilds from the pinned Lake snapshot or returns not-ready; it does not label a partial table scan complete.",
+      "required_validation": "chart integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A19",
+      "title": "schema and client parity",
+      "given_or_action": "Generate TS/Python clients and roundtrip decimal strings, UTC timestamps, nullable quality values and unknown optional fields.",
+      "expected": "Client schema validates the same contract; decimals unchanged; invalid units/required-field breaks produce machine-readable errors.",
+      "required_validation": "contract/generator integration",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A20",
+      "title": "mixed workload capacity",
+      "given_or_action": "Replay planned ingestion with interactive ranking/chart workload and background research on declared data/hardware.",
+      "expected": "Publish raw timings, resource usage, backlog and consistency errors; decide ClickHouse addition using measured targets, not invented throughput.",
+      "required_validation": "benchmark, not executed in this delivery",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A21",
+      "title": "database deployment and constraints",
+      "given_or_action": "Create empty database and apply all integrated SQL; run deferred trigger, FK and concurrent transaction examples.",
+      "expected": "Migration succeeds and rejects designed counterexamples; static parser alone cannot count as this acceptance.",
+      "required_validation": "PostgreSQL runtime test, not executed in this delivery",
+      "status": "not_executed"
+    },
+    {
+      "id": "DB-A22",
+      "title": "restore and reconciliation",
+      "given_or_action": "Restore app PG/catalog/object references/outbox to a consistent recovery point.",
+      "expected": "READY references resolve with correct hashes; pending events replay safely; source cursors and ledger versions reconcile; missing objects explicitly detected.",
+      "required_validation": "recovery rehearsal",
+      "status": "not_executed"
+    }
+  ]
+}

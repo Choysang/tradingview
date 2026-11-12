@@ -1,0 +1,74 @@
+[
+  {
+    "id": "CS01",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/yoon26b/yoon26b.pdf",
+    "status": "downloaded",
+    "pages": 34,
+    "bytes": 6183239,
+    "sha256": "28b0700356d31a616f798def0ba91a81f15bd99dea29ef481a7c4fdefc8ffd18",
+    "first_text": "Designing Observation and Action Models for Efficient Reinforcement Learning\nwith LLMs\nDeunsol Yoon 1 Sunghoon Hong 1 Whiyoung Jung 1 Junseok Park 1 Geon-Hyeong Kim 1 Woohyung Lim "
+  },
+  {
+    "id": "CS02",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/liu26j/liu26j.pdf",
+    "status": "downloaded",
+    "pages": 23,
+    "bytes": 8198952,
+    "sha256": "34b08f0b2622b7358d91550f5611099da3934150da5f7d77f3b1c03a8a6265ba",
+    "first_text": "Active Curriculum Refinement for Reinforcement Learning\nZhenya Liu 1 Yuxin Chen 1\nAbstract\nIn many RL domains, environments are linked by\nprerequisite relations—e.g., difficulty-in"
+  },
+  {
+    "id": "CS03",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/gerogiannis26a/gerogiannis26a.pdf",
+    "status": "downloaded",
+    "pages": 28,
+    "bytes": 8981687,
+    "sha256": "0bd76f7833beb5e9da5c94796eb0c2acb602d2d41615e4414b2deb5d951e76dc",
+    "first_text": "DAL: A Practical Prior-Free Black-Box Framework\nfor Piecewise Stationary Bandits\nArgyrios Gerogiannis 1 Yu-Han Huang 1 Subhonmesh Bose 1 Venugopal V. Veeravalli 1\nAbstract\nWe intro"
+  },
+  {
+    "id": "CS04",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/ann26a/ann26a.pdf",
+    "status": "downloaded",
+    "pages": 28,
+    "bytes": 2150733,
+    "sha256": "e57e4ea5a69b1a05fc349c874814e8798c5ed8cbfae9a7cd23773fb074ab73f2",
+    "first_text": "Generalized Linear Bandits with Memory\nHeesang Ann * 1 Hyunjun Choi * 1 Taehyun Hwang * 1 Younghoon Shin 1 Haeju Cheong 2 Min-hwan Oh 1\nAbstract\nWe study generalized linear bandits"
+  },
+  {
+    "id": "CS05",
+    "url": "https://raw.githubusercontent.com/mlresearch/v336/main/assets/maynard-zhang26a/maynard-zhang26a.pdf",
+    "status": "downloaded",
+    "pages": 32,
+    "bytes": 442748,
+    "sha256": "0aed44fa74a7bab904d2c17abedbc47a49351de6c0cf312c84a598de8a4d1edb",
+    "first_text": "Proceedings of Machine Learning Research vol :1–32, 2026\n39th Annual Conference on Learning Theory\nOn the Complexity of Best-Arm Identification in Non-Stationary\nLinear Bandits\nLeo"
+  },
+  {
+    "id": "CS06",
+    "url": "https://raw.githubusercontent.com/mlresearch/v300/main/assets/genalti26a/genalti26a.pdf",
+    "status": "downloaded",
+    "pages": 25,
+    "bytes": 1085587,
+    "sha256": "0025928559efccbef2290a9f0b632d3995aaf430c817394db68c92e2715b1078",
+    "first_text": "Catoni-Style Change Point Detection for Regret Minimization\nin Piecewise-Stationary Heavy-Tailed Bandits\nGianmarco Genalti\nSujay Bhatt\nNicola Gatti\nAlberto Maria Metelli\nPolitecnic"
+  },
+  {
+    "id": "CS07",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/bagatella26a/bagatella26a.pdf",
+    "status": "downloaded",
+    "pages": 19,
+    "bytes": 2764414,
+    "sha256": "0ffb526abd369f6d89c657aaeb9d6f4f7d15fa26c2c40ba8e3c10a5a1973760f",
+    "first_text": "Test-time Offline Reinforcement Learning on Goal-related Experience\nMarco Bagatella * 1 2 Mert Albaba * 1 2 Jonas Hübotter 1 Georg Martius 2 3 Andreas Krause 1\nAbstract\nFoundation "
+  },
+  {
+    "id": "CS08",
+    "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/stouras26a/stouras26a.pdf",
+    "status": "downloaded",
+    "pages": 21,
+    "bytes": 1144513,
+    "sha256": "e7362158af43ffce20b039be3b3eeb9869783374ee600008f1f5f3956ec7f559",
+    "first_text": "Retriever Portfolios: A Principled Approach to Adaptive RAG\nMiltiadis Stouras 1 Vincent Cohen-Addad 2 Silvio Lattanzi 2 Ola Svensson 1\nAbstract\nRetrieval-augmented generation (RAG)"
+  }
+]

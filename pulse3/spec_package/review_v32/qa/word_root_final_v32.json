@@ -1,0 +1,521 @@
+{
+  "reviewer": "/root",
+  "source_render": "report_render_v32_02",
+  "scope": {
+    "first_page": 129,
+    "last_page": 170,
+    "expected_pages": 42
+  },
+  "method": "Original PNG per-page visual inspection, max two per tool call; source-line display verified additionally using page160 native crop and PDF text bounds.",
+  "summary": {
+    "visually_inspected": 42,
+    "pass": 42,
+    "revision_required": 0
+  },
+  "pages": [
+    {
+      "page": 129,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-129.png",
+      "image_sha256": "7663aca66e493aefde552939ef05301e77dfa43e897c2f0a849a138ce85fb50a",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 130,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-130.png",
+      "image_sha256": "666ee23fc4113bf0fa91091e5324d890cc204d43187625f5b945fd7b96e0d9b0",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 131,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-131.png",
+      "image_sha256": "2c3e9e3bc979aaeb89c5bd00f918c215536e03c719a3bdcb761861830c8ce986",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 132,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-132.png",
+      "image_sha256": "172bb75f68f5d36965568eef8ecd1ce883c60414843c1de3d1e9a8a81fbd45a5",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 133,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-133.png",
+      "image_sha256": "38628171895390ca18b0649f143af9d0bc8f18fa8a921c16780fb4220168e2bf",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 134,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-134.png",
+      "image_sha256": "faaed839f65fcf082eff36ca6de922a99b192c6e36a99d595c6bee9ca29f290f",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 135,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-135.png",
+      "image_sha256": "3104f78ff300c13cf4921d2c02d1d90b659c36c571e4ba25a7d559aa938b6ef3",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 136,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-136.png",
+      "image_sha256": "4c1d29f478686b3cc854ff820eb975013afb8e8f3baa4edc541d290518eab2e6",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 137,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-137.png",
+      "image_sha256": "5fb46af277a7c132d1f89633a7531eae1e17314ba6f6418de6585ccfeca0ce0d",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 138,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-138.png",
+      "image_sha256": "9a41dda8bc54a4f472ab03794e92e0348ef2ca5d596938539072159933da7c5d",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 139,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-139.png",
+      "image_sha256": "9a55c1e2fd78337c5eca8334c7a54a2e9b68b1c984270cfb34d04dc306010baa",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 140,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-140.png",
+      "image_sha256": "267a86bb64c66da0d165c5c88613dff0dd6e81f86fe568680989a648d17deec5",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 141,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-141.png",
+      "image_sha256": "611e631441eb6263017a45b48f7cb07f6c484ae02b734f9397a29ebfaf69df03",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 142,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-142.png",
+      "image_sha256": "5705f089a7fbaf7c8b4707b664c9f8f650b2e6cf9015f73c8a754f474fc20926",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 143,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-143.png",
+      "image_sha256": "05a4c1faed84aff5c0f478833b0753709b7f77d91bcfd8e7652178255b836569",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 144,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-144.png",
+      "image_sha256": "6ac904bc47424c6fcbdb5574fa55fa29ac012800dfe3a92980e919b83dbf0a6b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 145,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-145.png",
+      "image_sha256": "d5edb6daf30c2554a8f98dc104dcc4e92bb6c6da623cb6969ce0c55b7bd3a30c",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 146,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-146.png",
+      "image_sha256": "2232ed00c1e8df6e7018a89a08865bcaacfed47ecd5048bf1c99e4b8fdc22c9b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 147,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-147.png",
+      "image_sha256": "d6d20416f1a7af54695430c265d13332ad03af30e4921c45044dcccb6fbcc104",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 148,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-148.png",
+      "image_sha256": "842ad918a15ec15788be383940dda582e67bddc34f2354f579592f556ec37ec5",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 149,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-149.png",
+      "image_sha256": "05d415c3c90836c27592ac1cff3318152a5441bdd10323c72ac95336c72a3d96",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 150,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-150.png",
+      "image_sha256": "e189d48f29079241fe3ed4b45b3628f153c2aeeb4c25240c646b68747670d4a6",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 151,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-151.png",
+      "image_sha256": "c516c5ea3cf0843b553457ba7bf517bec55d3038631c8b5b2b8d296f1712308b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 152,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-152.png",
+      "image_sha256": "d4e4cc7e3af9fb1ec6b1ad3c41809fc6ba65d049df804be35a795658a26abc36",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 153,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-153.png",
+      "image_sha256": "120478e0d41c735adc16179a188b024905351c3631feb4dcb920a0e0f963646e",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 154,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-154.png",
+      "image_sha256": "e2683486e2b07e0fc744e0df10fa33b496d54c71099e211f3984bf86edc7662b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 155,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-155.png",
+      "image_sha256": "28c1f40b9ea86ace8c2539c0e8e35721e57b5bf26c5d50a89503961b6a9aaaa1",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 156,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-156.png",
+      "image_sha256": "fb64a519770620f8896fba1762b8ce51bd7027664e61792b3c8646305a2901b8",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 157,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-157.png",
+      "image_sha256": "988b0c55f41dbd5a8b69758110dfb4b34d4d3ed42b9a19badfb8cea545a0a6a1",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 158,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-158.png",
+      "image_sha256": "6248665884347d4ede24b966cba9bbc09e769dfde3d4ae1e1795d554f922bcf1",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 159,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-159.png",
+      "image_sha256": "62072f54be30783d867a32142e1380609720b5b68e15375a88756a83162dfb33",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 160,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-160.png",
+      "image_sha256": "3734b77d50f426d0a699033ccf21986573b74304e79c6e9fc2a314447ce0ea3f",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 161,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-161.png",
+      "image_sha256": "013913c5649b461771a7209661e7609611efbcffe63d3818bdc0faca42ce556d",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 162,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-162.png",
+      "image_sha256": "2124652350e3a19f52fb23b0ed2a8cd72cf133f5307dcf5bda72cbb816b5c226",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 163,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-163.png",
+      "image_sha256": "2623fc2607a187a7464d2e2eb4c34619a813e931d5b17e37ca6b88495638d204",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 164,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-164.png",
+      "image_sha256": "cdbe0cc45c2c65a2ae5bb30c9f20fcb7b86f033836cf5522be1d71d45cab7ae8",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 165,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-165.png",
+      "image_sha256": "596f3d7ec099eafee36e38ecccf4efa30db43101a19e35310ec44267150b221e",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 166,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-166.png",
+      "image_sha256": "49de4c679dbadba54c1a151ddb3445a6ff8bcd11612b3916e57639f7aebe5496",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 167,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-167.png",
+      "image_sha256": "2694e4f3f16e5192cde371914f8b5443ef8e93386fbae9b2f9df259d84df6bc3",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 168,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-168.png",
+      "image_sha256": "fa6b7a8977a7e1fb15a15607f676281143984e73088879b62d2c7bdb44e5324c",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 169,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-169.png",
+      "image_sha256": "79d091bca6f71262d1cb2724dd1063f53082a25b9a3d887370de189a028b322b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 170,
+      "status": "pass",
+      "note": "原尺寸逐页视觉检查；文献卡标题、元数据、说明与来源保持同卡，未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_02/page-170.png",
+      "image_sha256": "d4fda9aba484a1392f2474d604d649e64687bc9a09ec303771aee6bf7b79e4ab",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    }
+  ]
+}

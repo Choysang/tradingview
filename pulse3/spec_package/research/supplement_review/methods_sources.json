@@ -1,0 +1,276 @@
+[
+  {
+    "source_id": "VM-S01",
+    "title": "MERA official WWW2025 Companion metadata and abstract",
+    "url": "https://www.sigweb.sigweb.hosting.acm.org/toc/www25b.html",
+    "tool_refs": [
+      "turn165search0",
+      "turn187view2"
+    ],
+    "read_depth": "publisher_catalog_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S02",
+    "title": "UMI author institution method summary",
+    "url": "https://www.bigscity.com/publications/learning-universal-multi-level-market-irrationality-factors-to-improve-stock-return-forecasting/index.html",
+    "tool_refs": [
+      "turn165search3",
+      "turn176view1"
+    ],
+    "read_depth": "author_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S02a",
+    "title": "UMI author code and input descriptions",
+    "url": "https://github.com/lIcIIl/UMI",
+    "tool_refs": [
+      "turn171view1"
+    ],
+    "read_depth": "author_readme",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S02b",
+    "title": "KDD2025 research paper registry",
+    "url": "https://kdd.org/kdd2025/research-track-papers-2/",
+    "tool_refs": [
+      "turn165search4"
+    ],
+    "read_depth": "official_venue_registry",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S03",
+    "title": "SAMBA IEEE publication metadata",
+    "url": "https://ieeexplore.ieee.org/document/10888749/",
+    "tool_refs": [
+      "turn175search2"
+    ],
+    "read_depth": "publisher_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S03a",
+    "title": "SAMBA author fulltext",
+    "url": "https://arxiv.org/html/2410.03707v2",
+    "tool_refs": [
+      "turn181view2",
+      "turn183view2"
+    ],
+    "read_depth": "targeted_fulltext_model_and_evaluation",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S04",
+    "title": "HRFT ACM publication",
+    "url": "https://doi.org/10.1145/3701716.3715235",
+    "tool_refs": [
+      "turn165search2"
+    ],
+    "read_depth": "publisher_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S04a",
+    "title": "HRFT/IRFT author code",
+    "url": "https://github.com/wencyxu/IRF-LLM-accepted-at-WWW25-",
+    "tool_refs": [
+      "turn171view2"
+    ],
+    "read_depth": "author_readme",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S05",
+    "title": "Hawkes-Structured Network fulltext",
+    "url": "https://arxiv.org/html/2610.16524v1",
+    "tool_refs": [
+      "turn183view4",
+      "turn183view5"
+    ],
+    "read_depth": "targeted_fulltext_sections_3_to_5",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S05a",
+    "title": "Hawkes-Structured Network author metadata",
+    "url": "https://arxiv.org/abs/2610.16524",
+    "tool_refs": [
+      "turn175view0"
+    ],
+    "read_depth": "author_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S05b",
+    "title": "ICAIF2026 accepted papers",
+    "url": "https://icaif2026.org/accepted-papers/",
+    "tool_refs": [
+      "turn167search1"
+    ],
+    "read_depth": "official_venue_registry",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S06",
+    "title": "DeepScalper author fulltext",
+    "url": "https://arxiv.org/html/2201.09058v3",
+    "tool_refs": [
+      "turn181view3",
+      "turn183view3"
+    ],
+    "read_depth": "targeted_fulltext_sections_4_1_to_4_3_and_evaluation",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S06a",
+    "title": "DeepScalper official CIKM2022 registry",
+    "url": "https://www.sigweb.org/toc/cikm22.html",
+    "tool_refs": [
+      "turn167search7"
+    ],
+    "read_depth": "official_venue_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S06b",
+    "title": "DeepScalper author metadata",
+    "url": "https://arxiv.org/abs/2201.09058",
+    "tool_refs": [
+      "turn176view3"
+    ],
+    "read_depth": "author_metadata",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S07",
+    "title": "RAM NeurIPS2025 official abstract",
+    "url": "https://papers.neurips.cc/paper_files/paper/2025/hash/76981cb7a06b5ad53639f5bbe9924388-Abstract-Conference.html",
+    "tool_refs": [
+      "turn167search4",
+      "turn171view3"
+    ],
+    "read_depth": "official_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S08",
+    "title": "TradingAgents author version history",
+    "url": "https://arxiv.org/abs/2412.20138",
+    "tool_refs": [
+      "turn175view1"
+    ],
+    "read_depth": "author_metadata_and_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S09",
+    "title": "FinMem AAAI Symposium Series publication",
+    "url": "https://ojs.aaai.org/index.php/AAAI-SS/article/view/31290",
+    "tool_refs": [
+      "turn170search1",
+      "turn186search0"
+    ],
+    "read_depth": "publisher_search_returned_abstract_and_metadata_open_blocked",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S09a",
+    "title": "FinMem first preprint",
+    "url": "https://arxiv.org/abs/2311.13743",
+    "tool_refs": [
+      "turn186academia8"
+    ],
+    "read_depth": "author_abstract",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S10",
+    "title": "TradingView volume profile measurement semantics",
+    "url": "https://www.tradingview.com/support/solutions/43000502040-volume-profile-indicators-basic-concepts/",
+    "tool_refs": [
+      "turn183view0",
+      "turn178search0"
+    ],
+    "read_depth": "official_product_docs",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S11",
+    "title": "Broker CYQ approximation explanation",
+    "url": "https://www.essence.com.cn/axhelp/jbtx_5.jsp",
+    "tool_refs": [
+      "turn183view1",
+      "turn185view1"
+    ],
+    "read_depth": "official_product_docs",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S12",
+    "title": "TradingView pivot/repainting semantics",
+    "url": "https://www.tradingview.com/pine-script-docs/v5/concepts/repainting/",
+    "tool_refs": [
+      "turn178search2"
+    ],
+    "read_depth": "official_product_docs",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S13",
+    "title": "CFA information ratio definition",
+    "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/using-multifactor-models",
+    "tool_refs": [
+      "turn189search2"
+    ],
+    "read_depth": "official_education_summary",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S14",
+    "title": "Qlib signal and portfolio benchmark metrics",
+    "url": "https://github.com/microsoft/qlib/blob/main/examples/benchmarks/README.md",
+    "tool_refs": [
+      "turn189search3",
+      "turn189search6"
+    ],
+    "read_depth": "official_project_docs",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  },
+  {
+    "source_id": "VM-S15",
+    "title": "SciPy randomized permutation p-value conventions",
+    "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
+    "tool_refs": [
+      "turn189search0"
+    ],
+    "read_depth": "official_technical_docs",
+    "role": "supports_method_or_identity_not_project_profitability",
+    "verified_date": "2026-11-11"
+  }
+]

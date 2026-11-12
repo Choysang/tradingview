@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:supplemental:v31",
+  "title": "Pulse v3.1 registered payload extensions",
+  "description": "Five strict task payloads for existing v3 slots. No new HTTP operation or SQL table. Numeric/time/identity primitives reference the unchanged v3 contract.",
+  "$defs": {
+    "CommunityForecastPayload": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "target_spec_ref": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/ArtifactRef"
+        },
+        "forecast_as_of": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp",
+          "description": "Original prediction information cutoff supported by source publication/version evidence. Later platform reception does not rewrite this instant or backdate actual document/claim available_at. Retrospectively discovered forecasts are a separate evaluation cohort."
+        },
+        "horizon_start_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "horizon_end_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prediction_probability": {
+          "anyOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "probability_origin": {
+          "type": "string",
+          "enum": [
+            "source_explicit",
+            "not_provided"
+          ]
+        },
+        "source_document_revision_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "source_evidence_ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "invalidation_condition": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "instrument_id",
+        "target_spec_ref",
+        "forecast_as_of",
+        "horizon_start_at",
+        "horizon_end_at",
+        "session_id",
+        "prediction_probability",
+        "probability_origin",
+        "source_document_revision_id",
+        "source_evidence_ordinal",
+        "invalidation_condition"
+      ],
+      "additionalProperties": false,
+      "description": "Payload of EvidenceClaim with assertion_type=forecast and predicate=community_binary_forecast. Its claim_schema_version is the qualified token pulse.community_forecast@1.0. A registered binary target artifact owns price/return basis, corporate actions, threshold, horizon calendar and invalidation semantics. forecast_as_of is the evidence-supported original prediction cutoff, not platform ingestion or parsing completion. Actual document/claim available_at remains unchanged and governs platform decision PIT. Probability is quoted only when source explicitly states it. Together with the containing claim_revision_id, source_document_revision_id and source_evidence_ordinal uniquely bind claim_evidence; ordinal alone is ambiguous."
+    },
+    "CommunityOutcomePayload": {
+      "type": "object",
+      "properties": {
+        "claim_revision_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "forecast_payload_hash": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Hash"
+        },
+        "target_spec_hash": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Hash"
+        },
+        "evaluation_snapshot_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "scoring_policy_version": {
+          "const": "brier_binary_decimal12_v1"
+        },
+        "horizon_end_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "computed_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "label_state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "resolved",
+            "unresolvable"
+          ]
+        },
+        "label_available_at": {
+          "anyOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "brier_error": {
+          "anyOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "claim_revision_id",
+        "forecast_payload_hash",
+        "target_spec_hash",
+        "evaluation_snapshot_id",
+        "scoring_policy_version",
+        "horizon_end_at",
+        "computed_at",
+        "label_state",
+        "label_available_at",
+        "label",
+        "brier_error",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "description": "Immutable feature artifact, not an overwrite of the source forecast. forecast_payload_hash uses the project canonical JSON payload serialization policy, not arbitrary source-document bytes. Semantic validator binds target hash and canonical forecast payload hash, label availability and Brier score. Actual claim identity/reference resolution is additionally required in Repository."
+    },
+    "ConvertibleRelationPayload": {
+      "type": "object",
+      "properties": {
+        "underlying_instrument_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "effective_from": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "effective_to": {
+          "anyOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "underlying_instrument_id",
+        "effective_from",
+        "effective_to"
+      ],
+      "additionalProperties": false,
+      "description": "Payload under claim_schema_version=pulse.convertible_relation@1.0, subject_kind=instrument, subject_key=convertible instrument UUID, predicate=convertible_underlying_of. Repository validates both instrument identities/types, evidence and PIT visibility. This relation alone does not define conversion price or debt trading support."
+    },
+    "ChartLayerDescriptor": {
+      "type": "object",
+      "properties": {
+        "layer_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layer_kind": {
+          "type": "string",
+          "enum": [
+            "anchored_vwap",
+            "volume_profile",
+            "cost_distribution_estimate",
+            "auction_imbalance",
+            "order_cancellation",
+            "news",
+            "seat",
+            "plan",
+            "community"
+          ]
+        },
+        "required_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "minute_bars",
+              "quote_snapshots",
+              "individual_trades",
+              "full_order_events",
+              "historical_documents",
+              "historical_community",
+              "published_plans"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "input_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:pulse:contracts:v3#/$defs/ArtifactRef"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "data_status": {
+          "type": "string",
+          "enum": [
+            "available",
+            "partial",
+            "unavailable"
+          ]
+        },
+        "derivation_kind": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "deterministic",
+            "estimated"
+          ]
+        },
+        "price_basis": {
+          "anyOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/AdjustmentMode"
+            },
+            {
+              "const": "not_applicable"
+            }
+          ]
+        },
+        "window_start_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "window_end_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "available_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "layer_id",
+        "layer_kind",
+        "required_capabilities",
+        "input_artifacts",
+        "data_status",
+        "derivation_kind",
+        "price_basis",
+        "window_start_at",
+        "window_end_at",
+        "available_at",
+        "assumptions",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "description": "Typed artifact referenced from Workspace.chart_window_refs; no new Workspace or SourceHealth property. Capabilities describe verified inputs, not merely an installed chart plugin."
+    },
+    "MacdProfile": {
+      "type": "object",
+      "properties": {
+        "profile_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timeframe": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timeframe"
+        },
+        "fast_period": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "slow_period": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "signal_period": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ema_seed": {
+          "type": "string",
+          "enum": [
+            "first_value",
+            "sma_seed"
+          ]
+        },
+        "hist_multiplier": {
+          "type": "string",
+          "enum": [
+            "1",
+            "2"
+          ]
+        },
+        "min_completed_bars": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "closed_bars_only": {
+          "const": true
+        },
+        "pivot_left_bars": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pivot_right_bars": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pivot_available_rule": {
+          "const": "right_closed_confirmation_only"
+        }
+      },
+      "required": [
+        "profile_version",
+        "timeframe",
+        "fast_period",
+        "slow_period",
+        "signal_period",
+        "ema_seed",
+        "hist_multiplier",
+        "min_completed_bars",
+        "closed_bars_only",
+        "pivot_left_bars",
+        "pivot_right_bars",
+        "pivot_available_rule"
+      ],
+      "additionalProperties": false,
+      "description": "Internal feature parameters bound by FeatureKey.parameter_digest; min_completed_bars >= slow_period + signal_period - 1 is this project profile policy, not a universal proof of convergence. Adjustment/numeric/source versions remain in FeatureKey."
+    }
+  }
+}

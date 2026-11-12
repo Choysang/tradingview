@@ -1,0 +1,285 @@
+{
+  "schema_version": "3.0-evidence.1",
+  "checked_at": "2026-11-10",
+  "coverage": "selected primary documents directly supporting the delivered database design, not a claim of exhaustive web coverage",
+  "sources": [
+    {
+      "evidence_id": "DB01",
+      "title": "PostgreSQL Table Partitioning",
+      "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Partition pruning depends on partition bounds and query predicates.",
+        "Partitioned-table unique/primary constraints must include partition key columns.",
+        "Partition count and application workload affect the tradeoff; partitioning is not an unconditional speedup."
+      ],
+      "read_scope": "Overview, declarative partitioning, limitations, pruning and best-practice sections.",
+      "limits": [
+        "No Pulse benchmark was run. Observed current documentation labels itself PostgreSQL 18; prerelease banner is not evidence of a newer stable version."
+      ],
+      "retrieval_refs": [
+        "turn118view2",
+        "turn151view0"
+      ]
+    },
+    {
+      "evidence_id": "DB02",
+      "title": "PostgreSQL Transaction Isolation",
+      "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Read Committed statements may see different committed snapshots within one transaction.",
+        "Repeatable Read provides a stable transaction snapshot, and serialization conflicts require application handling.",
+        "Sequence increments are visible independently of transaction rollback and cannot establish commit order."
+      ],
+      "read_scope": "Isolation comparison, sequence caveat, Read Committed/Repeatable Read/Serializable behavior.",
+      "limits": [
+        "The source does not prove this project implements correct retry, cursor or multi-store coordination."
+      ],
+      "retrieval_refs": [
+        "turn118view3",
+        "turn151view1"
+      ]
+    },
+    {
+      "evidence_id": "DB03",
+      "title": "PostgreSQL CREATE TABLE",
+      "url": "https://www.postgresql.org/docs/current/sql-createtable.html",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Column and table constraints have distinct semantics.",
+        "Foreign keys and unique constraints enforce declared relations, not arbitrary JSON payload or PIT meanings."
+      ],
+      "read_scope": "Constraint and partition grammar reference used for schema design.",
+      "limits": [
+        "pglast static parsing is not PostgreSQL execution."
+      ],
+      "retrieval_refs": [
+        "turn131view2"
+      ]
+    },
+    {
+      "evidence_id": "DB04",
+      "title": "ClickHouse MergeTree",
+      "url": "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "MergeTree sorting and sparse index design is workload-dependent.",
+        "Primary keys do not impose row uniqueness.",
+        "TTL processing is tied to background processing and is not an instantaneous application guarantee."
+      ],
+      "read_scope": "Index, sorting/primary key and TTL sections.",
+      "limits": [
+        "No evidence establishes a universal row-count threshold at which ClickHouse is required."
+      ],
+      "retrieval_refs": [
+        "turn118view0",
+        "turn130view2"
+      ]
+    },
+    {
+      "evidence_id": "DB05",
+      "title": "ClickHouse ReplacingMergeTree",
+      "url": "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replacingmergetree",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Replacement/deduplication occurs through merges and is not immediate uniqueness.",
+        "ORDER BY determines duplicate identity; a version column can select a revision."
+      ],
+      "read_scope": "Deduplication, version and merge behavior.",
+      "limits": [
+        "Query-time consistency must be designed and benchmarked; the engine is not the cash-ledger transaction store."
+      ],
+      "retrieval_refs": [
+        "turn118view1",
+        "turn130view3"
+      ]
+    },
+    {
+      "evidence_id": "DB06",
+      "title": "DuckLake Transactions",
+      "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/transactions",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "DuckLake has transactional snapshot semantics for its own catalog/data operations."
+      ],
+      "read_scope": "Transactions and snapshot isolation discussion.",
+      "limits": [
+        "This does not grant atomicity with an independent PostgreSQL business transaction or an external API."
+      ],
+      "retrieval_refs": [
+        "turn117search3"
+      ]
+    },
+    {
+      "evidence_id": "DB07",
+      "title": "DuckLake Snapshots",
+      "url": "https://ducklake.select/docs/stable/duckdb/usage/snapshots",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Committed change sets create catalog snapshots.",
+        "Snapshots expose ID, commit metadata and optional extra information.",
+        "Catalog identity must accompany a snapshot identifier in a multi-catalog application."
+      ],
+      "read_scope": "Snapshot listing, current/last committed snapshot functions and commit-extra-info example.",
+      "limits": [
+        "The final claim about catalog identity is application design inferred from catalog-scoped access, not a cross-catalog global-ID guarantee. Recovery by batch ID must be implemented by Pulse."
+      ],
+      "retrieval_refs": [
+        "turn117search6",
+        "turn151view2"
+      ]
+    },
+    {
+      "evidence_id": "DB08",
+      "title": "NATS JetStream pull consumers",
+      "url": "https://docs.nats.io/learn/jetstream/pull-consumers",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Pull consumers support explicitly acknowledged batch fetching and continuously driven pull consumption.",
+        "Fetch size, timeout and consumer bounds must be set by application workload."
+      ],
+      "read_scope": "Pull patterns, fetch/consume examples and bounded batch discussion.",
+      "limits": [
+        "This page does not prove end-to-end exactly-once business effects. Database inbox/outbox and side-effect idempotency are Pulse design obligations."
+      ],
+      "retrieval_refs": [
+        "turn131view0",
+        "turn151view3"
+      ]
+    },
+    {
+      "evidence_id": "DB09",
+      "title": "Tushare daily",
+      "url": "https://tushare.pro/document/2?doc_id=27",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "daily vol is in hands and amount is in thousand yuan.",
+        "pre_close is described as an ex-rights reference price, and pct_chg is in percent.",
+        "Daily raw/unadjusted data and postclose fields have endpoint-specific publication/coverage meanings."
+      ],
+      "read_scope": "Input/output field table, unadjusted/availability notes and postclose optional fields.",
+      "limits": [
+        "No authenticated live call made. Synthetic fixtures validate only the documented conversion and cannot certify real intraday completeness. Postclose inclusion must be verified, never blindly added."
+      ],
+      "retrieval_refs": [
+        "turn126view0",
+        "turn130view0"
+      ]
+    },
+    {
+      "evidence_id": "DB10",
+      "title": "Tushare rt_k",
+      "url": "https://tushare.pro/document/2?doc_id=372",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "rt_k vol is in shares and amount is in yuan, unlike daily.",
+        "The endpoint exposes cumulative intraday fields and a trade count; optional trade_time may be absent."
+      ],
+      "read_scope": "Endpoint description, permission note and output fields.",
+      "limits": [
+        "No entitlement or live connection established. A cumulative snapshot is not an independent interval bar."
+      ],
+      "retrieval_refs": [
+        "turn126view1",
+        "turn130view1"
+      ]
+    },
+    {
+      "evidence_id": "DB11",
+      "title": "AKShare stock_zh_a_hist",
+      "url": "https://akshare.akfamily.xyz/data/stock/stock_quote.html",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Chinese field 成交量 is in hands and 成交额 in yuan.",
+        "The adjust parameter distinguishes raw/forward-adjusted/backward-adjusted outputs.",
+        "AKShare documents Eastmoney as this endpoint underlying source."
+      ],
+      "read_scope": "stock_zh_a_hist input/output tables and example under stock quote documentation.",
+      "limits": [
+        "AKShare is an adapter; two Eastmoney-derived paths are not independent original market observations. Synthetic examples do not imply service availability or authorization."
+      ],
+      "retrieval_refs": [
+        "turn136view0",
+        "turn138view0",
+        "turn138view1"
+      ]
+    },
+    {
+      "evidence_id": "DB12",
+      "title": "OpenAPI Specification directory",
+      "url": "https://spec.openapis.org/oas/",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "The official specification has multiple published versions; a contract must select an explicit supported version."
+      ],
+      "read_scope": "Official version directory.",
+      "limits": [
+        "The directory alone does not validate a selected TypeScript/Python generator or semantic compatibility. Pulse must lock and test its actual toolchain."
+      ],
+      "retrieval_refs": [
+        "turn123search2"
+      ]
+    },
+    {
+      "evidence_id": "DB13",
+      "title": "Apache Arrow Columnar Format",
+      "url": "https://arrow.apache.org/docs/format/Columnar.html",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Arrow defines a language-independent typed columnar representation, including decimal and timestamp types."
+      ],
+      "read_scope": "Format overview and type/layout definitions.",
+      "limits": [
+        "Arrow is not a data-quality or transaction coordinator; no zero-copy guarantee is claimed for every transport/driver."
+      ],
+      "retrieval_refs": [
+        "turn131view1"
+      ]
+    },
+    {
+      "evidence_id": "DB15",
+      "title": "DuckLake Conflict Resolution",
+      "url": "https://ducklake.select/docs/stable/duckdb/advanced_features/conflict_resolution",
+      "publisher": "official project/provider documentation",
+      "retrieved_on": "2026-11-10",
+      "source_type": "primary",
+      "supported_claims": [
+        "Concurrent metadata/data operations can require retries or conflict handling rather than unconditional success."
+      ],
+      "read_scope": "Conflict-resolution documentation.",
+      "limits": [
+        "Pulse retry policy, idempotency and exact compatible extension versions remain implementation work."
+      ],
+      "retrieval_refs": [
+        "turn117search5"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "status": "passed_static_name_and_coverage_checks",
+  "subfeatures": 21,
+  "resource_mappings": 16,
+  "dataset_job_page_mappings": 20,
+  "public_operations": 31,
+  "sql_tables": 80,
+  "work_package_roles": {
+    "W01": "契约与集成",
+    "W02": "数据库",
+    "W03": "来源与消息",
+    "W04": "行情与特征",
+    "W05": "选股与板块",
+    "W06": "计划与组合",
+    "W07": "执行与账本",
+    "W08": "前端与工作台",
+    "W09": "研究与联赛",
+    "W10": "独立验收"
+  },
+  "source_hashes": {
+    "database/core_schema.sql": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2",
+    "execution/ledger_schema.sql": "0639b4fa05274633691961e407911418cd5f8e3bad611bd26812e32411cd8e85",
+    "sources_sectors/sources_sectors_schema.sql": "71f36e99075a7ccd26fcc1ec06afc2c256157ec36e336d3178705c1052e2b354",
+    "integration/integration_schema.sql": "ce2c2189f8197416b0bdbb6f179b0e7d095907e5495f59973a8300be9df0c758",
+    "contracts/openapi.json": "8ed3c090c7b10a36998a0f3773c81c1509d772bb3ca5f7d1ffcd81ffd94713da",
+    "contracts/api_bindings.json": "dfaa2ab0886cd0eabe31422e1580ac1f99097f57fbe21eb9d5809b6535525d87",
+    "traceability/work_packages.json": "a42abf8433b5ca1b829396b16ca12c4199f1db2a07929a3455eca80ebfc70ba2"
+  },
+  "limits": [
+    "静态检查验证表名/operationId/owner确实存在，不代表生产服务已实现",
+    "新扩展未改动OpenAPI 3.0.0，仍需合同/迁移和真实验收"
+  ]
+}

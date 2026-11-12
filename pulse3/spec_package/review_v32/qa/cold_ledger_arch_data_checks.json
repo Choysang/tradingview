@@ -1,0 +1,73 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T02:50:05.412833+00:00",
+  "scope": "跨作者关键数据逻辑冷审；容量算术、快照反例、SQLite精度独立微型检查。不是生产负载测试。",
+  "documents": [
+    {
+      "path": "research_v5/reviews/arch_data.json",
+      "sha256": "e8dfaccb79675b587431438662b3ff14cf570c37aa7c214289513ab5e6d4449a"
+    },
+    {
+      "path": "research_v5/reviews/arch_data.md",
+      "sha256": "164b55c868f8427fc9205b891ae3ebdc8340a2e11f5b6e7e0ec464182d73a135"
+    },
+    {
+      "path": "research_v5/evidence/arch_data_counterexamples.json",
+      "sha256": "1e8e33b8edea3d5dc7fe0c7bd493e95c1e19cc14a237f006c27f98ca16f06d76"
+    },
+    {
+      "path": "research_v5/input/03-architecture.md",
+      "sha256": "eba3e4542b45735abbd86d84ec9344d8288e8b2eb3369753b993463cdd95f3fd"
+    },
+    {
+      "path": "research_v5/input/04-data.md",
+      "sha256": "58e48358d772f6b4b06c764d77496e6f032e45026b172b12c08932019ee7d15a"
+    }
+  ],
+  "coverage": {
+    "required": 335,
+    "covered": 335,
+    "duplicates": [],
+    "missing": [],
+    "invalid_bindings": []
+  },
+  "arithmetic_recomputed": {
+    "canonical_60_2MB_x250": "15.05",
+    "raw_299_9MB_x250": "74.975",
+    "subtotal_table_items_at_upper_bounds": "36.5",
+    "daily_minute_rows_at_240_per_session": "1440000",
+    "year_minute_rows_at_250_sessions": "360000000",
+    "raw_canonical_retained_ingress_gb_per_trading_day_example": "0.3601",
+    "at_13_5GB_free_and_8GB_floor_example_days": "15.2735351291307970008331019161344071091363510136073312968620",
+    "process_peak_gb": "3.35",
+    "non_worker_process_gb": "1.35"
+  },
+  "sqlite_recomputed": {
+    "input": "12345678901234567890123456.123456789012",
+    "storage_type": "real",
+    "returned": "1.2345678901234568e+25",
+    "equal_decimal": false,
+    "runtime": "3.53.1",
+    "int64_scaled_at_1e12_abs_max": "9223372.036854775807"
+  },
+  "snapshot_recomputed": {
+    "at_snapshot": 1,
+    "active_filter": [],
+    "interval_filter": [
+      "F1"
+    ],
+    "as_of_2_latest": "R1",
+    "as_of_3_latest_status": "invalid; do not fall back to R1"
+  },
+  "capacity_evidence_consistent": true,
+  "status": "pass_with_one_gc_publication_concurrency_clarification",
+  "unresolved": [
+    {
+      "id": "CL-AD01",
+      "topic": "GC versus pending publication",
+      "need": "pending/staged objects hold pin or lease; GC and publish share catalog lock or CAS to prevent READY pointing to just-deleted object",
+      "type": "protocol clarification, not observed production incident"
+    }
+  ],
+  "optional_note": "SQLite定标int64在scale=1e12时最大约9223372.036854775807；不能等同NUMERIC(38,12)全范围，须文本/大整数适配或显式缩小金额域。"
+}

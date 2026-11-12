@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.0",
+  "research_as_of": "2026-11-10",
+  "scope": "Unified execution/economic ledger/performance foundations, not full market-rule extraction",
+  "engineering_decisions_not_claimed_as_standards": [
+    "single deterministic ledger",
+    "weighted_average_gross analytical cost",
+    "numeric(38,12) and Decimal precision 50",
+    "common OrderStateMachine/ReservationBook across adapters",
+    "same canonical facts yield identical journal"
+  ],
+  "sources": [
+    {
+      "source_id": "EXS01",
+      "title": "IFRS 9 Financial Instruments — official issued-standard summary",
+      "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn120view1",
+      "published_or_updated": null,
+      "effective_from": null,
+      "read_scope": "Public official summary; no claim to have read licensed full standard",
+      "supported_claims": [
+        "IFRS 9 concerns recognition/classification/measurement of financial instruments",
+        "Initial transaction-cost treatment depends on classification; FVTPL is an exception to capitalizing directly attributable transaction costs"
+      ],
+      "limitations": [
+        "Does not prescribe A-share matching, all customer account fee policies or a universal cost-basis method",
+        "This reference is an economic analysis ledger, not a statutory IFRS statement"
+      ]
+    },
+    {
+      "source_id": "EXS02",
+      "title": "IFRS 13 Fair Value Measurement — official issued-standard summary",
+      "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-13-fair-value-measurement/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn120view2",
+      "published_or_updated": null,
+      "effective_from": null,
+      "read_scope": "Public official summary",
+      "supported_claims": [
+        "Fair value uses an orderly-transaction exit-price concept and a measurement framework"
+      ],
+      "limitations": [
+        "Does not guarantee a quoted bar price was executable for a particular order",
+        "No formal IFRS compliance claim"
+      ]
+    },
+    {
+      "source_id": "EXS03",
+      "title": "GIPS Standards Handbook for Firms",
+      "url": "https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn120view0",
+      "published_or_updated": null,
+      "effective_from": null,
+      "read_scope": "Targeted full-page sections on trade-date accounting, transaction costs, valuation, external flows and TWR; not a claim of complete 9,000-line handbook reading",
+      "supported_claims": [
+        "Trade-date accounting values transactions before cash settlement",
+        "Transaction costs are included even in gross-of-fees returns",
+        "TWR treatment should neutralize external capital flows with consistent methodology"
+      ],
+      "limitations": [
+        "2020 edition framework, not a newly invented 2026 GIPS edition",
+        "Product borrowing selected principles is not GIPS compliance or verification"
+      ]
+    },
+    {
+      "source_id": "EXS04",
+      "title": "2026 CFA curriculum: Overview of the Global Investment Performance Standards",
+      "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn153view0",
+      "published_or_updated": "2026 curriculum",
+      "effective_from": null,
+      "read_scope": "Official public introduction, learning outcomes and summary; full paid reading not read",
+      "supported_claims": [
+        "The 2026 refresher explains the 2020 GIPS edition",
+        "Return calculation, cash and fees, valuation and verification are distinct GIPS subjects"
+      ],
+      "limitations": [
+        "Curriculum year is 2026, not a claim that GIPS itself was replaced in 2026"
+      ]
+    },
+    {
+      "source_id": "EXS05",
+      "title": "FIX Order State Changes — FIX Latest as of EP258 July 2020",
+      "url": "https://www.fixtrading.org/wp-content/uploads/download-manager-files/Order-State-Changes.pdf",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn124view0",
+      "published_or_updated": "2020-07",
+      "effective_from": null,
+      "read_scope": "Official 56-page PDF targeted state-transition examples: pending cancel/fills/cancel confirmation/trade correct-cancel",
+      "supported_claims": [
+        "A pending cancellation can overlap further executions",
+        "Order state uses cumulative and remaining quantities",
+        "Trade corrections/cancellations reference prior execution identity"
+      ],
+      "limitations": [
+        "The retrieved artifact identifies EP258 July 2020; not asserted to be newest 2026 FIX revision",
+        "FIX is a communication and business-state protocol, not an A-share accounting/settlement rule"
+      ]
+    },
+    {
+      "source_id": "EXS06",
+      "title": "关于发布《上海证券交易所交易规则（2026年修订）》的通知",
+      "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn120view3",
+      "published_or_updated": "2026-04-24",
+      "effective_from": "2026-07-06",
+      "read_scope": "Official notice page and attachment listing; DOCX body and all deferred clauses not exhaustively read",
+      "supported_claims": [
+        "2026 revised rules take effect 2026-07-06 and replace the 2023 edition",
+        "Notice separately identifies provisions whose implementation remains deferred"
+      ],
+      "limitations": [
+        "Must ingest and validate the actual rule body, deferred provisions and security-specific amendments before a production RuleRegistry release"
+      ]
+    },
+    {
+      "source_id": "EXS07",
+      "title": "深圳证券交易所交易规则（2026年修订）",
+      "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn120view4",
+      "published_or_updated": "2026-04-24",
+      "effective_from": "2026-07-06",
+      "read_scope": "Official PDF targeted clauses 3.1.4, 3.2.6–3.2.7, 3.3.13, 3.3.21, 3.4.2–3.4.6, 4.4 and 10.9",
+      "supported_claims": [
+        "Securities generally cannot be resold before settlement except permitted revolving-trading instruments",
+        "Price/time priority and distinct auction/continuous matching apply",
+        "Unfilled quantity/cancellation confirmation require explicit handling",
+        "Mainboard and ChiNext price-limit profiles differ and include exceptions",
+        "Ex-right/ex-dividend reference pricing has explicit rules",
+        "Effective date is 2026-07-06"
+      ],
+      "limitations": [
+        "Selected rules are not a complete market-rule engine",
+        "Do not apply the ordinary-stock T+1 reference to all ETFs, bonds or other permitted intraday instruments",
+        "Broker cash reuse and settlement statements require separate channel evidence"
+      ]
+    },
+    {
+      "source_id": "EXS08",
+      "title": "GIPS Q&A: external cash flow clarification",
+      "url": "https://www.gipsstandards.org/qadatabase/4807/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn153view1",
+      "published_or_updated": null,
+      "effective_from": "2020-01-01",
+      "read_scope": "Full substantive FAQ, current status",
+      "supported_claims": [
+        "External flows are capital entering/exiting a portfolio",
+        "Income receipts and transaction costs are not external flows",
+        "Fee/expense treatment differs by gross-of-fees versus net-of-fees presentation and must be declared"
+      ],
+      "limitations": [
+        "FAQ also treats expense payments as external flows; do not extrapolate the transaction-cost statement to every expense category",
+        "Reference TWR covers explicit capital flows and transaction costs, not all fee presentations"
+      ]
+    },
+    {
+      "source_id": "EXS09",
+      "title": "上海证券交易所收费一览表（2026年1月）",
+      "url": "https://www.sse.com.cn/services/tradingservice/charge/ssecharge/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn155view0",
+      "published_or_updated": "2026-01",
+      "effective_from": null,
+      "read_scope": "Official current fee table, A-share exchange handling fee rows and payer column",
+      "supported_claims": [
+        "A-share competitive-auction handling fee is 0.00341% of consideration in each direction in the shown schedule",
+        "The exchange charges members/other specified participants; this is not the complete client commission"
+      ],
+      "limitations": [
+        "Product/transaction type and temporary exemptions vary",
+        "Do not add this again if the broker commission already includes exchange fees"
+      ]
+    },
+    {
+      "source_id": "EXS10",
+      "title": "深交所收费及代收税费标准（2026年1月）",
+      "url": "https://www.szse.cn/marketServices/deal/payFees/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn154search2",
+      "published_or_updated": "2026-01",
+      "effective_from": null,
+      "read_scope": "Official-domain search result with detailed fee table; direct open timed out (turn155view1)",
+      "supported_claims": [
+        "Search-exposed official table lists A-share handling fee 0.0341 per mille, equivalent to SSE 0.00341%",
+        "Schedule distinguishes exchange handling and regulatory charges"
+      ],
+      "limitations": [
+        "Reading depth is indexed official table, not a successful direct page download",
+        "Cross-checked the rate against EXS09; production rule registry should retain the fetched original document"
+      ]
+    },
+    {
+      "source_id": "EXS11",
+      "title": "上海证券交易所 股票投资一件事 — 交易收费说明",
+      "url": "https://one.sse.com.cn/onething/gptz/",
+      "retrieved_on": "2026-11-10",
+      "source_kind": "official_primary_publisher",
+      "retrieval_ref": "turn155view2",
+      "published_or_updated": null,
+      "effective_from": null,
+      "read_scope": "Official investor guide fee section (also exposed in official search result turn154search5)",
+      "supported_claims": [
+        "Guide separately explains stamp tax, regulatory/exchange fees, transfer fee and broker commission",
+        "Guide explains exchange/regulatory charges may be contained in broker commission"
+      ],
+      "limitations": [
+        "This is exchange investor education, not the primary tax authority or settlement-operator notice",
+        "Use the tax/clearing authority rules and customer contract before producing the real cost profile",
+        "Do not use other guide sections instead of the effective 2026 trading rules"
+      ]
+    }
+  ]
+}

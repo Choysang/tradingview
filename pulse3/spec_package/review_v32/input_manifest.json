@@ -1,0 +1,117 @@
+{
+  "files": [
+    {
+      "file": "README.md",
+      "lines": 90,
+      "bytes": 7432,
+      "sha256": "b5613eb492614a1212cc7b20680c6c27ed32a1ecfc80fe2d3bca81fab5ad9a2e",
+      "units": 71,
+      "substantive_units": 58,
+      "nonblank_lines": 72,
+      "nonblank_lines_covered": 72
+    },
+    {
+      "file": "01-audit.md",
+      "lines": 248,
+      "bytes": 24940,
+      "sha256": "589d42d69f35fa432e716a2428fea324928c891e597356530cb86f4b149eb550",
+      "units": 195,
+      "substantive_units": 156,
+      "nonblank_lines": 198,
+      "nonblank_lines_covered": 198
+    },
+    {
+      "file": "02-product.md",
+      "lines": 197,
+      "bytes": 16233,
+      "sha256": "041299423a0f07d6d74081b19b5e0dd38b70ef6f7b1371b3bc76e7bb691c279c",
+      "units": 134,
+      "substantive_units": 100,
+      "nonblank_lines": 155,
+      "nonblank_lines_covered": 155
+    },
+    {
+      "file": "03-architecture.md",
+      "lines": 291,
+      "bytes": 27960,
+      "sha256": "eba3e4542b45735abbd86d84ec9344d8288e8b2eb3369753b993463cdd95f3fd",
+      "units": 149,
+      "substantive_units": 116,
+      "nonblank_lines": 232,
+      "nonblank_lines_covered": 232
+    },
+    {
+      "file": "04-data.md",
+      "lines": 414,
+      "bytes": 39972,
+      "sha256": "58e48358d772f6b4b06c764d77496e6f032e45026b172b12c08932019ee7d15a",
+      "units": 292,
+      "substantive_units": 219,
+      "nonblank_lines": 323,
+      "nonblank_lines_covered": 323
+    },
+    {
+      "file": "05-signals.md",
+      "lines": 361,
+      "bytes": 27629,
+      "sha256": "eabcf54ff3c6640ebd36de0cd11111841b54e2b95b4bf44368d1f8aa65e8e65d",
+      "units": 247,
+      "substantive_units": 185,
+      "nonblank_lines": 264,
+      "nonblank_lines_covered": 264
+    },
+    {
+      "file": "06-strategy.md",
+      "lines": 429,
+      "bytes": 36748,
+      "sha256": "f3599493506e9cacad1db136db46adc856fa9b1ec187bcb71c10d50b68702abe",
+      "units": 285,
+      "substantive_units": 219,
+      "nonblank_lines": 329,
+      "nonblank_lines_covered": 329
+    },
+    {
+      "file": "07-sim-ledger.md",
+      "lines": 291,
+      "bytes": 22068,
+      "sha256": "99df3537f95b1b7dbe2e2984a460975b012e8db1eb703b43e3fff49c9eac0ff0",
+      "units": 204,
+      "substantive_units": 154,
+      "nonblank_lines": 219,
+      "nonblank_lines_covered": 219
+    },
+    {
+      "file": "08-build-plan.md",
+      "lines": 221,
+      "bytes": 18559,
+      "sha256": "3c32cd50d66a373fcdfa954efda3e6b713996eda71c42705a710931c87f7fd16",
+      "units": 167,
+      "substantive_units": 127,
+      "nonblank_lines": 178,
+      "nonblank_lines_covered": 178
+    },
+    {
+      "file": "09-evidence.md",
+      "lines": 251,
+      "bytes": 27247,
+      "sha256": "f104ccb253e2133f61f7c5a7c68f0df0026537e12769204a12501915f5d44afb",
+      "units": 205,
+      "substantive_units": 163,
+      "nonblank_lines": 206,
+      "nonblank_lines_covered": 206
+    },
+    {
+      "file": "10-decisions.md",
+      "lines": 43,
+      "bytes": 6590,
+      "sha256": "506d49ace8b8518b8c5e71edf689dc951c3046ab6cf6456a8a42537e58acbc52",
+      "units": 35,
+      "substantive_units": 27,
+      "nonblank_lines": 36,
+      "nonblank_lines_covered": 36
+    }
+  ],
+  "total_lines": 2836,
+  "total_units": 1984,
+  "substantive_units": 1524
+}

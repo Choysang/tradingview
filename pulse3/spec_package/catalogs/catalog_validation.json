@@ -1,0 +1,98 @@
+{
+  "checked_at": "2026-11-11",
+  "passed_checks": 20,
+  "checks": [
+    {
+      "check": "61 strategy candidates retain S identities",
+      "passed": true
+    },
+    {
+      "check": "105 factor candidates retain F identities",
+      "passed": true
+    },
+    {
+      "check": "strategy UUIDs are deterministic and unique",
+      "passed": true
+    },
+    {
+      "check": "only six formal roles across registry and taxonomy",
+      "passed": true
+    },
+    {
+      "check": "primary and supporting roles remain distinct and formal",
+      "passed": true
+    },
+    {
+      "check": "all component/delegated/account roles use the same enum",
+      "passed": true
+    },
+    {
+      "check": "all strategy facet tags resolve to controlled shared values",
+      "passed": true
+    },
+    {
+      "check": "primary method is represented in method tags",
+      "passed": true
+    },
+    {
+      "check": "all strategy factor references resolve",
+      "passed": true
+    },
+    {
+      "check": "all candidates remain unimplemented and production routing disabled",
+      "passed": true
+    },
+    {
+      "check": "all factors remain unimplemented and not connected",
+      "passed": true
+    },
+    {
+      "check": "no simulated profitability or training runs invented",
+      "passed": true
+    },
+    {
+      "check": "factor missing data separates value field quality and condition",
+      "passed": true
+    },
+    {
+      "check": "quality_status never uses unknown",
+      "passed": true
+    },
+    {
+      "check": "units are controlled or require explicit binding",
+      "passed": true
+    },
+    {
+      "check": "unknown is not a unit and vectors have component units",
+      "passed": true
+    },
+    {
+      "check": "circulating market cap basis and threshold retained",
+      "passed": true
+    },
+    {
+      "check": "T overlays are holding forms and execution RL stays execution",
+      "passed": true
+    },
+    {
+      "check": "mixed raw score averaging is not an enabled route",
+      "passed": true
+    },
+    {
+      "check": "actual availability and reconstructed availability are distinct",
+      "passed": true
+    }
+  ],
+  "strategy_count": 61,
+  "factor_count": 105,
+  "role_counts": {
+    "entry": 18,
+    "selection": 32,
+    "allocation": 3,
+    "execution": 1,
+    "exit": 4,
+    "holding": 3
+  },
+  "production_routes_enabled": 0,
+  "live_data_or_strategy_returns_tested": false
+}

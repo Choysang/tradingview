@@ -1,0 +1,579 @@
+{
+  "reviewer": "/root/v32_arch_data",
+  "review_date": "2026-11-11",
+  "source_render": "report_render_v32_02",
+  "render_page_count": 170,
+  "scope": {
+    "first_page": 44,
+    "last_page": 86,
+    "expected_pages": 43
+  },
+  "method": "Every assigned complete PNG opened at original resolution using view_image, maximum two per call. Later pages and previews requiring clarification were opened singly. No thumbnails or text extraction substituted for visual inspection.",
+  "read_only": true,
+  "checks": [
+    "clipping",
+    "overlap",
+    "garbled glyphs",
+    "page breaks",
+    "short tails",
+    "near blank pages"
+  ],
+  "summary": {
+    "visually_inspected": 43,
+    "pass": 41,
+    "pass_with_note": 2,
+    "needs_fix": 0,
+    "blocking_pages": [],
+    "optional_polish_pages": [
+      50,
+      84
+    ],
+    "no_clipping_overlap_or_garbled_glyphs_observed": true
+  },
+  "previous_blocking_finding": {
+    "prior_render": "report_render_v32_01",
+    "prior_page": 52,
+    "kind": "near_blank_short_tail",
+    "status": "closed",
+    "evidence_pages": [
+      51,
+      52
+    ],
+    "evidence": "原第52页的两行尾段已完整收回最终第51页；最终第52页为正常第七部分开页。"
+  },
+  "pages": [
+    {
+      "page": 44,
+      "status": "pass",
+      "note": "章节开页及特征身份表完整，长字段正常换行。",
+      "image_path": "report_render_v32_02/page-44.png",
+      "native_resolution_opened": true,
+      "image_sha256": "2dc18dc8af48f96b9b1efc437d1bf88cc82ace45516efad27932d43995caed12",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 45,
+      "status": "pass",
+      "note": "依赖图、箭头、图注及前后正文清楚，无裁切或重叠。",
+      "image_path": "report_render_v32_02/page-45.png",
+      "native_resolution_opened": true,
+      "image_sha256": "19ea5db2af3190cf022f942f53622bdd428574a7381396b0907fd9af0faa03a4",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 46,
+      "status": "pass",
+      "note": "四层状态表与单位小节完整，段落及长英文未越界。",
+      "image_path": "report_render_v32_02/page-46.png",
+      "native_resolution_opened": true,
+      "image_sha256": "8841ef956dbb66825e7ac4caa05ad5dc24bacde28db6bb1b4ec5252fb4e2136c",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 47,
+      "status": "pass",
+      "note": "六类职责表可读，单元格换行及页尾条目完整。",
+      "image_path": "report_render_v32_02/page-47.png",
+      "native_resolution_opened": true,
+      "image_sha256": "345cc3eafab204be9380aa4ac93c6b19952248041b16c9a1ebbb707959565c39",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 48,
+      "status": "pass",
+      "note": "组合、身份和参考实现小节完整，代码标识自然换行。",
+      "image_path": "report_render_v32_02/page-48.png",
+      "native_resolution_opened": true,
+      "image_sha256": "f0c208069a749e0134ce17247c1f89c42c88fa10a883bd0f15a51f1a1b5c7a2c",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 49,
+      "status": "pass",
+      "note": "联赛章节开页及EvaluationContext表正常，跨页在完整行边界。",
+      "image_path": "report_render_v32_02/page-49.png",
+      "native_resolution_opened": true,
+      "image_sha256": "eb6c1cb6bfe36dc9fc28eea253292d352db1314aacd5504aa324aa655c939433",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 50,
+      "status": "pass_with_note",
+      "note": "EvaluationContext表一行续表仍在页首，重复表头完整；仅可选分页微调，无阅读障碍。",
+      "issue": {
+        "severity": "minor",
+        "kind": "short_table_tail",
+        "location": "页首续表",
+        "blocking": false
+      },
+      "image_path": "report_render_v32_02/page-50.png",
+      "native_resolution_opened": true,
+      "image_sha256": "dcc67b9a5e44e932c514ed0be16d74bcfb6ee9f1195892190998522471bbdfaf",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 51,
+      "status": "pass",
+      "note": "原第52页的两行章末内容已全部收回本页，末段完整且不挤压页脚。",
+      "image_path": "report_render_v32_02/page-51.png",
+      "native_resolution_opened": true,
+      "image_sha256": "26a6ca9f360fec02500829afb3ee3a15bd5547ddbd9868c5ebeaa928e3e861c5",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 52,
+      "status": "pass",
+      "note": "现为正常第七部分开页；原两行近空白页已消除。",
+      "image_path": "report_render_v32_02/page-52.png",
+      "native_resolution_opened": true,
+      "image_sha256": "3a1b344d009d280f6427a81f2b4f4a8a5170bf04e4bdc584762309eee5d0f6a8",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 53,
+      "status": "pass",
+      "note": "发布对象表和提交顺序完整，长字段及列表未溢出。",
+      "image_path": "report_render_v32_02/page-53.png",
+      "native_resolution_opened": true,
+      "image_sha256": "ddbd138bdaa49803108beb9965118b0f26f5b610cdd89d7dd1564f1cc2122094",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 54,
+      "status": "pass",
+      "note": "历史可见性与报价小节完整，长版本标识和代码路径正常换行。",
+      "image_path": "report_render_v32_02/page-54.png",
+      "native_resolution_opened": true,
+      "image_sha256": "5c22cadf020a3479484899f5ea41b4290bd4705afbeffafa1aa796a6e29c8543",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 55,
+      "status": "pass",
+      "note": "实时叠层和研究协议排版清楚，正文完整，无孤立短尾。",
+      "image_path": "report_render_v32_02/page-55.png",
+      "native_resolution_opened": true,
+      "image_sha256": "134e3cf15f76a98a2f3b79f2d65e190267e64b8eecd7ae575a88c0b461e6369b",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 56,
+      "status": "pass",
+      "note": "SQL到API映射表列宽和折行正常，表底与页脚没有冲突。",
+      "image_path": "report_render_v32_02/page-56.png",
+      "native_resolution_opened": true,
+      "image_sha256": "159c5d37531735ac32e232c091f899f321eea1d83ada85a5ab2071369207d845",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 57,
+      "status": "pass",
+      "note": "章节收尾含完整多段内容与命令行，章末留白正常。",
+      "image_path": "report_render_v32_02/page-57.png",
+      "native_resolution_opened": true,
+      "image_sha256": "ba73cbd285a447f5f5278034052a96cfd3a8935ca81450cae5a1b2786bbe1071",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 58,
+      "status": "pass",
+      "note": "论文章节与六组复现表完整，英文方法名折行正常。",
+      "image_path": "report_render_v32_02/page-58.png",
+      "native_resolution_opened": true,
+      "image_sha256": "1ab0449e054335a9f5270d0e778c3861ec80ca28486b3ca07cda05039924ce87",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 59,
+      "status": "pass",
+      "note": "AP01—AP04研究卡连续可读，长英文标题和来源链接未越界。",
+      "image_path": "report_render_v32_02/page-59.png",
+      "native_resolution_opened": true,
+      "image_sha256": "c2c658ffcca72df1e4912644e1270f61e2701af428b3300e1247a81a474a7692",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 60,
+      "status": "pass",
+      "note": "AP05—AP08中英研究卡层次清楚，链接及正文无重叠。",
+      "image_path": "report_render_v32_02/page-60.png",
+      "native_resolution_opened": true,
+      "image_sha256": "89fbb2712765185f49dac080694e94a0faaa9aaa4932c0ca8f14943897d3b4e7",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 61,
+      "status": "pass",
+      "note": "AP09—AP11与续文完整，页面连续阅读自然。",
+      "image_path": "report_render_v32_02/page-61.png",
+      "native_resolution_opened": true,
+      "image_sha256": "51db8d86a23530972f47f8f7866568c4cc2708eb64eb6f003f903c55163cee29",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 62,
+      "status": "pass",
+      "note": "AP12—AP15全部段落及页底续句可见，无文字裁切。",
+      "image_path": "report_render_v32_02/page-62.png",
+      "native_resolution_opened": true,
+      "image_sha256": "91dbf95aeece36f4b0743de460eb2569c0941e3094e9e8771f97b3557e880767",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 63,
+      "status": "pass",
+      "note": "AP16—AP19标题与正文连贯，长英文和出版状态正常折行。",
+      "image_path": "report_render_v32_02/page-63.png",
+      "native_resolution_opened": true,
+      "image_sha256": "d8911692a2447ae8da3fdfe5a358a42bd8b52c4dfc782729652c6e37d80b340a",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 64,
+      "status": "pass",
+      "note": "因双图预览标签疑点再次单页原尺寸核看，AP20—AP23标签和全部文字均完整。",
+      "image_path": "report_render_v32_02/page-64.png",
+      "native_resolution_opened": true,
+      "image_sha256": "278c25d7efac425fb5239c7bc5f395f7ed80863ee44966b952e4ffc259309f97",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 65,
+      "status": "pass",
+      "note": "EP01—EP03及前页续文完整，英文方法名和来源正常显示。",
+      "image_path": "report_render_v32_02/page-65.png",
+      "native_resolution_opened": true,
+      "image_sha256": "8abe23a9740bff5f3654c89eccdf758ffc1a3739b07d67e7c3f3d25f0b7df68d",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 66,
+      "status": "pass",
+      "note": "再次单页原尺寸检查，EP04—EP07的段落标签与全部内容均完整。",
+      "image_path": "report_render_v32_02/page-66.png",
+      "native_resolution_opened": true,
+      "image_sha256": "b46a60720b4e1ff0d50462935c65634c487e5efdb58971f653f2a5b6dc506a35",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 67,
+      "status": "pass",
+      "note": "EP08—EP10及续文可读，长英文和数字没有重叠。",
+      "image_path": "report_render_v32_02/page-67.png",
+      "native_resolution_opened": true,
+      "image_sha256": "2a98c6eb3aea7da5d529ad003269cb17243fd067d0694a248c97fc3313c0cb34",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 68,
+      "status": "pass",
+      "note": "再次单页打开确认EP11—EP14所有标签及文字完整，无缺字或裁切。",
+      "image_path": "report_render_v32_02/page-68.png",
+      "native_resolution_opened": true,
+      "image_sha256": "c74fb543c2c1a8d420b6d1b2ae92343fd3dcd7a0332092d6bc4e6b040648c2e4",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 69,
+      "status": "pass",
+      "note": "EP15及章节结尾小节完整，段落连续且无近空白短尾。",
+      "image_path": "report_render_v32_02/page-69.png",
+      "native_resolution_opened": true,
+      "image_sha256": "4bc7c247e43f7436e145a616fe3e5f1a12b4fa7f1c0bb2a463ba055d9a3441bf",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 70,
+      "status": "pass",
+      "note": "计算机与强化学习章节开页完整，CS01/CS02粗体标签和长标识清晰。",
+      "image_path": "report_render_v32_02/page-70.png",
+      "native_resolution_opened": true,
+      "image_sha256": "9e113d19b51ffebb400865ccf4e2294083029be5571616af138129c5790be152",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 71,
+      "status": "pass",
+      "note": "CS03/CS04及前页续文完整，段落标签、英文基准和中文均可读。",
+      "image_path": "report_render_v32_02/page-71.png",
+      "native_resolution_opened": true,
+      "image_sha256": "9553cc6d73cfa95b895782c2abed0eda6dfd8000abdb10dea492e54a809a65ab",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 72,
+      "status": "pass",
+      "note": "CS05/CS06及续文标题和正文完整，长基准标识正常折行。",
+      "image_path": "report_render_v32_02/page-72.png",
+      "native_resolution_opened": true,
+      "image_sha256": "9974d8b7d12598195fc175c23de7108638f89c3c1d37f5e73d3752b148712fac",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 73,
+      "status": "pass",
+      "note": "CS07/CS08、补读说明及续文完整，粗体标签清楚，页尾没有裁切。",
+      "image_path": "report_render_v32_02/page-73.png",
+      "native_resolution_opened": true,
+      "image_sha256": "a10b27f2545d3b6ce61c73dfb14400e639b879830bece3031db71ea6bf8b2601",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 74,
+      "status": "pass",
+      "note": "章末保留多段完整正文与补充说明；较大留白属于正常章节收尾，不是近空白短尾。",
+      "image_path": "report_render_v32_02/page-74.png",
+      "native_resolution_opened": true,
+      "image_sha256": "ffeaacb5e7799ffef1df3b8b23977be403531247326706cd9eddce1c4b96f0dd",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 75,
+      "status": "pass",
+      "note": "十大平台表与产品边界清楚，页尾小节标题带正文且未孤悬。",
+      "image_path": "report_render_v32_02/page-75.png",
+      "native_resolution_opened": true,
+      "image_sha256": "d7c2c2fc45c2a63ea2837a610a6a20fd57438787338beaad4d6b74dfbdaaf25c",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 76,
+      "status": "pass",
+      "note": "平台能力映射各段清楚，长英文ID及页尾说明完整。",
+      "image_path": "report_render_v32_02/page-76.png",
+      "native_resolution_opened": true,
+      "image_sha256": "d81cdf4dc832bbbb0ebdc50ecda74a281e21397f0b5cf491577d03cd31ee2d28",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 77,
+      "status": "pass",
+      "note": "回放、回测、网格和账户能力段落完整，编号与长术语没有重叠。",
+      "image_path": "report_render_v32_02/page-77.png",
+      "native_resolution_opened": true,
+      "image_sha256": "3ae909bedf4c2cb3f611e4a9903e668993dce681a64ecfa405bf804d6c19dda0",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 78,
+      "status": "pass",
+      "note": "账户/组合段落和56项能力索引首段表格完整，跨页在完整行之间。",
+      "image_path": "report_render_v32_02/page-78.png",
+      "native_resolution_opened": true,
+      "image_sha256": "2b27b1bd7e13e772e57be2b3172266c27d2ce2c9d03d4d6c4265be2ad8d158cc",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 79,
+      "status": "pass",
+      "note": "大表续页完整，重复表头、列边界和末行均可见。",
+      "image_path": "report_render_v32_02/page-79.png",
+      "native_resolution_opened": true,
+      "image_sha256": "3f6c85dc1d35a183614846ceaa3abb904152ce795ec5220299d331ec24ae47b6",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 80,
+      "status": "pass",
+      "note": "能力索引续表和收尾说明完整，列宽及留白正常。",
+      "image_path": "report_render_v32_02/page-80.png",
+      "native_resolution_opened": true,
+      "image_sha256": "6f9f1d2c14c8349dd34afdbe854dc36a1b16d249fa84649ac27e4f6e086a3d2c",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 81,
+      "status": "pass",
+      "note": "审计章节开页、基线说明和问题表完整，长Git哈希正常显示。",
+      "image_path": "report_render_v32_02/page-81.png",
+      "native_resolution_opened": true,
+      "image_sha256": "5d6dd5de84d329abb5a1e8d51a6976d95f9b91d2b8f917cdfbaf4763c4b15df3",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 82,
+      "status": "pass",
+      "note": "审计续表及C01/C02证据条目完整，代码路径正常换行。",
+      "image_path": "report_render_v32_02/page-82.png",
+      "native_resolution_opened": true,
+      "image_sha256": "5bf8e7df91f83dcdfa46259485cb82409be27fdae7419f030d112731d9a43132",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 83,
+      "status": "pass",
+      "note": "C02续文及C03—C05条目完整，长路径未越过页边或压住页脚。",
+      "image_path": "report_render_v32_02/page-83.png",
+      "native_resolution_opened": true,
+      "image_sha256": "1bae924ac930aabac4236305c6611852fef6795c42dcb460eb6ec489840c42f2",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 84,
+      "status": "pass_with_note",
+      "note": "C08标题后仅一条短属性说明，主体在85页；无孤悬标题或裁切，可选整节移到下一页。",
+      "issue": {
+        "severity": "minor",
+        "kind": "minimal_body_before_page_break",
+        "location": "页尾C08小节",
+        "blocking": false
+      },
+      "image_path": "report_render_v32_02/page-84.png",
+      "native_resolution_opened": true,
+      "image_sha256": "31947d38f8e661a2cb2897b927de6c4662ebd6b5f67be364c6c905d743e92a97",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 85,
+      "status": "pass",
+      "note": "C08续文及C09/C10完整，密集代码证据没有溢出或页底裁切。",
+      "image_path": "report_render_v32_02/page-85.png",
+      "native_resolution_opened": true,
+      "image_sha256": "1cbf11688586bdbf7aea6db92419d76609450cf3e6d3701f9c8dc5a3ff5747cf",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 86,
+      "status": "pass",
+      "note": "C11—C13审计条目完整，代码路径与长句折行正常，无裁切或乱码。",
+      "image_path": "report_render_v32_02/page-86.png",
+      "native_resolution_opened": true,
+      "image_sha256": "a7e8061a6c81235219a5766f4528f3e8cf2d20500cf8123a9bfa5e9af0a55e01",
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    }
+  ],
+  "limits": [
+    "Read-only layout review of this render; no DOCX changes.",
+    "No new content/fact/code audit performed.",
+    "Any later repagination requires inspection of changed pages."
+  ]
+}

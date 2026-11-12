@@ -1,0 +1,137 @@
+{
+  "granularity": "component and declared invariant; not line-by-line semantic proof",
+  "records": [
+    {
+      "reason_id": "WHY01",
+      "component_path": "reference_system/normalization.py",
+      "requirement_ids": [
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "reason": "Keep raw provenance and make deterministic, endpoint-specific normalization exact.",
+      "invariant_and_boundary": "Never infer source facts; explicit semantic comparisons; invalid precision is rejected."
+    },
+    {
+      "reason_id": "WHY02",
+      "component_path": "reference_system/release_store.py",
+      "requirement_ids": [
+        "R09",
+        "R10",
+        "R38"
+      ],
+      "reason": "Executable local model of complete-version publication and consumer idempotency.",
+      "invariant_and_boundary": "Frozen base, complete view set, atomic pointer/outbox, atomic inbox/effect; SQLite scope only."
+    },
+    {
+      "reason_id": "WHY03",
+      "component_path": "reference_system/source_health.py",
+      "requirement_ids": [
+        "R11"
+      ],
+      "reason": "Distinguish transport liveness from content freshness and committed coverage.",
+      "invariant_and_boundary": "Future clocks rejected; empty responses do not invent freshness; cursor follows durable data."
+    },
+    {
+      "reason_id": "WHY04",
+      "component_path": "reference_features/feature_store.py",
+      "requirement_ids": [
+        "R07",
+        "R08"
+      ],
+      "reason": "Share identical versioned feature work without mutable cache aliasing.",
+      "invariant_and_boundary": "All 19 identity dimensions retained; instrument order meaningful; single-process asyncio scope."
+    },
+    {
+      "reason_id": "WHY05",
+      "component_path": "execution/unified_ledger.py",
+      "requirement_ids": [
+        "R23",
+        "R24",
+        "R25",
+        "R26"
+      ],
+      "reason": "One deterministic economic account reducer for normalized event facts.",
+      "invariant_and_boundary": "Balanced journals, cash/quantity identities, T+1 inventory, reservation and reproducible TWR."
+    },
+    {
+      "reason_id": "WHY06",
+      "component_path": "integration/integration_schema.sql",
+      "requirement_ids": [
+        "R09",
+        "R19",
+        "R20",
+        "R29",
+        "R38"
+      ],
+      "reason": "Persist publication ownership, live overlays, experiments and comparison contexts.",
+      "invariant_and_boundary": "Immutable identities and references; actual PostgreSQL integration is a separate gate."
+    },
+    {
+      "reason_id": "WHY07",
+      "component_path": "integration/build_contracts.py",
+      "requirement_ids": [
+        "R27",
+        "R34"
+      ],
+      "reason": "Generate shared JSON Schema/OpenAPI/bindings from one contract definition.",
+      "invariant_and_boundary": "One authoritative contract output directory; typed references and field names synchronized."
+    },
+    {
+      "reason_id": "WHY08",
+      "component_path": "integration/validate_integration.py",
+      "requirement_ids": [
+        "R34"
+      ],
+      "reason": "Detect unresolved schema refs, API table bindings and SQL FK targets before deployment.",
+      "invariant_and_boundary": "Static checks do not prove database triggers, isolation, permissions or runtime query correctness."
+    },
+    {
+      "reason_id": "WHY09",
+      "component_path": "catalogs/validate_catalogs.py",
+      "requirement_ids": [
+        "R15",
+        "R27",
+        "R28"
+      ],
+      "reason": "Keep candidate identities, units, roles and availability semantics consistent.",
+      "invariant_and_boundary": "No catalog item is falsely promoted to implemented or profitability validated."
+    },
+    {
+      "reason_id": "WHY10",
+      "component_path": "sources_sectors/validate_fixtures.py",
+      "requirement_ids": [
+        "R05",
+        "R11",
+        "R13",
+        "R14",
+        "R17",
+        "R18"
+      ],
+      "reason": "Exercise bounded news, seat, taxonomy and sector examples.",
+      "invariant_and_boundary": "Synthetic check counts are separate from actual source or database integration."
+    },
+    {
+      "reason_id": "WHY11",
+      "component_path": "execution/synthetic_vertical_slice.py",
+      "requirement_ids": [
+        "R19",
+        "R20",
+        "R24",
+        "R34",
+        "R38"
+      ],
+      "reason": "Connect market/sector/workspace/plan/evaluation fixtures under the formal contract and the sole ledger.",
+      "invariant_and_boundary": "No alternate matcher, real source, strategy return claim or deployed API."
+    },
+    {
+      "reason_id": "WHY12",
+      "component_path": "execution/review_contracts_static.py",
+      "requirement_ids": [
+        "R34"
+      ],
+      "reason": "Independently compare SQL FK column types and target unique keys with actual contract bindings.",
+      "invariant_and_boundary": "Static review supplements author validation; runtime PG transactions remain pending."
+    }
+  ]
+}

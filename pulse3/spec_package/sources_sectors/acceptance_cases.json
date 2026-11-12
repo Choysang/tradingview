@@ -1,0 +1,188 @@
+{
+  "schema_version": "3.0",
+  "as_of": "2026-11-10",
+  "status": "acceptance_specification",
+  "cases": [
+    {
+      "case_id": "SS-A01",
+      "title": "有效空响应",
+      "input": "已启用资讯端点返回合法完整空集，轮询成功。",
+      "expected": "传输healthy；不刷新last_new_record_at；无确定内容deadline时freshness可为unknown，不能因没有新闻判异常。"
+    },
+    {
+      "case_id": "SS-A02",
+      "title": "登录页伪装200",
+      "input": "返回200但HTML是登录或验证码，预期JSON缺失。",
+      "expected": "auth_required或解析失败；不算success_empty，不推进游标。"
+    },
+    {
+      "case_id": "SS-A03",
+      "title": "304语义",
+      "input": "条件请求返回not_modified。",
+      "expected": "更新联系成功时间，保留最后新数据时间和内容水位。"
+    },
+    {
+      "case_id": "SS-A04",
+      "title": "429退避",
+      "input": "供应商明确限流，返回重试提示。",
+      "expected": "按有效预算退避；不立即重试风暴，不推进游标。"
+    },
+    {
+      "case_id": "SS-A05",
+      "title": "双通道去重",
+      "input": "同一来源同一文稿版本同时经push和poll到达。",
+      "expected": "一个原始版本与一个逻辑事件；接收批次可各留证据。"
+    },
+    {
+      "case_id": "SS-A06",
+      "title": "旧稿更正",
+      "input": "收到较新事件后又收到旧稿修订。",
+      "expected": "按原始ID和版本追加；不因event_time早于max_seen而丢弃。"
+    },
+    {
+      "case_id": "SS-A07",
+      "title": "崩溃重放",
+      "input": "原始落盘前进程崩溃，或落盘后确认前崩溃。",
+      "expected": "前者游标未推进；后者重复消费幂等，outbox最终到达。"
+    },
+    {
+      "case_id": "SS-A08",
+      "title": "交易日历",
+      "input": "行情午休没有新tick；同一时间新闻可能更新。",
+      "expected": "行情expected_now=false可not_expected；新闻按自身24x7计划检查。"
+    },
+    {
+      "case_id": "SS-A09",
+      "title": "夜间新闻",
+      "input": "海外政策在北京时间23点发布。",
+      "expected": "立即记录并分析；可更新观察计划，不假设A股当时可成交。"
+    },
+    {
+      "case_id": "SS-A10",
+      "title": "转载独立性",
+      "input": "同一新华社原稿在多个站出现，另有一个独立调查。",
+      "expected": "原稿链只计一个origin_group；独立调查另计；未知来源不增票。"
+    },
+    {
+      "case_id": "SS-A11",
+      "title": "金额单位",
+      "input": "上交所显示12.34万元，另一入口显示123400元。",
+      "expected": "精确转换后相等；不是两个相矛盾的金额。"
+    },
+    {
+      "case_id": "SS-A12",
+      "title": "资金算法",
+      "input": "同名资金流来自不同供应商/方法版本。",
+      "expected": "保留不同命名空间，不拼接、不覆盖、不平均生成统一真值。"
+    },
+    {
+      "case_id": "SS-A13",
+      "title": "人气刷新冲突",
+      "input": "同官方URL索引2分钟、直接页脚10分钟。",
+      "expected": "cadence_status=disputed，effective_cadence=null；前端不承诺2分钟。"
+    },
+    {
+      "case_id": "SS-A14",
+      "title": "龙虎榜可得性",
+      "input": "当日盘后公开席位信息，重放当日上午选股。",
+      "expected": "该信息不得进入盘中决策；次日是否可用按available_at判断。"
+    },
+    {
+      "case_id": "SS-A15",
+      "title": "重复披露窗口",
+      "input": "某股票同时有单日和三日累计报告。",
+      "expected": "报告保持独立窗口，未证明不重叠前禁止合并加总。"
+    },
+    {
+      "case_id": "SS-A16",
+      "title": "同席位两侧",
+      "input": "同一已解析营业部在同报告买榜和卖榜出现。",
+      "expected": "保留两边，净额仅在该报告范围派生。"
+    },
+    {
+      "case_id": "SS-A17",
+      "title": "未知席位",
+      "input": "原始用户文本只有前东路。",
+      "expected": "unresolved，canonical_seat_id=null；不纠正成其他营业部。"
+    },
+    {
+      "case_id": "SS-A18",
+      "title": "机构局部编号",
+      "input": "两天都出现机构专用1。",
+      "expected": "默认两个报告局部标签，不当同一机构计算跨日风格。"
+    },
+    {
+      "case_id": "SS-A19",
+      "title": "历史成分",
+      "input": "今天知道的主题成分业务生效日早于历史回测日。",
+      "expected": "历史known/available时间过滤该新增知识；不回填今日主题。"
+    },
+    {
+      "case_id": "SS-A20",
+      "title": "总榜/板块/工作台一致",
+      "input": "同release、同特征目标期限，用户从榜单进入个股。",
+      "expected": "保留ranking_id与release；展示当时解释和当前版本差异，不静默混用。"
+    },
+    {
+      "case_id": "SS-A21",
+      "title": "单股抬升主题",
+      "input": "少数微小股票极端上涨，其余成员缺乏广度。",
+      "expected": "集中度/覆盖/广度特征阻止误称整个主题普涨；是否入观察由验证政策决定。"
+    },
+    {
+      "case_id": "SS-A22",
+      "title": "候选池滞回",
+      "input": "分数在入池阈值附近反复波动。",
+      "expected": "采用分离进入/退出阈值、持续窗口；不每根K线反复进出。"
+    },
+    {
+      "case_id": "SS-A23",
+      "title": "未来点赞穿越",
+      "input": "使用发布三天后点赞数预测发布十分钟后的价格。",
+      "expected": "按sampled_at/available_at拒绝，不以post_created_at伪装可得。"
+    },
+    {
+      "case_id": "SS-A24",
+      "title": "默认不发帖",
+      "input": "社区分析产出待核实观点或讨论草稿。",
+      "expected": "只在本站展示，没有默认外部发帖任务或发送适配器。"
+    },
+    {
+      "case_id": "SS-A25",
+      "title": "板块总榜对象类型",
+      "input": "sector_overview排名对象是行业/主题节点。",
+      "expected": "行进入sector_rank_entry，不允许向stock ranking_entry写同scope。"
+    },
+    {
+      "case_id": "SS-A26",
+      "title": "已停用连接器",
+      "input": "来源记录存在，但enabled=false或凭据未配置。",
+      "expected": "paused/unconfigured；不能显示为已启用健康。"
+    },
+    {
+      "case_id": "SS-A27",
+      "title": "资金归因错位",
+      "input": "只有北向成交总额或ETF成交量。",
+      "expected": "不推出缺失的买卖差额、资金主体或实际申赎。"
+    },
+    {
+      "case_id": "SS-A28",
+      "title": "生产资格边界",
+      "input": "本目录有官方产品页面和研究字段表。",
+      "expected": "不自动标记active_contract、production_verified或真实策略通过。"
+    },
+    {
+      "case_id": "SS-A29",
+      "title": "板块写入并发与隔离级别",
+      "input": "在生产约定的READ COMMITTED下，两个事务向同一run并发插入不同rank_kind；另测发布事务与行写入并发。",
+      "expected": "同一父release锁串行；至少一个不同kind写入被拒绝；READY后增删改被拒绝。另行验证更换隔离级别，不能把REPEATABLE READ的旧快照视作锁后新快照。"
+    },
+    {
+      "case_id": "SS-A30",
+      "title": "父定义后改绕过",
+      "input": "先插入符合run分类/成分快照的板块行，再改变父run的分类或成分快照。",
+      "expected": "guard_sector_rank_parent拒绝与现存行矛盾的父定义；已发布run由公共guard禁止修改。"
+    }
+  ],
+  "production_integration_tests_run": false
+}

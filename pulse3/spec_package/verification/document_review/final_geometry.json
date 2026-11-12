@@ -1,0 +1,12 @@
+{
+  "pages": 134,
+  "docx_sha256": "49d594cfae62f003f7a4abdc8b3a85d84472b0bd490e7600bb97011dcba932fa",
+  "docx_bytes": 350778,
+  "tables": 34,
+  "figures": 1,
+  "navigation_bookmarks": 17,
+  "external_link_targets": 218,
+  "geometry_flags": [],
+  "footer_flags": [],
+  "limits": "Geometry and footer checks complement the actual page-image visual review; they do not independently verify content correctness."
+}

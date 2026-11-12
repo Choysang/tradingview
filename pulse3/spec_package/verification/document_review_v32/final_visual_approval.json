@@ -1,0 +1,45 @@
+{
+  "version": "3.2",
+  "checked_at": "2026-11-11T03:14:23.847345+00:00",
+  "pages": 167,
+  "docx_sha256": "78a105451465af49aac1dcb829503b4af4965a7e84fb8bbab9b9c61df7d46f7f",
+  "docx_bytes": 394066,
+  "tables": 35,
+  "figures": 1,
+  "navigation_bookmarks": 20,
+  "external_link_targets": 288,
+  "geometry_flags": [],
+  "footer_flags": [],
+  "reviewed_render": "report_render_v32_02",
+  "all_170_previous_render_pages_visually_inspected": true,
+  "final_render": "report_render_v32_03",
+  "identical_final_body_pages": 166,
+  "changed_final_body_pages": [
+    41
+  ],
+  "changed_final_body_pages_visually_rechecked": [
+    41
+  ],
+  "additional_final_boundary_pages_visually_rechecked": [
+    1,
+    13,
+    14,
+    40,
+    42,
+    94,
+    95,
+    96,
+    97,
+    167
+  ],
+  "all_final_body_pages_covered_by_visual_review_or_exact_pixel_equivalence": true,
+  "remaining_blocking_layout_issues": [],
+  "resolved_items": [
+    "Optional JetStream profile wording",
+    "M0-M6 milestone vocabulary",
+    "14/43/98 near-empty chapter tails removed",
+    "52 short tail merged",
+    "55 reference cards kept with their source paragraphs"
+  ],
+  "limits": "Actual full-size visual inspection covers all 170 source-render pages. Final 167 pages are covered by exact full-width body-pixel equivalence for 166 pages plus visual reinspection of the one changed page and chapter boundaries. Header/footer bounds and sequential page numbers checked separately. No claim of 167 repeated manual reads or production validation."
+}

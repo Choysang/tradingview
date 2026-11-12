@@ -1,0 +1,497 @@
+[
+  {
+    "row": 71,
+    "label": "Gao、Jiang、Yan，A Test of Lookahead Bias in LLM Forecasts",
+    "urls": [
+      "https://arxiv.org/abs/2512.23847"
+    ],
+    "claim": "预测效应中相当一部分与“文本在训练集里的可能性”相关；样本外安慰剂不显著",
+    "input_read_level": "全文（一位调研员）、片段（另一位）"
+  },
+  {
+    "row": 72,
+    "label": "Lopez-Lira、Tang、Zhu，The Memorization Problem",
+    "urls": [
+      "https://arxiv.org/abs/2504.14765"
+    ],
+    "claim": "模型能复现训练期内的行情数值；遮蔽实体后仍能认出公司；“假装截止日”的提示无效",
+    "input_read_level": "全文（部分）"
+  },
+  {
+    "row": 73,
+    "label": "Glasserman、Lin，Assessing Look-Ahead Bias",
+    "urls": [
+      "https://arxiv.org/abs/2309.17322"
+    ],
+    "claim": "匿名化的效果与“分心效应”",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 74,
+    "label": "He 等，Chronologically Consistent LLMs",
+    "urls": [
+      "https://arxiv.org/abs/2502.21206"
+    ],
+    "claim": "按时间截断训练的模型",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 75,
+    "label": "Kelly 等，Scaling Point-in-Time LMs",
+    "urls": [
+      "https://www.nber.org/papers/w35247"
+    ],
+    "claim": "时点语言模型",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 76,
+    "label": "DatedGPT",
+    "urls": [
+      "https://arxiv.org/abs/2603.11838"
+    ],
+    "claim": "泄漏溢价的量级（作者自报）",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 77,
+    "label": "Look-Ahead-Bench",
+    "urls": [
+      "https://arxiv.org/abs/2601.13770"
+    ],
+    "claim": "标准模型存在显著前视",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 78,
+    "label": "KTD-Fin",
+    "urls": [
+      "https://arxiv.org/abs/2605.28359"
+    ],
+    "claim": "沪深 300、遮蔽代码与日期：10 个模型里 9 个选股 alpha 为负，收益主要来自市场与风格暴露",
+    "input_read_level": "全文（一位）、摘要（另一位）"
+  },
+  {
+    "row": 79,
+    "label": "Quant-Arena",
+    "urls": [
+      "https://arxiv.org/abs/2610.30113"
+    ],
+    "claim": "封存的 A 股年度上没有模型跑赢等权",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 80,
+    "label": "FINSABER",
+    "urls": [
+      "https://arxiv.org/abs/2505.07078"
+    ],
+    "claim": "长周期宽截面下大模型策略的优势大幅缩水",
+    "input_read_level": "摘要与部分正文"
+  },
+  {
+    "row": 81,
+    "label": "StockBench",
+    "urls": [
+      "https://arxiv.org/abs/2510.02209"
+    ],
+    "claim": "多数智能体跑不赢买入持有",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 82,
+    "label": "AlphaForgeBench",
+    "urls": [
+      "https://arxiv.org/abs/2602.18481"
+    ],
+    "claim": "大模型逐日决策方差大；作研究员产出因子更可复现",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 83,
+    "label": "AI-Trader",
+    "urls": [
+      "https://arxiv.org/abs/2512.10971"
+    ],
+    "claim": "实时基准里多数智能体收益弱、风控差",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 84,
+    "label": "Stop Overvaluing Multi-Agent Debate",
+    "urls": [
+      "https://arxiv.org/abs/2502.08788"
+    ],
+    "claim": "多智能体辩论常不如单模型",
+    "input_read_level": "二手"
+  },
+  {
+    "row": 85,
+    "label": "公开交易比赛的媒体报道",
+    "urls": [
+      "https://protos.com/llm-crypto-trading-contest-finds-llms-cant-trade-crypto"
+    ],
+    "claim": "多数模型亏损并过度交易；各家数字不一致",
+    "input_read_level": "媒体"
+  },
+  {
+    "row": 91,
+    "label": "Lopez-Lira、Tang，Can ChatGPT Forecast Stock Price Movements?",
+    "urls": [
+      "https://arxiv.org/abs/2304.07619"
+    ],
+    "claim": "新闻打分与次日收益相关；集中在小盘与负面新闻；随模型普及而衰减",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 92,
+    "label": "Tan、Wu、Zhang，LLMs and Return Prediction in China",
+    "urls": [
+      "https://lintan-tsinghua.github.io/talk/preprint2"
+    ],
+    "claim": "A 股新闻信号约 2 天被吸收；多空口径，未见扣费结果",
+    "input_read_level": "二手"
+  },
+  {
+    "row": 93,
+    "label": "Tetlock，All the News That's Fit to Reprint",
+    "urls": [
+      "https://ideas.repec.org/a/oup/rfinst/v24y2011i5p1481-1512.html"
+    ],
+    "claim": "陈旧新闻的反应与反转",
+    "input_read_level": "二手"
+  },
+  {
+    "row": 94,
+    "label": "Fedyk、Hodson，When can the market identify old news?",
+    "urls": [
+      "https://ideas.repec.org/a/eee/jfinec/v149y2023i1p92-113.html"
+    ],
+    "claim": "近一半文章内容陈旧；重组旧闻引发反转",
+    "input_read_level": "二手"
+  },
+  {
+    "row": 95,
+    "label": "俞庆进、张兵（2012）",
+    "urls": [
+      "https://search.napstic.cn/literature/periodical/010jryj201208013"
+    ],
+    "claim": "搜索量上升当日价涨，随后反转",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 96,
+    "label": "熊熊等（2026）",
+    "urls": [
+      "https://xtglxb.sjtu.edu.cn/EN/Y2026/V35/I2/525"
+    ],
+    "claim": "关注度当日正相关，个股层面之后反转",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 97,
+    "label": "Jones 等，Retail Trading and Return Predictability in China",
+    "urls": [
+      "https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/retail-trading-and-return-predictability-in-china/37449FE025B0DA87A92A9BF9D30ED0FF"
+    ],
+    "claim": "小账户散户的交易方向负向预测收益",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 98,
+    "label": "刘莉亚等（2020）",
+    "urls": [
+      "https://qks.sufe.edu.cn/J/ArticleQuery/A44c2c628-9dee-45e0-b8ab-0f112001e2d9/CN"
+    ],
+    "claim": "“一日游”炒作；披露席位可识别此类账户",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 99,
+    "label": "证券时报关于拉萨营业部的报道（2026-10）",
+    "urls": [
+      "https://finance.sina.cn/2026-10-14/detail-inivchzv7280878.d.html"
+    ],
+    "claim": "这些营业部是线上个人账户的归集地",
+    "input_read_level": "媒体"
+  },
+  {
+    "row": 107,
+    "label": "Li、Liu、Liu、Wei，Replicating and Digesting Anomalies in the Chinese A-Share Market",
+    "urls": [
+      "https://research.polyu.edu.hk/en/publications/replicating-and-digesting-anomalies-in-the-chinese-a-share-market/"
+    ],
+    "claim": "469 个异象约 84%–87% 复现失败",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 108,
+    "label": "Liu、Stambaugh、Yuan，Size and Value in China",
+    "urls": [
+      "https://faculty.wharton.upenn.edu/wp-content/uploads/2018/03/Size-and-Value-in-China.pdf"
+    ],
+    "claim": "中国三因子模型；反转与换手异象未被解释",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 109,
+    "label": "Hou、Xue、Zhang，Replicating Anomalies",
+    "urls": [
+      "https://www.nber.org/papers/w23394.pdf"
+    ],
+    "claim": "多数异象在严格口径下不显著，微盘是主因",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 110,
+    "label": "Jensen、Kelly、Pedersen，Is There a Replication Crisis in Finance?",
+    "urls": [
+      "https://nber.org/system/files/working_papers/w28432/w28432.pdf"
+    ],
+    "claim": "反方证据：多数因子可复现，可归为 13 个主题",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 111,
+    "label": "Harvey、Liu、Zhu",
+    "urls": [
+      "https://www.nber.org/papers/w20592"
+    ],
+    "claim": "新因子的 t 值门槛约为 3",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 112,
+    "label": "Jensen 等，ML and the Implementable Efficient Frontier",
+    "urls": [
+      "https://papers.ssrn.com/abstract=4187217"
+    ],
+    "claim": "按扣费后的可实现收益评价",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 113,
+    "label": "Leippold、Wang、Zhou，ML in the Chinese Stock Market",
+    "urls": [
+      "https://econpapers.repec.org/RePEc:eee:jfinec:v:145:y:2022:i:2:p:64-82"
+    ],
+    "claim": "散户占主导增强短期可预测性；论文称扣费后仍显著（与本项目多头端结果有张力）",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 114,
+    "label": "Chui、Subrahmanyam、Titman",
+    "urls": [
+      "https://revfin.org/momentum-reversals-and-investor-clientele/"
+    ],
+    "claim": "A 股月度反转",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 115,
+    "label": "Chen 等，Daily Price Limits and Destructive Market Behavior",
+    "urls": [
+      "https://econpapers.repec.org/RePEc:eee:econom:v:208:y:2019:i:1:p:249-264"
+    ],
+    "claim": "大户涨停日买入、次日卖出",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 116,
+    "label": "Zhang，T+1 与隔夜收益",
+    "urls": [
+      "https://econpapers.repec.org/RePEc:eee:ecmode:v:89:y:2020:i:c:p:55-71"
+    ],
+    "claim": "A 股隔夜收益显著为负",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 117,
+    "label": "Gu、Hu、Xiong",
+    "urls": [
+      "https://ideas.repec.org/a/bla/acctfi/v65y2025i1p883-911.html"
+    ],
+    "claim": "彩票型异象主要来自隔夜",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 118,
+    "label": "He、Wang、Zhu",
+    "urls": [
+      "https://www.nber.org/papers/w35095"
+    ],
+    "claim": "北向资金的可预测性在制度变化后下降",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 119,
+    "label": "Du，可交易性掩码",
+    "urls": [
+      "https://arxiv.org/abs/2507.07107"
+    ],
+    "claim": "忽略涨跌停不可成交会使信息系数虚高约 18%；单人论文，数据为专有",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 125,
+    "label": "AlphaAgent",
+    "urls": [
+      "https://arxiv.org/abs/2502.16789"
+    ],
+    "claim": "语法树原创性、复杂度惩罚",
+    "input_read_level": "片段；收益为作者自报"
+  },
+  {
+    "row": 126,
+    "label": "RD-Agent(Q)",
+    "urls": [
+      "https://arxiv.org/abs/2505.15155"
+    ],
+    "claim": "假设、实现、反馈的闭环",
+    "input_read_level": "片段；收益为作者自报"
+  },
+  {
+    "row": 127,
+    "label": "AlphaMemo",
+    "urls": [
+      "https://arxiv.org/abs/2606.20625"
+    ],
+    "claim": "失败记忆",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 128,
+    "label": "Agora",
+    "urls": [
+      "https://arxiv.org/abs/2606.29194"
+    ],
+    "claim": "封存样本",
+    "input_read_level": "摘要；单随机种子"
+  },
+  {
+    "row": 129,
+    "label": "AQuA",
+    "urls": [
+      "https://arxiv.org/abs/2608.12841"
+    ],
+    "claim": "固定沙盒",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 130,
+    "label": "AlphaEval",
+    "urls": [
+      "https://arxiv.org/abs/2508.13174"
+    ],
+    "claim": "不依赖回测的因子预筛",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 131,
+    "label": "Kronos",
+    "urls": [
+      "https://arxiv.org/abs/2508.02739"
+    ],
+    "claim": "K 线基础模型；官方说明其回测不含成本；未见独立 A 股复现",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 132,
+    "label": "Re(Visiting) Time Series Foundation Models in Finance",
+    "urls": [
+      "https://arxiv.org/abs/2511.18578"
+    ],
+    "claim": "现成时序基础模型在金融收益上表现差",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 133,
+    "label": "Benchmarking Robustness of DRL for Portfolio",
+    "urls": [
+      "https://arxiv.org/pdf/2306.10950"
+    ],
+    "claim": "多数算法换随机种子结果就变",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 134,
+    "label": "Gort 等",
+    "urls": [
+      "https://arxiv.org/abs/2209.05559"
+    ],
+    "claim": "用过拟合概率拒绝过拟合的强化学习智能体",
+    "input_read_level": "片段"
+  },
+  {
+    "row": 135,
+    "label": "网格交易的理论分析",
+    "urls": [
+      "https://arxiv.org/pdf/2506.11921"
+    ],
+    "claim": "无趋势信息时期望趋零",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 136,
+    "label": "MacLean、Thorp 等，凯利准则",
+    "urls": [
+      "https://www.stat.berkeley.edu/~aldous/157/Papers/Good_Bad_Kelly.pdf"
+    ],
+    "claim": "全凯利在估计误差下的风险；半凯利保留大部分增长",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 142,
+    "label": "Deflated Sharpe Ratio",
+    "urls": [
+      "https://papers.ssrn.com/abstract=2460551"
+    ],
+    "claim": "收缩夏普",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 143,
+    "label": "Probability of Backtest Overfitting",
+    "urls": [
+      "https://papers.ssrn.com/abstract=2326253"
+    ],
+    "claim": "过拟合概率",
+    "input_read_level": "摘要"
+  },
+  {
+    "row": 144,
+    "label": "NautilusTrader 成交模型文档",
+    "urls": [
+      "https://nautilustrader.io/docs/latest/concepts/backtesting/fill-models/"
+    ],
+    "claim": "概率成交、种子、回测与实盘同构",
+    "input_read_level": "官方"
+  },
+  {
+    "row": 145,
+    "label": "RQAlpha 模拟撮合源码",
+    "urls": [
+      "https://raw.githubusercontent.com/ricequant/rqalpha/master/rqalpha/mod/rqalpha_mod_sys_simulation/__init__.py"
+    ],
+    "claim": "涨跌停、成交量上限 25% 的开关集",
+    "input_read_level": "官方源码"
+  },
+  {
+    "row": 146,
+    "label": "Qlib 交易所源码",
+    "urls": [
+      "https://github.com/microsoft/qlib/blob/main/qlib/backtest/exchange.py"
+    ],
+    "claim": "涨跌停双向判断、最低费用、成交单位",
+    "input_read_level": "官方源码"
+  },
+  {
+    "row": 147,
+    "label": "GIPS 概览",
+    "urls": [
+      "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards"
+    ],
+    "claim": "时间加权收益、不足一年不年化",
+    "input_read_level": "官方导读的转述"
+  }
+]

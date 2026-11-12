@@ -1,0 +1,136 @@
+{
+ "entries": [
+  {
+   "action_rank": null,
+   "action_status": "blocked",
+   "alpha_rank": 1,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:0bf9042678c79ce7a33f63d99f7048f56de4d5632e1255510e998e73e270b9da",
+   "instrument_id": "feafd8a8-2798-5a6f-8412-926edc30e08e",
+   "plan_ref": null,
+   "relative_rank_score": "0.999578066154"
+  },
+  {
+   "action_rank": 1,
+   "action_status": "actionable",
+   "alpha_rank": 2,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:5beeb01a44b1ad95f214a38ce94dbddf6778c0d9d65a81755fbefecfd8a14afc",
+   "instrument_id": "f6922384-a9c5-5cea-b758-5cbc1e7debe4",
+   "plan_ref": {
+    "plan_id": "6c4c3be4-bd5c-5ad1-a6d2-7e858d328125",
+    "plan_version": 1
+   },
+   "relative_rank_score": "0.846670171408"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 3,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:74ce6923beb2a0f69631fb04991e1451d101b16820ec0d786850e559aafb3f43",
+   "instrument_id": "e0539345-77d0-5089-8281-0c259638dd59",
+   "plan_ref": null,
+   "relative_rank_score": "0.653245096783"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 4,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:22516cab762c4a30de534879e72bd10d8d60de07cc8f3ce750c45400a93fc512",
+   "instrument_id": "b6143ac4-7cec-51ab-b166-02f3e0bd9508",
+   "plan_ref": null,
+   "relative_rank_score": "0.500337202037"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 5,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:c24cd4b439633dcabaf66f6ad8226fbbc7e6f8b9926d2f89f87eb4b0540d1eea",
+   "instrument_id": "a1d30373-3baa-5831-95b0-06947a2c7b33",
+   "plan_ref": null,
+   "relative_rank_score": "0.154004232667"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 6,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:fdf86d32dfac9091558361e63ccbb68597c4a9e4919113b492dda1441fab6e55",
+   "instrument_id": "a16e6e25-2090-558e-8ba0-f5cf73840943",
+   "plan_ref": null,
+   "relative_rank_score": "0.001096337921"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 7,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:84fcd3ffb74fed4b83d5e4c0468b2003613cc2d2103e74e1494127c80b32a287",
+   "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+   "plan_ref": null,
+   "relative_rank_score": "-0.192328736704"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 8,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:8c29f5ea14ec29c53b730a26a7ba2a518aa4be430505a4ca1e7b0f7ce9e33643",
+   "instrument_id": "27bb1a7a-6b38-5195-8998-b755b2d0fdf4",
+   "plan_ref": null,
+   "relative_rank_score": "-0.34523663145"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 9,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:4e1034f7f8ba22ef5a2f35d9daa9e738234f4c9dec2261bea39ce282e294bd92",
+   "instrument_id": "0c820176-c9ad-53aa-9587-e56231cc4b4d",
+   "plan_ref": null,
+   "relative_rank_score": "-0.538661706075"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 10,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:930c6444bec427baa0362a58f6cfd733094340bb7878fe39b7b56b9115c2b19e",
+   "instrument_id": "aa780b24-872f-5bc9-8b33-52f2ed3a168d",
+   "plan_ref": null,
+   "relative_rank_score": "-0.542656936354"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 11,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:5d4e3a914aff6cdc5b6ce07433ded7a6c36742c10a87bf0688a473240080f971",
+   "instrument_id": "07a3f65a-9364-50e0-8e7c-9a3edb2a8ae7",
+   "plan_ref": null,
+   "relative_rank_score": "-0.691569600821"
+  },
+  {
+   "action_rank": null,
+   "action_status": "watching",
+   "alpha_rank": 12,
+   "calibrated_probability": null,
+   "explanation_ref": "explain:f15570ec057d765a1b7892f233d01ffe34586a1822f6e5c92c3f1fbee446aa9f",
+   "instrument_id": "01d72580-2ba0-5961-9c3b-22b32a2bad58",
+   "plan_ref": null,
+   "relative_rank_score": "-0.844477495566"
+  }
+ ],
+ "forecast_target": "rel_opportunity_5td_after_declared_costs",
+ "horizon_id": "5td",
+ "membership_snapshot_id": null,
+ "ranking_id": "3720ac0e-5708-5ccd-a301-db0cb021ff7e",
+ "ranking_policy_version": "baseline-v1",
+ "ranking_scope": "market",
+ "release_id": "6aa1a225-6252-526f-8306-85ffc1891b29",
+ "scope_key": "cn.mainboard",
+ "taxonomy_node": null
+}

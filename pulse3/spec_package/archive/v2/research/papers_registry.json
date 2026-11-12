@@ -1,0 +1,1680 @@
+{
+  "schema_version": "2.0",
+  "cutoff_date": "2026-11-10",
+  "core_papers": 38,
+  "reading_counts": {
+    "targeted_fulltext": 29,
+    "abstract_only": 7,
+    "abstract_and_publisher_excerpt": 2
+  },
+  "author_experiments_independently_run": 0,
+  "coverage_claim": "定向系统检索所得核心证据集；非2026全年/所有领域穷尽清单。正式年份与首次公开日期分列。",
+  "dedup_method": "核心集规范化题名去重并核对原条目正式链接；跨版本/DOI去重由后续发现服务继续维护。",
+  "publication_status_semantics": "publication_status_code用于程序筛选；publication_status_note保留原始状态说明；venue和日期单列。未核实主会/分轨的条目不升级为main。",
+  "papers": [
+    {
+      "paper_id": "AP01",
+      "title": "AlphaBench: Benchmarking Large Language Models in Formulaic Alpha Factor Mining",
+      "name": "AlphaBench",
+      "venue": "ICLR 2026 Conference",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4f3820576130a8f796ddbf204c841487-Abstract-Conference.html",
+      "fulltext_url": "https://proceedings.iclr.cc/paper_files/paper/2026/file/4f3820576130a8f796ddbf204c841487-Paper-Conference.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "把因子生成、因子质量判断、迭代搜索分开评测；以可执行金融 DSL 和统一回测比较提示、推理配置及搜索范式。",
+      "limits": [
+        "基准能力不等于策略经济价值。",
+        "同一基准反复优化可能耗尽样本外信息；需另设本项目保留集。"
+      ],
+      "adaptation": "先把自然语言研究假说编译为带类型与单位的因子表达式；所有模型调用同一 as-of 数据快照、算子定义和评估服务。语义解释只供研究，不替代收益验证。",
+      "data": "附录因子数据集使用 CSI300、2021–2025；项目列出 1,857 条指令；不同子任务使用不同构造，不把它当单一训练/测试区间。",
+      "evaluation": "比较 Chain-of-Experience、Tree-of-Thought、Evolutionary Algorithms 及不同模型/提示；同时看有效性、搜索质量与多样性。",
+      "costs": "论文中的 search/retry cost 是研究计算成本；本次未核实交易费率，不能把成本效率等同扣费收益。",
+      "author_claim": "作者认为 LLM 可辅助因子挖掘，但不用执行结果直接判断因子好坏仍较弱，搜索预算与多样性是关键。",
+      "reproduction": [
+        "固定作者版本与依赖，核对算子时间方向和缺失值语义。",
+        "用统一 A 股日频/分钟数据复现三个任务，设置等 token/时延/试验次数预算。",
+        "再以未接触的滚动区间检验成本后边际贡献和相关性。"
+      ],
+      "code_url": "https://github.com/CityU-MLO/AlphaBench",
+      "module": [
+        "research.factor_dsl",
+        "research.factor_search",
+        "evaluation.model_benchmarks"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP02",
+      "title": "Reasoning on Time-Series for Financial Technical Analysis",
+      "name": "VTA",
+      "venue": "ICLR 2026 Conference",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/68c1b9784d982fa5575bb45ace7bd64e-Abstract-Conference.html",
+      "fulltext_url": "https://proceedings.iclr.cc/paper_files/paper/2026/file/68c1b9784d982fa5575bb45ace7bd64e-Paper-Conference.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "将价格序列转为文字标注，训练语言推理，再把推理属性作为时间序列骨干的条件；推理奖励与预测误差相关。",
+      "limits": [
+        "优化 MSE 不自动优化排序与成本后收益。",
+        "解释流畅与实际因果归因不是同一指标。"
+      ],
+      "adaptation": "做技术分析专家：数值指标由统一行情算子计算，模型解释趋势和情景，并输出预测分布、适用周期与反证；与纯时序/树模型按同数据比较。",
+      "data": "StockNet 88 只美股，2012–2017；额外 Dow Jones、China A50、EURO STOXX50 数据，测试 2024-01-01 至 2025-01-01。",
+      "evaluation": "预测误差、解释评价以及附录收益/市场 beta 分析；附录中 alpha 的统计显著性只在 China A50 达成。",
+      "costs": "本次未在阅读部分确认完整交易成本/成交假设。",
+      "author_claim": "作者报告跨市场预测准确度和专家解释评价改善；附录结果不支持所有市场都有显著 alpha。",
+      "reproduction": [
+        "固定序列标注和模型版本，先复现预测与解释两套指标。",
+        "在 A 股用 1/5/20 日与分钟窗口分别标定，比较有无语言推理的增量。",
+        "接入真实持仓与费用后再测买卖策略。"
+      ],
+      "code_url": "https://github.com/chen-jan/VTA",
+      "module": [
+        "stock.technical_analysis",
+        "experts.time_series_reasoning",
+        "forecast.multi_horizon"
+      ],
+      "dates": {
+        "first_public_date": "2025-11-06",
+        "version_date": "2026-03-02",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP03",
+      "title": "FinSearchComp: Towards a Realistic, Expert-Level Evaluation of Financial Search and Reasoning",
+      "name": "FinSearchComp",
+      "venue": "ICLR 2026 Conference",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d42358702dff82e1436550a05ade260-Abstract-Conference.html",
+      "fulltext_url": "https://proceedings.iclr.cc/paper_files/paper/2026/file/4d42358702dff82e1436550a05ade260-Paper-Conference.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "用实时数据获取、简单历史检索、复杂历史调查三类任务测金融搜索与推理。",
+      "limits": [
+        "排行榜是特定检索时间/产品配置的快照。",
+        "本次未完整核实每项最新问答的截止时刻与网页修订版本。"
+      ],
+      "adaptation": "建立中文金融检索回归集：公告、宏观发布日期、跨公司财务口径、国际事件传导；每题冻结 answer_as_of、证据链接、单位和实体主键。",
+      "data": "635 问、70 位金融专家、全球及大中华市场；21 个模型/产品。属于检索任务集，不是股票回测时间窗。",
+      "evaluation": "比较具有不同搜索/金融工具配置的系统；区域与工具能力会影响结果。",
+      "costs": "关注检索正确性；无可直接迁移的股票交易成本设定。",
+      "author_claim": "作者报告工具接入显著改善结果，模型与工具的地区适配差异明显。",
+      "reproduction": [
+        "按任务分类复现公开题集，不把今天答案用于历史题。",
+        "增加 A 股官方来源、跨市场时区和同名证券消歧题。",
+        "比较同模型不同工具、同工具不同模型，分别归因。"
+      ],
+      "code_url": null,
+      "module": [
+        "data.source_registry",
+        "research.search_agent",
+        "evaluation.retrieval_benchmarks"
+      ],
+      "dates": {
+        "first_public_date": "2025-09-16",
+        "version_date": "2026 conference version",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP04",
+      "title": "AlphaSAGE: Structure-Aware Alpha Mining via GFlowNets for Robust Exploration",
+      "name": "AlphaSAGE",
+      "venue": "ICLR 2026 Conference",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/06115011841a8d500050261c0ac4b1e4-Abstract-Conference.html",
+      "fulltext_url": "https://arxiv.org/html/2509.25055v3",
+      "read_depth": "targeted_fulltext",
+      "method": "RGCN 编码因子表达式图，GFlowNet 探索多个有价值表达式区域，密集多目标奖励同时考虑预测与多样性。",
+      "limits": [
+        "美国样本止于 2020。",
+        "生成分布多样性仍需在本项目用实际收益/暴露相关性检验。"
+      ],
+      "adaptation": "作为因子候选生成器，和 GP/LLM 候选共享 DSL、预算与同一评估器；不能把不同公式文字当成独立经济信号。",
+      "data": "中国 CSI300/500/1000：2010–2020 训练、2021 验证、2022–2024 测试；S&P500：2010–2016/2017/2018–2020。",
+      "evaluation": "与树模型、GP、AlphaGen、AlphaQCM、AlphaForge、AlphaAgent 等比较。",
+      "costs": "本次未核实交易成本完整参数；不能由 IC 表直接判断可交易性。",
+      "author_claim": "作者报告公式搜索的多样性、新颖性与预测效果改善。",
+      "reproduction": [
+        "重建同样算子库与分区，测搜索采样质量。",
+        "以计算预算匹配 GP、随机搜索及 LLM。",
+        "在盲测区间评估去相关后增量，而非只比较最佳单因子。"
+      ],
+      "code_url": "https://github.com/BerkinChen/AlphaSAGE",
+      "module": [
+        "research.expression_graph",
+        "research.factor_search",
+        "research.diversity"
+      ],
+      "dates": {
+        "first_public_date": "2025-09-29",
+        "version_date": "2026-05-19",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP05",
+      "title": "AlphaMaster: Dual-Chain Feedback for Scalable and Diverse Alpha Factor Discovery",
+      "name": "AlphaMaster",
+      "venue": "KDD 2026 V.2",
+      "primary_url": "https://doi.org/10.1145/3770855.3818120",
+      "fulltext_url": null,
+      "read_depth": "abstract_only",
+      "method": "生成链与优化链分工，联合 RL、GFlowNet、LLM 符号生成和 GP；用相关性约束减少同质因子。",
+      "limits": [
+        "没有全文验证，暂不能确认回测协议和数据时点。",
+        "组合多种生成器本身不证明收益独立。"
+      ],
+      "adaptation": "借鉴研究编排：多生成器提供候选，统一评估器筛选，优化器只看训练/验证反馈；公共因子库记录相关簇与替换历史。",
+      "data": "摘要：CSI500/CSI1000，2010–2025。",
+      "evaluation": "摘要报告 IC、RankIC、AR、IR 等比较；逐项训练/验证/测试与基线预算未核实。",
+      "costs": "摘要称 realistic trading constraints；费率、滑点、停牌与成交实现未核实。",
+      "author_claim": "作者声称多项指标优于比较方法；本记录不将其数值当项目目标收益。",
+      "reproduction": [
+        "取得正式全文、代码与交易假设。",
+        "统一每个生成器预算，比较单生成器与组合生成器。",
+        "测新增候选对现有池的边际贡献、衰减与换手。"
+      ],
+      "code_url": null,
+      "module": [
+        "research.multi_generator",
+        "strategy.evolution",
+        "research.diversity"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026-08-08",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P2",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_track_unverified",
+      "publication_status_code": "conference_published_track_unverified"
+    },
+    {
+      "paper_id": "AP06",
+      "title": "FactorMiner: A Self-Evolving Agent with Skills and Experience Memory for Financial Alpha Discovery",
+      "name": "FactorMiner",
+      "venue": "KDD 2026",
+      "primary_url": "https://kdd2026.kdd.org/papers/",
+      "fulltext_url": "https://arxiv.org/html/2602.14670v2",
+      "read_depth": "targeted_fulltext",
+      "method": "可执行研究技能加成功/失败经验库；快速 IC 筛选、池内相关性检查、批内去重、完整验证和近邻因子替换。",
+      "limits": [
+        "10 分钟预测收益不等于 A 股买入后可同日卖出。",
+        "绝对 IC 汇总需与有符号、训练期固定方向的结果分清。"
+      ],
+      "adaptation": "优先实现完整试验台账与失败记忆。日内因子先映射为机会评分；做 T 只使用可卖底仓，长周期选股另外构建目标。数据计算缓存共享，避免各 Agent 重算相同特征。",
+      "data": "CSI300/500/1000 与 64 个加密资产，10 分钟 bars；2024 训练、2025 测试，另检验至 2026-Q1。",
+      "evaluation": "比较随机公式、Alpha101、GP、AlphaForge、AlphaAgent 与无记忆消融；Top40 于 2024 固定后测 2025，指标主要 IC/ICIR/相关性。",
+      "costs": "性能是预测指标；GPU/C 吞吐结果排除 I/O，不能直接作为端到端线上延迟。",
+      "author_claim": "作者报告搜索效率、因子质量及相关性控制改善；无需更新 LLM 权重，进化来自记忆与库更新。",
+      "reproduction": [
+        "保持相同算子/字段/候选数量，复现记忆消融。",
+        "冻结方向和组合权重，增加费用、库存、限价可成交模拟。",
+        "把纯计算性能与读数据/排队/传输延迟分别测量。"
+      ],
+      "code_url": null,
+      "module": [
+        "research.memory",
+        "research.factor_library",
+        "strategy.evolution",
+        "data.feature_compute"
+      ],
+      "dates": {
+        "first_public_date": "2026-02-16",
+        "version_date": "2026-08-19",
+        "cohort": "2026_first_arxiv_and_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_track_unverified",
+      "publication_status_code": "conference_published_track_unverified"
+    },
+    {
+      "paper_id": "AP07",
+      "title": "Fin-RATE: A Real-world Financial Analytics and Tracking Evaluation Benchmark for LLMs on SEC Filings",
+      "name": "Fin-RATE",
+      "venue": "KDD 2026 Datasets and Benchmarks",
+      "primary_url": "https://doi.org/10.1145/3770855.3817528",
+      "fulltext_url": "https://arxiv.org/html/2602.07294v4",
+      "read_depth": "targeted_fulltext",
+      "method": "区分单文档细节推理、跨企业比较、跨期追踪，并把检索、实体、时间与推理错误拆开。",
+      "limits": [
+        "美国 SEC 与中国财报格式、会计口径不同。",
+        "生成题目和评分器也需要人工抽检。"
+      ],
+      "adaptation": "为公告/财务服务建立 entity_id、period、accounting_basis、unit、revision 约束；表格数值由程序复算，跨期比较必须记录重述版本。",
+      "data": "2020–2025 SEC 文件；43 公司、2,472 份申报、15,311 块；三任务各 2,500 例。",
+      "evaluation": "17 个模型，给定正确上下文与 RAG 两种条件，领域错误分类和评分。",
+      "costs": "问答基准；没有交易成本或投资收益结论。",
+      "author_claim": "跨期和跨企业任务较单文档准确率明显下降，常见实体/时间错配与虚构比较。",
+      "reproduction": [
+        "先复现公开任务分类和错误分解。",
+        "用 A 股年报/季报/更正公告构建同样三任务。",
+        "对同一证据比较模型，对同一模型比较检索，避免混淆瓶颈。"
+      ],
+      "code_url": "https://github.com/jyd777/Fin-RATE",
+      "module": [
+        "data.financial_statements",
+        "evidence.claim_registry",
+        "evaluation.filing_reasoning"
+      ],
+      "dates": {
+        "first_public_date": "2026-02-07",
+        "version_date": "2026-06-10",
+        "cohort": "2026_first_arxiv_and_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_benchmark",
+      "publication_status_code": "conference_published_benchmark"
+    },
+    {
+      "paper_id": "AP08",
+      "title": "FinRAQ: Financial News Reasoning through Importance Ranking and Socratic Questioning",
+      "name": "FinRAQ",
+      "venue": "Findings of EMNLP 2026",
+      "primary_url": "https://aclanthology.org/2026.findings-emnlp.1432/",
+      "fulltext_url": "https://aclanthology.org/2026.findings-emnlp.1432.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "NewsRank 以时间图的语义/时间双通道聚合新闻重要性；多空视角使用结构化 Socratic 提问相互检查假设。",
+      "limits": [
+        "网页摘要写 6 股票，正式 PDF 写 21 资产；本记录按 PDF，保留冲突。",
+        "资产范围有限、模型训练记忆与历史新闻重叠尚需单独审计。",
+        "允许做空的基准与普通 A 股账户不同。"
+      ],
+      "adaptation": "将消息重要性、方向、持续期分开建模；事件关系进入共享图，给新闻、选股与个股策略共同使用。辩论仅增加新证据或可检验反证时继续，用等预算单 Agent 作对照。",
+      "data": "正式 PDF 为 21 资产（20 美股及 BTC）；训练 2022-03-01 至 2024-03-01，测试至 2026-03-01。",
+      "evaluation": "多个骨干模型与新闻/Agent 基线；每天决策，使用此前五天最多 50 条新闻。",
+      "costs": "允许做空；附录称滑点、借券与佣金同先前工作，未给出本次可核实具体数值。",
+      "author_claim": "作者报告新闻排序和结构化提问改善收益等指标；不在此复述最高增幅作为普遍结论。",
+      "reproduction": [
+        "先重建时间/语义边和新闻可得时间，再比较去掉 NewsRank/提问的消融。",
+        "冻结新闻与模型版本，测新闻延迟、重复转载和跨市场休市场景。",
+        "重跑长仓 A 股成本/可成交协议并比较单 Agent 同预算。"
+      ],
+      "code_url": null,
+      "module": [
+        "news.importance_ranker",
+        "news.temporal_event_graph",
+        "agents.evidence_debate"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026-10",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "findings_published",
+      "publication_status_code": "findings_published"
+    },
+    {
+      "paper_id": "AP09",
+      "title": "FinEvo: Financial Language Agents Shape the Markets That Evaluate Them",
+      "name": "FinEvo",
+      "venue": "11th FinNLP Workshop 2026",
+      "primary_url": "https://aclanthology.org/2026.finnlp-1.5/",
+      "fulltext_url": null,
+      "read_depth": "abstract_only",
+      "method": "把新闻驱动的异质金融 Agent 放入连续双向拍卖市场，并通过资本重分配使参与者种群变化。",
+      "limits": [
+        "模拟内生成的价格不是观察到的真实 A 股价格。",
+        "不能从仿真种群胜出直接推断实盘 alpha。"
+      ],
+      "adaptation": "用于策略拥挤、新闻传播与流动性变化的压力实验；保留独立真实历史回放，评估一组策略同时使用后是否抵消收益。",
+      "data": "模拟冲击和历史新闻驱动的 128 次实验；本次未取得具体市场日期和逐项配置。",
+      "evaluation": "考察制度、市场状态、种群与创新机制对结果的影响。",
+      "costs": "仿真环境中的机制结果；真实交易费用/冲击迁移未核实。",
+      "author_claim": "作者报告 Agent 的排名依赖其所处市场与其他参与者，移除创新会提高集中度。",
+      "reproduction": [
+        "取得全文与环境后核对撮合/消息时间及种群规则。",
+        "与固定市场回放分别报告，先标定真实市场统计。",
+        "以跨策略容量/拥挤变化作为研究输出。"
+      ],
+      "code_url": null,
+      "module": [
+        "simulation.agent_market",
+        "strategy.population_diagnostics"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026-10",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P2",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "workshop_published",
+      "publication_status_code": "workshop_published"
+    },
+    {
+      "paper_id": "AP10",
+      "title": "From Knowing to Doing: A Memory-Controlled Benchmark for LLM Trading Agents on Stock Markets",
+      "name": "KTD-Fin",
+      "venue": "arXiv",
+      "primary_url": "https://arxiv.org/abs/2605.28359",
+      "fulltext_url": "https://arxiv.org/html/2605.28359v1",
+      "read_depth": "targeted_fulltext",
+      "method": "股票标识和日期匿名化控制历史记忆，再用 Barra 风格归因区分市场、风格和选股贡献。",
+      "limits": [
+        "不能据此否定有真实新闻和基本面输入的 LLM 增量。",
+        "匿名不保证抹除全部训练记忆；只有部分窗口严格晚于锚模型 cutoff。"
+      ],
+      "adaptation": "给所有研究保留模型版本/训练截止信息；同时做匿名、原始实体和真正未来的冻结预测。股票排名应展示成本后超额、风格解释和独立选股贡献。",
+      "data": "CSI300；长窗 2024-01-01 至 2026-04-10；价格/技术指标输入，无新闻或财报；十个 LLM、18 个训练基线。",
+      "evaluation": "多随机种子、不同匿名与决策模式、分市场区间；传统模型 2015–2022 训练、2023 验证。",
+      "costs": "作者协议：多头、T+1、下一交易日开盘、买 5bps/卖 15bps、每单最低 5 元，另做涨跌停过滤；这是基准假设，不是实时费率表。",
+      "author_claim": "在其价格输入和匿名实验中，LLM 收益多由 beta/风格解释，持续选股 alpha 证据有限。",
+      "reproduction": [
+        "先用相同价格数据复现 masking × 决策模式。",
+        "加新闻/财报后设计价格-only、新闻-only、组合消融。",
+        "持续存档未来到期标签前的预测，待标签可得再评分。"
+      ],
+      "code_url": null,
+      "module": [
+        "evaluation.contamination",
+        "portfolio.attribution",
+        "recommendations.rank_quality"
+      ],
+      "dates": {
+        "first_public_date": "2026-05-27",
+        "version_date": "2026-05-27",
+        "cohort": "2026_first_arxiv"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "preprint",
+      "publication_status_code": "preprint"
+    },
+    {
+      "paper_id": "AP11",
+      "title": "AlphaForgeBench: Benchmarking End-to-End Trading Strategy Design with Large Language Models",
+      "name": "AlphaForgeBench",
+      "venue": "KDD 2026 Datasets and Benchmarks",
+      "primary_url": "https://kdd2026.kdd.org/papers/",
+      "fulltext_url": "https://arxiv.org/abs/2602.18481",
+      "read_depth": "targeted_fulltext",
+      "method": "把可执行因子与组合策略代码作为研究结果，固定执行环境来区分研究能力与逐次动作波动。",
+      "limits": [
+        "其直接 Agent 实验配置不代表所有具备持仓记忆的未来 Agent。",
+        "无费收益不能作为 A 股上架依据。"
+      ],
+      "adaptation": "保存结构化计划、状态、策略代码版本与输入快照，避免同一信号反复买卖；保留可执行策略和实时 Agent 两条实验路线，统一比较收益增量与动作稳定性。",
+      "data": "多模型和多个金融任务；本次未完整抄录所有市场及日期，不能合并成单一时间窗。",
+      "evaluation": "重复运行/动作切换诊断，代码生成和固定执行评估。",
+      "costs": "主评估明确采用零交易成本；早期直接动作诊断使用全仓买入/全部退出、不做空、零费。",
+      "author_claim": "作者报告直接逐次动作存在高重复方差，而可执行策略设计可提高评估可重复性。",
+      "reproduction": [
+        "复现实验并加入持仓记忆、迟滞和计划版本基线。",
+        "用本项目交易协议重新计算费用/滑点后的效果。",
+        "同模型同预算比较直接计划、代码策略和二者组合。"
+      ],
+      "code_url": null,
+      "module": [
+        "strategy.specification",
+        "agents.stateful_planning",
+        "evaluation.reproducibility"
+      ],
+      "dates": {
+        "first_public_date": "2026-02-10",
+        "version_date": "2026-05-27",
+        "cohort": "2026_first_arxiv_and_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_benchmark",
+      "publication_status_code": "conference_published_benchmark"
+    },
+    {
+      "paper_id": "AP12",
+      "title": "AgenticFinBench: Benchmarking Financial Agents on Diverse Tasks from Real-World Requests",
+      "name": "AgenticFinBench",
+      "venue": "arXiv",
+      "primary_url": "https://arxiv.org/abs/2611.04813",
+      "fulltext_url": "https://arxiv.org/html/2611.04813v2",
+      "read_depth": "targeted_fulltext",
+      "method": "问题专属 rubric 加两阶段原子声明核验，区分缺少轨迹证据与被外部证据反驳。",
+      "limits": [
+        "样本规模与任务集有限；方差分解不是任意产品的普遍因果比率。",
+        "预印本发布仅一周，尚无本项目复现。"
+      ],
+      "adaptation": "把推荐和个股计划拆为可核查声明：事实、计算结果、推断、情景与动作条件。每项事实指向证据版本，数值附计算口径；跨源冲突保留而非直接平均。",
+      "data": "230 个真实金融任务、8 类、2 种语言、4 个复杂度；18 系统配置；非交易收益基准。",
+      "evaluation": "任务评分、证据可追溯性和幻觉审查；模型/harness 分析来自完整 3×3 子集。",
+      "costs": "关注研究任务质量与证据；不能映射为交易费用收益。",
+      "author_claim": "作者报告忽略错误声明会改变排名；该子集中 harness 对证据 grounding 的解释差异高于模型差异。",
+      "reproduction": [
+        "复现公开评分协议，构建中文投资研究任务集。",
+        "固定工具比较模型，固定模型比较工具与上下文。",
+        "对高影响数据和结论随机人工双评，检查自动 grader 偏差。"
+      ],
+      "code_url": null,
+      "module": [
+        "evidence.claim_registry",
+        "evaluation.agent_research",
+        "stock.research_dossier"
+      ],
+      "dates": {
+        "first_public_date": "2026-11-03",
+        "version_date": "2026-11-04",
+        "cohort": "2026_first_arxiv"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "preprint",
+      "publication_status_code": "preprint"
+    },
+    {
+      "paper_id": "AP13",
+      "title": "Vector-Quantized Discrete Latent Factors Meet Financial Priors: Dynamic Cross-Sectional Stock Ranking Prediction for Portfolio Construction",
+      "name": "PRISM-VQ",
+      "venue": "IJCAI 2026 Main Track",
+      "primary_url": "https://ijcai.org/proceedings/2026/492",
+      "fulltext_url": "https://ijcai.org/proceedings/2026/492",
+      "read_depth": "targeted_fulltext",
+      "method": "金融先验因子与 VQ 离散潜变量结合，结构条件 MoE 动态生成因子载荷。",
+      "limits": [
+        "5 日重叠收益标签的依赖结构与多重试验需在项目中统一处理。",
+        "使用 JKP 因子先验需核对中国市场可用版本和真正可得时间。"
+      ],
+      "adaptation": "进入中短期横截面排名专家池；MoE 路由输出保留状态与解释。先验因子先经 PIT 验证，不把 latent code 直接解释成固定经济因果。",
+      "data": "CSI300/S&P500 动态成分，Alpha158、20 日回看、主目标 5 日远期收益；2009–2019/2020–2021/2022–2024 划分。",
+      "evaluation": "同数据预处理与验证集调参；XGBoost、GRU、TCN、Transformer、MASTER 等；五随机种子，RankIC block bootstrap。",
+      "costs": "TopK-DropN K30/N5；开仓 5bps、平仓 15bps；更广泛成本敏感性在扩展附录。",
+      "author_claim": "作者报告排序与组合指标改善，并展示潜变量的因子暴露。",
+      "reproduction": [
+        "复现公开 CSI300 设置并检查动态成分与前向填充边界。",
+        "与 LightGBM、线性、无先验、无 VQ、无 MoE 同预算比较。",
+        "扩展全 A 股和盘后数据延迟，测费用/容量及风格暴露。"
+      ],
+      "code_url": "https://github.com/finxlab/PRISM-VQ",
+      "module": [
+        "recommendations.cross_section_ranker",
+        "models.mixture_of_experts",
+        "factors.prior_library"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP14",
+      "title": "TransAlpha: Lightweight Design Empowers Stock Return Forecasting",
+      "name": "TransAlpha",
+      "venue": "IJCAI 2026 Main Track",
+      "primary_url": "https://ijcai.org/proceedings/2026/580",
+      "fulltext_url": "https://ijcai.org/proceedings/2026/0580.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "横截面去噪、时间注意力门控、聚合与混合损失，降低日内高维因子预测计算量。",
+      "limits": [
+        "专有因子的生成过程限制真实在线复刻；匿名矩阵不等于完整实时数据管线。",
+        "简单多空收益不能直接当普通 A 股账户收益。"
+      ],
+      "adaptation": "优先抽取轻量去噪/门控思路，在本项目公开定义的因子上重新训练；作为 15 分钟机会预测，执行由持仓可卖数量、费用及价位确定。",
+      "data": "沪深全 A 股及 CSI300/500/1000/2000；400 个专有 15 分钟因子；2021-01 至 2023-09 训练、2023Q4 验证、2024 测试。",
+      "evaluation": "比较线性、非 Transformer 与 Transformer 基线；下一 15 分钟收益，naive long-short 50 回测。",
+      "costs": "清仓单边收 0.1% 包含费用；并非完整普通 A 股长仓/底仓做 T 协议。",
+      "author_claim": "作者报告预测、组合效果及计算效率改善；正文称提供匿名处理后的因子数据。",
+      "reproduction": [
+        "核实作者匿名数据/代码可得性，再复现实验。",
+        "换为自己可实时计算的特征，同时对照线性与 LightGBM。",
+        "加入 T+1、底仓、滑点、涨跌停和长仓约束重测。"
+      ],
+      "code_url": null,
+      "module": [
+        "forecast.intraday",
+        "data.feature_matrix",
+        "stock.t_opportunity"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP15",
+      "title": "Kronos: A Foundation Model for the Language of Financial Markets",
+      "name": "Kronos",
+      "venue": "AAAI 2026 Technical Track",
+      "primary_url": "https://ojs.aaai.org/index.php/AAAI/article/view/39730",
+      "fulltext_url": "https://arxiv.org/html/2508.02739v1",
+      "read_depth": "targeted_fulltext",
+      "method": "把金融 K 线离散为同时表达价量的 token，使用自回归预训练支撑价格、波动与生成任务。",
+      "limits": [
+        "预训练规模不是 A 股未来样本外有效性的证据。",
+        "跨交易所时间、复权及训练重叠需要查明。"
+      ],
+      "adaptation": "做可替换的价格/波动专家；保留原始数值与交易日语义，不将生成 K 线当未来事实。用概率分布辅助买卖区间和网格间距，和传统波动模型比较。",
+      "data": "作者称跨 45 个交易所、超过 120 亿 K 线；本次未完整确认所有市场训练截止和重叠排除清单。",
+      "evaluation": "零样本价格与波动预测、合成序列质量，对照通用时间序列基础模型与非预训练模型。",
+      "costs": "主要预测/生成指标；不能从 RankIC/MAE 改善直接推导成本后收益。",
+      "author_claim": "作者报告多任务指标优于所选基线；公开预训练模型和代码。",
+      "reproduction": [
+        "固定模型/ tokenizer 版本，核对训练截止。",
+        "在严格未见区间比较零样本、微调与简单基线。",
+        "将预测分布接到统一决策器后检验校准与净收益。"
+      ],
+      "code_url": "https://github.com/shiyu-coder/Kronos",
+      "module": [
+        "models.financial_foundation",
+        "forecast.price_distribution",
+        "stock.grid_parameters"
+      ],
+      "dates": {
+        "first_public_date": "2025-08-02",
+        "version_date": "2026-03-14 journal/proceedings",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP16",
+      "title": "FinRpt: Dataset, Evaluation System and LLM-based Multi-agent Framework for Equity Research Report Generation",
+      "name": "FinRpt",
+      "venue": "AAAI 2026 Technical Track",
+      "primary_url": "https://ojs.aaai.org/index.php/AAAI/article/view/37014",
+      "fulltext_url": "https://arxiv.org/html/2511.07322v3",
+      "read_depth": "targeted_fulltext",
+      "method": "聚合公司、财报、公告、新闻及行情等资料生成研究报告，配套报告评价与专用 Agent 训练。",
+      "limits": [
+        "数据时间跨度短，集中在特定行情。",
+        "报告生成/评分可能共享模型偏差，需要独立事实审查。"
+      ],
+      "adaptation": "个股页面按证据组织可持续更新的研究档案；事实与计算一次生成、多视图复用，新增公告只重算受影响段落与策略条件。",
+      "data": "CSI800；2024-09-03 至 2024-11-05，周度 10 个分析日，6,825 份输入/报告样本。",
+      "evaluation": "11 类报告评价指标及多 Agent 生成实验；属于报告质量，不是买卖收益检验。",
+      "costs": "本次未核实完整调用成本；没有证明可交易 alpha。",
+      "author_claim": "作者报告数据、评价系统和 FinRpt-Gen 对研究报告生成有效。",
+      "reproduction": [
+        "重现报告输入和评价后，增加更长时段及不同规模股票。",
+        "将事实准确率、数字口径、引用覆盖与投资判断分开评分。",
+        "报告变化与股票实际收益增量另外验证。"
+      ],
+      "code_url": null,
+      "module": [
+        "stock.research_dossier",
+        "evidence.document_pipeline",
+        "agents.report_composer"
+      ],
+      "dates": {
+        "first_public_date": "2025-11-10",
+        "version_date": "2026-08-05 arXiv v3; 2026-03-14 AAAI",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP17",
+      "title": "Trade in Minutes! Rationality-Driven Agentic System for Quantitative Financial Trading",
+      "name": "TiMi",
+      "venue": "ICLR 2026",
+      "primary_url": "https://iclr.cc/Downloads/2026",
+      "fulltext_url": "https://arxiv.org/html/2510.04787v2",
+      "read_depth": "targeted_fulltext",
+      "method": "语义分析、编程与数学推理 Agent 生成并优化交易程序，降低每次执行对连续大模型推理的依赖。",
+      "limits": [
+        "未完整确认 A 股专属成交约束。",
+        "代码发布承诺不等同本次确认已公开可运行。"
+      ],
+      "adaptation": "区分低延迟执行程序与随新事件更新的研究计划；重大消息可触发模型重写计划，执行器读取已经版本化的条件与预算，不必每个 tick 重做全链研究。",
+      "data": "作者称股票与加密市场 200+ 交易对；逐市场样本起止本次未完整核实。",
+      "evaluation": "比较收益/执行效率与反思优化；具体交易假设仍需取得实现。",
+      "costs": "论文区分离线分析成本与运行 bot 成本；不可与交易佣金混为一谈。",
+      "author_claim": "作者报告策略部署效率与收益表现改善，并讨论限价/止盈止损/市价订单。",
+      "reproduction": [
+        "核实数据和代码后复现部署/优化循环。",
+        "固定反思频率与预算，比较持续 Agent、固定程序、事件驱动更新。",
+        "在 A 股验证订单可执行性与计划更新造成的换手。"
+      ],
+      "code_url": null,
+      "module": [
+        "agents.strategy_research",
+        "strategy.compiler",
+        "strategy.plan_versions"
+      ],
+      "dates": {
+        "first_public_date": "2025-10-06",
+        "version_date": "2026-02-09",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_accepted_official_catalog",
+      "publication_status_code": "conference_accepted_official_catalog"
+    },
+    {
+      "paper_id": "AP18",
+      "title": "Joint-Embedding Predictive Learning of Latent Market States in U.S. Equities",
+      "name": "Market-JEPA",
+      "venue": "ICML 2026 / PMLR 306",
+      "primary_url": "https://proceedings.mlr.press/v306/mahns26a.html",
+      "fulltext_url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/mahns26a/mahns26a.pdf",
+      "read_depth": "abstract_only",
+      "method": "把每日无序资产特征编码为一组因子 token，时序 JEPA 学习紧凑市场状态。",
+      "limits": [
+        "关联不等于可利用的方向性 alpha。",
+        "全文未读，不能确认其状态标签的所有构造细节。"
+      ],
+      "adaptation": "作为行情状态/专家路由候选特征，与简单波动、涨跌广度和相关性基线比较；同时保留新闻事件通道识别突发变化。",
+      "data": "美国股票；具体股票池、日期与划分在本次可读摘要中未确认。",
+      "evaluation": "检验市场状态与波动、相关集中、有效维度、方向及新闻主题的关联。",
+      "costs": "状态表征研究；无可直接迁移的交易成本结果。",
+      "author_claim": "作者报告状态与二阶结构关系强、与方向关系弱；更能预测渐进恢复，对突发压力起点较弱。",
+      "reproduction": [
+        "取得 PDF/代码确认因果掩码与标签时点。",
+        "在 A 股训练无监督状态，再冻结下游样本外路由。",
+        "测其对组合专家净增量，而不只展示状态图好看。"
+      ],
+      "code_url": null,
+      "module": [
+        "market.regime_encoder",
+        "strategy.expert_router"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026",
+        "cohort": "2026_publication_first_public_unknown"
+      },
+      "adoption_original": "P2",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP19",
+      "title": "Emergence of Biased Consensus in Multi-Agent LLM Debates",
+      "name": "Biased-Consensus",
+      "venue": "ICML 2026 / PMLR 306",
+      "primary_url": "https://proceedings.mlr.press/v306/okawa26a.html",
+      "fulltext_url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/okawa26a/okawa26a.pdf",
+      "read_depth": "abstract_only",
+      "method": "用受控实验与社会动力学模型研究偏差、从众和采样噪声怎样形成多 Agent 共识，并测试异质性。",
+      "limits": [
+        "未证明所有多数投票或所有辩论都无效。",
+        "角色换名不一定产生统计独立信息。"
+      ],
+      "adaptation": "按独立数据、技能和模型家族形成专家；存储最初独立判断后再允许互评。融合权重依据样本外误差相关性、校准和增量，不依据同意人数。",
+      "data": "通用决策、投资决策和 LLM-as-a-judge 任务；不是 A 股收益回测。",
+      "evaluation": "理论预测与受控实验；不把所有 Agent 系统归为同一失败情形。",
+      "costs": "非交易成本研究；计算预算匹配需要本项目自行控制。",
+      "author_claim": "特定设置下辩论放大共同偏差，异质性可缓和共识形成。",
+      "reproduction": [
+        "构建同模型多次采样、异模型、异证据、单模型等预算四类对照。",
+        "测方向准确率外，还测共同错误与错误自信。",
+        "只保留能带来增量的交互轮次。"
+      ],
+      "code_url": null,
+      "module": [
+        "agents.collaboration_protocol",
+        "evaluation.error_correlation",
+        "strategy.expert_fusion"
+      ],
+      "dates": {
+        "first_public_date": null,
+        "version_date": "2026",
+        "cohort": "2026_general_method_with_investment_tasks"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_main",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "AP20",
+      "title": "Market Regime Council for Dynamic Credit Assignment in Multi-Agent LLM Decision Systems",
+      "name": "Market-Regime-Council",
+      "venue": "NeurIPS 2026 (accepted/in press; exact track unverified)",
+      "primary_url": "https://neurips.cc/Downloads/2026",
+      "fulltext_url": "https://arxiv.org/html/2605.24490v1",
+      "read_depth": "targeted_fulltext",
+      "method": "三个专家的单体/双体/全体输出用于 Shapley 贡献估计，配合指数加权历史、贝叶斯冷启动和状态权重。",
+      "limits": [
+        "加密市场和 A 股规则不同，不能搬运其回报水平。",
+        "三个专家的精确 coalition 枚举不能无代价扩大到任意多策略。"
+      ],
+      "adaptation": "作为专家贡献归因与动态权重实验；仅在收益标签已成熟后更新信誉。可对少量策略簇做精确贡献，多策略用近似贡献或分层路由，保留最强单策略对照。",
+      "data": "13 个加密资产，2023-03-01 至 2025-12-31，1,037 天，五随机种子。",
+      "evaluation": "单专家、两两协作、全体与完整融合消融；两两辩论未必优于最佳单体。",
+      "costs": "主表 0bps；另有 5/10bps 单边换手成本敏感性。",
+      "author_claim": "完整融合在其样本中改善相对表现；作者也限制结论为匹配执行约束下的相对鲁棒性。",
+      "reproduction": [
+        "复现三个专家全部 coalition，拆开辩论与加权收益。",
+        "在 A 股同费用、同库存约束测等权/最佳单体/动态加权。",
+        "测权重稳定、标签延迟、冷启动和 regime 错判影响。"
+      ],
+      "code_url": null,
+      "module": [
+        "strategy.expert_fusion",
+        "strategy.credit_assignment",
+        "market.regime_router"
+      ],
+      "dates": {
+        "first_public_date": "2026-05-23",
+        "version_date": "2026-05-23 preprint; accepted by cutoff",
+        "cohort": "2026_first_arxiv_and_accepted"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "accepted_in_press_track_unverified",
+      "publication_status_code": "accepted_in_press_track_unverified"
+    },
+    {
+      "paper_id": "AP21",
+      "title": "FinAuditing: A Financial Taxonomy-Structured Multi-Document Benchmark for Evaluating LLMs",
+      "name": "FinAuditing",
+      "venue": "SIGIR 2026 Resource Track",
+      "primary_url": "https://doi.org/10.1145/3805712.3808578",
+      "fulltext_url": "https://arxiv.org/abs/2510.08886",
+      "read_depth": "abstract_only",
+      "method": "用 XBRL/会计分类结构评测语义匹配、关系抽取和数值一致性，跨文档核对财务事实。",
+      "limits": [
+        "US-GAAP 分类不直接对应中国会计口径。",
+        "预印本与正式引用的作者列表有变动；本记录不拼接作者名单。"
+      ],
+      "adaptation": "财务数据层保存科目、合并/母公司、累计/单季、单位与校验等式；模型负责定位证据和解释，数值关系由可执行计算器校验，结果供所有策略共享。",
+      "data": "US-GAAP XBRL；1,102 个标注实例，平均超过 33k tokens；财报起止日期未核实。",
+      "evaluation": "13 个模型，分别测概念、层级关系与数值推理。",
+      "costs": "文档核对任务，不是投资交易收益。",
+      "author_claim": "作者报告结构化长文档推理仍存在明显瓶颈；不照搬早版摘要的极端百分比。",
+      "reproduction": [
+        "核实正式资源版本与公开代码。",
+        "用中国报表科目映射构造语义/关系/数值三类测试。",
+        "比较原文 RAG、结构化工具和组合，单独量化数字错误率。"
+      ],
+      "code_url": "https://github.com/The-FinAI/FinAuditing",
+      "module": [
+        "data.accounting_taxonomy",
+        "evidence.numeric_verification",
+        "evaluation.financial_tables"
+      ],
+      "dates": {
+        "first_public_date": "2025-10-10",
+        "version_date": "2026-05-17 pre-camera-ready",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_resource",
+      "publication_status_code": "conference_published_resource"
+    },
+    {
+      "paper_id": "AP22",
+      "title": "Data-Driven Function Calling Improvements in Large Language Model for Online Financial QA",
+      "name": "FC4FinQA",
+      "venue": "The Web Conference 2026 Industry Track",
+      "primary_url": "https://www2026.thewebconf.org/accepted/industry",
+      "fulltext_url": "https://arxiv.org/html/2604.05387v1",
+      "read_depth": "targeted_fulltext",
+      "method": "从真实查询构建工具调用样本，用 AugFC 补参数分布盲点，再 SFT/RL 训练函数选择与参数提取。",
+      "limits": [
+        "私有接口和用户查询不等于可公开复现完整产品。",
+        "模型互相同意只是标注线索，仍需真实工具结果核验。"
+      ],
+      "adaptation": "公共工具目录统一名称、输入输出、证券实体与 as_of 参数；选股、新闻、个股和回测都调用同一数据产品。记录错选工具/错单位/错时点样本，持续修复调用能力。",
+      "data": "金融 QA 私有 API/线上查询与公开工具基准；Qwen2.5 1.5B/7B/32B；不是股价回测。",
+      "evaluation": "工具选择 F1、参数与线上质量；对照种子/增强/组合数据及训练设置。",
+      "costs": "强调调用准确和响应效率；缺少可迁移的股票收益结论。",
+      "author_claim": "作者报告该流程在金融 QA 应用有效，并称已用于腾讯元宝场景。",
+      "reproduction": [
+        "先用无需训练的强模型加规范 schema 建基线。",
+        "建立证券代码/简称/别名、日期、周期、单位的参数回归集。",
+        "足够失败样本后再比较数据增强/小模型蒸馏是否改善成本与延迟。"
+      ],
+      "code_url": null,
+      "module": [
+        "platform.tool_registry",
+        "data.semantic_gateway",
+        "evaluation.tool_calling"
+      ],
+      "dates": {
+        "first_public_date": "2026-04-07",
+        "version_date": "2026-04-07 author manuscript",
+        "cohort": "2026_first_arxiv_and_publication"
+      },
+      "adoption_original": "P0",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "conference_published_industry",
+      "publication_status_code": "conference_published_industry"
+    },
+    {
+      "paper_id": "AP23",
+      "title": "Can ChatGPT forecast stock price movements? Return predictability and large language models",
+      "name": "JFE-LLM-News",
+      "venue": "Journal of Financial Economics 184 (2026), 104335",
+      "primary_url": "https://www.sciencedirect.com/science/article/pii/S0304405X26001066",
+      "fulltext_url": "https://arxiv.org/abs/2304.07619",
+      "read_depth": "abstract_and_publisher_excerpt",
+      "method": "用 LLM 新闻标题评分研究初始价格反应与后续漂移，并分析模型规模、消息类型和收益随普及变化。",
+      "limits": [
+        "90% 不是逐只股票可交易买点胜率。",
+        "不能把早期 GPT 模型的知识截止当所有新模型的截止。",
+        "美国做空/小盘微结构与 A 股不同。"
+      ],
+      "adaptation": "新闻因子分别记录初始解释、发布后漂移与加入数据/推理/下单延迟后的可交易收益；测公司规模、消息类别及流动性分层，避免使用已发生价格反应做买点标签。",
+      "data": "美国股票，2021-10 至 2024-05；CRSP、新闻、RavenPack、NYSE TAQ；作者称使用晚于所测模型知识截止的新闻。",
+      "evaluation": "区分初始反应与后续漂移，比较模型与新闻类别；是历史研究，不是 2026 模型实时榜。",
+      "costs": "本次未完整读取最终版成本表；不引用媒体转述的费率敏感性数字。",
+      "author_claim": "约 90% 的 portfolio-day 命中率对应不可交易的初始反应；后续漂移更集中于小股/负面消息，策略收益随 LLM 普及下降。",
+      "reproduction": [
+        "取得正式论文成本与事件定义，锁定模型版本。",
+        "以真实新闻可得时刻加总延迟定义可交易起点。",
+        "A 股按市值、流动性、正负消息和公告种类做样本外事件研究。"
+      ],
+      "code_url": null,
+      "module": [
+        "news.event_response",
+        "evaluation.latency_adjusted_alpha",
+        "strategy.signal_decay"
+      ],
+      "dates": {
+        "first_public_date": "2023-04-15",
+        "version_date": "2026-10 journal version; 2025-10-28 arXiv v6",
+        "cohort": "pre2026_origin_2026_publication"
+      },
+      "adoption_original": "P1",
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "journal_published",
+      "publication_status_code": "journal_published"
+    },
+    {
+      "paper_id": "EP01",
+      "title": "AlphaQuanter: An End-to-End Tool-Augmented Agentic Reinforcement Learning Framework for Stock Trading",
+      "name": "AlphaQuanter",
+      "venue": "Findings of ACL 2026，正式论文；不是 ACL 主会论文",
+      "primary_url": "https://aclanthology.org/2026.findings-acl.456/",
+      "fulltext_url": "https://aclanthology.org/2026.findings-acl.456/",
+      "read_depth": "targeted_fulltext",
+      "method": "以 GRPO 训练单个工具调用型语言模型，按需查询行情、基本面、新闻及宏观工具后输出日频买入/卖出/持有。",
+      "limits": [
+        "作者明确承认单资产范围、固定工具集合和上下文增长限制。",
+        "五只美国大盘股不能验证 A 股全市场选股；新闻字段的原始可见时间及版本需单独复核。"
+      ],
+      "adaptation": [
+        "采纳按需工具路由与结构化证据输出；将选股预测和账户下单权限分开。",
+        "输入必须带 available_at；同一时点的新闻事实由全站共享，避免每个 Agent 重建不一致消息库。",
+        "重建动态 A 股股票池及可交易日，比较相同信息预算下的非 RL、纯规则与模型组合。"
+      ],
+      "data": {
+        "market": "美国五只大型科技股 GOOGL/MSFT/META/NVDA/TSLA；逐只交易",
+        "train": "2022-09-01—2024-03-30",
+        "validation": "2024-05-15—2024-11-14",
+        "test": "2025-01-01—2025-06-30"
+      },
+      "evaluation": "三次独立种子；报告收益、夏普、最大回撤和工具使用消融。各单资产结果的平均数不等于共享资金组合的结果。",
+      "costs": "买卖单边费率 0.001；买入使用资金系数 0.9；下一日收盘成交式简化，不包含真实排队与自身冲击。",
+      "author_claim": "作者报告其受训 Agent 在该五股样本中优于所列基线；这是有限资产和测试期的实验结论。",
+      "reproduction": [
+        "锁定原文配置，复跑五股作为接口正确性检查。",
+        "在共享现金、多资产、T+1、最低佣金及涨跌停环境中重新训练和评价。",
+        "测量工具调用的增量信息、净收益、延迟和成本；不能只比较语言解释质量。"
+      ],
+      "code_url": "https://github.com/horizon-llm/AlphaQuanter",
+      "module": [
+        "selection",
+        "allocation",
+        "exit"
+      ],
+      "dates": {
+        "formal_publication": "2026-07",
+        "first_public_date_verified": null
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "工具路由可进入设计；交易策略须独立复现，不沿用论文收益承诺。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "Findings of ACL 2026，正式论文；不是 ACL 主会论文",
+      "publication_status_code": "findings_published"
+    },
+    {
+      "paper_id": "EP02",
+      "title": "STABLE: Shift-Tolerant Allocation via Black-Litterman Using Conditional Diffusion Estimates",
+      "name": "STABLE",
+      "venue": "ICLR 2026，正式会议论文",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d4dbc5c955c5d273eed12d565335068-Abstract-Conference.html",
+      "fulltext_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/4d4dbc5c955c5d273eed12d565335068-Abstract-Conference.html",
+      "read_depth": "targeted_fulltext",
+      "method": "宏观与个股条件扩散生成收益轨迹，估计联合收益分布，再将均值/协方差信息送入 Black–Litterman 配置。",
+      "limits": [
+        "按测试期末规模与完整历史选择股票存在事后成分/存活者问题。",
+        "标准归一化逆协方差权重表达式没有自动施加 A 股长仓、手数与换手约束。"
+      ],
+      "adaptation": [
+        "保留分布预测、观点不确定性和宏观信息融合；把最终配置交给统一约束优化器。",
+        "宏观数据使用当时发布版本，回测股票池使用历史时点成分；需重做完整时间外测试。",
+        "同时检验点预测、bootstrap 分布与条件扩散；生成样本数量不是额外独立市场证据。"
+      ],
+      "data": {
+        "market": "美国 55、中国 CSI300 55、欧洲 37、韩国 44 只股票",
+        "train": "2013-01—2024-09",
+        "test": "截至 2025-03",
+        "universe": "按 2025-03-31 规模选各行业股票并要求长历史完整"
+      },
+      "evaluation": "跨四个地区比较；论文列出固定种子。CSI300 的 STABLE 测试夏普为 -0.41，相对较好不代表绝对盈利。",
+      "costs": "正式 PDF 未检出明确 transaction 费用建模；不能把表中收益解释为完整扣费后实盘结果。",
+      "author_claim": "作者报告条件分布估计和宏观融合改善跨市场配置的相对表现。",
+      "reproduction": [
+        "复现文中四地设置并明确其选择偏差。",
+        "替换为时点股票池和实际可交易约束，补全费用、换手和容量曲线。",
+        "记录宏观信息增量和扩散模型额外贡献，防止把复杂度当效果。"
+      ],
+      "code_url": null,
+      "module": [
+        "allocation"
+      ],
+      "dates": {
+        "formal_publication": "2026",
+        "first_public_date_verified": null
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "纳入分布预测与配置比较池；原始权重公式和收益结果不直接上线。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "ICLR 2026，正式会议论文",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "EP03",
+      "title": "Decision-focused Sparse Tangent Portfolio Optimization",
+      "name": "Decision-focused Sparse Portfolio",
+      "venue": "ICML 2026，PMLR 306 正式论文",
+      "primary_url": "https://proceedings.mlr.press/v306/jeon26a.html",
+      "fulltext_url": "https://proceedings.mlr.press/v306/jeon26a.html",
+      "read_depth": "targeted_fulltext",
+      "method": "将可微稀疏 Sharpe 优化层接入预测模型，以决策损失与预测误差混合训练，并用可微 top-k 选择持股。",
+      "limits": [
+        "数据池过滤有存活者偏差。",
+        "作者代码取当前成分并删除不完整历史，重新下载会随数据版本改变。",
+        "允许的权重集合不同于普通 A 股现金账户；收敛/可微性不等于可交易性。"
+      ],
+      "adaptation": [
+        "把可微决策层当可插拔研究实现，与不可微但约束完整的优化器公平比较。",
+        "稀疏持股数、行业限额、单股上限和现金缓冲均为显式账户参数。",
+        "预测训练必须能接收同一账户真实成本与可卖库存状态，而不是事后裁切权重掩盖模型缺陷。"
+      ],
+      "data": {
+        "market": "Euro Stoxx 50、FTSE100、KOSPI200、Nikkei225",
+        "period": "2016-01—2025-12",
+        "split": "按时间约 80/20；100 日历史输入",
+        "universe": "仅稳定成员；忽略期间进出指数者"
+      },
+      "evaluation": "多个持股数设置、五个种子；比较样本外收益风险。",
+      "costs": "作者明确未加入换手惩罚、长仓约束和杠杆限制；不能视为净费后 A 股组合优化。",
+      "author_claim": "作者报告决策感知训练在较大股票集合上改善稀疏组合的样本外 Sharpe。",
+      "reproduction": [
+        "先复现原配置确认梯度与稀疏性。",
+        "构造动态股票池、长仓、换手、费率、涨跌停与 T+1 约束版本。",
+        "用等权、简单动量和成本感知二阶段优化作为必须击败的基线。"
+      ],
+      "code_url": "https://github.com/feuerwerksh/Diffble-card-SR",
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "dates": {
+        "formal_publication": "2026-07",
+        "arxiv_v1": "2026-07-01"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "适合配置研究；原作者实现不符合普通 A 股现金账户约束。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "ICML 2026，PMLR 306 正式论文",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "EP04",
+      "title": "A Linearly Convergent Proximal Subgradient Algorithm for Sparse Portfolio Optimization with Transaction Cost",
+      "name": "PSGA/STCO",
+      "venue": "ICML 2026，PMLR 306 正式论文",
+      "primary_url": "https://proceedings.mlr.press/v306/yao26s.html",
+      "fulltext_url": "https://proceedings.mlr.press/v306/yao26s.html",
+      "read_depth": "targeted_fulltext",
+      "method": "以稀疏持股与交易成本构造优化问题，采用差分凸松弛和近端次梯度算法；理论给出特定条件下的线性收敛。",
+      "limits": [
+        "旧小样本市场集不能验证当前 A 股表现。",
+        "Best/BCRP 等事后最优基准只是诊断上界，不能作为可部署竞争者。",
+        "公式费用与实际成交费用、参与率冲击不是一回事。"
+      ],
+      "adaptation": [
+        "采纳成本和稀疏度进入同一目标函数的思想，作为可解释 CPU 基准。",
+        "对账成本单位、单边/双边换手和现金权重；保留显式的 no-trade 区域。",
+        "不因复杂求解器的数值收敛就提升其资金分配等级。"
+      ],
+      "data": {
+        "market": "NYSE(O) 36 股、NYSE(N) 23 股、TSE 88 股、MSCI 24 地区指数",
+        "period": "各数据段分别位于 1962—2010；不是 2026 交易数据"
+      },
+      "evaluation": "终值、费用敏感性及数值优化表现；收敛对象是算法临界点，不能解释成金融收益保证。",
+      "costs": "实验含 0、0.25%、0.5% 费用及更广费率敏感性；使用其比例成本模型，非 A 股税费与盘口机制全实现。",
+      "author_claim": "作者报告优化效率和若干传统投资组合数据集上的净财富优势。",
+      "reproduction": [
+        "复现原文公开小数据与收敛曲线。",
+        "移植到同一时点 A 股数据、成本函数和账户约束，比较简单二次优化。",
+        "记录求解时延、最优性/可行性残差与净收益分别发生什么变化。"
+      ],
+      "code_url": "https://github.com/Ting221/STCO",
+      "module": [
+        "allocation"
+      ],
+      "dates": {
+        "formal_publication": "2026-07"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "作为稀疏成本优化的候选基线；不移植旧样本盈利率。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "ICML 2026，PMLR 306 正式论文",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "EP05",
+      "title": "Regime-Adaptive Continual Learning for Portfolio Management",
+      "name": "ReCAP",
+      "venue": "KDD 2026 正式录用/会议论文；DOI 10.1145/3770855.3817620",
+      "primary_url": "https://arxiv.org/abs/2606.00143",
+      "fulltext_url": "https://arxiv.org/abs/2606.00143",
+      "read_depth": "targeted_fulltext",
+      "method": "ReCAP 用在线状态变化检测器维护市场阶段，保存 PPO 的策略参数增量；门控混合阶段经验，适配新阶段并合并相似增量。",
+      "limits": [
+        "连续上市筛选存在存活者偏差。",
+        "代码明确是最小可运行版本，训练规模与完整论文复现存在差别。",
+        "参数增量合成依赖共同骨架，不支持任意异构策略参数直接平均。"
+      ],
+      "adaptation": [
+        "用过去信息估计阶段概率，并登记检测延迟、置信度和阶段切换费用。",
+        "把任意策略的组合统一为预测或目标权重接口；只有同骨架模型才可以研究参数增量合成。",
+        "状态库删除/合并要保留评估历史，避免淘汰差策略后重写成绩。"
+      ],
+      "data": {
+        "market": "DOW 29、NASDAQ 73、S&P500 398、Nikkei 29、商品 ETF 7",
+        "pretrain": "2008-05-01—2020-04-30",
+        "evaluation": "2020-05-01—2025-04-29",
+        "universe": "要求连续上市/完整数据"
+      },
+      "evaluation": "十个种子；匹配训练更新预算，比较多种持续学习方式，并做额外成本实验。",
+      "costs": "基准交易费 10bp，另加 5/10bp 敏感性；未验证 A 股最低收费、卖出税与 T+1。",
+      "author_claim": "作者报告阶段知识复用优于所列持续学习方案。",
+      "reproduction": [
+        "核对论文设置与简化仓库差异后建立锁定配置。",
+        "动态股票池、滚动训练、严格时间外逐日重演，所有更新只能使用已经成熟的标签。",
+        "对照简单指数加权专家组合、定期重训和冻结模型，计算切换收益及额外换手。"
+      ],
+      "code_url": "https://github.com/Dumail/ReCAP",
+      "module": [
+        "allocation"
+      ],
+      "dates": {
+        "arxiv_v1": "2026-05-29",
+        "conference": "2026-08-09—2026-08-13"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "优先验证阶段路由和知识复用；不直接把任意战法拼成一个神经网络。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "KDD 2026 正式录用/会议论文；DOI 10.1145/3770855.3817620",
+      "publication_status_code": "conference_published_track_unverified"
+    },
+    {
+      "paper_id": "EP06",
+      "title": "FineFT: Efficient and Risk-Aware Ensemble Reinforcement Learning for Futures Trading",
+      "name": "FineFT",
+      "venue": "KDD 2026 正式论文；DOI 10.1145/3770854.3780187；思想首次公开于 2025",
+      "primary_url": "https://arxiv.org/abs/2512.23773",
+      "fulltext_url": "https://arxiv.org/abs/2512.23773",
+      "read_depth": "targeted_fulltext",
+      "method": "以选择性 TD 更新训练专家，筛选各状态中表现较好的策略，再用能力/分布外状态路由决定采用哪个专家。",
+      "limits": [
+        "24 小时双向杠杆合约与 A 股现金股票交易条件不同。",
+        "筛选、路由与评估阶段必须清楚隔离，避免按测试收益选择专家。"
+      ],
+      "adaptation": [
+        "采用“符合条件的专家路由”而不是买卖票数相加。",
+        "专家输出统一为预期增量收益、持有期限及目标库存；统一组合器处理现金与可卖持仓。",
+        "保留简单规则与不交易作为合法专家，比较路由价值是否超过额外交易成本。"
+      ],
+      "data": {
+        "market": "Binance BNB/BTC/DOT/ETH USDT 永续合约",
+        "train": "2022",
+        "validation": "2023-01—2023-05",
+        "test": "2023-06—2024-01-01",
+        "frequency": "分钟级，含 5 倍杠杆设置"
+      },
+      "evaluation": "与十二种交易/集成方法对比，并研究训练效率与状态外表现。",
+      "costs": "包含订单簿深度消耗、佣金和资金费；该费用/动作模型属于加密永续合约。",
+      "author_claim": "作者报告专家选择改善风险收益和训练效率；数值不能迁移为 A 股收益预期。",
+      "reproduction": [
+        "先复现作者合约实验，避免把移植差异误报成复现失败。",
+        "另建 A 股长仓及 T+1 动作空间，单独训练评估。",
+        "比较最优单专家、平均预测、动态专家路由，分别报告训练预算和换手。"
+      ],
+      "code_url": "https://github.com/qinmoelei/FineFT_code_space",
+      "module": [
+        "allocation",
+        "overlay",
+        "execution"
+      ],
+      "dates": {
+        "arxiv_v1": "2025-12-29",
+        "formal_publication": "2026"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "路由设计值得采用；加密合约策略本身只进入研究池。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "KDD 2026 正式论文；DOI 10.1145/3770854.3780187；思想首次公开于 2025",
+      "publication_status_code": "conference_published_track_unverified"
+    },
+    {
+      "paper_id": "EP07",
+      "title": "Controllable Financial Market Generation with Diffusion Guided Meta Agent",
+      "name": "DigMA",
+      "venue": "AAAI 2026 正式论文（DigMA）；DOI 10.1609/aaai.v40i1.37009；首次公开于 2024",
+      "primary_url": "https://ojs.aaai.org/index.php/AAAI/article/view/37009",
+      "fulltext_url": "https://ojs.aaai.org/index.php/AAAI/article/view/37009",
+      "read_depth": "targeted_fulltext",
+      "method": "条件扩散生成中间价收益和订单到达参数，再由带经济先验的元 Agent 生成订单流。",
+      "limits": [
+        "Wind 完整数据受许可约束，公开代码不意味着原数据可任意再分发。",
+        "同年股票日随机划分不能证明跨时期泛化。",
+        "生成统计特征逼真不自动意味着对本策略下单干预反应真实。"
+      ],
+      "adaptation": [
+        "将生成器作为压力情景和模型训练的补充，不替代真实历史回放。",
+        "按时间、股票和未见市场阶段分层留出，并加入 LOB-Impact 式自身订单干预测试。",
+        "条件新闻情景只表示一个假设世界；真实新闻效应要由历史可见数据单独识别。"
+      ],
+      "data": {
+        "market": "Wind 深交所 2020 年主板 1452 股、创业板 854 股",
+        "split": "以股票日随机抽取各 5000 验证/测试实例，其余训练；不是纯时间外划分"
+      },
+      "evaluation": "比较统计特征、条件控制与模拟环境中的下游交易表现。",
+      "costs": "生成质量实验不等价于一套校准完整交易税费、排队和自身冲击的真实账户回测。",
+      "author_claim": "作者报告其生成机制可更好匹配若干市场特征并控制目标市场状态。",
+      "reproduction": [
+        "复现公开示例与统计量。",
+        "在有许可的 A 股逐笔数据上重建时间外测试。",
+        "注入不同规模母单，检查冲击、恢复和队列机制，再决定能否用于策略训练。"
+      ],
+      "code_url": "https://github.com/microsoft/TimeCraft",
+      "module": [
+        "execution",
+        "overlay"
+      ],
+      "dates": {
+        "arxiv_v1": "2024-08-23",
+        "arxiv_v3": "2026-01-15",
+        "formal_publication": "2026-03-14"
+      },
+      "adoption_original": {
+        "level": "C",
+        "decision": "用于可控情景研究；在干预有效性验证前，不承担实盘收益证明。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "AAAI 2026 正式论文（DigMA）；DOI 10.1609/aaai.v40i1.37009；首次公开于 2024",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "EP08",
+      "title": "Dynamic Action Space Reinforcement Learning for Optimal Trading Execution",
+      "name": "DASRL",
+      "venue": "AAMAS 2026 Research Track，正式论文；DOI 10.65109/GFLB4392",
+      "primary_url": "https://ifaamas.org/Proceedings/aamas2026/pdfs/GFLB4392.pdf",
+      "fulltext_url": "https://ifaamas.org/Proceedings/aamas2026/pdfs/GFLB4392.pdf",
+      "read_depth": "targeted_fulltext",
+      "method": "根据当前市场状态缩减执行动作集合，结合自适应探索与经验回放重整，学习大额卖出母单的拆分执行。",
+      "limits": [
+        "十年前的八股样本且排除涨跌停日，不能验证当前全 A 股执行。",
+        "母单数量规模与市场参与率须逐例重核；数据单次回放不一定完整模拟自身冲击。"
+      ],
+      "adaptation": [
+        "让 RL 只决定已批准母单的拆分、时机和价格类型，不让执行器重新发明选股方向。",
+        "动作可行域来自实时可卖量、涨跌停、交易时段、板块手数和已保留订单。",
+        "加入部分成交、撤单回报延迟、午休和集合竞价；保留 TWAP/VWAP 作为可解释基线。"
+      ],
+      "data": {
+        "market": "8 只上证50成分股、十档盘口",
+        "period": "2014-06—2015-03",
+        "split": "前约80%训练，后约20%测试",
+        "filter": "排除了涨跌停日"
+      },
+      "evaluation": "使用相对 VWAP 滑点与学习效率指标；并非选股收益回测。",
+      "costs": "执行价格与流动性反映部分成交成本；没有核实最低佣金、卖出税和全部真实排队模型。",
+      "author_claim": "作者报告相对比较模型降低执行成本并提高学习效率。",
+      "reproduction": [
+        "在相同历史八股条件下检验原结果。",
+        "扩充当前动态股票池且不删除难成交日，按参与率及母单方向分组。",
+        "用成交后净滑点、完成率和未完成头寸终值联合评价。"
+      ],
+      "code_url": null,
+      "module": [
+        "execution"
+      ],
+      "dates": {
+        "conference": "2026-05-25—2026-05-29"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "动作可行域思想可采用；执行优势须在当前数据重新证明。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "AAMAS 2026 Research Track，正式论文；DOI 10.65109/GFLB4392",
+      "publication_status_code": "conference_published_main"
+    },
+    {
+      "paper_id": "EP09",
+      "title": "Reinforcement learning for continuous-time optimal execution: actor–critic algorithm and error analysis",
+      "name": "Continuous-time Execution RL",
+      "venue": "Finance and Stochastics 30:597–655，正式期刊论文；不是 JF/JFE/RFS",
+      "primary_url": "https://link.springer.com/article/10.1007/s00780-026-00589-5",
+      "fulltext_url": "https://link.springer.com/article/10.1007/s00780-026-00589-5",
+      "read_depth": "targeted_fulltext",
+      "method": "在熵正则的均值—二次变差执行控制下构造可解析的策略/价值参数化，通过 actor–critic 与重校准学习执行路径。",
+      "limits": [
+        "理论依赖模型、步长及正则假设。",
+        "得到的是执行时间表/速率决策，不自动解决真实限价单排队。",
+        "样本为美国股票，不能验证 A 股 T+1 与集合竞价机制。"
+      ],
+      "adaptation": [
+        "作为有解析结构的 RL 执行基准，与复杂神经网络进行同成本比较。",
+        "按 A 股交易时段重新标定波动、冲击和可用库存；午休不能当普通连续交易时段。",
+        "策略方向与母单总量由配置层决定，执行层只优化交易质量。"
+      ],
+      "data": {
+        "market": "七只 Nasdaq 股票 LOBSTER 数据及三类模拟市场",
+        "period": "2016Q3—2017Q1",
+        "protocol": "以前一季度训练后一季度评估；约10%日均量母单，约6小时执行"
+      },
+      "evaluation": "理论误差与收敛分析，结合模拟和历史订单流执行比较。",
+      "costs": "研究模型中的冲击和执行目标；不应扩张成所有现实微观结构摩擦均已覆盖。",
+      "author_claim": "作者在其设定下给出学习收敛/误差结果，并报告执行质量改善。",
+      "reproduction": [
+        "先复现解析模拟与经典控制解。",
+        "在当前 A 股订单数据重新估计冲击与时段效应。",
+        "检验不同母单量级及市场阶段的改善，并检查未完成部分的机会成本。"
+      ],
+      "code_url": null,
+      "module": [
+        "execution"
+      ],
+      "dates": {
+        "formal_publication": "2026-03-10"
+      },
+      "adoption_original": {
+        "level": "B",
+        "decision": "适合作为执行优化基准；理论保证的适用条件必须保留。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "Finance and Stochastics 30:597–655，正式期刊论文；不是 JF/JFE/RFS",
+      "publication_status_code": "journal_published"
+    },
+    {
+      "paper_id": "EP10",
+      "title": "LOB-Impact Benchmark: Emergent Market Impact in Generative Limit Order Book Models",
+      "name": "LOB-Impact",
+      "venue": "ICAIF 2026 官方名单确认 oral 录用；截至 2026-11-10 会议尚未举行；作者预印本可读",
+      "primary_url": "https://arxiv.org/abs/2610.27100",
+      "fulltext_url": "https://arxiv.org/abs/2610.27100",
+      "read_depth": "targeted_fulltext",
+      "method": "通过向生成订单簿注入母单，并比较可见/隐藏订单干预，测量自身市场冲击和执行后的恢复。",
+      "limits": [
+        "只有五只美股与一个测试月份。",
+        "实验中用测试月校准干预规模用于诊断，不能偷换为实时交易策略可预知参数。",
+        "不应要求任何市场任何量级都遵守固定平方根指数。"
+      ],
+      "adaptation": [
+        "把订单干预、冲击恢复和容量响应列为模拟器验收指标。",
+        "针对 A 股加入涨跌停、集合竞价、午间停盘与有限可卖量，并按市场状态验证。",
+        "拒绝用不受自身下单影响的静态历史价格证明大资金策略可扩容。"
+      ],
+      "data": {
+        "market": "EA、NVDA、MSFT、AMD、GOOG 五只 Nasdaq 股票",
+        "test": "2026-01 订单簿保留月份",
+        "intervention": "100 个子单的母单，按约10%参与率校准实验"
+      },
+      "evaluation": "比较五种神经生成器及机械/历史回放对照；既检验自由生成，也检验干预响应。",
+      "costs": "这是市场冲击模型验证，不是包含佣金、税费的完整策略收益测算。",
+      "author_claim": "作者发现生成器的冲击弹性与执行后恢复仍不理想，提醒仅拟合市场统计量不足以验证交易模拟器。",
+      "reproduction": [
+        "跑作者公开 benchmark 检验每种生成器。",
+        "扩展 A 股样本与时段，和真实母单冲击曲线校准。",
+        "分开报告生成拟合分数和策略干预响应，不能合成一个掩盖缺陷的总分。"
+      ],
+      "code_url": "https://github.com/george-nigmatulin/lob_impact",
+      "module": [
+        "execution"
+      ],
+      "dates": {
+        "arxiv_v1": "2026-10-19",
+        "conference": "2026-11-14—2026-11-17"
+      },
+      "adoption_original": {
+        "level": "A",
+        "decision": "优先采纳模拟器验收方法；不据此宣称已有可盈利策略。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "ICAIF 2026 官方名单确认 oral 录用；截至 2026-11-10 会议尚未举行；作者预印本可读",
+      "publication_status_code": "conference_accepted_official_catalog"
+    },
+    {
+      "paper_id": "EP11",
+      "title": "Can We Stop the Backtest Yet? Anytime-Valid Promotion Tests for Adaptive Financial Research Agents",
+      "name": "PROMOTE",
+      "venue": "ICAIF 2026 官方名单确认 poster 录用；截至截止日会议未举行；作者预印本",
+      "primary_url": "https://arxiv.org/abs/2611.03384",
+      "fulltext_url": "https://arxiv.org/abs/2611.03384",
+      "read_depth": "targeted_fulltext",
+      "method": "PROMOTE 给新候选登记不可返还的检验预算，只用出生后净收益的有界分数更新 e-process，以控制持续搜索中的错误晋级概率。",
+      "limits": [
+        "被检验对象是裁剪后的有界净分数，其条件均值与未裁剪平均收益不是同一命题。",
+        "长期累积证据不会自动随优势衰退而失效；直接滚动删除旧乘积破坏原定理。",
+        "有效性有检测时延代价，不能把该门槛强制套到所有探索实验。"
+      ],
+      "adaptation": [
+        "采纳策略版本、候选出生时刻、数据快照、费用模型及全部淘汰历史的可追溯登记。",
+        "区分统计检验预算与账户资金；冠军资金配置不由 e 值机械决定。",
+        "需要随时有效声明时，严格实现其预算及重验证规则；普通候选筛选仍比较经济效果与验证成本。"
+      ],
+      "data": {
+        "market": "公开 ETF 与行业序列的24条规则；另有受控零均值模拟",
+        "period": "伪样本外约2015—2026-05；数据快照 2026-07-31"
+      },
+      "evaluation": "3000 条共享符号零假设路径、动态候选出生模拟与完整市场回放；实际市场回放没有策略晋级。",
+      "costs": "协议要求事前确定费用并按实际单边换手计扣；本卡不填尚未逐行核实的具体 bp 费率。",
+      "author_claim": "在明确的出生后条件均值非正零假设下，给出家族错误控制；它不是当前或未来盈利证书。",
+      "reproduction": [
+        "复现零假设模拟、晋级账本和下一时段部署边界。",
+        "用本站策略池的真实候选产生过程检验选择偏差。",
+        "同时报告错误晋级率、发现率、等待时间和增量净收益，避免只优化一个指标。"
+      ],
+      "code_url": null,
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "dates": {
+        "arxiv_v1": "2026-11-02",
+        "conference": "2026-11-14—2026-11-17"
+      },
+      "adoption_original": {
+        "level": "A",
+        "decision": "立即采用研究登记与时间边界；统计晋级协议作为有明确假设的可选评估器。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "ICAIF 2026 官方名单确认 poster 录用；截至截止日会议未举行；作者预印本",
+      "publication_status_code": "conference_accepted_official_catalog"
+    },
+    {
+      "paper_id": "EP12",
+      "title": "Realistic Market Impact Modeling for Reinforcement Learning Trading Environments",
+      "name": "MACE",
+      "venue": "arXiv 2026 预印本；未核实正式会议/期刊录用",
+      "primary_url": "https://arxiv.org/abs/2603.29086",
+      "fulltext_url": "https://arxiv.org/abs/2603.29086",
+      "read_depth": "targeted_fulltext",
+      "method": "MACE 以可替换执行成本模块比较固定比例费用、Almgren–Chriss 类冲击和衰减冲击，记录交易参与率与换手。",
+      "limits": [
+        "作者承认静态成分的存活者偏差。",
+        "“每轮 OOS 评估/选择最佳 OOS Sharpe”与“最终未见2025”需用代码澄清是否不同数据段；不能直接接受完全未触碰的测试集说法。",
+        "美国费用函数仍需当前 A 股真实成交校准。"
+      ],
+      "adaptation": [
+        "优先建设全站共享的费用/滑点/冲击插件；选股、配置、做T与回测使用同一版本。",
+        "加入板块、交易通道和券商收费，参数按生效日期而非全历史常数存储。",
+        "展示资金规模—净收益曲线，而非只展示零成本单一 Sharpe。"
+      ],
+      "data": {
+        "market": "NASDAQ100 股票及多种 RL 环境",
+        "period": "2010-01—2026-01",
+        "universe": "约2021年的静态成分",
+        "evaluation_claim": "作者称2025为最终样本外，另以样本外 Sharpe 跨 epoch 调参"
+      },
+      "evaluation": "A2C/PPO/DDPG/SAC/TD3，默认/优化超参及不同成本模型交叉比较。",
+      "costs": "固定10bp与规模、波动、流动性相关冲击模型；成本设定显著影响策略排名和交易强度。",
+      "author_claim": "作者强调交易成本模型的变化会改变 RL 策略训练和回测结论。",
+      "reproduction": [
+        "先用固定策略检查成本计算是否守恒且随规模合理变化。",
+        "清楚分开训练、调参和锁定终测，并保存 epoch 选择规则。",
+        "以真实成交样本拟合成本，再比较不同模型下策略排名是否稳定。"
+      ],
+      "code_url": null,
+      "module": [
+        "allocation",
+        "execution"
+      ],
+      "dates": {
+        "arxiv_v1": "2026-03-30",
+        "arxiv_v2": "2026-04-04"
+      },
+      "adoption_original": {
+        "level": "A",
+        "decision": "采纳可替换成本环境的工程思想；论文策略成绩只作待复现参考。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "arXiv 2026 预印本；未核实正式会议/期刊录用",
+      "publication_status_code": "preprint"
+    },
+    {
+      "paper_id": "EP13",
+      "title": "Machine Learning and the Implementable Efficient Frontier",
+      "name": "Implementable Efficient Frontier",
+      "venue": "The Review of Financial Studies 39(10):3035–3078，正式顶级金融期刊；DOI 10.1093/rfs/hhag022；不是2026首次提出",
+      "primary_url": "https://academic.oup.com/rfs/article/39/10/3035/8524346",
+      "fulltext_url": "https://academic.oup.com/rfs/article/39/10/3035/8524346",
+      "read_depth": "abstract_and_publisher_excerpt",
+      "method": "把机器学习收益预测放入含交易成本与多期持有决策的组合问题，评价可实施有效前沿及经济意义上的特征贡献。",
+      "limits": [
+        "作者仓库工作论文版本早于最终期刊版，需核对配置差异。",
+        "原始金融数据许可与计算资源需要单独落实。",
+        "本次未完成全文，因此不引用未经核实的特定收益倍数。"
+      ],
+      "adaptation": [
+        "将“给现有账户增加多少净收益/效用”作为因子、模型和策略的统一经济检验。",
+        "长短周期预测共同服务同一目标库存和交易成本函数；不要让各期限互相高频打架。",
+        "按资金量、持有期限与现有仓位报告可实施收益，而不是只有选股命中率。"
+      ],
+      "data": {
+        "market": "美国股票；作者仓库使用 WRDS/CRSP、公司特征及借券相关数据",
+        "period": null,
+        "horizons": "代码包含1—12个月预测期限；完整最终论文测试日期未核实"
+      },
+      "evaluation": "关注扣费后的组合前沿及不同管理规模；最终论文所有数值尚未逐表复核。",
+      "costs": "成本与持有期限共同进入组合决策；作者代码涉及交易成本和借券信息，不能直接复用于普通 A 股长仓账户。",
+      "author_claim": "作者主张应按可实施组合净效用评价预测，而非单独按预测精度排序模型。",
+      "reproduction": [
+        "获取最终正式全文并对照作者工作论文配置，补全数据期。",
+        "先复现简单成本感知动态组合，再加入机器学习。",
+        "在 A 股长仓约束、动态股票池和统一费用模型下作公平基准。"
+      ],
+      "code_url": "https://github.com/theisij/ml-and-the-implementable-efficient-frontier",
+      "module": [
+        "selection",
+        "allocation"
+      ],
+      "dates": {
+        "working_paper_first_year": "2022",
+        "verified_working_paper_version": "2024-06-19",
+        "online_publication": "2026-03-15",
+        "issue": "2026-10"
+      },
+      "adoption_original": {
+        "level": "A",
+        "decision": "经济评价目标可直接采纳；具体模型与数值保持待完整复现。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "The Review of Financial Studies 39(10):3035–3078，正式顶级金融期刊；DOI 10.1093/rfs/hhag022；不是2026首次提出",
+      "publication_status_code": "journal_published"
+    },
+    {
+      "paper_id": "EP14",
+      "title": "Volatility Harvesting or Inventory Risk? Market-Wide Evidence on Grid Trading in China's Equity ETF Market",
+      "name": "Grid Wealth Decomposition",
+      "venue": "SSRN 7429819 工作论文/预印本；未核实正式录用",
+      "primary_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7429819",
+      "fulltext_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7429819",
+      "read_depth": "abstract_only",
+      "method": "将网格交易和相同初始风险敞口的静态组合比较，重点区分波动收益与额外库存风险。",
+      "limits": [
+        "工作论文且本次只读摘要，不能据此支持任何特定网格收益数字。",
+        "经济机制可能受样本 ETF 退出、分红、交易限制与初始敞口定义影响，需阅读全文复核。"
+      ],
+      "adaptation": [
+        "立即采用匹配初始库存/现金的全账户净值比较，不以“已完成网格价差”代替盈利。",
+        "将剩余库存按同一时点市价计入；正T、倒T和只完成一条腿均不能隐藏。",
+        "ETF 是否当日回转按标的与交易通道配置，不能把所有 ETF 统一写成 T+1。"
+      ],
+      "data": {
+        "market": "中国股票 ETF 分钟数据",
+        "period": "2009—2026，精确最后交易日未核实",
+        "grid": "摘要列3%、5%、10%间距及1/3/5年窗口"
+      },
+      "evaluation": "摘要报告多市场窗口与严格样本外网格间距选择；尚未核实具体划分、ETF清单和统计细节。",
+      "costs": "摘要明确考虑 T+1、手数、现金/库存约束、佣金与不利滑点；具体参数未核实。",
+      "author_claim": "作者摘要称多数短窗口胜率并不排除左尾亏损；较长窗口平均结果不同，且间距预测没有稳定优势。",
+      "reproduction": [
+        "先获取作者全文和可验证数据说明，补足严格样本外细节。",
+        "建立机械网格经济账本，人工可核对每笔现金、库存和费用。",
+        "比较等敞口持有、无网格和多种网格；在趋势/震荡、上涨/下跌中分层。"
+      ],
+      "code_url": null,
+      "module": [
+        "overlay"
+      ],
+      "dates": {
+        "ssrn_posted": "2026-09-07"
+      },
+      "adoption_original": {
+        "level": "C",
+        "decision": "摘要支持研究方向；经济账本是独立可推导的工程要求，收益主张暂不采信。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "SSRN 7429819 工作论文/预印本；未核实正式录用",
+      "publication_status_code": "preprint"
+    },
+    {
+      "paper_id": "EP15",
+      "title": "Decoupling Grid Triggers from Trade Decisions: A Constrained Event-Driven Reinforcement Learning Architecture for ETF Trading",
+      "name": "EDGMGT",
+      "venue": "SSRN 7313639 工作论文/预印本；未核实正式录用",
+      "primary_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7313639",
+      "fulltext_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7313639",
+      "read_depth": "abstract_only",
+      "method": "EDGMGT 将网格越界作为事件，之后由有动作掩码的 PPO 选择买/卖/持有；不要求每次越界都成交。",
+      "limits": [
+        "单 ETF、较短测试、摘要读取深度，不支持“RL 网格已经有效”的结论。",
+        "可行动作掩码是否阻止全部非法交易，需要代码和账户转移测试。"
+      ],
+      "adaptation": [
+        "可以直接采用“触发事件 ≠ 下单命令”的接口。",
+        "掩码由全账户可卖量、保留资金和交易规则产生，策略不能自己创建独立钱包。",
+        "持有/跳过是主动策略动作，收益比较必须匹配暴露，否则可能只是少持仓。"
+      ],
+      "data": {
+        "market": "中国银行 ETF 分钟数据",
+        "period": "2018—2023",
+        "test": "摘要称共同测试242日，完整切分待核实"
+      },
+      "evaluation": "摘要称采用时间划分、等敞口对照和配对区块 bootstrap；详细统计流程未知。",
+      "costs": "动作掩码含现金、库存与持仓约束；具体费率、T+1掩码及滑点是否完整均未核实。",
+      "author_claim": "作者称有选择地跳过网格触发改善该样本的风险收益；不能外推到其他 ETF 或市场。",
+      "reproduction": [
+        "获取完整论文/代码，复核时间切分、费用和动作掩码。",
+        "机械网格先通过可计算账本验证，再加入学习策略。",
+        "在同一成交引擎、资本、初始敞口与费用下比较固定阈值、监督学习和 PPO。"
+      ],
+      "code_url": null,
+      "module": [
+        "overlay",
+        "execution"
+      ],
+      "dates": {
+        "written": "2026-08-19",
+        "ssrn_posted": "2026-08-20"
+      },
+      "adoption_original": {
+        "level": "C",
+        "decision": "事件与交易决策分离值得采用；RL 优势尚待完整证据。"
+      },
+      "reproduction_status": "not_started",
+      "implementation_status": "not_implemented",
+      "publication_status_note": "SSRN 7313639 工作论文/预印本；未核实正式录用",
+      "publication_status_code": "preprint"
+    }
+  ]
+}

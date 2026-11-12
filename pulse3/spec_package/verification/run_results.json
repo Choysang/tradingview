@@ -1,0 +1,219 @@
+{
+  "started_at": "2026-11-11T06:32:40.049810+00:00",
+  "finished_at": "2026-11-11T06:32:47.946099+00:00",
+  "python_version": "3.13.15",
+  "all_executed_suites_passed": true,
+  "suites": [
+    {
+      "suite": "ledger_unit",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_unified_ledger.py"
+      ],
+      "cwd": "execution",
+      "exit_code": 0,
+      "scope": "43 unittest cases; one normalized CNY account reducer",
+      "log": "verification/ledger_unit.log"
+    },
+    {
+      "suite": "ledger_golden",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "run_benchmark.py"
+      ],
+      "cwd": "execution",
+      "exit_code": 0,
+      "scope": "10 hand-computed cases, three transport harnesses, ONE ledger",
+      "log": "verification/ledger_golden.log"
+    },
+    {
+      "suite": "data_plane_unit",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_data_plane.py"
+      ],
+      "cwd": "reference_system",
+      "exit_code": 0,
+      "scope": "39 unittest cases; bounded mappings and SQLite transaction reference",
+      "log": "verification/data_plane_unit.log"
+    },
+    {
+      "suite": "feature_unit",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_feature_store.py"
+      ],
+      "cwd": "reference_features",
+      "exit_code": 0,
+      "scope": "19 unittest cases; in-process shared feature work",
+      "log": "verification/feature_unit.log"
+    },
+    {
+      "suite": "source_examples",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "validate_fixtures.py"
+      ],
+      "cwd": "sources_sectors",
+      "exit_code": 0,
+      "scope": "21 synthetic source/sector checks; no live provider",
+      "log": "verification/source_examples.log"
+    },
+    {
+      "suite": "catalog_consistency",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "validate_catalogs.py"
+      ],
+      "cwd": "catalogs",
+      "exit_code": 0,
+      "scope": "20 catalog consistency checks; candidates not promoted",
+      "log": "verification/catalog_consistency.log"
+    },
+    {
+      "suite": "sql_contract_static",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "validate_integration.py"
+      ],
+      "cwd": "integration",
+      "exit_code": 0,
+      "scope": "SQL/OAS/JSON Schema/reference checks; no PostgreSQL runtime",
+      "log": "verification/sql_contract_static.log"
+    },
+    {
+      "suite": "contract_independent_static",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "review_contracts_static.py"
+      ],
+      "cwd": "execution",
+      "exit_code": 0,
+      "scope": "independent FK columns/types/unique-target and contract boundary review; no SQL runtime",
+      "log": "verification/contract_independent_static.log"
+    },
+    {
+      "suite": "synthetic_vertical_slice",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "synthetic_vertical_slice.py"
+      ],
+      "cwd": "execution",
+      "exit_code": 0,
+      "scope": "same-release fixtures through formal schemas and sole account reducer; no website/network",
+      "log": "verification/synthetic_vertical_slice.log"
+    },
+    {
+      "suite": "alignment_reference",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "run_validation.py"
+      ],
+      "cwd": "reference_alignment",
+      "exit_code": 0,
+      "scope": "27 author unittest cases and 8 policy-schema fixtures; observed-mode synthetic reference",
+      "log": "verification/alignment_reference.log"
+    },
+    {
+      "suite": "supplement_payload_unit",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_semantics.py"
+      ],
+      "cwd": "reference_extensions",
+      "exit_code": 0,
+      "scope": "26 author unit cases; five strict payloads and bounded semantic helpers",
+      "log": "verification/supplement_payload_unit.log"
+    },
+    {
+      "suite": "ranking_continuity_unit",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_continuity.py"
+      ],
+      "cwd": "reference_transition",
+      "exit_code": 0,
+      "scope": "13 author unit cases; exact ranking trial budgets and explicit baseline residual; no capital allocation",
+      "log": "verification/ranking_continuity_unit.log"
+    },
+    {
+      "suite": "alignment_independent",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "independent_alignment_review.py"
+      ],
+      "cwd": "verification",
+      "exit_code": 0,
+      "scope": "16 independent unittest cases; separate fixture authorship, same bounded reference",
+      "log": "verification/alignment_independent.log"
+    },
+    {
+      "suite": "payload_independent",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "extension_independent_review.py"
+      ],
+      "cwd": "verification",
+      "exit_code": 0,
+      "scope": "13 probes: 10 implemented boundary checks and 3 known unimplemented Repository gaps",
+      "log": "verification/payload_independent.log"
+    },
+    {
+      "suite": "supplement_static",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "validate_supplement_v31.py"
+      ],
+      "cwd": "verification",
+      "exit_code": 0,
+      "scope": "supplement identity, schema, actual SQL and API bindings, source/decision/baseline checks; no live runtime",
+      "log": "verification/supplement_static.log"
+    },
+    {
+      "suite": "review_v32_static",
+      "command": [
+        "C:\\Users\\华为\\AppData\\Local\\Python\\pythoncore-3.13-64\\python.exe",
+        "validate_review_v32.py"
+      ],
+      "cwd": "verification",
+      "exit_code": 0,
+      "scope": "eleven original hashes, 1524 units/590 decisions, 55 input references, appendix and product mappings, proposed type closure and unchanged baseline; static only",
+      "log": "verification/review_v32_static.log"
+    }
+  ],
+  "author_unit_test_cases": 167,
+  "independent_alignment_unit_test_cases": 16,
+  "unit_test_cases": 183,
+  "ranking_continuity_unit_test_cases": 13,
+  "alignment_policy_fixture_checks": 8,
+  "extension_probe_count": 13,
+  "extension_implemented_boundary_checks": 10,
+  "extension_known_repository_gaps": 3,
+  "golden_cases": 10,
+  "golden_transport_passes": 30,
+  "independent_ledger_engines": 1,
+  "source_records": 304,
+  "unique_source_urls": 288,
+  "source_synthetic_checks": 21,
+  "catalog_checks": 20,
+  "real_postgres_executed": false,
+  "live_data_connected": false,
+  "production_load_tested": false,
+  "website_implemented": false,
+  "paper_training_or_returns_reproduced": false
+}

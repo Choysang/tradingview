@@ -1,0 +1,588 @@
+{
+  "checked_at": "2026-11-11",
+  "scope": "Static names only. No SQL execution, API server, feeds, feature implementation or scenario behavior tested.",
+  "checks_passed": 92,
+  "checks": [
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.claim_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.subject_kind",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.subject_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.predicate",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.object_payload",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.claim_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.assertion_type",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.claim_status",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_revision.available_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_evidence.claim_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_evidence.document_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_evidence.evidence_ordinal",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_evidence.evidence_span",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "intelligence.claim_evidence.relation",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.feature_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.definition_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.full_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.snapshot_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.decision_as_of",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.result_uri",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.result_hash",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP04",
+      "binding": "market.feature_result.computed_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.object_payload",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.claim_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.claim_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.available_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockWorkspace",
+      "binding": "Workspace.features",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockCommunity",
+      "binding": "CommunityObservation.analysis_payload",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockCommunity",
+      "binding": "CommunityObservation.analysis_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockCommunity",
+      "binding": "CommunityObservation.sampled_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP04",
+      "operation": "getStockCommunity",
+      "binding": "CommunityObservation.coverage_status",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "core.source_endpoint.source_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "core.source_endpoint.endpoint_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "core.source_endpoint.source_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "core.source_endpoint.mapping_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "core.source_endpoint.policy_document",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.dataset_manifest.contract_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.dataset_manifest.schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.dataset_manifest.coverage_document",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.dataset_manifest.content_hash",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.feature_result.feature_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.feature_result.full_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.feature_result.result_uri",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP13",
+      "binding": "market.feature_result.result_hash",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP13",
+      "operation": "getStockWorkspace",
+      "binding": "Workspace.features",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP13",
+      "operation": "getStockWorkspace",
+      "binding": "Workspace.chart_window_refs",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP13",
+      "operation": "getDataStatus",
+      "binding": "SourceHealth.runtime_state",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP13",
+      "operation": "getDataStatus",
+      "binding": "SourceHealth.freshness_state",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP13",
+      "operation": "getDataStatus",
+      "binding": "SourceHealth.last_canonical_ready_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.funding_observation_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.metric_namespace",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.metric_name",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.methodology_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.methodology_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.measurement_class",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.trade_or_order_basis",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.observation_window_start",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.observation_window_end",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.canonical_value",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.canonical_unit",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.available_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP15",
+      "binding": "intelligence.funding_observation.field_quality",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.metric_name",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.metric_namespace",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.measurement_class",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.trade_or_order_basis",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.canonical_value",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.canonical_unit",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP15",
+      "operation": "getStockFundFlow",
+      "binding": "FundFlowObservation.missing_reason",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "core.instrument.instrument_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "core.instrument.instrument_type",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "core.instrument.currency",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.subject_kind",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.subject_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.predicate",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.object_payload",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.claim_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_revision.available_at",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_evidence.claim_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_evidence.document_revision_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "intelligence.claim_evidence.evidence_span",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "market.feature_result.full_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "market.feature_result.snapshot_id",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "market.feature_result.result_uri",
+      "passed": true
+    },
+    {
+      "kind": "existing_sql_column",
+      "proposal": "SP17",
+      "binding": "market.feature_result.result_hash",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.subject_kind",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.subject_key",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.predicate",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.object_payload",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockEvidence",
+      "binding": "EvidenceClaim.claim_schema_version",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockWorkspace",
+      "binding": "FeatureResult.key",
+      "passed": true
+    },
+    {
+      "kind": "existing_dto_property",
+      "proposal": "SP17",
+      "operation": "getStockWorkspace",
+      "binding": "FeatureResult.artifact",
+      "passed": true
+    }
+  ],
+  "acceptance_scenarios_executed": 0
+}

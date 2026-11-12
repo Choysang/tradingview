@@ -1,0 +1,2014 @@
+{
+  "schema_version": "3.0",
+  "as_of": "2026-11-10",
+  "status": "research_and_design_catalog_not_active_configuration",
+  "all_sources_production_connected": false,
+  "source_count": 24,
+  "initial_policy_proposals": {
+    "claim_type": "design",
+    "not_provider_sla": true,
+    "requires_permitted_access": true,
+    "licensed_push_reconciliation_poll_seconds": 120,
+    "permitted_public_news_poll_seconds_range": [
+      60,
+      300
+    ],
+    "actual_defaults_not_activated": true,
+    "revision_backfill_window": "contract_and_observed_latency_dependent",
+    "polling_faster_than_native_cadence_creates_no_new_information": true
+  },
+  "community_policy": {
+    "mode": "read_only",
+    "external_posting_enabled": false,
+    "account_access_configured": false
+  },
+  "claim_origin_contract": {
+    "origin_group_scope": "one factual publication chain, not provider company count",
+    "independence_status": [
+      "confirmed_original",
+      "confirmed_independent_report",
+      "republication",
+      "unknown"
+    ],
+    "unknown_independence_is_not_a_new_vote": true
+  },
+  "canonical_field_profiles": {
+    "news.document.v1": {
+      "required_canonical": [
+        "source_id",
+        "source_record_id",
+        "revision",
+        "document_status",
+        "raw_object_uri",
+        "content_hash",
+        "first_seen_at",
+        "ingested_at",
+        "available_at",
+        "quality_status"
+      ],
+      "nullable_with_reason": [
+        "published_at",
+        "event_time",
+        "author",
+        "original_publisher",
+        "origin_group",
+        "language",
+        "title",
+        "body_excerpt"
+      ],
+      "derived_separately": [
+        "claims",
+        "entities",
+        "sentiment",
+        "event_cluster_id",
+        "transmission_channel",
+        "affected_instruments"
+      ],
+      "invariants": [
+        "source-published timestamp is not automatically platform availability",
+        "correction creates revision and invalidates downstream dependencies",
+        "unresolved original publisher cannot be counted as confirmed independent origin"
+      ]
+    },
+    "community.observation.v1": {
+      "required_canonical": [
+        "platform_id",
+        "post_id_or_stable_reference",
+        "revision",
+        "first_seen_at",
+        "available_at",
+        "sampled_at",
+        "sampling_entry",
+        "sampling_sort",
+        "sampling_window",
+        "coverage_status",
+        "quality_status"
+      ],
+      "nullable_with_reason": [
+        "author_pseudonym",
+        "created_at",
+        "edited_at",
+        "reply_count",
+        "like_count",
+        "unique_participant_count",
+        "text_excerpt"
+      ],
+      "derived_separately": [
+        "stance",
+        "claims",
+        "novelty",
+        "duplicate_cluster_id",
+        "sarcasm_probability"
+      ],
+      "invariants": [
+        "engagement belongs to sampled_at, not automatically post creation time",
+        "absent participant counts stay null",
+        "default processing is read_only",
+        "store minimal author identity only"
+      ]
+    },
+    "funding.observation.v1": {
+      "required_canonical": [
+        "source_id",
+        "instrument_or_market_id",
+        "metric_namespace",
+        "metric_name",
+        "measurement_class",
+        "methodology_id",
+        "methodology_version",
+        "observation_window",
+        "available_at",
+        "currency",
+        "unit",
+        "quality_status"
+      ],
+      "nullable_with_reason": [
+        "original_value",
+        "canonical_value",
+        "side_convention",
+        "trade_or_order_basis",
+        "session_scope",
+        "market_direction",
+        "published_at",
+        "period_end"
+      ],
+      "invariants": [
+        "gross turnover does not imply net flow",
+        "different methodology is a different series",
+        "quarterly reporting period and publication date remain distinct",
+        "unknown zero and true zero remain different"
+      ]
+    },
+    "attention.observation.v1": {
+      "required_canonical": [
+        "platform_id",
+        "metric_id",
+        "methodology_version",
+        "instrument_id",
+        "sampled_at",
+        "available_at",
+        "coverage_status",
+        "quality_status"
+      ],
+      "nullable_with_reason": [
+        "rank",
+        "score",
+        "rank_change",
+        "declared_refresh_seconds",
+        "observed_refresh_seconds"
+      ],
+      "invariants": [
+        "source cadence conflict must remain explicit",
+        "rank change is not a return estimate",
+        "cross-platform levels are not directly additive"
+      ]
+    },
+    "lhb.report.v1": {
+      "required_canonical": [
+        "exchange",
+        "instrument_id",
+        "disclosure_report_id",
+        "window_start",
+        "window_end",
+        "reason_code_or_text",
+        "report_revision",
+        "scope",
+        "available_at",
+        "rows"
+      ],
+      "row_required": [
+        "side",
+        "rank",
+        "raw_seat_name",
+        "raw_amount",
+        "raw_unit",
+        "canonical_amount_cny",
+        "resolution_status",
+        "row_id"
+      ],
+      "row_nullable_with_reason": [
+        "canonical_seat_id",
+        "broker_id",
+        "city",
+        "stable_trading_unit_id"
+      ],
+      "invariants": [
+        "same seat can occur on both buy and sell side",
+        "overlapping one-day and multi-day reports cannot be naively added",
+        "generic institution numbered labels are report-local unless stable ID is verified",
+        "report cannot affect decisions before available_at"
+      ]
+    },
+    "seat.statistic.v1": {
+      "required_canonical": [
+        "source_id",
+        "seat_reference",
+        "sample_window",
+        "outcome_definition",
+        "holding_horizon",
+        "calculation_version",
+        "available_at",
+        "quality_status"
+      ],
+      "nullable_with_reason": [
+        "sample_size",
+        "mean_return",
+        "up_probability",
+        "entry_price_definition",
+        "cost_model",
+        "unfilled_handling"
+      ],
+      "invariants": [
+        "missing methodology excludes statistic from certified tradable benchmark",
+        "branch statistics are not beneficial-owner identity"
+      ]
+    },
+    "sector.membership.v1": {
+      "required_canonical": [
+        "taxonomy_namespace",
+        "taxonomy_version",
+        "sector_id",
+        "instrument_id",
+        "membership_role",
+        "effective_from",
+        "known_from",
+        "available_at",
+        "source_id"
+      ],
+      "nullable_with_reason": [
+        "effective_to",
+        "known_to",
+        "exposure_weight",
+        "confidence"
+      ],
+      "invariants": [
+        "historical decision uses historically known membership",
+        "industry taxonomy and provider concept are separate namespaces",
+        "membership changes append revisions"
+      ]
+    },
+    "market.observation.shared_contract": {
+      "delegates_to": "database and unified market-data contracts",
+      "special_requirements": [
+        "explicit raw and adjusted price basis",
+        "volume shares vs lots",
+        "turnover amount currency",
+        "calendar/session version",
+        "bar completion status",
+        "revision and availability"
+      ]
+    }
+  },
+  "runtime_contract": {
+    "key": [
+      "source_id",
+      "endpoint_id",
+      "source_schema_version",
+      "mapping_version",
+      "partition_key"
+    ],
+    "runtime_state": [
+      "healthy",
+      "degraded",
+      "unavailable",
+      "auth_required",
+      "paused",
+      "unconfigured"
+    ],
+    "freshness_state": [
+      "current",
+      "stale",
+      "unknown",
+      "not_expected"
+    ],
+    "ingest_phase": [
+      "starting",
+      "live",
+      "backfilling",
+      "idle"
+    ],
+    "attempt_outcome": [
+      "success_data",
+      "success_empty",
+      "not_modified",
+      "rate_limited",
+      "auth_required",
+      "transport_error",
+      "parse_error",
+      "schema_changed",
+      "partial_page"
+    ],
+    "timestamps": [
+      "last_attempt_at",
+      "last_transport_ok_at",
+      "last_new_record_at",
+      "last_persisted_at",
+      "last_canonical_ready_at",
+      "last_projected_at",
+      "last_delivered_at",
+      "next_attempt_at"
+    ],
+    "watermarks": [
+      "committed_cursor",
+      "last_contiguous_sequence",
+      "source_event_watermark",
+      "max_seen_event_time",
+      "verified_time_intervals",
+      "missing_sequence_ranges"
+    ],
+    "rules": [
+      "HTTP 200 does not imply valid data; reject login/captcha/truncated or changed schema payloads.",
+      "success_empty and not_modified update contact health without pretending new data arrived.",
+      "Market data can be not_expected outside its calendar; news remains 24x7.",
+      "Advance committed cursor only after durable raw commit and outbox creation.",
+      "Maximum event time is not a completeness watermark.",
+      "Replay uses overlap and revision channels; late corrections are not filtered solely by latest timestamp.",
+      "An independent watchdog checks worker heartbeat and dataset progress.",
+      "Rate limits cause bounded backoff and do not advance the cursor.",
+      "Health is per endpoint/dataset/partition, not merely a reachable provider homepage."
+    ]
+  },
+  "quality_checks": [
+    {
+      "check_id": "DQ-SOURCE-01",
+      "check": "raw payload is expected document type, not login/error shell",
+      "failure": "invalid / auth_required or parse_error"
+    },
+    {
+      "check_id": "DQ-SOURCE-02",
+      "check": "required fields, native type, unit and timestamp precision match mapping version",
+      "failure": "invalid or partial; no canonical publication if essential field fails"
+    },
+    {
+      "check_id": "DQ-SOURCE-03",
+      "check": "raw amount unit and canonical CNY conversion are explicit",
+      "failure": "disputed until unit resolved"
+    },
+    {
+      "check_id": "DQ-SOURCE-04",
+      "check": "pagination and contiguous cursor gaps reconciled",
+      "failure": "partial coverage, do not label complete"
+    },
+    {
+      "check_id": "DQ-SOURCE-05",
+      "check": "original article IDs and revision hashes deduplicate push/poll/backfill",
+      "failure": "idempotency violation"
+    },
+    {
+      "check_id": "DQ-SOURCE-06",
+      "check": "claim independence resolved separately from media copies",
+      "failure": "unknown origin, no independent confirmation increment"
+    },
+    {
+      "check_id": "DQ-SOURCE-07",
+      "check": "funding metric provider/method/window/session equal before comparison",
+      "failure": "separate series or disputed comparator"
+    },
+    {
+      "check_id": "DQ-SOURCE-08",
+      "check": "available_at bounds historical feature use and engagement snapshots",
+      "failure": "PIT rejection"
+    },
+    {
+      "check_id": "DQ-SOURCE-09",
+      "check": "source reports no records only after valid response and complete page checks",
+      "failure": "transport/parse/schema error, never success_empty"
+    },
+    {
+      "check_id": "DQ-SOURCE-10",
+      "check": "unresolved seat and concept entities are nullable and auditable",
+      "failure": "hold entity linking, do not fabricate ID"
+    },
+    {
+      "check_id": "DQ-SOURCE-11",
+      "check": "ranking release has consistent snapshot/horizon/target/membership version",
+      "failure": "reject mixed or incomplete batch"
+    },
+    {
+      "check_id": "DQ-SOURCE-12",
+      "check": "correction/withdrawal reaches all dependent projections",
+      "failure": "stale dependent plan/rank until regenerated"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "xinhua_wire",
+      "provider": "新华社",
+      "dataset": "新闻供稿",
+      "dataset_kind": "news",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "xinhua_wire.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contracted_api",
+        "contracted_rss",
+        "contracted_ftp_push",
+        "contracted_ftp_download",
+        "contracted_email"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "documented",
+        "push": "documented_ftp",
+        "rss": "documented",
+        "revisions": "documented_service_capability",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS01",
+          "url": "https://www.xinhuanet.com/xinhuashe/ggjs.htm",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Preserve original wire ID and correction/withdrawal relation.",
+        "Specific contract format may be XML/CNML/NewsML; no concrete endpoint is verified."
+      ],
+      "consumer_contracts": [
+        "news_event_pipeline",
+        "market_regime_features",
+        "instrument_and_sector_ranking",
+        "stock_workspace_evidence"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "xinhua",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "ceis_finance",
+      "provider": "中国经济信息社 / 新华财经",
+      "dataset": "资讯与结构化金融数据",
+      "dataset_kind": "news_and_fundamental",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "ceis_finance.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contracted_data_service"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "product_described_contract_unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "dataset_specific",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS02",
+          "url": "https://www.ceis.cn/xzy/detail/20210705/3209023_1.html",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Use dataset-specific schema contracts; do not place stock, macro and news records into one untyped response.",
+        "Shared Xinhua original article does not create a new independent factual origin."
+      ],
+      "consumer_contracts": [
+        "typed_dataset_normalization",
+        "news_event_pipeline",
+        "fundamental_features"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "ceis",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "stcn_news",
+      "provider": "证券时报",
+      "dataset": "实时财经资讯库（机构版）",
+      "dataset_kind": "news",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "stcn_news.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "institutional_data_product"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_publicly_verified",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS03",
+          "url": "https://stcn.com/article/detail/1450627.html",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Product listing verified; latency, endpoint, contract, licensing and history depth unverified."
+      ],
+      "consumer_contracts": [
+        "news_event_pipeline",
+        "market_regime_features",
+        "instrument_and_sector_ranking",
+        "stock_workspace_evidence"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "stcn",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "cnstock_news",
+      "provider": "上海证券报 / 中国证券网",
+      "dataset": "机构资讯数据产品",
+      "dataset_kind": "news",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "cnstock_news.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "institutional_data_product"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_publicly_verified",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS04",
+          "url": "https://paper.cnstock.com/html/2024-01/17/content_1867502.htm",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Data product announcement verified; technical product specifications remain pending."
+      ],
+      "consumer_contracts": [
+        "news_event_pipeline",
+        "market_regime_features",
+        "instrument_and_sector_ranking",
+        "stock_workspace_evidence"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "cnstock",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "cls_telegraph",
+      "provider": "财联社",
+      "dataset": "财经电报与资讯",
+      "dataset_kind": "news",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "cls_telegraph.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "licensed_feed_candidate",
+        "permitted_read_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "no_public_official_api_verified",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS05",
+          "url": "https://www.cls.cn/our?nav=copyright",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Official product describes 24x7 telegraph, not a verified transport SLA.",
+        "Third-party proxy endpoints are not labeled official."
+      ],
+      "consumer_contracts": [
+        "news_event_pipeline",
+        "market_regime_features",
+        "instrument_and_sector_ranking",
+        "stock_workspace_evidence"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "cls",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "cninfo_announcements",
+      "provider": "巨潮资讯 / 深圳证券信息",
+      "dataset": "上市公司公告",
+      "dataset_kind": "company_disclosure",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "cninfo_announcements.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "official_data_platform_contract_candidate",
+        "permitted_public_read_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "official_platform_link_verified_endpoint_unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "announcement_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS11",
+          "url": "https://www.cninfo.com.cn/new/commonUrl?url=data/public-information",
+          "read_depth": "page_fields_units_navigation_and_indexed_examples"
+        }
+      ],
+      "quality_notes": [
+        "Public data API navigation verified only; no production announcement endpoint or payload acquired.",
+        "Issuer announcement replicated by multiple portals shares one factual origin."
+      ],
+      "consumer_contracts": [
+        "issuer_event_pipeline",
+        "instrument_and_sector_ranking",
+        "stock_workspace_evidence"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "cninfo",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "sse_lhb",
+      "provider": "上海证券交易所",
+      "dataset": "交易公开信息 / 龙虎榜",
+      "dataset_kind": "seat_disclosure",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "sse_lhb.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "permitted_public_data_candidate",
+        "licensed_feed_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "push": "unknown",
+        "historical_replay": "public_page_history_described_download_not_verified"
+      },
+      "cadence": {
+        "calendar_id": "exchange_post_close_and_revisions",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "lhb.report.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS10",
+          "url": "https://www.sse.com.cn/disclosure/diclosure/public/inquirydata/index.shtml?secCode=605136",
+          "read_depth": "page_notes_and_indexed_field_labels"
+        }
+      ],
+      "quality_notes": [
+        "Auction-trading scope excludes block trades and after-hours fixed-price trades for the cited page.",
+        "Main-board query presentation may use ten-thousand CNY; preserve raw unit and multiply exactly by 10000.",
+        "Disclosure criteria and board-specific rules are versioned separately; do not infer them from a vendor."
+      ],
+      "consumer_contracts": [
+        "seat_resolution",
+        "seat_conditional_research",
+        "stock_workspace_funding_context"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "sse",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "cninfo_lhb",
+      "provider": "巨潮资讯 / 深圳证券信息",
+      "dataset": "交易公开信息",
+      "dataset_kind": "seat_disclosure",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "cninfo_lhb.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "official_data_platform_contract_candidate",
+        "permitted_public_data_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "official_platform_link_verified_endpoint_unknown",
+        "push": "unknown",
+        "historical_replay": "not_verified"
+      },
+      "cadence": {
+        "calendar_id": "exchange_post_close_and_revisions",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "lhb.report.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS11",
+          "url": "https://www.cninfo.com.cn/new/commonUrl?url=data/public-information",
+          "read_depth": "page_fields_units_navigation_and_indexed_examples"
+        }
+      ],
+      "quality_notes": [
+        "Cited presentation unit is CNY yuan, not ten-thousand CNY.",
+        "Direct page reported system busy; indexed rows are not proof of a live download connector."
+      ],
+      "consumer_contracts": [
+        "seat_resolution",
+        "seat_conditional_research",
+        "stock_workspace_funding_context"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "cninfo",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "eastmoney_lhb_analytics",
+      "provider": "东方财富 / Choice",
+      "dataset": "营业部上榜后收益统计",
+      "dataset_kind": "seat_derived_statistic",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "eastmoney_lhb_analytics.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "licensed_product_candidate",
+        "permitted_read_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "push": "unknown",
+        "historical_replay": "ui_windows_described"
+      },
+      "cadence": {
+        "calendar_id": "provider_post_close",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "seat.statistic.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS12",
+          "url": "https://emdata.eastmoney.com/lhb/businessranking.html",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Vendor outcome definition and execution/cost details are incomplete; exclude from certified benchmark truth.",
+        "An aggregate named seat is not an identified beneficial owner."
+      ],
+      "consumer_contracts": [
+        "reference_display_only",
+        "methodology_comparison"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "eastmoney",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "eastmoney_fund_flow",
+      "provider": "东方财富",
+      "dataset": "资金流向 / 大单分类",
+      "dataset_kind": "provider_funding_metric",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "eastmoney_fund_flow.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "licensed_terminal_or_data_product_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "push": "unknown",
+        "historical_replay": "not_verified",
+        "classification_basis": "order_and_trade_information_described"
+      },
+      "cadence": {
+        "calendar_id": "exchange_sessions",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "funding.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS06",
+          "url": "https://emdesk.eastmoney.com/pc_activity/Pages/VIPTrade/pages/answer.html",
+          "read_depth": "questions_33_to_37"
+        }
+      ],
+      "quality_notes": [
+        "Each metric must retain vendor and methodology namespace.",
+        "Do not reproduce order-origin classification merely by thresholding individual fills.",
+        "Do not silently replace with another vendor series."
+      ],
+      "consumer_contracts": [
+        "funding_feature_namespace",
+        "strategy_input_routing",
+        "stock_workspace_funding"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "eastmoney",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "eastmoney_popularity",
+      "provider": "东方财富股吧",
+      "dataset": "人气榜 / 飙升榜",
+      "dataset_kind": "attention_metric",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "eastmoney_popularity.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "permitted_product_access_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "push": "unknown",
+        "historical_replay": "not_verified"
+      },
+      "cadence": {
+        "calendar_id": "provider_defined",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "disputed",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior.",
+        "declared_refresh_candidates_seconds": [
+          120,
+          600
+        ],
+        "fan_feature_declared_refresh_seconds": 3600,
+        "resolution_required": "Verify effective product version or interface contract; measure observable changes."
+      },
+      "field_profile_id": "attention.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS07",
+          "url": "https://guba.eastmoney.com/rank/",
+          "read_depth": "direct_page_footer_and_official_indexed_rules"
+        }
+      ],
+      "quality_notes": [
+        "Official index text says 2-minute refresh; directly opened footer says 10-minute refresh.",
+        "Attention combines product-specific participation; it is not cash flow."
+      ],
+      "consumer_contracts": [
+        "attention_features",
+        "sector_rising_candidates",
+        "community_context"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "eastmoney",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "eastmoney_guba_comments",
+      "provider": "东方财富股吧",
+      "dataset": "帖子与评论样本",
+      "dataset_kind": "community",
+      "provider_group": null,
+      "verification_status": "platform_and_rank_verified_comment_endpoint_unverified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "eastmoney_guba_comments.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "authorized_export_candidate",
+        "permitted_read_candidate",
+        "user_supplied_reference"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "no_public_bulk_api_verified",
+        "push": "unknown",
+        "historical_replay": "not_verified",
+        "coverage": "sampled_not_exhaustive"
+      },
+      "cadence": {
+        "calendar_id": "community_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "community.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS07",
+          "url": "https://guba.eastmoney.com/rank/",
+          "read_depth": "direct_page_footer_and_official_indexed_rules"
+        }
+      ],
+      "quality_notes": [
+        "Ranking product evidence does not verify full comment API availability.",
+        "Store entry point, sampling sort, time window, revision and engagement sampled_at."
+      ],
+      "consumer_contracts": [
+        "community_read_only_analysis",
+        "sentiment_features",
+        "attention_features"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "eastmoney",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "xueqiu_community",
+      "provider": "雪球",
+      "dataset": "投资讨论样本",
+      "dataset_kind": "community",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "xueqiu_community.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "authorized_export_candidate",
+        "permitted_read_candidate",
+        "user_supplied_reference"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "no_public_bulk_api_verified",
+        "push": "unknown",
+        "historical_replay": "not_verified",
+        "coverage": "sampled_not_exhaustive"
+      },
+      "cadence": {
+        "calendar_id": "community_24x7",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "community.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS08",
+          "url": "https://www.xueqiu.com/about/faq",
+          "read_depth": "full_relevant_service_and_community_sections"
+        }
+      ],
+      "quality_notes": [
+        "No access-control bypass or anonymous bulk API is assumed.",
+        "Community writer identity remains a platform-pseudonymous ID; do not infer real assets."
+      ],
+      "consumer_contracts": [
+        "community_read_only_analysis",
+        "sentiment_features",
+        "attention_features"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "xueqiu",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "sse_stock_connect",
+      "provider": "上海证券交易所",
+      "dataset": "沪港通统计",
+      "dataset_kind": "official_funding_disclosure",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "sse_stock_connect.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "permitted_official_data_candidate",
+        "licensed_data_product_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "realtime_northbound_net_flow": "not_supported_by_cited_disclosure",
+        "daily_northbound_gross_turnover": "officially_documented",
+        "northbound_holding_frequency": "quarter_end_published_on_subsequent_rule_date",
+        "southbound_fields": "different_rule"
+      },
+      "cadence": {
+        "calendar_id": "rule_versioned_daily_and_quarterly",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "funding.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS09",
+          "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/global/hkexsc/c/c_20250613_10781806.shtml",
+          "read_depth": "full_relevant_sections"
+        }
+      ],
+      "quality_notes": [
+        "Keep direction and disclosed field: northbound gross turnover is not net buy.",
+        "Quarter-end holdings cannot be backfilled as daily observed holdings."
+      ],
+      "consumer_contracts": [
+        "funding_feature_namespace",
+        "macro_and_market_context",
+        "PIT_research"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "sse",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "szse_stock_connect",
+      "provider": "深圳证券交易所",
+      "dataset": "深港通统计",
+      "dataset_kind": "official_funding_disclosure",
+      "provider_group": null,
+      "verification_status": "official_index_verified_direct_read_incomplete",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "szse_stock_connect.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "permitted_official_data_candidate",
+        "licensed_data_product_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "not_verified",
+        "disclosure_rule": "official_index_crosscheck_only"
+      },
+      "cadence": {
+        "calendar_id": "rule_versioned_daily_and_quarterly",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "funding.observation.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS16",
+          "url": "https://investor.szse.cn/szhk/hkbussiness/news/t20240726_608353.html",
+          "read_depth": "official_indexed_text_direct_open_timeout"
+        }
+      ],
+      "quality_notes": [
+        "Direct notice opening timed out; exact production fields require direct document and payload review."
+      ],
+      "consumer_contracts": [
+        "funding_feature_namespace",
+        "macro_and_market_context",
+        "PIT_research"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "szse",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "sse_market_data",
+      "provider": "上海证券交易所",
+      "dataset": "授权 Level-1 / Level-2 行情",
+      "dataset_kind": "market_data",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "sse_market_data.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "licensed_market_data_feed"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "level1": "official_product_documented",
+        "level2": "official_product_documented",
+        "api": "contract_pending",
+        "push": "contract_pending",
+        "historical_replay": "contract_pending"
+      },
+      "cadence": {
+        "calendar_id": "exchange_sessions",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "market.observation.shared_contract",
+      "primary_sources": [
+        {
+          "evidence_id": "NS17",
+          "url": "https://www.sse.com.cn/transparency/services/",
+          "read_depth": "relevant_product_and_authorization_sections"
+        }
+      ],
+      "quality_notes": [
+        "Market-data authorization and technical product categories verified, not an active subscription.",
+        "Required trading calendars, sequence guarantees and feed failover are contract-specific."
+      ],
+      "consumer_contracts": [
+        "shared_market_observations",
+        "technical_features",
+        "shared_execution_engine_inputs"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "sse",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "capco_industry",
+      "provider": "中国上市公司协会 / 交易所采用口径",
+      "dataset": "上市公司行业分类",
+      "dataset_kind": "classification",
+      "provider_group": null,
+      "verification_status": "official_material_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "capco_industry.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "official_classification_release_candidate"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "standard": "metadata_verified",
+        "exchange_adoption": "documented",
+        "historical_constituents": "not_verified"
+      },
+      "cadence": {
+        "calendar_id": "classification_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "sector.membership.v1",
+      "primary_sources": [
+        {
+          "evidence_id": "NS14",
+          "url": "https://www.csisc.cn/zbscbzw/c100177/202411/aefc8a590c7647b5b5aad487768bd099.shtml",
+          "read_depth": "metadata_only"
+        },
+        {
+          "evidence_id": "NS15",
+          "url": "https://www.sse.com.cn/assortment/stock/areatrade/trade/",
+          "read_depth": "methodology_note"
+        }
+      ],
+      "quality_notes": [
+        "Do not invent official classification codes from standard metadata.",
+        "Obtain dated classification files, publication dates and subsequent corrections before PIT research."
+      ],
+      "consumer_contracts": [
+        "PIT_sector_membership",
+        "sector_overview_ranking",
+        "within_sector_ranking"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "provider_id": "capco",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "pboc_policy",
+      "provider": "中国人民银行",
+      "dataset": "货币政策与公开市场信息",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "pboc_policy.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.pbc.gov.cn/",
+      "coverage_domain": "policy_monetary",
+      "provider_id": "pboc",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "nbs_macro",
+      "provider": "国家统计局",
+      "dataset": "宏观数据发布",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "nbs_macro.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.stats.gov.cn/",
+      "coverage_domain": "macro_release",
+      "provider_id": "nbs",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "ndrc_policy",
+      "provider": "国家发展改革委",
+      "dataset": "产业与宏观政策",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "ndrc_policy.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.ndrc.gov.cn/",
+      "coverage_domain": "policy_industry",
+      "provider_id": "ndrc",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "mofcom_trade",
+      "provider": "商务部",
+      "dataset": "贸易与供应限制相关公开信息",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "mofcom_trade.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.mofcom.gov.cn/",
+      "coverage_domain": "trade_policy",
+      "provider_id": "mofcom",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "fed_policy",
+      "provider": "Federal Reserve",
+      "dataset": "政策与经济发布",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "fed_policy.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.federalreserve.gov/",
+      "coverage_domain": "global_rates",
+      "provider_id": "fed",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "ecb_policy",
+      "provider": "European Central Bank",
+      "dataset": "政策与经济发布",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "ecb_policy.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": "https://www.ecb.europa.eu/",
+      "coverage_domain": "global_rates",
+      "provider_id": "ecb",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    },
+    {
+      "source_id": "global_licensed_wire",
+      "provider": "待选择的国际机构资讯商",
+      "dataset": "国际财经资讯",
+      "dataset_kind": "candidate_primary_or_licensed_source",
+      "provider_group": null,
+      "verification_status": "candidate_not_verified",
+      "integration_status": "unconfigured",
+      "enabled": false,
+      "endpoint_id": "global_licensed_wire.primary.pending_contract",
+      "endpoint_url": null,
+      "contract_revision": "draft.v3",
+      "source_schema_version": null,
+      "mapping_version": null,
+      "access_modes_documented_or_candidate": [
+        "contract_or_permitted_endpoint_to_be_verified"
+      ],
+      "rights": {
+        "entitlement_status": "pending_confirmation",
+        "credential_configured": false,
+        "permitted_uses": [],
+        "retention_limit": null,
+        "training_use_granted": false,
+        "redistribution_granted": false,
+        "status_note": "No permission, subscription, credentials, or data purchase was activated by this research."
+      },
+      "capabilities": {
+        "api": "unknown",
+        "push": "unknown",
+        "historical_replay": "unknown"
+      },
+      "cadence": {
+        "calendar_id": "news_24x7_or_release_calendar",
+        "declared_refresh_seconds": null,
+        "observed_refresh_seconds": null,
+        "cadence_status": "unknown",
+        "provider_latency_sla_seconds": null,
+        "initial_poll_seconds": null,
+        "activation_rule": "Set permitted polling and replay budgets from the actual contract and observed endpoint behavior."
+      },
+      "field_profile_id": "news.document.v1",
+      "primary_sources": [],
+      "quality_notes": [
+        "Candidate coverage item only; this research did not verify endpoint, access, freshness, field contract or current product availability."
+      ],
+      "consumer_contracts": [
+        "planned_coverage_only"
+      ],
+      "verification_before_activation": [
+        "obtain permitted access and endpoint contract",
+        "inspect actual payload and revisions",
+        "verify units, time zones, IDs and paging",
+        "test success-empty vs source error",
+        "record history floor, quota and freshness expectations",
+        "run source-to-canonical reconciliation"
+      ],
+      "candidate_homepage": null,
+      "coverage_domain": "global_news",
+      "provider_id": "global",
+      "organization_grouping_status": "not_used_for_claim_independence"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "twr": {
+    "begin": "10000",
+    "pre_flow_value": "11000",
+    "external_deposit": "9000",
+    "end": "22000",
+    "uploaded_formula": "0.157894736842105263157894736842105263158",
+    "correct_linked_twr": "0.21"
+  },
+  "cost_net_example": {
+    "old_net_return": "0.0022",
+    "old_cost_factor": "0.9980017489380778243719929587817938069206",
+    "new_cost_factor": "0.9974827930209366336611606441534407656992",
+    "same_gross_return_factor": "1.004206657018777089320241807168282665226",
+    "new_net_return": "0.001678861013307531397666199495200154952",
+    "new_net_still_positive": true,
+    "scope": "示例大单最低费不约束，佣金/印花税/过户费/滑点按旧常数简单乘法核算；实际gross and fee rows仍须底账。"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:internal:input-alignment-policy:1.0.0",
+  "title": "InputAlignmentPolicy",
+  "description": "Internal observed-mode input selection policy. It is registered in core.contract_version and referenced by ops.reconciliation_result.alignment_policy_version. It does not extend any public HTTP response.",
+  "type": "object",
+  "properties": {
+    "alignment_policy_version": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "selection_mode": {"type": "string", "enum": ["state_hold", "exact_event"]},
+    "max_age_seconds": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "strategy": {"const": "backward"},
+    "latest_invalid_policy": {"const": "surface_latest"}
+  },
+  "required": ["alignment_policy_version", "selection_mode", "max_age_seconds", "strategy", "latest_invalid_policy"],
+  "additionalProperties": false
+}

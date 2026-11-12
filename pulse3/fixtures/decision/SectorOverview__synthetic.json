@@ -1,0 +1,42 @@
+{
+ "entries": [
+  {
+   "explanation_ref": "explain:9274e78c2d3c0a78d2ddda1c0f6ee19476c022984e532294adca4b1f1f998d3c",
+   "member_count": 6,
+   "membership_snapshot_id": "74558117-ca10-5812-81ea-67d5bd30d814",
+   "observed_member_count": 6,
+   "quality_status": "valid",
+   "rank": 1,
+   "rank_kind": "sector_opportunity_rank",
+   "score": "8",
+   "taxonomy_node": {
+    "node_id": "chip",
+    "taxonomy_id": "fixture.concept",
+    "taxonomy_version": 1
+   }
+  },
+  {
+   "explanation_ref": "explain:06b5e84baeeda8248a871b6e31423656e2efee4d448d27caf9d5a68ba9528031",
+   "member_count": 6,
+   "membership_snapshot_id": "74558117-ca10-5812-81ea-67d5bd30d814",
+   "observed_member_count": 6,
+   "quality_status": "valid",
+   "rank": 2,
+   "rank_kind": "sector_opportunity_rank",
+   "score": "4",
+   "taxonomy_node": {
+    "node_id": "ai",
+    "taxonomy_id": "fixture.concept",
+    "taxonomy_version": 1
+   }
+  }
+ ],
+ "forecast_target": "synthetic_sector_opportunity",
+ "horizon_id": "5td",
+ "ranking_id": "554be7cb-e55a-5f69-ae4c-936aa69004e7",
+ "ranking_policy_version": "sec-fixture-v1",
+ "ranking_scope": "sector_overview",
+ "release_id": "6aa1a225-6252-526f-8306-85ffc1891b29",
+ "taxonomy_id": "fixture.concept",
+ "taxonomy_version": 1
+}

@@ -1,0 +1,45 @@
+{
+  "papers": 38,
+  "paper_reading_counts": {
+    "targeted_fulltext": 29,
+    "abstract_only": 7,
+    "abstract_and_publisher_excerpt": 2
+  },
+  "platforms": {
+    "platform_count": 10,
+    "feature_count": 56,
+    "source_count": 42,
+    "by_platform": {
+      "tradingview": 13,
+      "trendspider": 6,
+      "quantconnect": 6,
+      "ibkr": 4,
+      "tdx": 6,
+      "ifind": 4,
+      "choice": 5,
+      "futu": 5,
+      "wind": 4,
+      "xueqiu": 3
+    },
+    "by_decision": {
+      "integrate": 54,
+      "research": 2
+    },
+    "account_testing_performed": false
+  },
+  "source_entries": 137,
+  "original_factor_candidates": 96,
+  "original_strategy_candidates": 60,
+  "unique_source_urls": 133,
+  "paper_hypotheses": 38,
+  "legacy_audit_findings": 30,
+  "base_acceptance_scenarios": 22,
+  "v2_acceptance_scenarios": 27,
+  "reference_test_count": 45,
+  "reference_test_status": "passed",
+  "tracked_code_files": 435,
+  "symbol_declarations": 3484,
+  "reason_records": 24,
+  "requirement_anchors": 24,
+  "word_pages": 90
+}

@@ -1,0 +1,1074 @@
+{
+  "schema_version": "3.0",
+  "as_of": "2026-11-10",
+  "status": "design_contract",
+  "full_ontology_claim": false,
+  "namespace_policy": {
+    "stable_ids": true,
+    "display_labels_are_not_identifiers": true,
+    "official_codes_not_invented": true,
+    "industry_sources": [
+      "NS14",
+      "NS15"
+    ],
+    "multi_label_membership": true,
+    "effective_time_and_knowledge_time_required": true,
+    "unknown_is_not_zero_or_false": true,
+    "classification_is_not_strategy_validation": true
+  },
+  "tag_definition_contract": {
+    "required": [
+      "tag_id",
+      "namespace",
+      "definition_version",
+      "display_name",
+      "value_type",
+      "semantics",
+      "authority",
+      "created_at"
+    ],
+    "conditional": [
+      "unit",
+      "allowed_values",
+      "calculation_window",
+      "calculation_method_version",
+      "reference_universe_id",
+      "threshold_policy_id"
+    ],
+    "change_rule": "Semantic changes create a new definition version; aliases do not rewrite history."
+  },
+  "tag_assignment_contract": {
+    "required": [
+      "assignment_id",
+      "entity_type",
+      "entity_id",
+      "tag_id",
+      "definition_version",
+      "value",
+      "effective_from",
+      "known_from",
+      "available_at",
+      "provenance",
+      "assignment_method"
+    ],
+    "nullable": [
+      "effective_to",
+      "known_to",
+      "confidence",
+      "supersedes_assignment_id"
+    ],
+    "assignment_methods": [
+      "official_mapping",
+      "provider_mapping",
+      "deterministic_transform",
+      "statistical_estimate",
+      "model_inference",
+      "manual_research"
+    ],
+    "invariants": [
+      "available_at is bounded by the information actually available to the platform",
+      "entity_id must not be fabricated for unresolved mentions",
+      "model_inference cannot overwrite an official master-data fact",
+      "historical query includes both effective and knowledge time"
+    ]
+  },
+  "facets": [
+    {
+      "facet_id": "instrument.market",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "交易市场；证券代码单独不能确定标的。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "XSHG",
+        "XSHE",
+        "XBSE"
+      ]
+    },
+    {
+      "facet_id": "instrument.asset_type",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "当前平台可支持的资产分类；是否开放由统一市场能力配置决定。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "equity",
+        "etf",
+        "fund",
+        "bond",
+        "convertible_bond",
+        "index",
+        "other"
+      ]
+    },
+    {
+      "facet_id": "instrument.board",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "板块代码来自主数据，不以代码前缀作为唯一永久规则。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "main_board",
+        "star_market",
+        "chinext",
+        "bse",
+        "not_applicable",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "instrument.trading_status",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "当时已知交易状态，需生效时间和来源。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "active",
+        "suspended",
+        "delisted",
+        "pre_listing",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "instrument.special_status",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "风险警示等主数据状态，规则引擎另行决定具体限制。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "none",
+        "st",
+        "star_st",
+        "other",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "classification.namespace",
+      "applies_to": [
+        "sector",
+        "instrument"
+      ],
+      "semantics": "不同分类体系不能自动等同。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "capco_industry",
+        "cnindex_industry",
+        "csi_industry",
+        "provider_concept",
+        "internal_theme",
+        "region",
+        "index_membership",
+        "supply_chain_exposure"
+      ]
+    },
+    {
+      "facet_id": "classification.membership_role",
+      "applies_to": [
+        "sector_membership"
+      ],
+      "semantics": "主要行业、直接暴露与研究关联的证据要求不同。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "primary_industry",
+        "secondary_business",
+        "direct_exposure",
+        "indirect_exposure",
+        "index_constituent",
+        "research_association"
+      ]
+    },
+    {
+      "facet_id": "stock.market_cap_band",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "相对于版本化股票池的规模分档；保存观察时点与边界。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "micro",
+        "small",
+        "mid",
+        "large",
+        "mega",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "stock.liquidity_band",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "由统一成交/价差/可成交量测量定义，不由社区热度代替。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "thin",
+        "normal",
+        "deep",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "stock.volatility_band",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "滚动窗口、价格口径及分位阈值属于标签定义版本。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "low",
+        "medium",
+        "high",
+        "extreme",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "stock.leadership_phase",
+      "applies_to": [
+        "instrument"
+      ],
+      "semantics": "研究派生标签；不能当作已验证收益保证。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "emerging",
+        "established",
+        "diffusing",
+        "exhausting",
+        "unclassified"
+      ]
+    },
+    {
+      "facet_id": "strategy.role",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "同一策略可有多个角色；组合按输入输出契约连接。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "selection",
+        "allocation",
+        "entry",
+        "holding",
+        "execution",
+        "exit"
+      ]
+    },
+    {
+      "facet_id": "strategy.method",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "方法族不是性能等级；LLM、RL、规则都需共同验证。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "rule_based",
+        "statistical",
+        "supervised_learning",
+        "self_supervised_learning",
+        "reinforcement_learning",
+        "llm_assisted",
+        "optimization",
+        "hybrid"
+      ]
+    },
+    {
+      "facet_id": "strategy.signal_axis",
+      "applies_to": [
+        "strategy",
+        "feature"
+      ],
+      "semantics": "信息轴为多选；资金披露与热度指标分开。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "news_facts",
+        "technical",
+        "funding_disclosed",
+        "funding_provider_derived",
+        "sentiment",
+        "attention",
+        "fundamentals",
+        "macro",
+        "cross_asset",
+        "sector_structure",
+        "account_state"
+      ]
+    },
+    {
+      "facet_id": "strategy.horizon",
+      "applies_to": [
+        "strategy",
+        "rank_run",
+        "trade_plan"
+      ],
+      "semantics": "窗口单位由目标契约确定；同一榜单不能混排。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "intraday",
+        "one_trading_day",
+        "two_to_five_trading_days",
+        "one_to_four_weeks",
+        "one_to_three_months",
+        "longer_term"
+      ]
+    },
+    {
+      "facet_id": "strategy.objective",
+      "applies_to": [
+        "strategy",
+        "rank_run"
+      ],
+      "semantics": "alpha 排名、注意力、账户动作分别命名。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "relative_return",
+        "absolute_return",
+        "risk_adjusted_return",
+        "hit_probability",
+        "drawdown_control",
+        "cost_reduction",
+        "liquidity_provision",
+        "attention_detection",
+        "catalyst_detection"
+      ]
+    },
+    {
+      "facet_id": "strategy.market_regime",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "规则或模型产生的条件适用性标签，定义和版本必须可追溯。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "trending_up",
+        "trending_down",
+        "range_bound",
+        "high_volatility",
+        "low_liquidity",
+        "event_driven",
+        "broad_rotation",
+        "concentrated_leadership",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "strategy.execution_grade",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "策略对执行仿真或实际计划所需的数据/订单能力。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "daily_bar",
+        "intraday_bar",
+        "quote_aware",
+        "order_book_aware",
+        "position_aware"
+      ]
+    },
+    {
+      "facet_id": "strategy.overlay_type",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "做 T、网格属于持有/操作组件，受共用持仓与成交规则约束。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "none",
+        "intraday_position_rotation",
+        "grid",
+        "trailing_exit",
+        "rebalance",
+        "hedge",
+        "custom"
+      ]
+    },
+    {
+      "facet_id": "strategy.lifecycle",
+      "applies_to": [
+        "strategy"
+      ],
+      "semantics": "沿用公共策略池生命周期，与标签角色分开。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "discovered",
+        "specified",
+        "data_ready",
+        "screened",
+        "validated",
+        "shadow",
+        "active",
+        "paused",
+        "retired"
+      ]
+    },
+    {
+      "facet_id": "news.assertion_type",
+      "applies_to": [
+        "claim"
+      ],
+      "semantics": "事实陈述来源形态，不能由热度或转载次数升级。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "official_disclosure",
+        "independently_reported",
+        "attributed_statement",
+        "opinion",
+        "forecast",
+        "rumor"
+      ]
+    },
+    {
+      "facet_id": "news.claim_status",
+      "applies_to": [
+        "claim"
+      ],
+      "semantics": "不适用于尚无可判定结果的预测时强制二元真伪。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "supported",
+        "contradicted",
+        "disputed",
+        "unverified",
+        "not_falsifiable_yet"
+      ]
+    },
+    {
+      "facet_id": "news.document_status",
+      "applies_to": [
+        "raw_document_revision"
+      ],
+      "semantics": "每次修订追加记录，撤稿会使下游依赖失效。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "published",
+        "corrected",
+        "withdrawn",
+        "deleted_at_source",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "community.stance",
+      "applies_to": [
+        "community_observation"
+      ],
+      "semantics": "仅表示观测样本的观点方向。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "bullish",
+        "bearish",
+        "mixed",
+        "neutral",
+        "unclear"
+      ]
+    },
+    {
+      "facet_id": "community.access_mode",
+      "applies_to": [
+        "source",
+        "community_observation"
+      ],
+      "semantics": "默认只读；没有自动对外发帖权限。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "authorized_feed",
+        "permitted_read",
+        "authorized_export",
+        "user_supplied_reference",
+        "unconfigured"
+      ]
+    },
+    {
+      "facet_id": "funding.measurement_class",
+      "applies_to": [
+        "funding_observation"
+      ],
+      "semantics": "原始披露、供应商衍生量和研究推断分开。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "disclosed_observation",
+        "provider_derived",
+        "research_inference"
+      ]
+    },
+    {
+      "facet_id": "funding.side_convention",
+      "applies_to": [
+        "funding_observation"
+      ],
+      "semantics": "方向分类不能省略。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "reported_buy_sell",
+        "aggressor_classification",
+        "order_size_classification",
+        "holding_change",
+        "gross_turnover_only",
+        "not_applicable",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "funding.direction",
+      "applies_to": [
+        "funding_observation"
+      ],
+      "semantics": "沪深港通必须区分方向。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "northbound",
+        "southbound",
+        "domestic",
+        "not_applicable",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "seat.resolution_status",
+      "applies_to": [
+        "seat_mention",
+        "seat_disclosure_row"
+      ],
+      "semantics": "无法确认的名称保留未知；机构局部标签不跨日合并。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "resolved",
+        "ambiguous",
+        "unresolved",
+        "report_local_label"
+      ]
+    },
+    {
+      "facet_id": "seat.entity_kind",
+      "applies_to": [
+        "seat_entity"
+      ],
+      "semantics": "披露单位不是最终账户身份。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "broker_branch",
+        "trading_unit",
+        "report_local_institution_label",
+        "unresolved_text"
+      ]
+    },
+    {
+      "facet_id": "seat.alias_relation",
+      "applies_to": [
+        "seat_alias"
+      ],
+      "semantics": "别名和组织变化是有时间证据的边，不是无条件身份合并。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "official_rename",
+        "relocation",
+        "broker_merger_context",
+        "source_abbreviation",
+        "unverified_community_alias"
+      ]
+    },
+    {
+      "facet_id": "rank.kind",
+      "applies_to": [
+        "rank_run"
+      ],
+      "semantics": "排名目标分层。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "market_alpha_rank",
+        "sector_opportunity_rank",
+        "within_sector_alpha_rank",
+        "account_action_rank",
+        "sector_attention_rank",
+        "sector_rising_rank"
+      ]
+    },
+    {
+      "facet_id": "pool.state",
+      "applies_to": [
+        "candidate_pool_event"
+      ],
+      "semantics": "候选池状态独立于 TradePlan.state。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "observing",
+        "qualified",
+        "actionable",
+        "cooling",
+        "removed"
+      ]
+    },
+    {
+      "facet_id": "data.quality_status",
+      "applies_to": [
+        "record",
+        "field"
+      ],
+      "semantics": "与数据库公共规范一致；缺失写在字段 missing_reason。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "valid",
+        "partial",
+        "disputed",
+        "invalid"
+      ]
+    },
+    {
+      "facet_id": "data.freshness_state",
+      "applies_to": [
+        "dataset",
+        "source_endpoint"
+      ],
+      "semantics": "与 runtime_state 和字段有效性分开。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "current",
+        "stale",
+        "unknown",
+        "not_expected"
+      ]
+    },
+    {
+      "facet_id": "source.runtime_state",
+      "applies_to": [
+        "source_endpoint"
+      ],
+      "semantics": "与数据库 source_health 对齐；启动/补采另记 ingest_phase。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "healthy",
+        "degraded",
+        "unavailable",
+        "auth_required",
+        "paused",
+        "unconfigured"
+      ]
+    },
+    {
+      "facet_id": "source.ingest_phase",
+      "applies_to": [
+        "source_endpoint"
+      ],
+      "semantics": "采集阶段，不覆盖 runtime_state。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "starting",
+        "live",
+        "backfilling",
+        "idle"
+      ]
+    },
+    {
+      "facet_id": "source.attempt_outcome",
+      "applies_to": [
+        "ingest_attempt"
+      ],
+      "semantics": "成功空结果、304、错误空壳必须区分。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "success_data",
+        "success_empty",
+        "not_modified",
+        "rate_limited",
+        "auth_required",
+        "transport_error",
+        "parse_error",
+        "schema_changed",
+        "partial_page"
+      ]
+    },
+    {
+      "facet_id": "source.cadence_status",
+      "applies_to": [
+        "source_endpoint"
+      ],
+      "semantics": "供应商声明、观测和冲突分别记录。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "contract_verified",
+        "official_documented",
+        "observed_only",
+        "disputed",
+        "unknown"
+      ]
+    },
+    {
+      "facet_id": "source.entitlement_status",
+      "applies_to": [
+        "source_endpoint"
+      ],
+      "semantics": "产品存在不等于有权限或已接通。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "active_contract",
+        "permitted_access_verified",
+        "user_export_only",
+        "pending_confirmation",
+        "not_configured",
+        "expired"
+      ]
+    },
+    {
+      "facet_id": "source.integration_status",
+      "applies_to": [
+        "source_endpoint"
+      ],
+      "semantics": "研究交付的所有来源均未配置生产接入。",
+      "value_type": "enum",
+      "point_in_time_required": true,
+      "authority": "project_design",
+      "allowed_values": [
+        "unconfigured",
+        "configuring",
+        "sample_verified",
+        "production_verified",
+        "disabled"
+      ]
+    }
+  ],
+  "event_categories": [
+    {
+      "category_id": "policy.monetary",
+      "label": "货币政策/流动性",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "policy.fiscal",
+      "label": "财政政策",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "policy.industry",
+      "label": "产业政策",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "policy.market_regulation",
+      "label": "市场监管/交易制度",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "macro.release",
+      "label": "经济数据及预期差",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "macro.rates_fx",
+      "label": "利率/汇率",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "global.geopolitics",
+      "label": "国际政治与安全事件",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "global.trade_supply_restriction",
+      "label": "贸易/关税/供应限制",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "global.cross_asset",
+      "label": "海外权益/债券/商品冲击",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "industry.supply_demand",
+      "label": "产销/库存/供需",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "industry.price_cost",
+      "label": "价格/成本/能源",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "industry.technology_capacity",
+      "label": "技术/产能变化",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "company.earnings_guidance",
+      "label": "业绩/预告/指引",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "company.contract_order",
+      "label": "订单/合同/客户",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "company.capital_action",
+      "label": "融资/回购/分红/减持",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "company.ma_governance",
+      "label": "并购/治理/诉讼",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "market.index_passive_flow",
+      "label": "指数调整/被动资金",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "market.microstructure",
+      "label": "流动性/交易结构",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "event.disruption",
+      "label": "灾害/供应链/公共事件",
+      "version": "1",
+      "kind": "project_design"
+    },
+    {
+      "category_id": "social.attention_sentiment",
+      "label": "社区注意力/情绪变化",
+      "version": "1",
+      "kind": "project_design"
+    }
+  ],
+  "routing_contract": {
+    "ordered_gates": [
+      {
+        "gate": "market_capability",
+        "checks": [
+          "asset_type",
+          "market",
+          "board",
+          "trading_status",
+          "session",
+          "horizon",
+          "execution_grade"
+        ]
+      },
+      {
+        "gate": "data_readiness",
+        "checks": [
+          "exact_metric_namespace",
+          "methodology_version",
+          "required_field_presence",
+          "source_coverage",
+          "freshness_state",
+          "PIT_availability"
+        ]
+      },
+      {
+        "gate": "strategy_qualification",
+        "checks": [
+          "lifecycle",
+          "validation_certificate",
+          "shared_execution_accounting_model_version"
+        ]
+      },
+      {
+        "gate": "component_composition",
+        "checks": [
+          "role_inputs_outputs",
+          "duplicate_evidence_dependencies",
+          "correlation_and_conflict_policy"
+        ]
+      },
+      {
+        "gate": "portfolio_context",
+        "checks": [
+          "cash",
+          "holdings",
+          "sellable_quantity",
+          "cost_basis",
+          "account_snapshot_id"
+        ]
+      }
+    ],
+    "missing_input_policy": "Reject route or use an independently validated explicit fallback variant; never silently substitute zero.",
+    "route_result_required": [
+      "route_id",
+      "decision_as_of",
+      "input_snapshot_id",
+      "taxonomy_versions",
+      "eligible_components",
+      "excluded_components_with_reasons",
+      "composition_policy_version"
+    ]
+  },
+  "seat_resolution_examples": [
+    {
+      "raw_mention": "前东路",
+      "entity_kind": "unresolved_text",
+      "resolution_status": "unresolved",
+      "canonical_seat_id": null,
+      "candidate_seat_ids": [],
+      "required_extra_evidence": [
+        "full_branch_name",
+        "broker",
+        "city",
+        "effective_dates",
+        "alias_provenance"
+      ],
+      "automatic_correction_allowed": false
+    },
+    {
+      "raw_mention": "拉萨天团",
+      "entity_kind": "unresolved_text",
+      "resolution_status": "ambiguous",
+      "canonical_seat_id": null,
+      "group_policy_required": true,
+      "group_membership": [],
+      "not_equivalent_to": "A single account, beneficial owner, or deterministic next-day sell signal."
+    },
+    {
+      "raw_mention": "机构专用1",
+      "entity_kind": "report_local_institution_label",
+      "resolution_status": "report_local_label",
+      "canonical_seat_id": null,
+      "identity_scope": "one disclosure report unless a verified stable official identifier is supplied"
+    }
+  ],
+  "community_policy": {
+    "default_mode": "read_only",
+    "external_posting_adapter_enabled": false,
+    "author_identity": "minimal platform-pseudonymous identifier",
+    "private_holdings_inference_allowed": false,
+    "future_engagement_in_historical_feature_allowed": false
+  },
+  "candidate_pool_policy_contract": {
+    "required": [
+      "policy_id",
+      "policy_version",
+      "universe_id",
+      "entry_rule_ast",
+      "exit_rule_ast",
+      "consecutive_windows",
+      "minimum_dwell",
+      "cooldown",
+      "expiry_rule",
+      "hard_invalidations",
+      "validation_run_id"
+    ],
+    "hysteresis_required": true,
+    "all_numeric_defaults_are_research_parameters": true,
+    "hard_invalidation_overrides_minimum_dwell": true
+  },
+  "ranking_scope_contract": {
+    "market": "stock universe",
+    "sector": "stocks within one sector",
+    "sector_overview": "sectors themselves",
+    "watchlist": "watchlist instruments",
+    "account": "account-context actions on instruments",
+    "sector_overview_requires": [
+      "taxonomy_id",
+      "taxonomy_version",
+      "membership_snapshot_id"
+    ],
+    "sector_overview_node_id": null,
+    "sector_overview_row_table": "decision.sector_rank_entry",
+    "other_instrument_rank_row_table": "decision.ranking_entry"
+  }
+}

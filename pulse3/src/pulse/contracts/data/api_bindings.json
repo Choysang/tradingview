@@ -1,0 +1,1101 @@
+{
+  "schema_version": "3.0.0",
+  "status": "implementation_contract_seed",
+  "scope": "31 initial operations; not every future API and not a deployed service",
+  "migration_order": [
+    "database/core_schema.sql",
+    "execution/ledger_schema.sql",
+    "sources_sectors/sources_sectors_schema.sql",
+    "integration/integration_schema.sql"
+  ],
+  "operations": [
+    {
+      "operation_id": "getCurrentRelease",
+      "method": "GET",
+      "path": "/v1/releases/current",
+      "response_type": "ReleasePointer",
+      "request_type": null,
+      "application_service": "PublicationQuery.current",
+      "tables": [
+        "decision.release_slot",
+        "decision.release_publication"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pointer_read",
+      "events": [],
+      "query_parameters": [
+        [
+          "slot_key",
+          "string",
+          true
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getCurrentReleaseResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "read current slot generation once; subsequent calls pin release_id.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getRelease",
+      "method": "GET",
+      "path": "/v1/releases/{release_id}",
+      "response_type": "AnalysisRelease",
+      "request_type": null,
+      "application_service": "PublicationQuery.get",
+      "tables": [
+        "decision.release",
+        "decision.release_component",
+        "market.dataset_manifest"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getReleaseResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getMarketRanking",
+      "method": "GET",
+      "path": "/v1/rankings",
+      "response_type": "Ranking",
+      "request_type": null,
+      "application_service": "RankingQuery.market",
+      "tables": [
+        "decision.ranking_run",
+        "decision.ranking_entry",
+        "decision.release_component"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "horizon_id",
+          "string",
+          true
+        ],
+        [
+          "forecast_target",
+          "string",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getMarketRankingResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getSectorOverview",
+      "method": "GET",
+      "path": "/v1/sectors/rankings",
+      "response_type": "SectorOverview",
+      "request_type": null,
+      "application_service": "RankingQuery.sectors",
+      "tables": [
+        "decision.ranking_run",
+        "decision.sector_rank_entry",
+        "core.taxonomy_node"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "taxonomy_id",
+          "string",
+          true
+        ],
+        [
+          "taxonomy_version",
+          "PositiveInteger",
+          true
+        ],
+        [
+          "rank_kind",
+          "string",
+          true
+        ],
+        [
+          "horizon_id",
+          "string",
+          true
+        ],
+        [
+          "forecast_target",
+          "string",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getSectorOverviewResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getSectorRanking",
+      "method": "GET",
+      "path": "/v1/sectors/{node_id}/rankings",
+      "response_type": "Ranking",
+      "request_type": null,
+      "application_service": "RankingQuery.sectorMembers",
+      "tables": [
+        "decision.ranking_run",
+        "decision.ranking_entry",
+        "core.instrument_tag"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "taxonomy_id",
+          "string",
+          true
+        ],
+        [
+          "taxonomy_version",
+          "PositiveInteger",
+          true
+        ],
+        [
+          "horizon_id",
+          "string",
+          true
+        ],
+        [
+          "forecast_target",
+          "string",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getSectorRankingResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getCandidatePool",
+      "method": "GET",
+      "path": "/v1/candidate-pools/{pool_id}",
+      "response_type": "CandidatePool",
+      "request_type": null,
+      "application_service": "CandidatePoolQuery.get",
+      "tables": [
+        "decision.candidate_pool_event",
+        "decision.release"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getCandidatePoolResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockWorkspace",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/workspace",
+      "response_type": "Workspace",
+      "request_type": null,
+      "application_service": "WorkspaceQuery.get",
+      "tables": [
+        "core.instrument",
+        "core.instrument_state",
+        "decision.workspace_projection",
+        "market.feature_result",
+        "decision.trade_plan",
+        "market.quote_projection"
+      ],
+      "authorization_scope": "public_or_owner",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "view_kind",
+          "string",
+          true
+        ],
+        [
+          "account_id",
+          "UUID",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockWorkspaceResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "Frozen analysis core is cached by release_id/scope/projection_version. Its projection_hash excludes dynamic quote_overlay/actionability_id and ResponseMeta.generated_at; resolve and cache overlays independently by their own snapshot/version/freshness policy.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockQuote",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/quote",
+      "response_type": "QuoteSnapshot",
+      "request_type": null,
+      "application_service": "QuoteQuery.get",
+      "tables": [
+        "market.quote_projection",
+        "market.dataset_manifest",
+        "ingest.observation",
+        "ingest.source_health",
+        "core.source_endpoint"
+      ],
+      "authorization_scope": "public",
+      "consistency": "quote_snapshot_or_current",
+      "events": [],
+      "query_parameters": [
+        [
+          "quote_snapshot_id",
+          "UUID",
+          false
+        ],
+        [
+          "quote_policy_version",
+          "string",
+          true
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockQuoteResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "instrument_id + quote_policy_version + exact quote_snapshot_id/live_quote_version; current resolves a snapshot once. Immutable canonical artifact facts and time-derived freshness are separate. quote_projection is only a rebuildable hot cache: verify pinned artifact/hash/row identity and coverage before serving. Never fall back to daily close as a live quote.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockBars",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/bars",
+      "response_type": "BarWindow",
+      "request_type": null,
+      "application_service": "BarsQuery.window",
+      "tables": [
+        "market.dataset_manifest",
+        "market.feature_result",
+        "market.bar_projection"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_snapshot",
+      "events": [],
+      "query_parameters": [
+        [
+          "snapshot_id",
+          "UUID",
+          true
+        ],
+        [
+          "decision_as_of",
+          "Timestamp",
+          true
+        ],
+        [
+          "availability_policy_version",
+          "string",
+          true
+        ],
+        [
+          "timeframe",
+          "Timeframe",
+          true
+        ],
+        [
+          "session_policy_version",
+          "string",
+          true
+        ],
+        [
+          "adjustment_mode",
+          "AdjustmentMode",
+          true
+        ],
+        [
+          "adjustment_version",
+          "string",
+          false
+        ],
+        [
+          "start",
+          "Timestamp",
+          true
+        ],
+        [
+          "end",
+          "Timestamp",
+          true
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockBarsResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "complete FeatureKey/bars.window range + scope + snapshot + adjustment; serve only READY window.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockEvidence",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/evidence",
+      "response_type": "Evidence",
+      "request_type": null,
+      "application_service": "IntelligenceQuery.evidence",
+      "tables": [
+        "decision.workspace_projection",
+        "intelligence.document_revision",
+        "intelligence.claim_revision",
+        "intelligence.claim_evidence"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockEvidenceResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockCommunity",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/community",
+      "response_type": "Community",
+      "request_type": null,
+      "application_service": "IntelligenceQuery.community",
+      "tables": [
+        "decision.workspace_projection",
+        "intelligence.community_observation"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockCommunityResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockFundFlow",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/fund-flow",
+      "response_type": "FundFlow",
+      "request_type": null,
+      "application_service": "IntelligenceQuery.fund-flow",
+      "tables": [
+        "decision.workspace_projection",
+        "intelligence.funding_observation"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockFundFlowResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getStockSeats",
+      "method": "GET",
+      "path": "/v1/stocks/{instrument_id}/seats",
+      "response_type": "Seat",
+      "request_type": null,
+      "application_service": "IntelligenceQuery.seats",
+      "tables": [
+        "decision.workspace_projection",
+        "intelligence.seat_report",
+        "intelligence.seat_report_row",
+        "intelligence.seat_entity_version"
+      ],
+      "authorization_scope": "public",
+      "consistency": "pinned_release",
+      "events": [],
+      "query_parameters": [
+        [
+          "release_id",
+          "UUID",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getStockSeatsResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "release_id + query target/horizon/scope + projection version; immutable results. Cursor pins ranking and sort.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getTradePlan",
+      "method": "GET",
+      "path": "/v1/plans/{plan_id}/versions/{plan_version}",
+      "response_type": "TradePlan",
+      "request_type": null,
+      "application_service": "PlanQuery.getVersion",
+      "tables": [
+        "decision.trade_plan",
+        "decision.release",
+        "execution.account_head"
+      ],
+      "authorization_scope": "public_or_owner",
+      "consistency": "immutable_plan_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getTradePlanResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "(plan_id,plan_version)+principal/account scope; no inferred latest version.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "listStrategies",
+      "method": "GET",
+      "path": "/v1/strategies",
+      "response_type": "StrategyList",
+      "request_type": null,
+      "application_service": "StrategyQuery.list",
+      "tables": [
+        "strategy.definition",
+        "strategy.instance",
+        "strategy.tag_assignment",
+        "core.taxonomy_node",
+        "research.promotion_decision"
+      ],
+      "authorization_scope": "public",
+      "consistency": "catalog_snapshot",
+      "events": [],
+      "query_parameters": [
+        [
+          "role",
+          "StrategyRole",
+          false
+        ],
+        [
+          "horizon_id",
+          "string",
+          false
+        ],
+        [
+          "method_family",
+          "string",
+          false
+        ],
+        [
+          "lifecycle",
+          "StrategyLifecycle",
+          false
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/listStrategiesResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "cursor binds catalog version/read timestamp and filters; no mutable latest pagination.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getDataStatus",
+      "method": "GET",
+      "path": "/v1/data-status",
+      "response_type": "SourceHealthList",
+      "request_type": null,
+      "application_service": "DataStatusQuery.get",
+      "tables": [
+        "core.source_endpoint",
+        "ingest.source_health",
+        "ingest.source_cursor",
+        "ops.consumer_checkpoint"
+      ],
+      "authorization_scope": "public",
+      "consistency": "health_sample",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getDataStatusResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "short sampled operational read, explicit updated times; no freshness guarantee from HTTP200.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "createExperiment",
+      "method": "POST",
+      "path": "/v1/experiments",
+      "response_type": "JobReceipt",
+      "request_type": "ExperimentRequest",
+      "application_service": "ResearchService.schedule",
+      "tables": [
+        "research.evaluation_context",
+        "research.evaluation_input",
+        "research.experiment_run",
+        "ops.job_definition",
+        "ops.job_run",
+        "ops.command_receipt",
+        "ops.outbox"
+      ],
+      "authorization_scope": "researcher",
+      "consistency": "idempotent_command",
+      "events": [
+        "experiment.scheduled"
+      ],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": "urn:pulse:contracts:v3#/$defs/ExperimentRequest",
+      "response_contract": "urn:pulse:contracts:v3#/$defs/createExperimentResponse",
+      "event_schema_version": "3.0.0",
+      "cache_and_consistency": "principal/role + Idempotency-Key + request hash; reuse the same logical job on retries.",
+      "implementation_status": "contract_seed",
+      "mutations": "Application service owns short transaction, version/idempotency checks, canonical writes and outbox; API must not duplicate logic."
+    },
+    {
+      "operation_id": "getEvaluation",
+      "method": "GET",
+      "path": "/v1/experiments/{experiment_id}",
+      "response_type": "Evaluation",
+      "request_type": null,
+      "application_service": "ResearchQuery.evaluation",
+      "tables": [
+        "research.experiment_run",
+        "research.evaluation_context",
+        "research.metric_value"
+      ],
+      "authorization_scope": "researcher",
+      "consistency": "experiment_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getEvaluationResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "experiment_id + state/lease_epoch; completed artifact and metrics immutable.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getLeague",
+      "method": "GET",
+      "path": "/v1/leagues/{league_id}/versions/{league_version}",
+      "response_type": "League",
+      "request_type": null,
+      "application_service": "ResearchQuery.league",
+      "tables": [
+        "research.league_definition",
+        "research.league_round",
+        "research.league_pairing",
+        "research.promotion_decision"
+      ],
+      "authorization_scope": "researcher",
+      "consistency": "league_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getLeagueResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "league_id/version + round state; completed rounds immutable.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "listPapers",
+      "method": "GET",
+      "path": "/v1/research/papers",
+      "response_type": "PaperList",
+      "request_type": null,
+      "application_service": "ResearchQuery.papers",
+      "tables": [
+        "research.paper_revision",
+        "research.hypothesis"
+      ],
+      "authorization_scope": "public",
+      "consistency": "catalog_snapshot",
+      "events": [],
+      "query_parameters": [
+        [
+          "publication_year",
+          "PositiveInteger",
+          false
+        ],
+        [
+          "publication_status",
+          "string",
+          false
+        ],
+        [
+          "read_depth",
+          "string",
+          false
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/listPapersResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "cursor binds catalog version/read timestamp and filters; no mutable latest pagination.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getAccountProjection",
+      "method": "GET",
+      "path": "/v1/accounts/{account_id}",
+      "response_type": "AccountProjection",
+      "request_type": null,
+      "application_service": "AccountQuery.project",
+      "tables": [
+        "execution.account_head",
+        "execution.account_event",
+        "execution.journal_entry",
+        "execution.journal_line",
+        "execution.position_projection",
+        "execution.quantity_lot",
+        "execution.order_reservation",
+        "market.dataset_manifest"
+      ],
+      "authorization_scope": "account_owner",
+      "consistency": "pinned_account_version",
+      "events": [],
+      "query_parameters": [
+        [
+          "account_version",
+          "SafeInteger",
+          true
+        ],
+        [
+          "valuation_snapshot_id",
+          "UUID",
+          true
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getAccountProjectionResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "account_id + account_version + valuation_snapshot_id + valuation policy; never share across accounts. Historical versions replay canonical account events or use an exact versioned projection; filtering mutable current positions by applied_sequence is not historical reconstruction.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getAccountActionability",
+      "method": "GET",
+      "path": "/v1/accounts/{account_id}/actionability/{actionability_id}",
+      "response_type": "ActionabilitySnapshot",
+      "request_type": null,
+      "application_service": "ActionabilityQuery.get",
+      "tables": [
+        "decision.actionability_snapshot",
+        "decision.ranking_run",
+        "execution.account_event",
+        "market.dataset_manifest"
+      ],
+      "authorization_scope": "account_owner",
+      "consistency": "pinned_actionability",
+      "events": [],
+      "query_parameters": [
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getAccountActionabilityResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "actionability_id + account_id + account_version + quote_snapshot_id + policy + cursor; no live reorder of frozen rank.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getLayout",
+      "method": "GET",
+      "path": "/v1/workspace-layouts/{layout_id}",
+      "response_type": "Layout",
+      "request_type": null,
+      "application_service": "LayoutService.get",
+      "tables": [
+        "ui.workspace_layout"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "owner_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getLayoutResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "principal_id + resource ID + saved version; persistence is PG, not TTL cache.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "saveLayout",
+      "method": "PUT",
+      "path": "/v1/workspace-layouts/{layout_id}",
+      "response_type": "Layout",
+      "request_type": "LayoutUpdate",
+      "application_service": "LayoutService.save",
+      "tables": [
+        "ui.workspace_layout",
+        "ops.command_receipt",
+        "ops.outbox"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "optimistic_owner_command",
+      "events": [
+        "layout.saved"
+      ],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": "urn:pulse:contracts:v3#/$defs/LayoutUpdate",
+      "response_contract": "urn:pulse:contracts:v3#/$defs/saveLayoutResponse",
+      "event_schema_version": "3.0.0",
+      "cache_and_consistency": "principal owner + request hash + idempotency key; expected_*_version CAS in one transaction; emit outbox.",
+      "implementation_status": "contract_seed",
+      "mutations": "Application service owns short transaction, version/idempotency checks, canonical writes and outbox; API must not duplicate logic."
+    },
+    {
+      "operation_id": "listWatchlists",
+      "method": "GET",
+      "path": "/v1/watchlists",
+      "response_type": "WatchlistList",
+      "request_type": null,
+      "application_service": "WatchlistService.list",
+      "tables": [
+        "ui.watchlist",
+        "ui.watchlist_member",
+        "core.instrument"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "owner_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/listWatchlistsResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "principal_id + resource ID + saved version; persistence is PG, not TTL cache.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "saveWatchlist",
+      "method": "PUT",
+      "path": "/v1/watchlists/{watchlist_id}",
+      "response_type": "Watchlist",
+      "request_type": "WatchlistUpdate",
+      "application_service": "WatchlistService.save",
+      "tables": [
+        "ui.watchlist",
+        "ui.watchlist_member",
+        "ops.command_receipt",
+        "ops.outbox"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "optimistic_owner_command",
+      "events": [
+        "watchlist.saved"
+      ],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": "urn:pulse:contracts:v3#/$defs/WatchlistUpdate",
+      "response_contract": "urn:pulse:contracts:v3#/$defs/saveWatchlistResponse",
+      "event_schema_version": "3.0.0",
+      "cache_and_consistency": "principal owner + request hash + idempotency key; expected_*_version CAS in one transaction; emit outbox.",
+      "implementation_status": "contract_seed",
+      "mutations": "Application service owns short transaction, version/idempotency checks, canonical writes and outbox; API must not duplicate logic."
+    },
+    {
+      "operation_id": "saveAnnotation",
+      "method": "PUT",
+      "path": "/v1/annotations/{annotation_id}",
+      "response_type": "Annotation",
+      "request_type": "AnnotationUpdate",
+      "application_service": "AnnotationService.save",
+      "tables": [
+        "ui.annotation",
+        "ops.command_receipt",
+        "ops.outbox"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "optimistic_owner_command",
+      "events": [
+        "annotation.saved"
+      ],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": "urn:pulse:contracts:v3#/$defs/AnnotationUpdate",
+      "response_contract": "urn:pulse:contracts:v3#/$defs/saveAnnotationResponse",
+      "event_schema_version": "3.0.0",
+      "cache_and_consistency": "principal owner + request hash + idempotency key; expected_*_version CAS in one transaction; emit outbox.",
+      "implementation_status": "contract_seed",
+      "mutations": "Application service owns short transaction, version/idempotency checks, canonical writes and outbox; API must not duplicate logic."
+    },
+    {
+      "operation_id": "listAnnotations",
+      "method": "GET",
+      "path": "/v1/annotations",
+      "response_type": "AnnotationList",
+      "request_type": null,
+      "application_service": "AnnotationService.list",
+      "tables": [
+        "ui.annotation",
+        "core.instrument"
+      ],
+      "authorization_scope": "principal_owner",
+      "consistency": "owner_version",
+      "events": [],
+      "query_parameters": [
+        [
+          "instrument_id",
+          "UUID",
+          false
+        ],
+        [
+          "watchlist_id",
+          "UUID",
+          false
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/listAnnotationsResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "principal_id + resource ID + saved version; persistence is PG, not TTL cache.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getModelRun",
+      "method": "GET",
+      "path": "/v1/analysis-runs/{model_run_id}",
+      "response_type": "ModelRun",
+      "request_type": null,
+      "application_service": "AnalysisQuery.run",
+      "tables": [
+        "analysis.model_run",
+        "analysis.model_policy",
+        "decision.release_stage"
+      ],
+      "authorization_scope": "researcher",
+      "consistency": "model_run_binding",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getModelRunResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "model_run_id + policy version + input hash; successful stale result cannot publish.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "getJobRun",
+      "method": "GET",
+      "path": "/v1/jobs/{job_run_id}",
+      "response_type": "JobRun",
+      "request_type": null,
+      "application_service": "JobQuery.get",
+      "tables": [
+        "ops.job_run",
+        "ops.job_definition"
+      ],
+      "authorization_scope": "operator",
+      "consistency": "job_run_version",
+      "events": [],
+      "query_parameters": [],
+      "pending": [],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/getJobRunResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "job_run_id + lease_epoch/attempt_count; heartbeat is not data freshness.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    },
+    {
+      "operation_id": "pollUpdates",
+      "method": "GET",
+      "path": "/v1/updates",
+      "response_type": "UpdatePage",
+      "request_type": null,
+      "application_service": "DeliveryQuery.poll",
+      "tables": [
+        "ops.outbox",
+        "decision.release_publication",
+        "decision.release_slot",
+        "ops.consumer_checkpoint"
+      ],
+      "authorization_scope": "public_or_owner",
+      "consistency": "resumable_event_cursor",
+      "events": [],
+      "query_parameters": [
+        [
+          "slot_key",
+          "string",
+          true
+        ],
+        [
+          "cursor",
+          "string",
+          false
+        ]
+      ],
+      "pending": [
+        "Scope-specific delivery index and retention/reset integration tests. Never implement this with id > max-seen UUID/sequence as commit watermark."
+      ],
+      "request_contract": null,
+      "response_contract": "urn:pulse:contracts:v3#/$defs/pollUpdatesResponse",
+      "event_schema_version": null,
+      "cache_and_consistency": "opaque cursor includes stream epoch + scope + contiguous position; expired retention resets to current snapshot.",
+      "implementation_status": "contract_seed",
+      "mutations": "none"
+    }
+  ],
+  "unimplemented_contract_details": [
+    "Task-specific strategy/claim/community/editor JSON schemas at marked seed extension points.",
+    "Authentication principal tables, cookie/session implementation and account authorization.",
+    "Delivery index/stream retention and cursor reset behavior.",
+    "Source adapters, full calendar/cost rules, model provider SDKs and actual performance targets.",
+    "Explicit pointer rollback command/event; ordinary release stage only supports forward publication."
+  ]
+}

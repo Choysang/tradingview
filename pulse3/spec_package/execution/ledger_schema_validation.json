@@ -1,0 +1,10 @@
+{
+  "parser": "pglast v8.7",
+  "statement_count": 31,
+  "sha256": "0639b4fa05274633691961e407911418cd5f8e3bad611bd26812e32411cd8e85",
+  "postgres_migration_executed": false,
+  "trigger_bodies_executed": false,
+  "limits": "SQL grammar parse is not execution, constraint validation, or concurrency verification.",
+  "plpgsql_function_count": 4,
+  "plpgsql_syntax_parsed": true
+}

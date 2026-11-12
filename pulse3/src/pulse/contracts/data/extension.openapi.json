@@ -1,0 +1,1279 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Pulse extension operations",
+  "version": "3.0.0+ext.1"
+ },
+ "paths": {
+  "/v1/x/query-market-today": {
+   "get": {
+    "operationId": "queryMarketToday",
+    "summary": "PEX01 市场状态与今日摘要",
+    "x-card": "PEX01",
+    "x-operation-kind": "query",
+    "x-authorization": "public研究可读；account_id要求account:read，按认证主体过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "无可用baseline时stage失败且不发新READY；如已有批准备用基线则按新stage显式切换。",
+     "最后READY包显示stale，当前actionability不得据失效输入产生新actionable；已有持仓/挂单按既有缺数据政策管理，不自动撤销。",
+     "不同账户overlay不可命中同私有缓存。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryMarketTodayResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryMarketTodayRequest"
+   }
+  },
+  "/v1/x/query-ranking-history": {
+   "get": {
+    "operationId": "queryRankingHistory",
+    "summary": "PEX02 推荐榜与回避榜",
+    "x-card": "PEX02",
+    "x-operation-kind": "query",
+    "x-authorization": "public或对应私人scope权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "SHORT/SWING/LONG只是展示标签，真实过滤使用target/horizon/scope。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryRankingHistoryResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryRankingHistoryRequest"
+   }
+  },
+  "/v1/x/query-ranking-track-record": {
+   "get": {
+    "operationId": "queryRankingTrackRecord",
+    "summary": "PEX02 推荐榜与回避榜",
+    "x-card": "PEX02",
+    "x-operation-kind": "query",
+    "x-authorization": "按每个榜单scope授权。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "未下单与未成交计入预登记机会分母；不把回避榜反转为未经验证卖空收益。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryRankingTrackRecordResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryRankingTrackRecordRequest"
+   }
+  },
+  "/v1/x/query-sector-details": {
+   "get": {
+    "operationId": "querySectorDetails",
+    "summary": "PEX03 板块",
+    "x-card": "PEX03",
+    "x-operation-kind": "query",
+    "x-authorization": "public研究或已有私有scope授权。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "同板块不同版本分别可寻址，榜单、梯队、候选使用同一membership。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/querySectorDetailsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/querySectorDetailsRequest"
+   }
+  },
+  "/v1/x/query-analog-cases": {
+   "get": {
+    "operationId": "queryAnalogCases",
+    "summary": "PEX04 个股",
+    "x-card": "PEX04",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读权限，私有特征还需所属scope。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "加入未来行情后旧查询邻居不改变；未到期结果null；展示经验分布不冒称校准概率。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryAnalogCasesResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryAnalogCasesRequest"
+   }
+  },
+  "/v1/x/query-interval-statistics": {
+   "get": {
+    "operationId": "queryIntervalStatistics",
+    "summary": "PEX04 个股",
+    "x-card": "PEX04",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读与数据访问权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "区间收益与唯一价格/公司行为口径一致，不混账户TWR。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryIntervalStatisticsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryIntervalStatisticsRequest"
+   }
+  },
+  "/v1/x/propose-trade-plan": {
+   "post": {
+    "operationId": "proposeTradePlan",
+    "summary": "PEX05 交易计划",
+    "x-card": "PEX05",
+    "x-operation-kind": "command",
+    "x-authorization": "plan:write；账户需account:plan；principal仅来自认证。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "重复命令不生成第二计划；事件迟到不会把旧建议编进新release；用户编辑结果与系统原计划分别对账。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/proposeTradePlanResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/proposeTradePlanRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-plan-versions": {
+   "get": {
+    "operationId": "queryPlanVersions",
+    "summary": "PEX05 交易计划",
+    "x-card": "PEX05",
+    "x-operation-kind": "query",
+    "x-authorization": "public系统研究或plan owner/account read；现有getTradePlan同样须按新增owner关系过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "未授权用户不能通过已知plan_id读取他人编辑计划。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryPlanVersionsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryPlanVersionsRequest"
+   }
+  },
+  "/v1/x/list-trade-plans": {
+   "get": {
+    "operationId": "listTradePlans",
+    "summary": "PEX05 交易计划",
+    "x-card": "PEX05",
+    "x-operation-kind": "query",
+    "x-authorization": "plan:read；账户计划需account:read；无account_id不意味着所有用户私有计划。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "按股票可找到已有计划；用户修改版与系统版均保留明确来源。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/listTradePlansResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/listTradePlansRequest"
+   }
+  },
+  "/v1/x/query-plan-proposal": {
+   "get": {
+    "operationId": "queryPlanProposal",
+    "summary": "PEX05 交易计划",
+    "x-card": "PEX05",
+    "x-operation-kind": "query",
+    "x-authorization": "plan:read且proposal owner/account授权。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "propose收据可直达最终plan；基线或账户过期返回明确原因，不生成伪成功空计划。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryPlanProposalResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryPlanProposalRequest"
+   }
+  },
+  "/v1/x/schedule-tactic-replay": {
+   "post": {
+    "operationId": "scheduleTacticReplay",
+    "summary": "PEX06 操作策略回放",
+    "x-card": "PEX06",
+    "x-operation-kind": "command",
+    "x-authorization": "research:run；私有期初持仓需account:read；预算由研究作业policy限制。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "与同初始资产持有基准比较NAV/现金/库存/费用；T+1及未成交保留。",
+     "现有ExperimentRequest只接收其六个字段；replay_spec不直接塞进3.0.0请求。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/scheduleTacticReplayResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/scheduleTacticReplayRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-event-clusters": {
+   "get": {
+    "operationId": "queryEventClusters",
+    "summary": "PEX07 消息",
+    "x-card": "PEX07",
+    "x-operation-kind": "query",
+    "x-authorization": "public/来源内容权限与private scope过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "多家转载同上游不当多份独立证据；未关联股票的宏观事件不丢弃。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryEventClustersResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryEventClustersRequest"
+   }
+  },
+  "/v1/x/query-calendar-events": {
+   "get": {
+    "operationId": "queryCalendarEvents",
+    "summary": "PEX07 消息",
+    "x-card": "PEX07",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读及来源可展示权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "会议延期、公告更正、只有日期的日程和宏观修订有fixture。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryCalendarEventsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryCalendarEventsRequest"
+   }
+  },
+  "/v1/x/query-seat-directory": {
+   "get": {
+    "operationId": "querySeatDirectory",
+    "summary": "PEX08 龙虎榜与席位",
+    "x-card": "PEX08",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "重名、迁址和机构匿名池样本不强行合并。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/querySeatDirectoryResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/querySeatDirectoryRequest"
+   }
+  },
+  "/v1/x/query-seat-profile": {
+   "get": {
+    "operationId": "querySeatProfile",
+    "summary": "PEX08 龙虎榜与席位",
+    "x-card": "PEX08",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读及源范围权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "地域传言不能变成必砸规则；同席位双侧报告不双算净额。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/querySeatProfileResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/querySeatProfileRequest"
+   }
+  },
+  "/v1/x/query-seat-reports": {
+   "get": {
+    "operationId": "querySeatReports",
+    "summary": "PEX08 龙虎榜与席位",
+    "x-card": "PEX08",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读及披露来源权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "全市场按日榜单与个股getStockSeats引用同report_revision_id；盘后报告不进入当日盘中。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/querySeatReportsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/querySeatReportsRequest"
+   }
+  },
+  "/v1/x/query-market-sentiment": {
+   "get": {
+    "operationId": "queryMarketSentiment",
+    "summary": "PEX09 情绪与社区",
+    "x-card": "PEX09",
+    "x-operation-kind": "query",
+    "x-authorization": "public/对应私人scope。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "涨停、炸板、晋级分母与研究/产品一致。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryMarketSentimentResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryMarketSentimentRequest"
+   }
+  },
+  "/v1/x/query-community-opinions": {
+   "get": {
+    "operationId": "queryCommunityOpinions",
+    "summary": "PEX09 情绪与社区",
+    "x-card": "PEX09",
+    "x-operation-kind": "query",
+    "x-authorization": "研究读；允许展示的来源内容范围。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "缺明确目标或期限的观点只展示描述，不进入准确率统计。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryCommunityOpinionsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryCommunityOpinionsRequest"
+   }
+  },
+  "/v1/x/parse-screen-text": {
+   "get": {
+    "operationId": "parseScreenText",
+    "summary": "PEX10 筛选",
+    "x-card": "PEX10",
+    "x-operation-kind": "pure_query",
+    "x-authorization": "screen:parse；无账户写权限要求。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "不直接返回模型记忆股票名单；不执行任意SQL。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/parseScreenTextResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/parseScreenTextRequest"
+   }
+  },
+  "/v1/x/run-screen": {
+   "post": {
+    "operationId": "runScreen",
+    "summary": "PEX10 筛选",
+    "x-card": "PEX10",
+    "x-operation-kind": "command",
+    "x-authorization": "screen:run；私有母集另需授权。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "缺失字段输出unknown及原因；未许可研究策略可用于显式研究筛选但不改变生产推荐。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/runScreenResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/runScreenRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/save-screen": {
+   "post": {
+    "operationId": "saveScreen",
+    "summary": "PEX10 筛选",
+    "x-card": "PEX10",
+    "x-operation-kind": "command",
+    "x-authorization": "screen:write且owner匹配。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "保存后的筛选不依赖浏览器localStorage。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/saveScreenResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/saveScreenRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-screen-run": {
+   "get": {
+    "operationId": "queryScreenRun",
+    "summary": "PEX10 筛选",
+    "x-card": "PEX10",
+    "x-operation-kind": "query",
+    "x-authorization": "screen:read且owner或获分享权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "同分tie-break及unknown分母可解释。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryScreenRunResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryScreenRunRequest"
+   }
+  },
+  "/v1/x/list-saved-screens": {
+   "get": {
+    "operationId": "listSavedScreens",
+    "summary": "PEX10 筛选",
+    "x-card": "PEX10",
+    "x-operation-kind": "query",
+    "x-authorization": "screen:read且owner过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "换设备可恢复保存条件；不得按screen_id越权枚举。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/listSavedScreensResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/listSavedScreensRequest"
+   }
+  },
+  "/v1/x/register-strategy-draft": {
+   "post": {
+    "operationId": "registerStrategyDraft",
+    "summary": "PEX11 策略与联赛",
+    "x-card": "PEX11",
+    "x-operation-kind": "command",
+    "x-authorization": "strategy:register；research权限不包含production:promote。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "重复公式/父血缘可查；新注册策略不因出现文件便进入生产融合。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/registerStrategyDraftResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/registerStrategyDraftRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-strategy-version": {
+   "get": {
+    "operationId": "queryStrategyVersion",
+    "summary": "PEX11 策略与联赛",
+    "x-card": "PEX11",
+    "x-operation-kind": "query",
+    "x-authorization": "公开研究或策略owner权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "无代码编译前后golden输入输出一致；参数扫描全部试验入族。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryStrategyVersionResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryStrategyVersionRequest"
+   }
+  },
+  "/v1/x/list-authorized-accounts": {
+   "get": {
+    "operationId": "listAuthorizedAccounts",
+    "summary": "PEX12 组合",
+    "x-card": "PEX12",
+    "x-operation-kind": "query",
+    "x-authorization": "认证主体account:read；禁止请求者提供任意owner冒充。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "account_head无owner列，采用D15或外部授权来源，不返回全库账户。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/listAuthorizedAccountsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/listAuthorizedAccountsRequest"
+   }
+  },
+  "/v1/x/import-broker-fills": {
+   "post": {
+    "operationId": "importBrokerFills",
+    "summary": "PEX12 组合",
+    "x-card": "PEX12",
+    "x-operation-kind": "command",
+    "x-authorization": "account:import且账户授权；此能力仅回填已发生事实，不外发委托。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "重复回报不重复记账；更正走correction链；无订单依赖可恢复pending，不改成未成交。",
+     "费用未知不得补0；按已登记pending/估计费用政策标记，实际费用补报用更正链。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/importBrokerFillsResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/importBrokerFillsRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-account-orders": {
+   "get": {
+    "operationId": "queryAccountOrders",
+    "summary": "PEX12 组合",
+    "x-card": "PEX12",
+    "x-operation-kind": "query",
+    "x-authorization": "account:read；来源委托身份不越权返回。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "分笔成交、撤单在途与成交迟到有不同状态；重复回报不重复增加CumQty。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryAccountOrdersResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryAccountOrdersRequest"
+   }
+  },
+  "/v1/x/query-account-performance": {
+   "get": {
+    "operationId": "queryAccountPerformance",
+    "summary": "PEX12 组合",
+    "x-card": "PEX12",
+    "x-operation-kind": "query",
+    "x-authorization": "account:read。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "账户入出金、公司行为、费用和停牌估值场景与统一benchmark一致；无TWR必需输入显示missing。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryAccountPerformanceResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryAccountPerformanceRequest"
+   }
+  },
+  "/v1/x/query-opportunities": {
+   "get": {
+    "operationId": "queryOpportunities",
+    "summary": "PEX12 组合",
+    "x-card": "PEX12",
+    "x-operation-kind": "query",
+    "x-authorization": "account:read或所属experiment:read。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "持仓已卖未买回的库存损失计入增量价值，不只看摊薄成本。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryOpportunitiesResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryOpportunitiesRequest"
+   }
+  },
+  "/v1/x/save-alert-rule": {
+   "post": {
+    "operationId": "saveAlertRule",
+    "summary": "PEX13 告警",
+    "x-card": "PEX13",
+    "x-operation-kind": "command",
+    "x-authorization": "alert:write且scope/destination归属均通过。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "重复source事件不重复触发；禁用后新窗口不再产生告警。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/saveAlertRuleResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/saveAlertRuleRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/list-user-alerts": {
+   "get": {
+    "operationId": "listUserAlerts",
+    "summary": "PEX13 告警",
+    "x-card": "PEX13",
+    "x-operation-kind": "query",
+    "x-authorization": "alert:read，按认证owner过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "历史补采不触发刚发生告警；重试只增加attempt。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/listUserAlertsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/listUserAlertsRequest"
+   }
+  },
+  "/v1/x/delete-workspace-item": {
+   "post": {
+    "operationId": "deleteWorkspaceItem",
+    "summary": "PEX14 工作区",
+    "x-card": "PEX14",
+    "x-operation-kind": "command",
+    "x-authorization": "workspace:write且owner匹配。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "已被另一设备修改时返回VERSION_CONFLICT；重复删除重放原回执；旧ID不可被任意再创建。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/deleteWorkspaceItemResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/deleteWorkspaceItemRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/schedule-workspace-export": {
+   "post": {
+    "operationId": "scheduleWorkspaceExport",
+    "summary": "PEX14 工作区",
+    "x-card": "PEX14",
+    "x-operation-kind": "command",
+    "x-authorization": "data:export与各workspace owner/source权限。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "大导出异步；图片含证券/周期/复权/as-of/版本与组件署名。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/scheduleWorkspaceExportResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/scheduleWorkspaceExportRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-workspace-revision": {
+   "get": {
+    "operationId": "queryWorkspaceRevision",
+    "summary": "PEX14 工作区",
+    "x-card": "PEX14",
+    "x-operation-kind": "query",
+    "x-authorization": "workspace:read且owner权限。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "画线调整复权后旧告警仍可定位原锚点和原编译条件。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryWorkspaceRevisionResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryWorkspaceRevisionRequest"
+   }
+  },
+  "/v1/x/query-export-artifact": {
+   "get": {
+    "operationId": "queryExportArtifact",
+    "summary": "PEX14 工作区",
+    "x-card": "PEX14",
+    "x-operation-kind": "query",
+    "x-authorization": "data:export和owner授权；下载时复核源范围。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "未完成artifact为null；到期或权限撤销后不能继续下载。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryExportArtifactResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryExportArtifactRequest"
+   }
+  },
+  "/v1/x/query-workspace-index": {
+   "get": {
+    "operationId": "queryWorkspaceIndex",
+    "summary": "PEX14 工作区",
+    "x-card": "PEX14",
+    "x-operation-kind": "query",
+    "x-authorization": "workspace:read，认证主体owner过滤。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "六个UI入口均可按owner列出持久对象；绘图、笔记、复盘仍使用drawing/note/review严格枚举。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryWorkspaceIndexResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryWorkspaceIndexRequest"
+   }
+  },
+  "/v1/x/run-registered-job": {
+   "post": {
+    "operationId": "runRegisteredJob",
+    "summary": "PEX15 数据健康",
+    "x-card": "PEX15",
+    "x-operation-kind": "command",
+    "x-authorization": "ops:run且该application_operation允许手动触发；普通GET无此权限。",
+    "x-idempotency": "principal_id来自认证上下文；(principal_id,proposed operation_id,idempotency_key)唯一，相同键同request_hash返回原收据，异payload返回IDEMPOTENCY_CONFLICT。新操作登记core.api_binding后才可复用ops.command_receipt；业务写/收据/outbox同事务。",
+    "x-acceptance": [
+     "源补采和发布任务分别校验权限；失败不发假dataset.updated；陈旧worker无提交权。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/runRegisteredJobResponse"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "urn:pulse:contracts:ext:v1#/$defs/runRegisteredJobRequest"
+       }
+      }
+     }
+    },
+    "parameters": [
+     {
+      "name": "Idempotency-Key",
+      "in": "header",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    ]
+   }
+  },
+  "/v1/x/query-dataset-status": {
+   "get": {
+    "operationId": "queryDatasetStatus",
+    "summary": "PEX15 数据健康",
+    "x-card": "PEX15",
+    "x-operation-kind": "query",
+    "x-authorization": "data-health:read；不暴露源凭据或私有原文路径。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "休市not_expected与故障不同；enabled并不保证已收到数据。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryDatasetStatusResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryDatasetStatusRequest"
+   }
+  },
+  "/v1/x/query-job-runs": {
+   "get": {
+    "operationId": "queryJobRuns",
+    "summary": "PEX15 数据健康",
+    "x-card": "PEX15",
+    "x-operation-kind": "query",
+    "x-authorization": "ops:read；普通用户只读其获准的job定义/自己发起的任务。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "任务列表能定位已有getJobRun；不能借已知UUID读取他人私有导出/账户任务参数。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/queryJobRunsResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/queryJobRunsRequest"
+   }
+  },
+  "/v1/x/stream-registered-updates": {
+   "get": {
+    "operationId": "streamRegisteredUpdates",
+    "summary": "PEX16 实时推送",
+    "x-card": "PEX16",
+    "x-operation-kind": "transport_adapter",
+    "x-authorization": "沿用pollUpdates的public/private授权过滤；断线重连重新认证。",
+    "x-idempotency": "无业务写入。缓存键含查询输入、权限scope和冻结版本；同游标不跨snapshot复用。",
+    "x-acceptance": [
+     "重复/乱序/重连后完整release切换；新alert类型在未注册公开版本时不通过此3.0.0流发出。"
+    ],
+    "responses": {
+     "200": {
+      "description": "typed response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "urn:pulse:contracts:ext:v1#/$defs/streamRegisteredUpdatesResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-query-schema": "urn:pulse:contracts:ext:v1#/$defs/streamRegisteredUpdatesRequest"
+   }
+  }
+ }
+}

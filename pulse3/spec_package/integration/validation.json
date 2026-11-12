@@ -1,0 +1,173 @@
+{
+  "checked_at": "2026-11-10",
+  "sql_parser": "pglast 8.7",
+  "files": [
+    {
+      "path": "database\\core_schema.sql",
+      "statements": 76,
+      "tables": 37,
+      "sha256": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2"
+    },
+    {
+      "path": "execution\\ledger_schema.sql",
+      "statements": 31,
+      "tables": 7,
+      "sha256": "0639b4fa05274633691961e407911418cd5f8e3bad611bd26812e32411cd8e85"
+    },
+    {
+      "path": "sources_sectors\\sources_sectors_schema.sql",
+      "statements": 30,
+      "tables": 12,
+      "sha256": "71f36e99075a7ccd26fcc1ec06afc2c256157ec36e336d3178705c1052e2b354"
+    },
+    {
+      "path": "integration\\integration_schema.sql",
+      "statements": 72,
+      "tables": 24,
+      "sha256": "ce2c2189f8197416b0bdbb6f179b0e7d095907e5495f59973a8300be9df0c758"
+    }
+  ],
+  "total_tables": 80,
+  "integration_tables": 24,
+  "integration_fields": 279,
+  "all_sql_fields": 883,
+  "field_descriptions_missing": 0,
+  "foreign_key_targets_checked": 149,
+  "foreign_key_validation_scope": "declared target tables and named target columns exist; no runtime type/index/constraint/concurrency proof",
+  "plpgsql": [
+    {
+      "function": "decision.assert_release_components",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_published_release",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_published_component",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "market.guard_ready_manifest",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "market.guard_ready_dependency",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "market.assert_ready_manifest_inputs",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.reject_plan_mutation",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_ranking_run",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_ranking_entry",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "execution.freeze_journal_creation_xid",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "execution.check_new_journal_line",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "execution.check_entry_balanced",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "execution.reject_history_mutation",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_sector_rank_entry",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_sector_rank_parent",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.begin_release_stage",
+      "status": "not_resolved_by_static_parser",
+      "reason": "pglast cannot resolve custom-schema composite/domain/%ROWTYPE declarations without a catalog; SQL CREATE FUNCTION statement parsed, body not claimed validated."
+    },
+    {
+      "function": "decision.publish_release_stage",
+      "status": "not_resolved_by_static_parser",
+      "reason": "pglast cannot resolve custom-schema composite/domain/%ROWTYPE declarations without a catalog; SQL CREATE FUNCTION statement parsed, body not claimed validated."
+    },
+    {
+      "function": "decision.assert_publication_outbox",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.reject_immutable_mutation",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_league_pairing",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_promotion_identity",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "decision.guard_actionability_inputs",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_context_seal",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_evaluation_input",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_experiment_run",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_metric_result",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "research.guard_closed_round",
+      "status": "syntax_parsed_without_catalog"
+    },
+    {
+      "function": "analysis.guard_model_run_binding",
+      "status": "not_resolved_by_static_parser",
+      "reason": "pglast cannot resolve custom-schema composite/domain/%ROWTYPE declarations without a catalog; SQL CREATE FUNCTION statement parsed, body not claimed validated."
+    },
+    {
+      "function": "ops.guard_job_run_binding",
+      "status": "syntax_parsed_without_catalog"
+    }
+  ],
+  "json_schema_meta_validation": "passed",
+  "json_schema_version": "4.26.0",
+  "openapi_structural_validation": "passed_openapi_spec_validator_0.7.2",
+  "operations": 31,
+  "paths": 30,
+  "schema_definitions": 142,
+  "all_local_refs_resolve": true,
+  "all_api_table_refs_exist": true,
+  "feature_key_dimensions": 19,
+  "contract_boundary_examples_checked": 23,
+  "postgres_migration_executed": false,
+  "postgres_triggers_executed": false,
+  "production_api_implemented": false,
+  "provider_connections_verified": false,
+  "performance_benchmark_executed": false
+}

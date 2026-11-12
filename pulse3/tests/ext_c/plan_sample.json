@@ -1,0 +1,216 @@
+{
+ "state": "watching",
+ "sizing": {
+  "kind": "portfolio_fraction",
+  "fraction": "0.05",
+  "maximum_quantity_shares": null
+ },
+ "plan_id": "e515c645-4800-5ef7-86c3-2bf1135948e6",
+ "account_id": null,
+ "expires_at": "2026-11-19T01:37:09.339399Z",
+ "supersedes": null,
+ "valid_from": "2026-11-12T01:37:09.339399Z",
+ "validation": {
+  "status": "pending",
+  "result_ref": null,
+  "validated_at": null,
+  "evaluation_id": null,
+  "policy_version": "plan-validation-v1-not-run"
+ },
+ "available_at": "2026-11-12T01:38:43.108437Z",
+ "invalidation": {
+  "left": {
+   "kind": "feature",
+   "unit": "CNY",
+   "timeframe": "1d",
+   "feature_id": "px.close",
+   "field_path": "close",
+   "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+   "definition_version": "1",
+   "initial_feature_key_hash": null,
+   "resolution_policy_version": "latest-completed-bar-v1"
+  },
+  "node": "compare",
+  "clock": {
+   "kind": "bar_close",
+   "timeframe": "1d",
+   "session_policy_version": "regular_continuous_v1"
+  },
+  "right": {
+   "kind": "constant",
+   "unit": "CNY",
+   "value": "5.2"
+  },
+  "operator": "lt"
+ },
+ "model_run_id": null,
+ "plan_version": 1,
+ "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+ "position_side": "long",
+ "strategy_refs": [
+  {
+   "instance_id": "cf28e778-ca67-5a53-9e39-dbc34a018015",
+   "strategy_id": "2e7feaa4-349a-5f05-9b66-25b01b073fad",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "780a6ad4-5921-59c5-af36-9be485fa4bae",
+   "strategy_id": "b98612ec-5c12-5ec5-9d4d-38a4c48eb7a9",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "21d1f480-651f-5446-ad62-b7f6890477e9",
+   "strategy_id": "f764c9a5-c502-5f1b-8188-a45a57f121b7",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "9fdc6042-8e59-50e3-b15e-1387e26813a4",
+   "strategy_id": "c20f88a8-bc2a-5035-bb3f-ca89325b0d5f",
+   "strategy_version": 1
+  }
+ ],
+ "replace_policy": "cancel_remaining_and_reconcile",
+ "trigger_policy": {
+  "rearm": {
+   "mode": "never",
+   "cooldown_ms": 0
+  },
+  "fire_mode": "on_transition_to_true",
+  "max_fires": 1,
+  "trigger_id": "plan-entry",
+  "unknown_policy": "do_not_fire",
+  "min_interval_ms": 0,
+  "require_final_bar": true,
+  "pending_order_policy": "block_retrigger"
+ },
+ "exit_conditions": {
+  "left": {
+   "kind": "feature",
+   "unit": "CNY",
+   "timeframe": "1d",
+   "feature_id": "px.close",
+   "field_path": "close",
+   "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+   "definition_version": "1",
+   "initial_feature_key_hash": null,
+   "resolution_policy_version": "latest-completed-bar-v1"
+  },
+  "node": "compare",
+  "clock": {
+   "kind": "bar_close",
+   "timeframe": "1d",
+   "session_policy_version": "regular_continuous_v1"
+  },
+  "right": {
+   "kind": "constant",
+   "unit": "CNY",
+   "value": "6.14"
+  },
+  "operator": "gte"
+ },
+ "holding_horizon": {
+  "unit": "trading_days",
+  "value": 5,
+  "horizon_id": "5td"
+ },
+ "entry_conditions": {
+  "node": "all",
+  "clock": {
+   "kind": "bar_close",
+   "timeframe": "1d",
+   "session_policy_version": "regular_continuous_v1"
+  },
+  "children": [
+   {
+    "left": {
+     "kind": "feature",
+     "unit": "CNY",
+     "timeframe": "1d",
+     "feature_id": "px.close",
+     "field_path": "close",
+     "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+     "definition_version": "1",
+     "initial_feature_key_hash": null,
+     "resolution_policy_version": "latest-completed-bar-v1"
+    },
+    "node": "compare",
+    "clock": {
+     "kind": "bar_close",
+     "timeframe": "1d",
+     "session_policy_version": "regular_continuous_v1"
+    },
+    "right": {
+     "kind": "feature",
+     "unit": "CNY",
+     "timeframe": "1d",
+     "feature_id": "ma",
+     "field_path": "ma",
+     "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+     "definition_version": "v1",
+     "initial_feature_key_hash": null,
+     "resolution_policy_version": "raw-latest-completed-bar-v1;n=5"
+    },
+    "operator": "gt"
+   },
+   {
+    "left": {
+     "kind": "feature",
+     "unit": "CNY",
+     "timeframe": "1d",
+     "feature_id": "px.close",
+     "field_path": "close",
+     "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+     "definition_version": "1",
+     "initial_feature_key_hash": null,
+     "resolution_policy_version": "latest-completed-bar-v1"
+    },
+    "node": "compare",
+    "clock": {
+     "kind": "bar_close",
+     "timeframe": "1d",
+     "session_policy_version": "regular_continuous_v1"
+    },
+    "right": {
+     "kind": "constant",
+     "unit": "CNY",
+     "value": "5.46"
+    },
+    "operator": "gte"
+   },
+   {
+    "left": {
+     "kind": "feature",
+     "unit": "CNY",
+     "timeframe": "1d",
+     "feature_id": "px.close",
+     "field_path": "close",
+     "instrument_id": "e2268a03-3be9-5fb8-8a2b-1cdca8d66c94",
+     "definition_version": "1",
+     "initial_feature_key_hash": null,
+     "resolution_policy_version": "latest-completed-bar-v1"
+    },
+    "node": "compare",
+    "clock": {
+     "kind": "bar_close",
+     "timeframe": "1d",
+     "session_policy_version": "regular_continuous_v1"
+    },
+    "right": {
+     "kind": "constant",
+     "unit": "CNY",
+     "value": "5.6"
+    },
+    "operator": "lte"
+   }
+  ]
+ },
+ "entry_price_zone": {
+  "currency": "CNY",
+  "adjustment_mode": "raw",
+  "lower_price_raw": "5.46",
+  "upper_price_raw": "5.6"
+ },
+ "based_on_release_id": "21a2f6dc-8e87-5e4e-bc64-f6a83e9c24f3",
+ "evidence_revision_ids": [],
+ "expected_account_version": null
+}

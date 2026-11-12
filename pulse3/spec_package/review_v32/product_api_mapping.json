@@ -1,0 +1,860 @@
+[
+  {
+    "resource_id": "PA01",
+    "extension_card_id": "PEX01",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-114",
+    "input_line": 174,
+    "resource": "市场状态与今日摘要",
+    "current_operation_ids": [
+      "getCurrentRelease",
+      "getMarketRanking",
+      "getDataStatus"
+    ],
+    "required_application_contract_extensions": [
+      "MarketTodayQuery"
+    ],
+    "reason_and_semantics": "聚合冻结市场状态/事件日历/持仓提示；新读模型必须声明release和各overlay时刻。",
+    "candidate_table_owners": [
+      "decision.release",
+      "decision.release_component",
+      "market.feature_result"
+    ],
+    "table_definition_sources": {
+      "decision.release": "database/core_schema.sql",
+      "decision.release_component": "database/core_schema.sql",
+      "market.feature_result": "database/core_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA02",
+    "extension_card_id": "PEX02",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-115",
+    "input_line": 175,
+    "resource": "推荐榜与回避榜",
+    "current_operation_ids": [
+      "getMarketRanking",
+      "getRelease"
+    ],
+    "required_application_contract_extensions": [
+      "RankingHistoryQuery"
+    ],
+    "reason_and_semantics": "现有榜单可读，历史版本和前向记录聚合需新增查询，避开榜使用显式角色。",
+    "candidate_table_owners": [
+      "decision.ranking_run",
+      "decision.ranking_entry",
+      "research.metric_value"
+    ],
+    "table_definition_sources": {
+      "decision.ranking_run": "database/core_schema.sql",
+      "decision.ranking_entry": "database/core_schema.sql",
+      "research.metric_value": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA03",
+    "extension_card_id": "PEX03",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-116",
+    "input_line": 176,
+    "resource": "板块",
+    "current_operation_ids": [
+      "getSectorOverview",
+      "getSectorRanking",
+      "getCandidatePool"
+    ],
+    "required_application_contract_extensions": [
+      "SectorDetailsQuery"
+    ],
+    "reason_and_semantics": "复用成分版本与升温候选池；补板块详情聚合。",
+    "candidate_table_owners": [
+      "core.taxonomy_node",
+      "decision.sector_rank_entry",
+      "decision.candidate_pool_event"
+    ],
+    "table_definition_sources": {
+      "core.taxonomy_node": "database/core_schema.sql",
+      "decision.sector_rank_entry": "sources_sectors/sources_sectors_schema.sql",
+      "decision.candidate_pool_event": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA04",
+    "extension_card_id": "PEX04",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-117",
+    "input_line": 177,
+    "resource": "个股",
+    "current_operation_ids": [
+      "getStockWorkspace",
+      "getStockBars",
+      "getStockEvidence",
+      "getStockSeats",
+      "getStockCommunity",
+      "getStockFundFlow"
+    ],
+    "required_application_contract_extensions": [
+      "AnalogCasesQuery"
+    ],
+    "reason_and_semantics": "指标信号归工作台；历史相似案例需冻结邻居与结果窗。",
+    "candidate_table_owners": [
+      "decision.workspace_projection",
+      "market.feature_result",
+      "intelligence.event_revision"
+    ],
+    "table_definition_sources": {
+      "decision.workspace_projection": "database/core_schema.sql",
+      "market.feature_result": "database/core_schema.sql",
+      "intelligence.event_revision": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA05",
+    "extension_card_id": "PEX05",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-118",
+    "input_line": 178,
+    "resource": "交易计划",
+    "current_operation_ids": [
+      "getTradePlan"
+    ],
+    "required_application_contract_extensions": [
+      "CreateOrRevisePlanCommand",
+      "PlanVersionListQuery"
+    ],
+    "reason_and_semantics": "创建/修订命令必须使用expected_version、idempotency_key及supersedes；新增API合同，不伪装已支持。",
+    "candidate_table_owners": [
+      "decision.trade_plan",
+      "ops.command_receipt"
+    ],
+    "table_definition_sources": {
+      "decision.trade_plan": "database/core_schema.sql",
+      "ops.command_receipt": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA06",
+    "extension_card_id": "PEX06",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-119",
+    "input_line": 179,
+    "resource": "操作策略回放",
+    "current_operation_ids": [
+      "createExperiment",
+      "getEvaluation"
+    ],
+    "required_application_contract_extensions": [
+      "TacticReplayExperimentType"
+    ],
+    "reason_and_semantics": "以指定股票、区间、初始库存和成本定义实验类型，复用实验端点，不新增账本。",
+    "candidate_table_owners": [
+      "research.experiment_run",
+      "research.evaluation_context"
+    ],
+    "table_definition_sources": {
+      "research.experiment_run": "integration/integration_schema.sql",
+      "research.evaluation_context": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      },
+      {
+        "id": "W07",
+        "role": "执行与账本"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA07",
+    "extension_card_id": "PEX07",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-120",
+    "input_line": 180,
+    "resource": "消息",
+    "current_operation_ids": [
+      "getStockEvidence"
+    ],
+    "required_application_contract_extensions": [
+      "EventClusterQuery",
+      "CalendarQuery"
+    ],
+    "reason_and_semantics": "现有个股证据不是全市场事件浏览；补跨股票分页检索和日历读模型。",
+    "candidate_table_owners": [
+      "intelligence.document_revision",
+      "intelligence.claim_revision",
+      "intelligence.event_revision"
+    ],
+    "table_definition_sources": {
+      "intelligence.document_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.claim_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.event_revision": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA08",
+    "extension_card_id": "PEX08",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-121",
+    "input_line": 181,
+    "resource": "龙虎榜与席位",
+    "current_operation_ids": [
+      "getStockSeats"
+    ],
+    "required_application_contract_extensions": [
+      "SeatDirectoryQuery",
+      "SeatProfileQuery"
+    ],
+    "reason_and_semantics": "当前个股席位读数可复用，补跨股席位目录与可观察画像；不输出假持仓。",
+    "candidate_table_owners": [
+      "intelligence.seat_entity_version",
+      "intelligence.seat_report",
+      "intelligence.seat_report_row"
+    ],
+    "table_definition_sources": {
+      "intelligence.seat_entity_version": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.seat_report": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.seat_report_row": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA09",
+    "extension_card_id": "PEX09",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-122",
+    "input_line": 182,
+    "resource": "情绪与社区",
+    "current_operation_ids": [
+      "getStockCommunity",
+      "getSectorOverview"
+    ],
+    "required_application_contract_extensions": [
+      "MarketSentimentQuery",
+      "OpinionQuery"
+    ],
+    "reason_and_semantics": "补全市场情绪/观点聚合；个股社区和资金不混成同一数。",
+    "candidate_table_owners": [
+      "intelligence.community_observation",
+      "market.feature_result",
+      "decision.workspace_projection"
+    ],
+    "table_definition_sources": {
+      "intelligence.community_observation": "sources_sectors/sources_sectors_schema.sql",
+      "market.feature_result": "database/core_schema.sql",
+      "decision.workspace_projection": "database/core_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      },
+      {
+        "id": "W04",
+        "role": "行情与特征"
+      },
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA10",
+    "extension_card_id": "PEX10",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-123",
+    "input_line": 183,
+    "resource": "筛选",
+    "current_operation_ids": [
+      "getMarketRanking"
+    ],
+    "required_application_contract_extensions": [
+      "ParseScreenCommand",
+      "RunScreenCommand",
+      "SaveScreenCommand"
+    ],
+    "reason_and_semantics": "解析为类型DSL、固定母集和输入快照；保存筛选需新增持久合同，不能偷偷塞布局JSON。",
+    "candidate_table_owners": [
+      "strategy.definition",
+      "market.feature_result"
+    ],
+    "table_definition_sources": {
+      "strategy.definition": "database/core_schema.sql",
+      "market.feature_result": "database/core_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA11",
+    "extension_card_id": "PEX11",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-124",
+    "input_line": 184,
+    "resource": "策略与联赛",
+    "current_operation_ids": [
+      "listStrategies",
+      "getLeague",
+      "createExperiment",
+      "getEvaluation"
+    ],
+    "required_application_contract_extensions": [
+      "RegisterStrategyCommand",
+      "StrategyVersionQuery"
+    ],
+    "reason_and_semantics": "登记和完整版本详情需应用命令及写权限；复用策略父版本/实验/联赛模型。",
+    "candidate_table_owners": [
+      "strategy.definition",
+      "strategy.instance",
+      "research.strategy_parent",
+      "research.league_round"
+    ],
+    "table_definition_sources": {
+      "strategy.definition": "database/core_schema.sql",
+      "strategy.instance": "database/core_schema.sql",
+      "research.strategy_parent": "integration/integration_schema.sql",
+      "research.league_round": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W09",
+        "role": "研究与联赛"
+      },
+      {
+        "id": "W05",
+        "role": "选股与板块"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA12",
+    "extension_card_id": "PEX12",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-125",
+    "input_line": 185,
+    "resource": "组合",
+    "current_operation_ids": [
+      "getAccountProjection",
+      "getAccountActionability"
+    ],
+    "required_application_contract_extensions": [
+      "ListAccountsQuery",
+      "ImportBrokerFillsCommand",
+      "OpportunityQuery"
+    ],
+    "reason_and_semantics": "真实成交回填需broker fill identity、映射、数量/价格/手续费校验、幂等与对账，不可让用户直接改NAV。",
+    "candidate_table_owners": [
+      "execution.account_head",
+      "execution.account_event",
+      "execution.journal_entry",
+      "execution.journal_line",
+      "execution.position_projection",
+      "execution.quantity_lot",
+      "execution.order_reservation",
+      "ops.command_receipt"
+    ],
+    "table_definition_sources": {
+      "execution.account_head": "execution/ledger_schema.sql",
+      "execution.account_event": "execution/ledger_schema.sql",
+      "execution.journal_entry": "execution/ledger_schema.sql",
+      "execution.journal_line": "execution/ledger_schema.sql",
+      "execution.position_projection": "execution/ledger_schema.sql",
+      "execution.quantity_lot": "execution/ledger_schema.sql",
+      "execution.order_reservation": "execution/ledger_schema.sql",
+      "ops.command_receipt": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W07",
+        "role": "执行与账本"
+      },
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA13",
+    "extension_card_id": "PEX13",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-126",
+    "input_line": 186,
+    "resource": "告警",
+    "current_operation_ids": [
+      "pollUpdates"
+    ],
+    "required_application_contract_extensions": [
+      "ListAlertsQuery",
+      "SaveAlertRuleCommand"
+    ],
+    "reason_and_semantics": "更新日志不是用户告警列表；补告警规则、业务意图、送达与到期结果的正式持久合同。",
+    "candidate_table_owners": [
+      "ops.outbox",
+      "ops.consumer_inbox"
+    ],
+    "table_definition_sources": {
+      "ops.outbox": "database/core_schema.sql",
+      "ops.consumer_inbox": "database/core_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W06",
+        "role": "计划与组合"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA14",
+    "extension_card_id": "PEX14",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-127",
+    "input_line": 187,
+    "resource": "工作区",
+    "current_operation_ids": [
+      "getLayout",
+      "saveLayout",
+      "listWatchlists",
+      "saveWatchlist",
+      "listAnnotations",
+      "saveAnnotation"
+    ],
+    "required_application_contract_extensions": [
+      "DeleteWorkspaceItemCommand"
+    ],
+    "reason_and_semantics": "布局/自选/标注已覆盖；笔记、复盘和删除需明确annotation类型与引用约束，不能只新增万能kind。",
+    "candidate_table_owners": [
+      "ui.workspace_layout",
+      "ui.watchlist",
+      "ui.watchlist_member",
+      "ui.annotation"
+    ],
+    "table_definition_sources": {
+      "ui.workspace_layout": "database/core_schema.sql",
+      "ui.watchlist": "integration/integration_schema.sql",
+      "ui.watchlist_member": "integration/integration_schema.sql",
+      "ui.annotation": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA15",
+    "extension_card_id": "PEX15",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-128",
+    "input_line": 188,
+    "resource": "数据健康",
+    "current_operation_ids": [
+      "getDataStatus",
+      "getJobRun"
+    ],
+    "required_application_contract_extensions": [
+      "RunJobCommand"
+    ],
+    "reason_and_semantics": "现有查询保留；手动运行命令走作业定义、去重/排他/权限，不由GET触发。",
+    "candidate_table_owners": [
+      "ingest.source_health",
+      "ops.job_definition",
+      "ops.job_run",
+      "ops.command_receipt"
+    ],
+    "table_definition_sources": {
+      "ingest.source_health": "database/core_schema.sql",
+      "ops.job_definition": "integration/integration_schema.sql",
+      "ops.job_run": "integration/integration_schema.sql",
+      "ops.command_receipt": "integration/integration_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W02",
+        "role": "数据库"
+      },
+      {
+        "id": "W03",
+        "role": "来源与消息"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  },
+  {
+    "resource_id": "PA16",
+    "extension_card_id": "PEX16",
+    "input_file": "02-product.md",
+    "input_unit_id": "R02-129",
+    "input_line": 189,
+    "resource": "实时推送",
+    "current_operation_ids": [
+      "pollUpdates"
+    ],
+    "required_application_contract_extensions": [
+      "SSETransportAdapter"
+    ],
+    "reason_and_semantics": "同一更新日志的可恢复传输，无新业务事件语义；游标失效回到快照。",
+    "candidate_table_owners": [
+      "ops.outbox",
+      "ops.consumer_checkpoint"
+    ],
+    "table_definition_sources": {
+      "ops.outbox": "database/core_schema.sql",
+      "ops.consumer_checkpoint": "database/core_schema.sql"
+    },
+    "work_package_owners": [
+      {
+        "id": "W01",
+        "role": "契约与集成"
+      },
+      {
+        "id": "W08",
+        "role": "前端与工作台"
+      }
+    ],
+    "persistence_gap_note": "列出的是实际存在的可复用表；新增持久对象、注册payload和需要的新约束逐项见product_extension_cards.json，不计入现有80表。",
+    "extension_common_fields": [
+      "request_id",
+      "authenticated_principal_context_not_client_claim",
+      "idempotency_key_for_writes",
+      "expected_version_for_updates",
+      "input_snapshot_id",
+      "release_id_if_applicable"
+    ],
+    "extension_error_policy": [
+      "INVALID_CONTRACT",
+      "INSUFFICIENT_CAPABILITY",
+      "VERSION_CONFLICT",
+      "STALE_INPUT"
+    ],
+    "acceptance": "输出引用稳定ID和版本；写命令通过唯一应用服务；不存在伪已有API、二次经济账本或隐藏写入。",
+    "contract_status": "existing_ops_verified_extensions_specified_not_in_public_openapi_3_0_0"
+  }
+]

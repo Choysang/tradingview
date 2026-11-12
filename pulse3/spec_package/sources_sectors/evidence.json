@@ -1,0 +1,409 @@
+{
+  "schema_version": "3.0",
+  "as_of": "2026-11-10",
+  "scope": "news_sentiment_funding_community_seats_sectors",
+  "verification_policy": {
+    "claim_types": [
+      "fact",
+      "design",
+      "research_hypothesis"
+    ],
+    "primary_source_preference": true,
+    "retrieval_is_not_integration": true,
+    "same_origin_republication_is_not_independent_confirmation": true,
+    "current_rule_label_observed_not_forever_guarantee": true,
+    "full_coverage_claim": false,
+    "quoted_source_text_in_artifacts": "No extended source copies; claims paraphrased with references."
+  },
+  "items": [
+    {
+      "evidence_id": "NS01",
+      "title": "新华社供稿技术方式",
+      "url": "https://www.xinhuanet.com/xinhuashe/ggjs.htm",
+      "retrieval_ref": "turn135view0",
+      "source_type": "official_service_documentation",
+      "read_depth": "full_relevant_sections",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "新华社官方列出 API、RSS、FTP push/download、Email 等供稿方式。",
+        "文档提到 XML、CNML、NewsML 等格式和稿件更正/撤回相关服务。"
+      ],
+      "limits": [
+        "服务能力存在不代表本项目获得账号或授权。",
+        "没有核验具体 endpoint、鉴权、历史深度、费用或延迟 SLA。"
+      ]
+    },
+    {
+      "evidence_id": "NS02",
+      "title": "中经社数据服务",
+      "url": "https://www.ceis.cn/xzy/detail/20210705/3209023_1.html",
+      "retrieval_ref": "turn135view2",
+      "source_type": "official_product_description",
+      "read_depth": "full_relevant_sections",
+      "published_at": "2021-07-05",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方数据服务介绍涵盖资讯、证券、宏观、行业与定制数据服务。"
+      ],
+      "limits": [
+        "原始说明发表于 2021 年，不称为 2026 年新产品。",
+        "接口契约与用途权限未实际取得。",
+        "与新华社有共同原稿时不能算独立事实来源。"
+      ]
+    },
+    {
+      "evidence_id": "NS03",
+      "title": "证券时报实时财经资讯库（机构版）挂牌",
+      "url": "https://stcn.com/article/detail/1450627.html",
+      "retrieval_ref": "turn137view0",
+      "source_type": "official_publisher_product_announcement",
+      "read_depth": "full_relevant_sections",
+      "published_at": "2024-12-12",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "证券时报官方报道其实时财经资讯库机构产品在深圳数据交易所挂牌。",
+        "报道描述原创财经资讯以及展示、加工、舆情监测、模型训练等应用场景。"
+      ],
+      "limits": [
+        "产品说明不是对任意使用者的批量获取或训练许可。",
+        "公开文中未核验可调用 API、鉴权、历史深度与延迟 SLA。"
+      ]
+    },
+    {
+      "evidence_id": "NS04",
+      "title": "上海证券报数据产品挂牌",
+      "url": "https://paper.cnstock.com/html/2024-01/17/content_1867502.htm",
+      "retrieval_ref": "turn137view1",
+      "source_type": "official_publisher_product_announcement",
+      "read_depth": "full_relevant_sections",
+      "published_at": "2024-01-17",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "上证报官方报道其数据产品在上海数据交易所挂牌。"
+      ],
+      "limits": [
+        "所打开页面为报纸续文，不据此推定完整产品接口。",
+        "未取得产品合同、数据授权和技术对接文档。"
+      ]
+    },
+    {
+      "evidence_id": "NS05",
+      "title": "财联社版权与服务介绍",
+      "url": "https://www.cls.cn/our?nav=copyright",
+      "retrieval_ref": "turn135view3",
+      "source_type": "official_publisher_terms_and_description",
+      "read_depth": "full_relevant_sections",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方页面介绍 7×24 财经电报及其内容授权。"
+      ],
+      "limits": [
+        "没有核验到公开官方批量 API 文档。",
+        "第三方 API 代理和抓取库不等于财联社官方接口。"
+      ]
+    },
+    {
+      "evidence_id": "NS06",
+      "title": "东方财富终端常见问题：资金流向",
+      "url": "https://emdesk.eastmoney.com/pc_activity/Pages/VIPTrade/pages/answer.html",
+      "retrieval_ref": "turn139view1",
+      "source_type": "official_vendor_methodology_faq",
+      "read_depth": "questions_33_to_37",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "FAQ 说明其介绍的实时/盘后个股资金流向由各软件自行计算，算法差异会带来不同结果。",
+        "大单分类可能依据原始大额委托归属，不能单看成交金额。",
+        "主力净流入的 FAQ 公式组合大单与超大单流入流出。"
+      ],
+      "limits": [
+        "不能扩大成交易所不披露任何融资或资金相关数据。",
+        "未取得生产 API 字段、方法版本变更历史或全部算法细节。",
+        "主动方向分类不等于识别最终资金所有者。"
+      ]
+    },
+    {
+      "evidence_id": "NS07",
+      "title": "东方财富人气榜规则与刷新口径冲突",
+      "url": "https://guba.eastmoney.com/rank/",
+      "retrieval_ref": "turn137view3",
+      "source_type": "official_product_page_with_index_discrepancy",
+      "read_depth": "direct_page_footer_and_official_indexed_rules",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方索引规则描述访问、关注、社区互动构成人气。",
+        "同 URL 官方索引写每 2 分钟，直接打开页脚写每 10 分钟，粉丝指标写每小时。"
+      ],
+      "limits": [
+        "刷新频率尚不能唯一确认，effective_cadence_seconds 必须为 null。",
+        "直接打开未读取当前排行数据主体；没有验证实时抓取或历史覆盖。",
+        "热度测量不能作为实际净买入数据。"
+      ],
+      "additional_retrieval_refs": [
+        "turn129search5"
+      ]
+    },
+    {
+      "evidence_id": "NS08",
+      "title": "雪球官方 FAQ 与服务规则",
+      "url": "https://www.xueqiu.com/about/faq",
+      "retrieval_ref": "turn143view0",
+      "source_type": "official_platform_terms",
+      "read_depth": "full_relevant_service_and_community_sections",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方资料介绍投资讨论社区及其服务规则。",
+        "服务条款对未经授权的自动化采集和绕过访问限制设有约束。"
+      ],
+      "limits": [
+        "未核验开放的官方批量 API。",
+        "本项目只登记合法可用访问、授权导出或用户提交材料，不声称账号已经接入。",
+        "不得从公开发言推定真实账户持仓或个人资产。"
+      ]
+    },
+    {
+      "evidence_id": "NS09",
+      "title": "上交所沪港通交易信息披露调整通知",
+      "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/global/hkexsc/c/c_20250613_10781806.shtml",
+      "retrieval_ref": "turn141view0",
+      "source_type": "exchange_effective_notice",
+      "read_depth": "full_relevant_sections",
+      "published_at": "2024-07-26",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "页面标示上证发〔2024〕106号现行有效，相关调整自 2024-08-19 起实施。",
+        "沪股通盘后披露成交总额、总笔数等及活跃证券总额；季度末持股于后续指定交易日披露。",
+        "港股通披露安排与沪股通不同。"
+      ],
+      "limits": [
+        "已披露总成交额不能被转成缺失的买卖方向和实时净买入。",
+        "持股统计期末与平台可得时间不同。",
+        "本次未发现已取代该通知的更晚官方规则；上线仍需规则版本检查。"
+      ]
+    },
+    {
+      "evidence_id": "NS10",
+      "title": "上交所交易公开信息页面",
+      "url": "https://www.sse.com.cn/disclosure/diclosure/public/inquirydata/index.shtml?secCode=605136",
+      "retrieval_ref": "turn141view1",
+      "source_type": "exchange_public_data_page",
+      "read_depth": "page_notes_and_indexed_field_labels",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "该页注明交易公开信息口径为竞价交易，不包括大宗交易和盘后固定价格交易。",
+        "官方查询页索引显示营业部、买卖方向、金额等字段；部分金额以万元显示。"
+      ],
+      "limits": [
+        "直接页面表格为动态加载，本次没有成功下载实际完整历史数据。",
+        "主板、科创板、其他市场及规则日期分别核验，不从一个页面推断全部触发阈值。",
+        "前五名单不是全部交易账户。"
+      ],
+      "additional_retrieval_refs": [
+        "turn129search4"
+      ]
+    },
+    {
+      "evidence_id": "NS11",
+      "title": "巨潮资讯交易公开信息",
+      "url": "https://www.cninfo.com.cn/new/commonUrl?url=data/public-information",
+      "retrieval_ref": "turn143view3",
+      "source_type": "official_disclosure_platform_page",
+      "read_depth": "page_fields_units_navigation_and_indexed_examples",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方公开信息页面列出证券、交易日、披露原因等，金额页面单位为元。",
+        "巨潮页面提供到官方数据 API 平台的入口。",
+        "官方索引示例包含营业部同时出现于买/卖榜及报告局部机构标签。"
+      ],
+      "limits": [
+        "本次直接页面显示系统繁忙，没有成功下载全量历史记录。",
+        "数据 API 入口存在不等于获得账号、套餐与具体 endpoint。",
+        "机构专用的局部编号不能据此当作跨日报告稳定实体。"
+      ],
+      "additional_retrieval_refs": [
+        "turn121search3"
+      ]
+    },
+    {
+      "evidence_id": "NS12",
+      "title": "东方财富席位历史排行口径说明",
+      "url": "https://emdata.eastmoney.com/lhb/businessranking.html",
+      "retrieval_ref": "turn143view1",
+      "source_type": "official_vendor_statistics_explanation",
+      "read_depth": "full_relevant_sections",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "页面定义上榜后 1 天等统计，并提供多个持有窗口与统计区间。"
+      ],
+      "limits": [
+        "未完整披露可成交价格、交易成本、不可成交、幸存者和样本筛选处理。",
+        "只能用于产品参考；不能作为本站统一撮合与记账 benchmark 的真值。"
+      ]
+    },
+    {
+      "evidence_id": "NS13",
+      "title": "证券时报：以差异化披露推动龙虎榜高质量发展",
+      "url": "https://epaper.stcn.com/att/202601/27/32414cf2-254b-42a3-87ed-8bca8b4cb000.pdf",
+      "retrieval_ref": "turn143view2",
+      "source_type": "publisher_opinion_article",
+      "read_depth": "relevant_pdf_text",
+      "published_at": "2026-01-27",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "作者指出营业部/交易单位展示并不完整揭示背后资金主体与账户数量。"
+      ],
+      "limits": [
+        "这是署名评论，不是交易所规则或实证研究。",
+        "不支持拉萨必然次日下跌、某个席位必然代表某位游资等断言。",
+        "文内历史触发阈值不能直接作为 2026 年后续修订规则使用。"
+      ]
+    },
+    {
+      "evidence_id": "NS14",
+      "title": "上市公司行业统计分类与代码标准条目",
+      "url": "https://www.csisc.cn/zbscbzw/c100177/202411/aefc8a590c7647b5b5aad487768bd099.shtml",
+      "retrieval_ref": "turn141view3",
+      "source_type": "official_financial_standard_catalogue",
+      "read_depth": "metadata_only",
+      "published_at": "2024-11-20",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "标准条目列出 JR/T 0020—2024，发布日期/实施日期为 2024-11-20。"
+      ],
+      "limits": [
+        "未在本次下载完整标准正文，不能据目录杜撰具体分类代码。",
+        "标准存在不意味着所有供应商概念与投资行业分类等价。"
+      ]
+    },
+    {
+      "evidence_id": "NS15",
+      "title": "上交所行业统计分类说明",
+      "url": "https://www.sse.com.cn/assortment/stock/areatrade/trade/",
+      "retrieval_ref": "turn141view2",
+      "source_type": "exchange_statistics_page",
+      "read_depth": "methodology_note",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "上交所行业统计页说明采用中国上市公司协会的上市公司行业统计分类指引。"
+      ],
+      "limits": [
+        "当前网页不能单独提供历史成分可得性。",
+        "精确分类变更与成分列表仍需对应版本来源。"
+      ]
+    },
+    {
+      "evidence_id": "NS16",
+      "title": "深交所深港通披露机制调整说明",
+      "url": "https://investor.szse.cn/szhk/hkbussiness/news/t20240726_608353.html",
+      "retrieval_ref": "turn129search2",
+      "source_type": "exchange_official_indexed_notice",
+      "read_depth": "official_indexed_text_direct_open_timeout",
+      "published_at": "2024-07-26",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方索引内容与 2024 年北向信息披露调整方向一致。"
+      ],
+      "limits": [
+        "直接打开超时，不宣称全文逐条核验。",
+        "主要细项结论依据 NS09 的已打开有效上交所通知。"
+      ]
+    },
+    {
+      "evidence_id": "NS17",
+      "title": "上交所行情服务",
+      "url": "https://www.sse.com.cn/transparency/services/",
+      "retrieval_ref": "turn144view1",
+      "source_type": "exchange_market_data_service",
+      "read_depth": "relevant_product_and_authorization_sections",
+      "published_at": null,
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "官方行情服务入口说明产品介绍、授权、费用、技术文档及申请流程，覆盖 Level-1、Level-2 等。"
+      ],
+      "limits": [
+        "本项目没有通过本次研究取得任何行情授权、账号或费用报价。",
+        "公共页面可读不能被写成实时逐笔服务已经可用。"
+      ]
+    },
+    {
+      "evidence_id": "NS18",
+      "title": "HTTP 条件请求和限流标准入口",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "retrieval_ref": "turn144view2",
+      "source_type": "technical_standard",
+      "read_depth": "metadata_and_table_of_contents",
+      "published_at": "2022-06",
+      "verified_as_of": "2026-11-10",
+      "supported_claims": [
+        "RFC 9110 为 HTTP Semantics 官方标准文档入口。"
+      ],
+      "limits": [
+        "本次读取确认文档及章节入口，没有逐段摘录条件请求细节。",
+        "轮询参数、Retry-After 与幂等实现为本项目设计，应由实现者结合具体供应商协议验证。"
+      ],
+      "additional_sources": [
+        {
+          "url": "https://www.rfc-editor.org/rfc/rfc6585.html",
+          "retrieval_ref": "turn144view3",
+          "read_depth": "metadata_and_table_of_contents",
+          "title": "Additional HTTP Status Codes"
+        }
+      ]
+    }
+  ],
+  "explicit_unresolved_claims": [
+    {
+      "claim_id": "UNRESOLVED-SEAT-001",
+      "user_text": "前东路",
+      "status": "unresolved_entity",
+      "facts_available": [
+        "Only the user-provided text fragment is available."
+      ],
+      "missing": [
+        "broker",
+        "city",
+        "complete_branch_name",
+        "effective_date",
+        "alias_evidence"
+      ],
+      "prohibited_inference": "Do not auto-correct to 上塘路 or another known trading seat."
+    },
+    {
+      "claim_id": "UNTESTED-SEAT-002",
+      "user_text": "拉萨天团第二天一定砸盘",
+      "status": "untested_conditional_hypothesis",
+      "finding": "Public branch labels do not identify one beneficial owner or establish a deterministic next-day rule.",
+      "required_validation": [
+        "explicit_branch_group_membership",
+        "PIT_disclosure_events",
+        "executable_outcomes",
+        "matched_controls",
+        "out_of_sample_windows",
+        "multiple_testing_registry"
+      ],
+      "assertion_allowed": false
+    },
+    {
+      "claim_id": "DISPUTED-CADENCE-003",
+      "user_text": "东方财富人气榜刷新间隔",
+      "status": "official_materials_conflict",
+      "candidates_seconds": [
+        120,
+        600
+      ],
+      "effective_cadence_seconds": null,
+      "evidence_ids": [
+        "NS07"
+      ],
+      "resolution": "Confirm product version or authoritative interface contract and measure observed changes."
+    }
+  ]
+}

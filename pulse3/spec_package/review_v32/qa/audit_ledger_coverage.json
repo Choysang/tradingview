@@ -1,0 +1,29 @@
+{
+  "required_units": 310,
+  "covered_units": 310,
+  "decision_count": 211,
+  "missing_unit_ids": [],
+  "duplicate_unit_ids": {},
+  "per_file": {
+    "01-audit.md": {
+      "required": 156,
+      "covered": 156
+    },
+    "07-sim-ledger.md": {
+      "required": 154,
+      "covered": 154
+    }
+  },
+  "disposition_decisions": {
+    "revise": 136,
+    "adopt": 52,
+    "reject": 7,
+    "covered": 16
+  },
+  "disposition_units": {
+    "revise": 217,
+    "adopt": 57,
+    "reject": 13,
+    "covered": 23
+  }
+}

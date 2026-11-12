@@ -1,0 +1,2808 @@
+{
+  "schema_version": "2.0-reason-ledger.1",
+  "created_at": "2026-11-10",
+  "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+  "scope": "有限的核心理由台账；逐条连接已存在的审计、设计、平台、论文及测试。不是全部文件的逐行语义证明。",
+  "identifier_policy": "RR编号为本台账新登记ID；requirement_id直接复用已有C审计编号或V2验收编号作为需求锚点。未发明新的C、平台、论文或测试编号。",
+  "status_definitions": {
+    "implemented_reference": "已存在的独立参考代码及日志验证；仅status_scope中的单进程子集，不代表完整网站或集成已实现。",
+    "planned": "已有设计依据和验收目标；planned_component是规划责任，不声称相应实现文件已存在。",
+    "observed_issue": "既有审计记录所证明的问题或适用范围差距；不自动表示已修复、可外部利用或全系统均受影响。"
+  },
+  "inventory_boundary": {
+    "tracked_files": 435,
+    "indexed_declarations": 3484,
+    "code_inventory": "traceability/code_inventory.json",
+    "symbol_inventory": "traceability/symbol_inventory.json",
+    "meaning": "文件与声明可检索覆盖；Python AST加JS/TS顶层正则，不是3484个符号均已人工核验，不是435文件均已逐行审计。"
+  },
+  "coverage": {
+    "reason_records": 24,
+    "requirements": 24,
+    "by_status": {
+      "observed_issue": 3,
+      "planned": 15,
+      "implemented_reference": 6
+    },
+    "audit_findings": {
+      "catalog_count": 30,
+      "mapped_count": 30,
+      "unmapped_ids": []
+    },
+    "platform_features": {
+      "catalog_count": 56,
+      "mapped_count": 52,
+      "unmapped_ids": [
+        "QC-F04",
+        "TS-F02",
+        "TS-F04",
+        "TV-F07"
+      ]
+    },
+    "papers": {
+      "catalog_count": 38,
+      "mapped_count": 24,
+      "unmapped_ids": [
+        "AP04",
+        "AP05",
+        "AP06",
+        "AP10",
+        "AP13",
+        "AP14",
+        "AP16",
+        "AP17",
+        "AP18",
+        "EP05",
+        "EP07",
+        "EP09",
+        "EP10",
+        "EP12"
+      ]
+    },
+    "reference_tests": {
+      "catalog_count": 45,
+      "mapped_count": 45,
+      "unmapped_test_names": []
+    },
+    "spec_acceptance": {
+      "catalog_count": 27,
+      "mapped_count": 25,
+      "unmapped_ids": [
+        "V2-26",
+        "V2-27"
+      ]
+    }
+  },
+  "validation": {
+    "reference_resolution": "passed",
+    "duplicate_ids": 0,
+    "unresolved_refs": 0,
+    "existing_reference_test_log": "reference_models/validation.log",
+    "existing_reference_tests": 45,
+    "tests_rerun_for_this_index": false,
+    "note": "本次只校验登记ID、文件、heading、JSON指针及真实测试名称；没有为了计数重跑测试或新建系统能力。"
+  },
+  "records": [
+    {
+      "reason_id": "RR-001",
+      "requirement_id": "C19",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "把UI广播的适用范围与业务事件持久性分开",
+      "status": "observed_issue",
+      "reason": "旧Broadcaster的进程内、满队列丢旧语义适合页面最新状态；把它当跨进程成交总线会丢失恢复依据。该记录描述已审计的架构差距，不声称旧UI通道本身是故障。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C19",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C19 UI广播不能直接升级成跨项目业务总线",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "source",
+          "id": "X01",
+          "path": "research/source_index.json",
+          "json_pointer": "/50",
+          "primary_url": "https://docs.nats.io/concepts/jetstream"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 4.1 四类通道及边界",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "继续仅用进程内队列承载所有事件",
+        "用同步HTTP串联所有消费者"
+      ],
+      "tradeoff": "新增持久通道需要部署与保留策略，但保留轻量UI投影，避免把每次行情刷新都变成不可丢事件。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-05",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一业务事件重复投递",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-07",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "交易事件不能被UI合并丢弃",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "仅确认审计中列出的UI广播边界；未部署跨项目消息总线。",
+      "remaining_work": [
+        "为持久事件实现outbox/inbox及独立consumer",
+        "验证重启、重复投递和UI断线恢复"
+      ],
+      "owner_domain": "data",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "data",
+        "name": "持久事件发布与独立消费者适配层",
+        "implementation_file_created": false
+      },
+      "observed_legacy_components": [
+        {
+          "repository_relative_path": "backend/app/core/bus.py",
+          "inventory_ref": "traceability/code_inventory.json",
+          "json_pointer": "/files/64",
+          "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+          "recorded_sha256": "720ceecfa55740b16325d7e0b5d581b86cc137b3619734ef3087816a028a8bca",
+          "review_state": "full_file_read_targeted_semantic_review"
+        },
+        {
+          "repository_relative_path": "backend/app/api/stream.py",
+          "inventory_ref": "traceability/code_inventory.json",
+          "json_pointer": "/files/60",
+          "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+          "recorded_sha256": "cfbef00ab6adf9b5522cb475e1a96517cd548290686b47d07a9dfd85e5de7696",
+          "review_state": "full_file_read_targeted_semantic_review"
+        }
+      ]
+    },
+    {
+      "reason_id": "RR-002",
+      "requirement_id": "V2-05",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "独立消息消费与事务幂等使模块共享事实",
+      "status": "planned",
+      "reason": "新闻、选股、研究和账户各自必须完整消费同一事件，不能因为共享一个工作队列而互相抢走事实。业务写入与幂等登记使用同一事务，成功后确认消息。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C20",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C20 事件带缺少跨重启身份和完整时间",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C09",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C09 新闻分类异常被永久标成已处理",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F06",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/34",
+          "source_id": "TD04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/46",
+          "source_id": "FU03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F09",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/8",
+          "source_id": "TV08",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "source",
+          "id": "X01",
+          "path": "research/source_index.json",
+          "json_pointer": "/50",
+          "primary_url": "https://docs.nats.io/concepts/jetstream"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 4.2 写入、发布与恢复",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "各模块自己抓取同一网页与行情",
+        "把传输层短期去重窗口当永久业务幂等"
+      ],
+      "tradeoff": "事件至少一次投递需要消费者保存自己的进度；它换来独立回放和故障恢复，不承诺跨存储exactly-once。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-05",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一业务事件重复投递",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-07",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "交易事件不能被UI合并丢弃",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "协议已写入v2；没有消息代理、数据库事务或恢复器的端到端实测。",
+      "remaining_work": [
+        "按event_type注册载荷",
+        "实现消费者inbox与重放checkpoint",
+        "测量保留容量与慢消费者行为"
+      ],
+      "owner_domain": "data",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "data",
+        "name": "JetStream领域流与PostgreSQL outbox/inbox",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-003",
+      "requirement_id": "C29",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "收盘选股不能读取下一开盘可交易状态",
+      "status": "observed_issue",
+      "reason": "现有审计定位到FQI及固定持有路径在生成t时点目标前使用下一开盘mask。若目标声称在t收盘已确定，这会把未来可交易性反馈给选股；若开盘后重选，就必须移动决策时间。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C29",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C29 FQI决策阶段使用了下一开盘状态",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/21",
+          "source_id": "QC03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        }
+      ],
+      "alternatives": [
+        "继续让未来涨停过滤进入历史排名",
+        "把所有结果统一解释为开盘后决策但保留原收盘标签"
+      ],
+      "tradeoff": "严格区分会降低部分历史表现，但能明确损益来自预测、等待还是成交环境。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "依据C29已定位的研究路径；未在本轮对全部旧策略运行前视检测。",
+      "remaining_work": [
+        "构造截至t相同、t+1不同的两份输入",
+        "t时SignalProposal保持一致，下一时点由执行器处理差异"
+      ],
+      "owner_domain": "research",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "research",
+        "name": "决策时点与成交时点分离的评估适配器",
+        "implementation_file_created": false
+      },
+      "observed_legacy_components": [
+        {
+          "repository_relative_path": "scripts/lab/rl_fqi.py",
+          "inventory_ref": "traceability/code_inventory.json",
+          "json_pointer": "/files/403",
+          "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+          "recorded_sha256": "8f7c6bc757ac63a0d038930cbb877c7dbd7c610224c0be7a34ae815455580e55",
+          "review_state": "full_file_read_targeted_semantic_review"
+        },
+        {
+          "repository_relative_path": "scripts/lab/book.py",
+          "inventory_ref": "traceability/code_inventory.json",
+          "json_pointer": "/files/338",
+          "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+          "recorded_sha256": "e07dae86dedaa3dbd223298f9abf54d9404c4269f05cf1a74885f9565c82b2e9",
+          "review_state": "full_file_read_targeted_semantic_review"
+        }
+      ]
+    },
+    {
+      "reason_id": "RR-004",
+      "requirement_id": "V2-25",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "PIT查询同时约束快照、决策时点与可用性政策",
+      "status": "planned",
+      "reason": "冻结快照只固定数据版本，其中仍可能含未来财务修订、新闻解析或模型结果。每次研究/决策查询还需decision_as_of与availability_policy，分别约束各层结果何时可用。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C05",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C05 部分历史特征仍用今天的证券主数据",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C24",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C24 心跳时间不能替代行情可获知时间",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C17",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C17 历史图表缓存只按创建日期判断新鲜度",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F06",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/5",
+          "source_id": "TV06",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/21",
+          "source_id": "QC03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/GREENFIELD_SPEC.md",
+          "heading": "### 3.1 时间不能折叠为一个字段",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "只在缓存键添加snapshot_id",
+        "用系统心跳或爬取时间替代全部业务时间"
+      ],
+      "tradeoff": "需要保存vintage和多种时间字段；可以把历史真实记录与明确延迟假设的重建结果分开评估。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "FeatureKey已能区分历史决策时点，但真实DataQuery过滤尚未实现；两者不得等同。",
+      "remaining_work": [
+        "实现原文/解析/模型结果的不同available_at过滤",
+        "处理行业成分、公司状态及宏观修订历史",
+        "执行两个未来版本不影响历史结果的跨模块测试"
+      ],
+      "owner_domain": "data",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "data",
+        "name": "DataQueryService的时点可见性过滤",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-005",
+      "requirement_id": "V2-06",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "共享数据只有READY快照可以对业务发布",
+      "status": "planned",
+      "reason": "分析湖提交与业务目录发布不是同一个事务。用batch_id和INGESTING/COMMITTED_UNPUBLISHED/READY状态恢复同一版本，让图表、策略和研究取得一致的完整输入。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C25",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C25 覆盖率规则已有实现，但入口统一尚未完成",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C09",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C09 新闻分类异常被永久标成已处理",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IF-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/35",
+          "source_id": "IF01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "CH-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/39",
+          "source_id": "CH01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "WI-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/49",
+          "source_id": "WI01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "source",
+          "id": "X02",
+          "path": "research/source_index.json",
+          "json_pointer": "/51",
+          "primary_url": "https://ducklake.select/faq"
+        },
+        {
+          "kind": "source",
+          "id": "X03",
+          "path": "research/source_index.json",
+          "json_pointer": "/52",
+          "primary_url": "https://ducklake.select/docs/stable/duckdb/advanced_features/transactions"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 4.2 写入、发布与恢复",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "文件一出现就向读者暴露",
+        "业务发布失败后重新下载并追加第二份同批数据"
+      ],
+      "tradeoff": "需要一个恢复登记步骤；无需引入第二套竞争的业务主数据库，也不让策略直接读取临时文件。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-06",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "Lake提交成功但登记失败",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-17",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据不同单位/时间",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "只有设计与协议；未完成DuckLake/PostgreSQL双系统故障注入。",
+      "remaining_work": [
+        "实现发布恢复与批次幂等",
+        "把覆盖率/字段质量与READY条件绑定",
+        "验证提交成功发布失败后的重复恢复"
+      ],
+      "owner_domain": "data",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "data",
+        "name": "DatasetManifest发布状态与DuckLake恢复协调器",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-006",
+      "requirement_id": "C22",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "特征计算只执行被请求的依赖闭包",
+      "status": "planned",
+      "reason": "旧系统已有拓扑排序，但每次执行全集。新计算应从请求向上求依赖闭包，复用输入订阅和特征结果，并让缺依赖/循环只阻断相关子图。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C22",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C22 因子注册器会执行全集，缺按需共享与故障边界",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C21",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C21 行情更新和所有投影共享长临界区",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/47",
+          "source_id": "FU04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F06",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/34",
+          "source_id": "TD04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "每个策略单独计算MACD及全部指标",
+        "任何插件失败就把全市场计算标为空成功"
+      ],
+      "tradeoff": "需要显式依赖与失败状态；换来扩展策略数量时计算成本按新增依赖增长，而不是按消费者重复增长。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-01",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "100个策略健康并发请求同一特征",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-02",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个特征等待者取消",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "SingleFlight参考组件存在，真正DAG调度、依赖裁剪和分布式worker未实现。",
+      "remaining_work": [
+        "实现requested子图与拓扑验证",
+        "登记每个特征的单位/预热/缺值语义",
+        "将分布式发布与lease/fencing绑定"
+      ],
+      "owner_domain": "market",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "market",
+        "name": "FeatureDefinition注册与FeatureDAG调度器",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-007",
+      "requirement_id": "V2-01",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "完整身份与singleflight隔离同键共享计算",
+      "status": "implemented_reference",
+      "reason": "同一计算的100个消费者共用producer；19维键包含决策时点及可用性/会话政策，避免时间和版本串用。等待者取消不取消共享任务；失败可重试；结果副本和共享关闭任务避免变异与shutdown竞态。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C22",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C22 因子注册器会执行全集，缺按需共享与故障边界",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C17",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C17 历史图表缓存只按创建日期判断新鲜度",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "contracts/V2_PROTOCOLS.md",
+          "heading": "## 5 参考实现范围",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "仅按证券/日期缓存",
+        "把每个消费者取消直接传播给producer",
+        "对所有消费者共享可变dict引用"
+      ],
+      "tradeoff": "小值使用deepcopy说明隔离语义；大矩阵生产实现应返回不可变Arrow/Parquet引用，不能为100消费者复制100份。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-01",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "100个策略健康并发请求同一特征",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-02",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个特征等待者取消",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_canonical_parameters_and_parameter_change",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_parameter_digest_rejects_ambiguous_or_nonfinite_parameters",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_every_version_dimension_changes_the_key",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_no_implicit_or_mutable_key_dimensions",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_parameter_mutation_cannot_mutate_existing_key_identity",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_decision_time_requires_timezone_and_normalizes_same_instant",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_100_concurrent_same_key_compute_once",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_cancelling_creator_waiter_does_not_cancel_other_waiter",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_all_waiters_cancel_but_later_waiter_joins_original_work",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_shared_failure_is_not_cached_and_retry_succeeds",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_failure_after_all_waiters_cancel_has_no_unobserved_exception",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_different_snapshots_compute_independently",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_same_snapshot_different_decision_time_does_not_reuse_future_result",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_none_is_a_cached_success",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_mutable_results_are_isolated_from_producer_waiters_and_cache",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_bounded_lru_evicts_least_recently_used_result",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_shutdown_cancels_producer_and_rejects_new_work",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_concurrent_shutdowns_do_not_interrupt_producer_cleanup",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_cancelling_shutdown_waiter_does_not_abort_shutdown",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "单进程、单事件循环参考实现；19项相关测试已出现在45项通过日志中。键正确不证明DataQuery已过滤未来行。",
+      "remaining_work": [
+        "生产不可变结果载荷",
+        "跨进程租约、结果登记与故障恢复",
+        "真实特征及数据服务集成"
+      ],
+      "owner_domain": "market",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/feature_store.py",
+      "component_symbols": [
+        "parameter_digest",
+        "FeatureKey",
+        "SingleFlightFeatureStore"
+      ]
+    },
+    {
+      "reason_id": "RR-008",
+      "requirement_id": "V2-23",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "筛选、预警、回测与计划共用有类型条件AST",
+      "status": "planned",
+      "reason": "用户的一条选股条件必须在图表、盘中警报和历史实验中含义一致。价格单位、周期完成状态、UNKNOWN与真值、持续时间和冷却属于规则定义，不能由各入口各自猜测。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C01",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C01 网页推荐与冻结主账本执行不同的策略",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C02",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C02 推荐卡的买卖计划与所谓实盘记录不是同一口径",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C12",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C12 多个回测入口对同一市场规则有不同实现",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TS-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/15",
+          "source_id": "TS01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/29",
+          "source_id": "TD01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/30",
+          "source_id": "TD02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "CH-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/42",
+          "source_id": "CH04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "前端、回测、警报分别写一份表达式",
+        "把自然语言提示直接作为执行条件"
+      ],
+      "tradeoff": "需要维护算子类型和版本；已有种子Schema只证明字段形状与部分约束，不代表完整解释器已实现。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "AST种子契约已验证；跨入口统一执行行为仍是开发任务。",
+      "remaining_work": [
+        "实现类型检查与解释器",
+        "验证三种运行模式的相同快照结果一致",
+        "为未来算子新增显式版本"
+      ],
+      "owner_domain": "decision",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "decision",
+        "name": "RuleSpec编译器及多运行模式解释器",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-009",
+      "requirement_id": "C26",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "市场规则、交易日历和原始价格共享版本来源",
+      "status": "planned",
+      "reason": "涨跌停、回转、会话、最小价位及证券状态会随品种和日期变化。市场状态统计、选股、回测及执行都应查询同一有效规则，原始成交价与复权研究价不能互换。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C03",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C03 网站推荐未统一过滤沪深主板",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C07",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C07 实时后备涨停规则仍硬编码主板 ST 5%",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C12",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C12 多个回测入口对同一市场规则有不同实现",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C26",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C26 市场状态研究绕开统一涨跌停规则",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "CH-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/41",
+          "source_id": "CH03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/48",
+          "source_id": "FU05",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "source",
+          "id": "X04",
+          "path": "research/source_index.json",
+          "json_pointer": "/53",
+          "primary_url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml"
+        },
+        {
+          "kind": "source",
+          "id": "X05",
+          "path": "research/source_index.json",
+          "json_pointer": "/54",
+          "primary_url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/GREENFIELD_SPEC.md",
+          "heading": "### 7.1 MarketRules",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "用固定9.8%或10%阈值识别所有历史涨停",
+        "不同模块自行计算工作日与复权价格"
+      ],
+      "tradeoff": "增加规则主数据和版本查询，但同一规则修订可被全部消费者一致采用；默认交易宇宙与研究宇宙分开。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-11",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先买后卖做T",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "参考账户展示部分库存语义；没有真实交易所完整RuleBook与日历适配器。",
+      "remaining_work": [
+        "建立生效区间与获知时间",
+        "核对2026会话和量额归属",
+        "按实际证券/渠道生成规则适配测试"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "execution",
+        "name": "MarketRules与CalendarService",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-010",
+      "requirement_id": "C23",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "未知数据与真实零值必须分开影响排名",
+      "status": "observed_issue",
+      "reason": "旧质量维度先fill_null(0)再计权，把无数据解释成已知低分，与注释中的缺失维度退出计分不一致。应分别表达value、coverage、quality及允许估计的政策。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C23",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C23 缺失维度重新归一化的说明与部分实现不一致",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C06",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C06 LIVE 行情中存在未标识的估算与默认状态",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C25",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C25 覆盖率规则已有实现，但入口统一尚未完成",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IF-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/38",
+          "source_id": "IF02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "WI-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/52",
+          "source_id": "WI01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 3 数据论证与多源交叉校验",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 5 共享特征计算与条件语言",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "所有空值补0以维持排序输出",
+        "只在页面写一个全局数据不足提示"
+      ],
+      "tradeoff": "某些候选会变成UNKNOWN或暂不参与排名；这保留真实证据边界，避免静默改变经济含义。",
+      "acceptance_refs": [
+        {
+          "kind": "audit_acceptance",
+          "id": "C23",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C23 缺失维度重新归一化的说明与部分实现不一致",
+          "required_behavior": "区分缺失维度、部分覆盖与真实零；权重处理按显式政策测试",
+          "execution_status": "not_executed"
+        }
+      ],
+      "status_scope": "已记录旧路径的语义问题；本台账没有宣称完成新质量系统或重算旧排名。",
+      "remaining_work": [
+        "定义字段覆盖与估计政策",
+        "真实零/缺失的成对排序用例",
+        "将供应商失败与成功空结果分开"
+      ],
+      "owner_domain": "data",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "data",
+        "name": "CoveragePolicy与FeatureQuality状态",
+        "implementation_file_created": false
+      },
+      "observed_legacy_components": [
+        {
+          "repository_relative_path": "backend/app/factors/engine.py",
+          "inventory_ref": "traceability/code_inventory.json",
+          "json_pointer": "/files/78",
+          "baseline_commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+          "recorded_sha256": "ccae4c6f00a8886440b0c010ecd20a7ce69109ed9073918a08b34cb8862592f9",
+          "review_state": "full_file_read_targeted_semantic_review"
+        }
+      ]
+    },
+    {
+      "reason_id": "RR-011",
+      "requirement_id": "V2-20",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "六类策略角色允许组合而不混同目标",
+      "status": "planned",
+      "reason": "选股、配置、入场、持仓管理、执行、退出与复盘分别输出不同契约。先统一预测目标与期限，再比较或组合；五分钟做T与一年价值修复不能进入未校准的单一总分。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C01",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C01 网页推荐与冻结主账本执行不同的策略",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C30",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C30 RL组合回报近似尚未接到账户执行",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/19",
+          "source_id": "QC01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/4",
+          "source_id": "TV05",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/2",
+          "source_id": "TV03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "AP01",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/0",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP02",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/1",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP15",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/14",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP03",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/25",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP08",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/30",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 6 策略系统的六层职责",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "所有策略输出buy/sell后多数投票",
+        "把单股Pine样式脚本作为全部组合与执行内核"
+      ],
+      "tradeoff": "需要多种角色契约和适配器，但允许传统规则、大模型、监督学习、RL在各自适合的位置竞争。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "角色和协议已有文字规格，尚未实现注册/编译/校准服务；引用论文不等于本站收益复现。",
+      "remaining_work": [
+        "固定不同角色输入输出",
+        "按同期限校准预测",
+        "与简单等权和最强单体做消融"
+      ],
+      "owner_domain": "decision",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "decision",
+        "name": "StrategyBlueprint/Instance与ComponentRegistry",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-012",
+      "requirement_id": "V2-09",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "账户先净额目标再生成外部委托",
+      "status": "implemented_reference",
+      "reason": "不同策略共享一份真实现金与库存。先合成全部袖套的绝对目标，再扣账户持仓与未成交委托；策略之间相反变化不能被伪造成外部成交或盈利。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C30",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C30 RL组合回报近似尚未接到账户执行",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/20",
+          "source_id": "QC02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 7 多策略如何融合和消除冲突",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "每个策略对同一账户独立下单",
+        "将策略内部权利转移记为市场成交"
+      ],
+      "tradeoff": "需要完整活跃目标集合和准确未成交数量；参考函数只规划差额，取消/替换和原子预留仍由执行器实现。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_opposing_sleeve_changes_net_to_no_account_order",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_pending_unfilled_orders_reduce_new_delta",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_absent_target_is_zero_and_negative_projected_position_is_rejected",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "net_target_deltas纯函数已验证；不代表完整PortfolioCoordinator或券商下单服务。",
+      "remaining_work": [
+        "接入账户版本与袖套权利",
+        "处理目标变化与旧订单撤换",
+        "把负差额交给库存预留"
+      ],
+      "owner_domain": "decision",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/account_model.py",
+      "component_symbols": [
+        "net_target_deltas"
+      ]
+    },
+    {
+      "reason_id": "RR-013",
+      "requirement_id": "V2-08",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "唯一组合协调与触发时资源预留",
+      "status": "planned",
+      "reason": "分析会话先合成提案，组合器结合所有有效策略、计划和待成交订单形成唯一账户目标，编译器提交计划；实际触发订单时再次核验并原子预留。计划生效不能被解释为未来资源已经占用。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C27",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C27 库存纯函数缺少输入边界和订单级预留归属",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C30",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C30 RL组合回报近似尚未接到账户执行",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/20",
+          "source_id": "QC02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IB-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/27",
+          "source_id": "IB02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "EP02",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/24",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP04",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/26",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP06",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/28",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 7 多策略如何融合和消除冲突",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "contracts/V2_PROTOCOLS.md",
+          "heading": "## 6 唯一命名与状态来源",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "每个模型会话直接激活自己的账户目标",
+        "计划生成时按旧账户快照永久保证可成交数量"
+      ],
+      "tradeoff": "多一个账户级合成步骤，但同一账户有明确串行版本；不同账户可以并行，推理不占数据库长事务。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-08",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "两策略同时使用同一现金/库存",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-10",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "核心仓与网格冲突",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "已有净额与库存参考函数；分布式事务、完整协调器、真实账户集成未实现。",
+      "remaining_work": [
+        "单账户版本化事务",
+        "条件触发时现金及库存原子预留",
+        "处理旧提案与新成交的冲突"
+      ],
+      "owner_domain": "decision",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "decision",
+        "name": "SessionCoordinator → PortfolioCoordinator → PlanCompiler；ExecutionCoordinator",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-014",
+      "requirement_id": "V2-11",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "正数量、订单归属与T+1库存的不变量",
+      "status": "implemented_reference",
+      "reason": "动作数量必须为正整数Decimal，卖单逐订单预留合格库存；当日买入只增加总量。用成交ID幂等入账，阻止两策略重复消耗同一底仓或重复回报增加资金。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C27",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C27 库存纯函数缺少输入边界和订单级预留归属",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/45",
+          "source_id": "FU02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 8.1 账户库存是操作前提",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "只依赖HTTP/Pydantic入口校验领域函数",
+        "只存账户总预留而没有order_id归属"
+      ],
+      "tradeoff": "参考模型使用顺序写入和内存ID记录来证明不变量；生产版本需要事务、持久事件与实际日历，不能借此宣称已接券商。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-11",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先买后卖做T",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-08",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "两策略同时使用同一现金/库存",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_positive_integral_quantities_required_for_actions",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_floats_are_rejected_at_money_boundary",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_position_invariants_are_enforced",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_today_buy_does_not_increase_sellable_until_next_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_reservations_prevent_two_strategies_from_overselling",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_duplicate_sell_fill_does_not_double_book_cash_or_inventory",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_duplicate_buy_fill_does_not_double_book",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_same_day_or_backwards_inventory_settlement_is_rejected",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "相关正数量、预留、重复成交、T+1行为通过本地测试；真实交易规则与持久化仍未实现。",
+      "remaining_work": [
+        "生产持久幂等和多进程竞争",
+        "实际日历与公司行动",
+        "未成交买单资金预留"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/account_model.py",
+      "component_symbols": [
+        "Position",
+        "Account.reserve_sell",
+        "Account.apply_buy",
+        "Account.apply_sell",
+        "Account.advance_trading_day"
+      ]
+    },
+    {
+      "reason_id": "RR-015",
+      "requirement_id": "V2-12",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "现金可用政策与互斥资产桶分开",
+      "status": "implemented_reference",
+      "reason": "国内卖出款可交易复用与指定服务限制必须由账户渠道政策选择。模型以互斥的cash_available/cash_unsettled保存资产，结算只改变可用性，不改变总净值；不能直接相加真实券商重叠视图。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C27",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C27 库存纯函数缺少输入边界和订单级预留归属",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "source",
+          "id": "X06",
+          "path": "research/source_index.json",
+          "json_pointer": "/55",
+          "primary_url": "https://www.hangseng.com/zh-cn/investment/securities-services/stock-connect/faq-stock-connect/"
+        },
+        {
+          "kind": "source",
+          "id": "X07",
+          "path": "research/source_index.json",
+          "json_pointer": "/56",
+          "primary_url": "https://edu.18.cn/CaiFuShuYuan/JiChuZhiShi"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 8.1 账户库存是操作前提",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "所有卖款都立即可用",
+        "所有A股卖款统一冻结到次日",
+        "把available/settled/withdrawable相加当财富"
+      ],
+      "tradeoff": "每个渠道要核验资金政策；可交易、已交收、可取是不同视图。参考模型不含银行转出与结算事件幂等。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-12",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先卖后买且资金复用政策不同",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_domestic_sale_proceeds_can_fund_another_trade_same_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_service_unsettled_policy_blocks_reuse_until_explicit_release",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_cash_bucket_policy_does_not_change_total_equity",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_inventory_day_roll_does_not_assume_cash_release",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_failed_buy_leaves_all_state_unchanged",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_invalid_fee_and_cash_release_are_not_silent",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_fee_above_tiny_sale_proceeds_is_a_cash_debit_not_an_asset",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "两种示例现金政策及财富不变测试已通过；费率、交收日期和真实渠道能力未集成。",
+      "remaining_work": [
+        "渠道适配与明确结算事件ID",
+        "生产互斥现金账本派生视图",
+        "最低佣金与费用归组"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/account_model.py",
+      "component_symbols": [
+        "CashPolicy",
+        "Account.apply_sell",
+        "Account.release_unsettled_cash",
+        "Account.total_equity"
+      ]
+    },
+    {
+      "reason_id": "RR-016",
+      "requirement_id": "C27",
+      "requirement_anchor_kind": "audit_finding",
+      "title": "撤单确认先对齐累计成交再释放预留",
+      "status": "implemented_reference",
+      "reason": "撤单请求、权威确认和迟到成交不是同一事实。cancel_sell要求confirmed_cumulative_filled与本地累计一致；缺30股成交回报时保持预留，补齐成交后才释放剩余量。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C27",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C27 库存纯函数缺少输入边界和订单级预留归属",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/45",
+          "source_id": "FU02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IB-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/26",
+          "source_id": "IB03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/23",
+          "source_id": "QC04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/GREENFIELD_SPEC.md",
+          "heading": "### 7.2 同一执行协议",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "review_resolution",
+          "path": "traceability/review_resolution.md",
+          "support_scope": "已记录撤单确认未对齐的独立账户复核及参考修订"
+        }
+      ],
+      "alternatives": [
+        "发出撤单请求就释放全部库存",
+        "迟到真实成交被静默丢弃"
+      ],
+      "tradeoff": "未对齐确认必须保留等待补报，短时不能复用库存；参考方法不代替完整乱序OMS。",
+      "acceptance_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_partial_fill_then_cancel_releases_only_remainder",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_overfill_and_fill_after_cancel_do_not_mutate_account",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_cancel_confirmation_with_missing_fills_preserves_reservation",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "累计不一致不释放、补齐30股后释放70股的回归已通过；没有真实券商事件序列适配器。",
+      "remaining_work": [
+        "持久保存待对齐撤单确认",
+        "券商序号/累计成交校验",
+        "撤改单与重连对账协议"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/account_model.py",
+      "component_symbols": [
+        "Account.cancel_sell",
+        "Account.apply_sell"
+      ]
+    },
+    {
+      "reason_id": "RR-017",
+      "requirement_id": "V2-13",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "做T和网格用相同起点的总净值增量评价",
+      "status": "implemented_reference",
+      "reason": "只计已配对价差会隐藏卖后未买回的上涨机会成本、剩余库存与双边费用。用同一起点、相同终值价格的主动/被动分支比较全部现金与持仓价值。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C13",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C13 期末强制卖出用于前向主书 会把估值当成交",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C14",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C14 复权价格同时承担研究信号与按股成交记账",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C15",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C15 成本与绩效描述之间有多套口径",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F10",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/9",
+          "source_id": "TV09",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IF-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/37",
+          "source_id": "IF01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "XQ-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/53",
+          "source_id": "XQ01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "EP14",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/36",
+          "read_depth": "abstract_only",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP13",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/35",
+          "read_depth": "abstract_and_publisher_excerpt",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 8.3 成本下降与实际利润分别计算",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "用closed profit替代total equity",
+        "用摊薄成本下降直接宣称利润上升",
+        "期末强制平仓冒充真实成交"
+      ],
+      "tradeoff": "需要匹配初始资产和现金流；本参考没有公司行动、FX或外部出入金，因此只验证无这些事件的经济恒等式。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-13",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "网格只成交一腿",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-15",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "费用吃掉价差",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_completed_t_roundtrip_deducts_both_fees",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_unbought_inventory_opportunity_cost_can_make_t_negative",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_partial_repurchase_uses_total_equity_not_closed_profit",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_comparison_rejects_different_origins_or_valuation_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_marks_must_cover_inventory_and_be_finite",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "status_scope": "总净值比较函数已验证；完整网格状态机与绩效归因服务仍待实现。",
+      "remaining_work": [
+        "外部现金流和公司行动统一处理",
+        "操作周期与策略归属持久化",
+        "与真实成交、费用政策联通"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "component_path": "reference_models/account_model.py",
+      "component_symbols": [
+        "Account.total_equity",
+        "compare_t_equity",
+        "TEquityComparison"
+      ]
+    },
+    {
+      "reason_id": "RR-018",
+      "requirement_id": "V2-14",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "网格与做T操作状态不得被重锚或快照简化抹掉",
+      "status": "planned",
+      "reason": "网格需要记录未完成腿、库存权利、价格锚点、费用和退出条件。一个K线跨多格或只有粗快照时，不能默认有利的路径和排队成交；重锚不能丢失旧订单。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C28",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C28 排队情景仍需明确首个快照区间的不确定性",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "FU-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/44",
+          "source_id": "FU01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "QC-F06",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/24",
+          "source_id": "QC01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/3",
+          "source_id": "TV04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "EP15",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/37",
+          "read_depth": "abstract_only",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "### 8.2 网格定义和生命周期",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "静态买卖箭头代替操作周期",
+        "每次更新网格都清空旧订单状态",
+        "触价就视作全部成交"
+      ],
+      "tradeoff": "要么提高数据粒度，要么报告明确情景与敏感性；更细成交不等于已掌握真实队列位置。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-10",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "核心仓与网格冲突",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-13",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "网格只成交一腿",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-14",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个K线跨多格",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-15",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "费用吃掉价差",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "有账户与净值参考，尚无完整网格/撮合引擎；EP15等论文方法未在本站复现。",
+      "remaining_work": [
+        "持久operation_id与未完成腿",
+        "路径情景及部分成交",
+        "重锚、撤单、单边行情用例"
+      ],
+      "owner_domain": "execution",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "execution",
+        "name": "PositionPolicy与GridDefinition状态机",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-019",
+      "requirement_id": "V2-16",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "消息证据按原始来源和传播通道关联股票",
+      "status": "planned",
+      "reason": "同一公告的多家转载或多个模型复述不是多个独立事实。用origin_group、原文锚点、修订、实体与业务暴露连接候选股和持仓，保留事实边与模型推断边。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C11",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C11 消息处理结束于告警日志 没有推动排名与计划更新",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F11",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/10",
+          "source_id": "TV09",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/31",
+          "source_id": "TD03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/32",
+          "source_id": "TD03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "CH-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/40",
+          "source_id": "CH02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "WI-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/50",
+          "source_id": "WI01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "WI-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/51",
+          "source_id": "WI02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "XQ-F03",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/55",
+          "source_id": "XQ02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "AP08",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/7",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP21",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/20",
+          "read_depth": "abstract_only",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 3 数据论证与多源交叉校验",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 9 新闻与大模型对计划的真实作用",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "新闻条数直接作为独立证据票数",
+        "只有情绪分而没有原文与实体路径",
+        "每个Agent各自维护消息库"
+      ],
+      "tradeoff": "需要实体消歧和出处链；换来消息→产业通道→股票→期限的可检查解释，不把模型推断当已确认供应关系。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-16",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新闻转载三次",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-17",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据不同单位/时间",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-21",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "多Agent共享错误来源",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "是数据与情报契约；没有声称已经接全网消息或完成全部影响因素验证。",
+      "remaining_work": [
+        "源注册与内容指纹",
+        "修订/澄清与证据冲突",
+        "企业暴露边的来源和有效期"
+      ],
+      "owner_domain": "intelligence",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "intelligence",
+        "name": "SourceClaim、EventRecord与行业/企业暴露图",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-020",
+      "requirement_id": "V2-19",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "新消息异步改变计划版本并保留延迟成本",
+      "status": "planned",
+      "reason": "原文接收和规则计算不能等待长模型推理；模型完成后才有新的available_at。受影响排名和计划生成新版本，旧已发布判断与成交不被覆盖，并评估识别方向在延迟后是否仍有可交易价值。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C04",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C04 已发布推荐会被同日重算覆盖",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C08",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C08 新闻源叫 7×24 但采集与告警不是全天连续运行",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C10",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C10 规则判读与大模型串行共用一个批处理阻塞链",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C11",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C11 消息处理结束于告警日志 没有推动排名与计划更新",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F08",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/7",
+          "source_id": "TV07",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TS-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/17",
+          "source_id": "TS02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "AP23",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/22",
+          "read_depth": "abstract_and_publisher_excerpt",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP01",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/23",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 9 新闻与大模型对计划的真实作用",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "全市场每个tick都重新问模型",
+        "新闻结束于告警日志",
+        "同日重算覆盖旧计划版本"
+      ],
+      "tradeoff": "异步结果需要版本与依赖管理；热路径持续运行，模型只在有新信息时为相关证券提供增量判断。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-19",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "模型方向识别高但延迟后无收益",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "任务/版本协议已设计，未部署全天候采集与计划重算脚本。",
+      "remaining_work": [
+        "独立采集、解析、模型队列",
+        "依赖失效与计划差异",
+        "按真实延迟衡量净收益"
+      ],
+      "owner_domain": "intelligence",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "intelligence",
+        "name": "温路径ImpactProposal与计划依赖失效",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-021",
+      "requirement_id": "V2-18",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "论文状态、阅读深度与本项目复现分别登记",
+      "status": "planned",
+      "reason": "正式出版、录用、Findings、Workshop和预印本不是同一状态；作者结果、本站复现和本站前向表现要分别记录。论文入库先形成可证伪假说、所需数据与统一实验任务。",
+      "evidence_refs": [
+        {
+          "kind": "platform_feature",
+          "id": "XQ-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/54",
+          "source_id": "XQ01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "AP01",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/0",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP07",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/6",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP11",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/10",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP12",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/11",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP11",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/33",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 10 策略库如何优胜劣汰并吸收新研究",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "按年份或模型名直接启用论文策略",
+        "只保存结论摘要而不保存费用、划分和阅读深度"
+      ],
+      "tradeoff": "先花精力统一证据与实验语义；38张当前登记卡是资料成果，不等于38种已复现策略。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-18",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "论文网页摘要与正式PDF冲突",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "papers_registry/hypotheses资料文件存在；自动发现、下载、编译和复现执行服务尚未部署。",
+      "remaining_work": [
+        "论文版本/DOI去重",
+        "固定正式来源及代码依赖",
+        "按阅读深度和可复现性排队"
+      ],
+      "owner_domain": "research",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "research",
+        "name": "PaperMethodCard、Hypothesis与持续发现任务",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-022",
+      "requirement_id": "V2-24",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "研究晋级根据净贡献与独立验证更新策略池",
+      "status": "planned",
+      "reason": "持续试验容易把同一留出样本用成训练反馈。记录所有尝试和失败，比较简单基线、最强单体与消融；标签成熟后才更新表现，退化时按发布政策调整权重而不改写历史。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C30",
+          "path": "spec/CODE_AUDIT_V2.md",
+          "heading": "## C30 RL组合回报近似尚未接到账户执行",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TD-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/33",
+          "source_id": "TD03",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "EP11",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/33",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "EP13",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/35",
+          "read_depth": "abstract_and_publisher_excerpt",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP09",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/8",
+          "read_depth": "abstract_only",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP20",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/19",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 10 策略库如何优胜劣汰并吸收新研究",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "只保存冠军回测",
+        "按样本内收益自动放大权重",
+        "新论文一出现就替换活跃策略"
+      ],
+      "tradeoff": "晋级会受到实验预算、成本与独立证据约束；规则仍可自动执行，不要求每个候选人工审批。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-24",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "前向策略退化或恢复",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-19",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "模型方向识别高但延迟后无收益",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "生命周期与目标验收已明确；未实际运行论文训练或真实前向晋级。",
+      "remaining_work": [
+        "保存全部trial及留出集访问",
+        "执行单体/组合消融",
+        "发布、暂停与恢复事件不可覆盖历史"
+      ],
+      "owner_domain": "research",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "research",
+        "name": "ExperimentRun、TrialLedger与晋级政策",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-023",
+      "requirement_id": "V2-21",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "多Agent共享工具与证据，合成提案不靠多数票",
+      "status": "planned",
+      "reason": "多模型可能共享错误来源，意见数量不代表证据独立性。统一证券、单位、时点和工具接口，记录各Agent的证据与未完成状态，再按已登记规则形成提案，账户仍由唯一协调链处理。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C10",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C10 规则判读与大模型串行共用一个批处理阻塞链",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C11",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C11 消息处理结束于告警日志 没有推动排名与计划更新",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TS-F06",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/18",
+          "source_id": "TS02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IF-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/36",
+          "source_id": "IF01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "paper",
+          "id": "AP03",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/2",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP19",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/18",
+          "read_depth": "abstract_only",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP20",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/19",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "paper",
+          "id": "AP22",
+          "path": "research/papers_registry.json",
+          "json_pointer": "/papers/21",
+          "read_depth": "targeted_fulltext",
+          "support_scope": "方法与边界证据；未在本项目复现作者投资收益"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 12 并行Agent开发与完成标准",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/GREENFIELD_SPEC.md",
+          "heading": "### 15.6 推荐动作与自动研究的默认边界",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "让每个Agent自己下载数据和下单",
+        "用模型自述confidence直接当胜率",
+        "把未返回Agent的意见补写出来"
+      ],
+      "tradeoff": "要维护工具契约、会话预算和迟到结果版本；能力更强的新模型只替换提供者，不改变账户和数据语义。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-21",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "多Agent共享错误来源",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "多Agent运行是未来实施合同；本次并行研究本身不等于网站运行时Agent系统已完成。",
+      "remaining_work": [
+        "能力路由与工具回归集",
+        "截止时间/缺项/迟到修订",
+        "独立证据与模型校准评测"
+      ],
+      "owner_domain": "assistant",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "assistant",
+        "name": "AnalysisSession、统一工具目录与SessionCoordinator",
+        "implementation_file_created": false
+      }
+    },
+    {
+      "reason_id": "RR-024",
+      "requirement_id": "V2-22",
+      "requirement_anchor_kind": "spec_acceptance",
+      "title": "多周期工作台是统一数据对象的联动投影",
+      "status": "planned",
+      "reason": "用户要同时看年/月/周/日与盘中量价、消息和持仓计划。不同图表共享证券身份与数据版本，未完结周期明确显示；前端不重新计算自己的排名、MACD或交易规则。",
+      "evidence_refs": [
+        {
+          "kind": "audit",
+          "id": "C16",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C16 当日日线在15:05被过早视为最终数据",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "audit",
+          "id": "C18",
+          "path": "spec/CODE_AUDIT.md",
+          "heading": "## C18 个股图表已有指标，但缺少多周期工作台与自动同步",
+          "support_scope": "既有审计记录；本台账不把静态索引升级为新复现"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/0",
+          "source_id": "TV01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F02",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/1",
+          "source_id": "TV02",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F12",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/11",
+          "source_id": "TV10",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TV-F13",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/12",
+          "source_id": "TV11",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "TS-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/13",
+          "source_id": "TS01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IB-F01",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/25",
+          "source_id": "IB01",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "IB-F04",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/28",
+          "source_id": "IB04",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "platform_feature",
+          "id": "CH-F05",
+          "path": "research/platforms.json",
+          "json_pointer": "/records/43",
+          "source_id": "CH05",
+          "support_scope": "公开功能事实；本站实现建议仍为设计推断"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "heading": "## 11 平台能力如何成为一个连贯网站",
+          "support_scope": "目标设计，不代表已经实现"
+        },
+        {
+          "kind": "specification",
+          "path": "spec/GREENFIELD_SPEC.md",
+          "heading": "### 3.3 K线与指标一致性",
+          "support_scope": "目标设计，不代表已经实现"
+        }
+      ],
+      "alternatives": [
+        "把十个平台的页面独立拼接",
+        "每个面板自行请求并计算相同指标",
+        "把15:00临时快照当全天最终量额"
+      ],
+      "tradeoff": "需要上下文分组和请求版本防串台；可以分期实现面板，但同一用户动作必须贯通同一快照。",
+      "acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "status_scope": "56项平台能力为规划与证据目录；没有把这些条目计为已上线的UI功能。",
+      "remaining_work": [
+        "图表与自选/消息/订单分组联动",
+        "保存布局与指标参数",
+        "验证迟到请求不会覆盖新证券上下文"
+      ],
+      "owner_domain": "market",
+      "checked_at": "2026-11-10",
+      "planned_component": {
+        "domain": "market",
+        "name": "StockWorkspace、InstrumentContext与分组联动面板",
+        "implementation_file_created": false
+      }
+    }
+  ]
+}

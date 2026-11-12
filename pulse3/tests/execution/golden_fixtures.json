@@ -1,0 +1,849 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "pulse-economic-cny-weighted-average-gross-v1",
+  "fixture_kind": "synthetic_hand_calculated",
+  "cases": [
+    {
+      "case_id": "B01",
+      "title": "买卖完整往返",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {},
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "b1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "buy",
+            "quantity": 100,
+            "limit_price": "10",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fb",
+            "order_id": "b1",
+            "quantity": 100,
+            "price": "10",
+            "fee": "5",
+            "eligible_on": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "session.open",
+          "effective_at": "2026-11-11T10:00:03+08:00",
+          "payload": {
+            "trading_day": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e004",
+          "sequence": 4,
+          "kind": "cash.settlement",
+          "effective_at": "2026-11-11T10:00:04+08:00",
+          "payload": {
+            "fill_ids": [
+              "fb"
+            ]
+          }
+        },
+        {
+          "event_id": "e005",
+          "sequence": 5,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-11T10:00:05+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 100,
+            "limit_price": "11",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e006",
+          "sequence": 6,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-11T10:00:06+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 100,
+            "price": "11",
+            "fee": "5",
+            "eligible_on": null
+          }
+        },
+        {
+          "event_id": "e007",
+          "sequence": 7,
+          "kind": "session.open",
+          "effective_at": "2026-11-12T10:00:07+08:00",
+          "payload": {
+            "trading_day": "2026-11-12"
+          }
+        },
+        {
+          "event_id": "e008",
+          "sequence": 8,
+          "kind": "cash.settlement",
+          "effective_at": "2026-11-12T10:00:08+08:00",
+          "payload": {
+            "fill_ids": [
+              "fs"
+            ]
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "11"
+      },
+      "expected": {
+        "cash_settled": "10090",
+        "nav": "10090",
+        "cost_basis": "0",
+        "realized_gross": "100",
+        "fees": "10",
+        "pnl_from_cost_origin": "90",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 0,
+            "sellable": 0,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "10000 - 100×10 - 5 + 100×11 - 5 = 10090；毛已实现100，费用10。"
+    },
+    {
+      "case_id": "B02",
+      "title": "部分成交后确认撤单",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 300,
+            "limit_price": "10",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 100,
+            "price": "10.5",
+            "fee": "5",
+            "eligible_on": null
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "order.cancel_confirmed",
+          "effective_at": "2026-11-10T10:00:03+08:00",
+          "payload": {
+            "order_id": "s1",
+            "cumulative_filled": 100
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "10"
+      },
+      "expected": {
+        "cash_settled": "10000",
+        "trade_receivable": "1045",
+        "cash_available": "11045",
+        "nav": "20045",
+        "cost_basis": "9000",
+        "realized_gross": "50",
+        "fees": "5",
+        "pnl_from_cost_origin": "45",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 900,
+            "sellable": 900,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "卖100股净应收100×10.5-5=1045；剩900股按10计值9000；撤单不产生盈亏。"
+    },
+    {
+      "case_id": "B03",
+      "title": "做T卖出后未买回",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 200,
+            "limit_price": "10.5",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 200,
+            "price": "10.5",
+            "fee": "5",
+            "eligible_on": null
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "12"
+      },
+      "expected": {
+        "nav": "21695",
+        "realized_gross": "100",
+        "unrealized": "1600",
+        "fees": "5",
+        "cost_basis": "8000",
+        "pnl_from_cost_origin": "1695",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 800,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "主动净值10000+200×10.5-5+800×12=21695；持续持有净值10000+1000×12=22000；增量-305。",
+      "passive_nav": "22000",
+      "expected_increment": "-305"
+    },
+    {
+      "case_id": "B04",
+      "title": "复用卖出款完成一次T",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 200,
+            "limit_price": "10.5",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 200,
+            "price": "10.5",
+            "fee": "5",
+            "eligible_on": null
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:03+08:00",
+          "payload": {
+            "order_id": "b1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "buy",
+            "quantity": 200,
+            "limit_price": "10",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e004",
+          "sequence": 4,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:04+08:00",
+          "payload": {
+            "fill_id": "fb",
+            "order_id": "b1",
+            "quantity": 200,
+            "price": "10",
+            "fee": "5",
+            "eligible_on": "2026-11-11"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "10"
+      },
+      "expected": {
+        "cash_settled": "0",
+        "trade_receivable": "2095",
+        "trade_payable": "2005",
+        "cash_available": "90",
+        "nav": "10090",
+        "cost_basis": "10000",
+        "realized_gross": "100",
+        "fees": "10",
+        "pnl_from_cost_origin": "90",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "经济净现金2095-2005=90；老底仓可卖量从1000降为800，新买200当日不恢复可卖额度。",
+      "passive_nav": "10000",
+      "expected_increment": "90"
+    },
+    {
+      "case_id": "B05",
+      "title": "分红应收到账与税款",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "dividend.accrued",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "action_id": "div1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "entitlement_quantity": 1000,
+            "cash_per_share": "0.2",
+            "entitlement_snapshot_id": "record-date-v1"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "dividend.paid",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "action_id": "div1"
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "tax.withheld",
+          "effective_at": "2026-11-10T10:00:03+08:00",
+          "payload": {
+            "action_id": "div1",
+            "amount": "20"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "9.8"
+      },
+      "expected": {
+        "cash_settled": "10180",
+        "dividend_receivable": "0",
+        "dividend_income": "200",
+        "withholding_tax": "20",
+        "unrealized": "-200",
+        "nav": "19980",
+        "pnl_from_cost_origin": "-20"
+      },
+      "manual_derivation": "价格从10降为9.8，市值少200；应收红利200到账仅变资产形态；税款20使总净值少20。税率仅为假设输入。"
+    },
+    {
+      "case_id": "B06",
+      "title": "纯拆股不制造收益",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 100,
+            "cost": "1000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "corporate.split_effective",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "action_id": "split1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "factor": "2",
+            "eligibility_policy": "inherit_existing_lot_dates"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "5"
+      },
+      "expected": {
+        "cost_basis": "1000",
+        "nav": "1000",
+        "pnl_from_cost_origin": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 200,
+            "sellable": 200,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "100股×10拆成200股×5，成本总额1000和净值1000不变；是纯拆股样例，A股送转股上市日另定。"
+    },
+    {
+      "case_id": "B07",
+      "title": "外部入金与时间加权收益分开",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "0",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "capital.deposit",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "amount": "9000"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "13"
+      },
+      "expected": {
+        "cash_settled": "9000",
+        "net_external_capital": "19000",
+        "nav": "22000",
+        "unrealized": "3000",
+        "pnl_from_cost_origin": "3000"
+      },
+      "manual_derivation": "入金前1000股从10涨到11，NAV11000；入金9000后NAV20000；期末股价13，NAV22000。TWR=(11000/10000)×(22000/20000)-1=21%，不能把入金算收益。",
+      "twr_segments": [
+        [
+          "10000",
+          "11000"
+        ],
+        [
+          "20000",
+          "22000"
+        ]
+      ],
+      "expected_twr": "0.21"
+    },
+    {
+      "case_id": "B08",
+      "title": "先买后卖使用旧可卖库存",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "cost": "10000"
+          }
+        },
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "b1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "buy",
+            "quantity": 200,
+            "limit_price": "9.8",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fb",
+            "order_id": "b1",
+            "quantity": 200,
+            "price": "9.8",
+            "fee": "5",
+            "eligible_on": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:03+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 200,
+            "limit_price": "10.1",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e004",
+          "sequence": 4,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:04+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 200,
+            "price": "10.1",
+            "fee": "5",
+            "eligible_on": null
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "10"
+      },
+      "expected": {
+        "cash_available": "10050",
+        "nav": "20050",
+        "cost_basis": "9966.666666666667",
+        "realized_gross": "26.666666666667",
+        "unrealized": "33.333333333333",
+        "fees": "10",
+        "pnl_from_cost_origin": "50",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 1000,
+            "sellable": 800,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "净现金变化200×(10.1-9.8)-10=50；加权平均成本只改变已实现/未实现拆分，不改变总利润50。",
+      "passive_nav": "20000",
+      "expected_increment": "50"
+    },
+    {
+      "case_id": "B09",
+      "title": "同订单三次成交累计费用一次",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {},
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "b1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "buy",
+            "quantity": 100,
+            "limit_price": "10",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fb1",
+            "order_id": "b1",
+            "quantity": 30,
+            "price": "10",
+            "fee": "5",
+            "eligible_on": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:03+08:00",
+          "payload": {
+            "fill_id": "fb2",
+            "order_id": "b1",
+            "quantity": 30,
+            "price": "10",
+            "fee": "0",
+            "eligible_on": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e004",
+          "sequence": 4,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:04+08:00",
+          "payload": {
+            "fill_id": "fb3",
+            "order_id": "b1",
+            "quantity": 40,
+            "price": "10",
+            "fee": "0",
+            "eligible_on": "2026-11-11"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "10"
+      },
+      "expected": {
+        "cash_available": "8995",
+        "trade_payable": "1005",
+        "cost_basis": "1000",
+        "fees": "5",
+        "nav": "9995",
+        "pnl_from_cost_origin": "-5",
+        "positions": {
+          "SAMPLE_MAIN_001": {
+            "quantity": 100,
+            "sellable": 0,
+            "reserved_sell": 0
+          }
+        }
+      },
+      "manual_derivation": "同一订单100股成交拆30/30/40，已由费用策略产生增量费用5/0/0；总成本1005，不对每笔成交再扣最低佣金。此样例不实现费用策略本身。"
+    },
+    {
+      "case_id": "B10",
+      "title": "追加费用退款保留旧分录",
+      "synthetic": true,
+      "initial": {
+        "trading_day": "2026-11-10",
+        "opening_cash": "10000",
+        "positions": {},
+        "sale_proceeds_reusable": true
+      },
+      "events": [
+        {
+          "event_id": "e001",
+          "sequence": 1,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-10T10:00:01+08:00",
+          "payload": {
+            "order_id": "b1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "buy",
+            "quantity": 100,
+            "limit_price": "10",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e002",
+          "sequence": 2,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-10T10:00:02+08:00",
+          "payload": {
+            "fill_id": "fb",
+            "order_id": "b1",
+            "quantity": 100,
+            "price": "10",
+            "fee": "5",
+            "eligible_on": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e003",
+          "sequence": 3,
+          "kind": "session.open",
+          "effective_at": "2026-11-11T10:00:03+08:00",
+          "payload": {
+            "trading_day": "2026-11-11"
+          }
+        },
+        {
+          "event_id": "e004",
+          "sequence": 4,
+          "kind": "cash.settlement",
+          "effective_at": "2026-11-11T10:00:04+08:00",
+          "payload": {
+            "fill_ids": [
+              "fb"
+            ]
+          }
+        },
+        {
+          "event_id": "e005",
+          "sequence": 5,
+          "kind": "order.reserve",
+          "effective_at": "2026-11-11T10:00:05+08:00",
+          "payload": {
+            "order_id": "s1",
+            "instrument_id": "SAMPLE_MAIN_001",
+            "side": "sell",
+            "quantity": 100,
+            "limit_price": "11",
+            "fee_budget": "5"
+          }
+        },
+        {
+          "event_id": "e006",
+          "sequence": 6,
+          "kind": "fill.booked",
+          "effective_at": "2026-11-11T10:00:06+08:00",
+          "payload": {
+            "fill_id": "fs",
+            "order_id": "s1",
+            "quantity": 100,
+            "price": "11",
+            "fee": "5",
+            "eligible_on": null
+          }
+        },
+        {
+          "event_id": "e007",
+          "sequence": 7,
+          "kind": "session.open",
+          "effective_at": "2026-11-12T10:00:07+08:00",
+          "payload": {
+            "trading_day": "2026-11-12"
+          }
+        },
+        {
+          "event_id": "e008",
+          "sequence": 8,
+          "kind": "cash.settlement",
+          "effective_at": "2026-11-12T10:00:08+08:00",
+          "payload": {
+            "fill_ids": [
+              "fs"
+            ]
+          }
+        },
+        {
+          "event_id": "e009",
+          "sequence": 9,
+          "kind": "fee.cash_adjustment",
+          "effective_at": "2026-11-12T10:00:09+08:00",
+          "payload": {
+            "related_fill_id": "fb",
+            "expense_delta": "-1"
+          }
+        }
+      ],
+      "marks": {
+        "SAMPLE_MAIN_001": "11"
+      },
+      "expected": {
+        "cash_settled": "10091",
+        "fees": "9",
+        "realized_gross": "100",
+        "nav": "10091",
+        "pnl_from_cost_origin": "91"
+      },
+      "manual_derivation": "原往返利润90，费用退款1通过新分录使净值10091；原Fill和分录不覆写。"
+    }
+  ]
+}

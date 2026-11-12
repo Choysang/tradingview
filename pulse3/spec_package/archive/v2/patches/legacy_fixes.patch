@@ -1,0 +1,271 @@
+diff --git a/backend/app/playbooks/picks.py b/backend/app/playbooks/picks.py
+index 1388a68ee73a49c3d442a74112811f7ad4d7eb85..984f2287a6cb056d81f49a2642878c0b030e3ea8 100644
+--- a/backend/app/playbooks/picks.py
++++ b/backend/app/playbooks/picks.py
+@@ -73,9 +73,9 @@ REPLAY_STEP = 5
+ MIN_AMOUNT = 0.5  # 亿元
+ MIN_BARS = 60
+ REBALANCE_CYCLE = 25  # bars; a calendar month has at most ~23 trading days
+-# Bump when the report gains content (2: rotation voting and sell plans; 3: bear mode), so
++# Bump when the report changes (2: rotation and sell plans; 3: bear mode; 4: main board only), so
+ # stored reports built by older code are rebuilt instead of served without it.
+-REPORT_FORMAT = 3
++REPORT_FORMAT = 4
+ # Bear mode (docs/research/2026-11-01-technical-bear.md): while the benchmark closes below its
+ # 60-day mean, technical bottom-fishing and chasing lost money in down months, and only
+ # low-volatility playbooks held up. Short and swing pause; long keeps the defensive styles.
+@@ -90,7 +90,7 @@ BLEND = {  # ensemble, sentiment, technical, trend
+ }
+ DISCLAIMER = "研究用途，不构成投资建议"
+ DAY_COLUMNS = (
+-    "name", "close", "pct_chg", "amount", "days_listed", "limit_streak", "volume", "vol_ma20", "ma5", "ma10",
++    "name", "board", "close", "pct_chg", "amount", "days_listed", "limit_streak", "volume", "vol_ma20", "ma5", "ma10",
+     "ma20", "ma60", "ma120", "macd_dif", "macd_dea", "macd_hist", "high_60_prev", "ret_20", "ret_60", "ret_120",
+     "volatility_20", "atr_14", "one_word",
+ )
+@@ -169,7 +169,8 @@ def _eligible(day: pl.DataFrame, exclude_st: bool) -> pl.DataFrame:
+     # look-ahead for a past date, so the replay turns it off.
+     st = pl.col("name").fill_null("").str.to_uppercase().str.contains("ST") if exclude_st else pl.lit(False)
+     return day.filter(
+-        ~st
++        (pl.col("board") == "10cm").fill_null(False)
++        & ~st
+         & (pl.col("days_listed").fill_null(0) >= MIN_BARS)
+         & (pl.col("amount").fill_null(0) >= MIN_AMOUNT)
+     )
+@@ -507,7 +508,7 @@ def build_report(ctx: Context, summaries: list[PlaybookSummary], regime) -> Dail
+             f"（适配度 ≥ {MIN_FITNESS:g} 且样本外有效或限定环境有效）。"
+         ),
+         rot.verdict,
+-        "排除：ST、上市不足 60 个交易日、当日无行情、成交额低于 0.5 亿。",
++        "仅沪深主板；排除：板块未知、ST、上市不足 60 个交易日、当日无行情、成交额低于 0.5 亿。",
+         "止损 = max(收盘价×(1-止损%), 收盘价-2×ATR14)，取自贡献最大的战法的离场规则；"
+         "战法本身不设价格止损时（如低风险复合），止损价只是 2×ATR14 的风险参考，回测没有用它。",
+         "卖出计划取自贡献最大的战法：卖法实验室在样本内选出、且样本外也更好的卖法才替换默认卖法。",
+diff --git a/backend/app/warehouse/news_alerts.py b/backend/app/warehouse/news_alerts.py
+index e33cf5ea3df69a380fe74f3702795852f41de820..fe09204fc6655764bb15a038745ad4bda1a7367b 100644
+--- a/backend/app/warehouse/news_alerts.py
++++ b/backend/app/warehouse/news_alerts.py
+@@ -556,30 +556,48 @@ class AlertEngine:
+ 
+     # one cycle
+     def step(self) -> int:
+-        """Read what is new, judge it, append the alerts, refresh summary and state. Returns messages judged."""
++        """Read and judge new messages; return the number successfully classified (including neutral ones)."""
+         if not self.day_dir.is_dir():
+             return 0
+         self.book = load_book(self.day, self.book_path)
+         raw_files = list((self.day_dir / "raw").glob("*.jsonl.gz")) if (self.day_dir / "raw").is_dir() else []
++        prior_offsets = dict(self.state["raw_offsets"])
++        prior_parts = list(self.state["parts_done"])
+         done = set(self.state["parts_done"])
+         batch = raw_messages(self.day_dir, self.state["raw_offsets"]) if raw_files else parquet_messages(self.day_dir, done)
+         self.state["parts_done"] = sorted(done)
+         fresh: list[Msg] = []
++        batch_keys: set[str] = set()
+         for m in sorted(batch, key=lambda x: x.received_at):
+-            if m.key not in self.seen:
+-                self.seen.add(m.key)
++            if m.key not in self.seen and m.key not in batch_keys:
++                batch_keys.add(m.key)
+                 fresh.append(m)
+-        rows = [row for m in fresh for row in self.safe_judge(m)]
++        completed: list[Msg] = []
++        rows: list[dict[str, Any]] = []
++        failed = False
++        for m in fresh:
++            judged = self.safe_judge(m)
++            if judged is None:
++                failed = True
++                continue
++            completed.append(m)
++            rows.extend(judged)
++        if failed:
++            # The readers advance their cursors before classification. Replay this batch on the next cycle
++            # (also after a restart); completed keys below prevent duplicate alerts and neutral rechecks.
++            self.state["raw_offsets"] = prior_offsets
++            self.state["parts_done"] = prior_parts
+         _append_lines(self.day_dir / "alerts.jsonl", [json.dumps(r, ensure_ascii=False) for r in rows])
+-        _append_lines(self.day_dir / "alerts_seen.txt", [m.key for m in fresh])
++        _append_lines(self.day_dir / "alerts_seen.txt", [m.key for m in completed])
++        self.seen.update(m.key for m in completed)
+         for r in rows:
+             self.counts["levels"][r["level"]] += 1
+             self.counts["methods"][r["method"]] += 1
+             self.counts["sources"][r["source"]] += 1
+-        self.processed += len(fresh)
++        self.processed += len(completed)
+         _atomic_write(self.state_path, json.dumps(self.state, ensure_ascii=False))
+         self.write_summary()
+-        return len(fresh)
++        return len(completed)
+ 
+     def mapped_codes(self, m: Msg, text: str) -> tuple[str, ...]:
+         out: list[str] = []
+@@ -600,12 +618,13 @@ class AlertEngine:
+         named = tuple(c for c in self.names.find(_squash(title)) if c != own)
+         return named if named and name.endswith(BROKER_SUFFIX) else (own, *named)
+ 
+-    def safe_judge(self, m: Msg) -> list[dict[str, Any]]:
++    def safe_judge(self, m: Msg) -> list[dict[str, Any]] | None:
++        """An empty list is a successful neutral judgement; None leaves the message eligible for retry."""
+         try:
+             return self.judge(m)
+-        except Exception as exc:  # one odd message must not lose the batch (its key is already seen)
++        except Exception as exc:  # one odd message must not discard it or stop the rest of the batch
+             LOG.error("news_alerts: judging %s failed (%s)", m.key, type(exc).__name__)
+-            return []
++            return None
+ 
+     def judge(self, m: Msg) -> list[dict[str, Any]]:
+         text = R.normalize(f"{m.title}\n{m.body}")
+diff --git a/backend/app/warehouse/sync.py b/backend/app/warehouse/sync.py
+index cd09785ae436223635dbfa7be631a461c3e643b6..a1f0383228fb1749079d84cbd929377f078f3926 100644
+--- a/backend/app/warehouse/sync.py
++++ b/backend/app/warehouse/sync.py
+@@ -44,7 +44,9 @@ READJUST_TOLERANCE = 0.005
+ COMPACT_ABOVE = 40
+ MAX_CONSECUTIVE_ERRORS = 30
+ CST = timezone(timedelta(hours=8))
+-SESSION_DONE = time(15, 5)  # after the close auction; earlier bars for today are unfinished
++# A daily bar includes the fixed-price session's volume and amount. From
++# 2026-07-06 that session covers all main-board A shares and ends at 15:30.
++SESSION_DONE = time(15, 30)
+ # The kline WAF behaves like a request quota, not a rate limit: on 2026-10-30/31 it
+ # refused us after ~1,000 requests at 6/s and after ~700 at 2/s, and stayed closed
+ # for over 30 minutes. `--wait-hours` waits it out and resumes.
+diff --git a/backend/tests/test_news_alerts.py b/backend/tests/test_news_alerts.py
+index b80260b97612d6cbf4d230ec9c40465f7d4ebd90..7a199f158b8851d278ce2b3901677dc7cdc940d3 100644
+--- a/backend/tests/test_news_alerts.py
++++ b/backend/tests/test_news_alerts.py
+@@ -395,6 +395,58 @@ def test_point_in_time_membership_keeps_a_future_joiner_out(tmp_path: Path):
+ 
+ # --- dedup, restart, incremental reading ----------------------------------------------------------
+ 
++@pytest.mark.parametrize("storage", ["raw", "parquet"])
++@pytest.mark.parametrize("restart", [False, True])
++def test_failed_judgement_is_retried_without_repeating_successes(
++    day_dir: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, storage: str, restart: bool,
++):
++    items = [
++        {"item_id": "901", "title": "公司收到证监会立案告知书", "body": "", "codes": ["600513"]},
++        {"item_id": "902", "title": "公司收到问询函", "body": "", "codes": ["600513"]},
++        {"item_id": "903", "title": "今日天气晴朗", "body": "", "codes": []},
++    ]
++    received = "2026-11-06T00:05:00+00:00"
++    if storage == "raw":
++        write_raw(day_dir, [{"source": "ths.724", "received_at": received, "items": items}])
++    else:
++        rows = [{"source_id": "ths.724", **it,
++                 "revision_id": A.revision_id(it["item_id"], it["title"], it["body"]),
++                 "received_at": datetime.fromisoformat(received)} for it in items]
++        (day_dir / "messages").mkdir()
++        pl.DataFrame(rows, schema_overrides={"received_at": pl.Datetime("ms", "UTC")}).write_parquet(
++            day_dir / "messages" / "part-retry.parquet")
++
++    calls = {it["item_id"]: 0 for it in items}
++
++    def instrument(eng: A.AlertEngine) -> None:
++        original = eng.judge
++
++        def judge(m: A.Msg):
++            calls[m.item_id] += 1
++            if m.item_id == "901" and calls[m.item_id] == 1:
++                raise RuntimeError("transient classification failure")
++            return original(m)
++
++        monkeypatch.setattr(eng, "judge", judge)
++
++    first = engine(day_dir, tmp_path)
++    instrument(first)
++    assert first.step() == 2  # one alert plus one successfully classified neutral message
++    keys = {it["item_id"]: "ths.724|" + A.revision_id(it["item_id"], it["title"], it["body"]) for it in items}
++    assert keys["901"] not in first.seen
++    assert {keys["902"], keys["903"]} <= first.seen
++    assert [r["item_id"] for r in rows_of(day_dir)] == ["902"]
++
++    again = engine(day_dir, tmp_path) if restart else first
++    if restart:
++        instrument(again)
++    assert again.step() == 1
++    assert {r["item_id"] for r in rows_of(day_dir)} == {"901", "902"}
++    assert calls == {"901": 2, "902": 1, "903": 1}
++    assert again.step() == 0
++    assert len(rows_of(day_dir)) == 2
++
++
+ def test_restart_does_not_alert_again(day_dir: Path, tmp_path: Path):
+     write_raw(day_dir, answers())
+     engine(day_dir, tmp_path).step()
+diff --git a/backend/tests/test_picks.py b/backend/tests/test_picks.py
+index df95b66b3b429b9ba954d75a35b76dfc3821dae2..9e1d1fbd5d21d958e75157b9f1a006146ae44815 100644
+--- a/backend/tests/test_picks.py
++++ b/backend/tests/test_picks.py
+@@ -66,7 +66,7 @@ def test_weights_follow_fitness_and_verdict():
+ # --- ensemble maths ------------------------------------------------------------------------
+ 
+ def day_frame() -> pl.DataFrame:
+-    base = dict(close=10.0, pct_chg=1.0, amount=5.0, days_listed=300, limit_streak=0, volume=100.0, vol_ma20=100.0,
++    base = dict(board="10cm", close=10.0, pct_chg=1.0, amount=5.0, days_listed=300, limit_streak=0, volume=100.0, vol_ma20=100.0,
+                 ma5=10.0, ma10=9.5, ma20=9.0, ma60=8.0, ma120=7.0, macd_dif=1.0, macd_dea=0.5, macd_hist=1.0,
+                 high_60_prev=10.0, ret_20=5.0, ret_60=10.0, ret_120=20.0, volatility_20=2.0, atr_14=0.3, one_word=False)
+     rows = [
+@@ -80,6 +80,26 @@ def day_frame() -> pl.DataFrame:
+     return pl.DataFrame(rows)
+ 
+ 
++def test_daily_picks_only_admit_known_main_board_stocks():
++    base = day_frame().row(0, named=True)
++    day = pl.DataFrame([
++        {**base, "code": "600001", "name": "主板公司"},
++        {**base, "code": "300001", "name": "创业公司", "board": "20cm"},
++        {**base, "code": "688001", "name": "科创公司", "board": "20cm"},
++        {**base, "code": "920001", "name": "北交公司", "board": "30cm"},
++        {**base, "code": "600002", "name": "ST公司"},
++        {**base, "code": "600003", "name": "新股公司", "days_listed": 20},
++        {**base, "code": "600004", "name": "未知板块", "board": None},
++    ])
++    signals = {"p": day.select("code").with_columns(pl.lit(1.0).alias("score"))}
++    weights = [picks.Weight("p", "swing", 1.0)]
++    ranked, _ = picks.ensemble_day(day, signals, weights, "repair")
++    assert ranked["swing"]["code"].to_list() == ["600001"]
++    # Historical replay may not use today's ST name, but still keeps its main-board universe.
++    replay, _ = picks.ensemble_day(day, signals, weights, "repair", exclude_st=False)
++    assert set(replay["swing"]["code"]) == {"600001", "600002"}
++
++
+ def test_ensemble_is_weighted_mean_of_percentile_ranks():
+     signals = {
+         "p1": pl.DataFrame({"code": ["A", "B", "D", "E", "F"], "score": [3.0, 2.0, 9.0, 9.0, 9.0]}),
+@@ -187,7 +207,7 @@ def market(change_after: int | None = None, shock: float = 0.0, n_codes: int = 1
+                 "code": f"{c:06d}", "date": D0 + timedelta(days=i), "open": close[i], "high": close[i] * 1.003,
+                 "low": close[i] * 0.997, "close": close[i], "atr_14": close[i] * 0.02, "is_limit_down": False,
+                 "open_at_limit": False, "open_at_floor": False, "name": f"股{c}", "days_listed": i + 100,
+-                "amount": 3.0, "ret_20": ret_20[i], "volume": 100.0, "vol_ma20": 100.0,
++                "board": "10cm", "amount": 3.0, "ret_20": ret_20[i], "volume": 100.0, "vol_ma20": 100.0,
+             })
+     panel = pl.DataFrame(rows)
+     dates = [D0 + timedelta(days=i) for i in range(N_DAYS)]
+diff --git a/backend/tests/test_warehouse.py b/backend/tests/test_warehouse.py
+index cbb7ab60f0606ad54559106c7a7085cb1eb938aa..95d9eab86fda62db931e7db46e3ac12acd9c1578 100644
+--- a/backend/tests/test_warehouse.py
++++ b/backend/tests/test_warehouse.py
+@@ -407,6 +407,18 @@ def test_session_cut_keeps_unfinished_bars_out() -> None:
+     assert sync.session_cut(dt(2026, 10, 31, 10, 30, tzinfo=cst)) is None                # Saturday
+ 
+ 
++def test_session_cut_waits_for_after_hours_volume_to_finish() -> None:
++    from datetime import datetime as dt, timezone
++
++    # Since 2026-07-06 all main-board A shares have a 15:05-15:30
++    # fixed-price session. Its volume still changes the daily bar.
++    for hour, minute, second in [(15, 5, 0), (15, 15, 0), (15, 29, 59)]:
++        instant = dt(2026, 7, 6, hour, minute, second, tzinfo=sync.CST)
++        assert sync.session_cut(instant) == date(2026, 7, 6)
++        assert sync.session_cut(instant.astimezone(timezone.utc)) == date(2026, 7, 6)
++    assert sync.session_cut(dt(2026, 7, 6, 15, 30, tzinfo=sync.CST)) is None
++
++
+ def test_intraday_daily_sync_stores_nothing_for_today(fake, monkeypatch) -> None:
+     fake.universe = ["600000"]
+     sync.run_sync(backfill(years=1))

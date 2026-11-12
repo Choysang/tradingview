@@ -1,0 +1,63 @@
+{
+  "version": "3.1",
+  "status": "specified_not_run",
+  "measurement_policy": "no latency or capacity result is claimed until exact workload and hardware are recorded",
+  "required_environment": [
+    "engine_and_extension_versions",
+    "cpu_model_and_cores",
+    "memory_bytes",
+    "storage_kind_and_bandwidth",
+    "network_location",
+    "worker_count",
+    "concurrency",
+    "cache_condition"
+  ],
+  "required_dataset": [
+    "snapshot_id",
+    "input_rows",
+    "selected_columns",
+    "logical_bytes",
+    "compressed_bytes",
+    "partitioning",
+    "query_or_replay_hash",
+    "parameters",
+    "output_rows"
+  ],
+  "required_metrics": [
+    "p50_ms",
+    "p95_ms",
+    "p99_ms",
+    "peak_rss_bytes",
+    "temporary_spill_bytes",
+    "physical_bytes_read",
+    "failed_requests",
+    "queue_delay_ms"
+  ],
+  "workloads": [
+    {
+      "profile_id": "single_stock_chart",
+      "scope": "declared instrument/time range/fields; cold and warm",
+      "result": null
+    },
+    {
+      "profile_id": "cross_section_ranking",
+      "scope": "whole declared universe and frozen factor set",
+      "result": null
+    },
+    {
+      "profile_id": "historical_scan",
+      "scope": "declared years and predicates; no cached aggregate substitution",
+      "result": null
+    },
+    {
+      "profile_id": "ledger_replay",
+      "scope": "same event set and account policy; stateful event processing included",
+      "result": null
+    },
+    {
+      "profile_id": "event_to_release",
+      "scope": "source receipt, normalized ready, analysis ready, release commit and page receipt separately",
+      "result": null
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "scope": "bounded observed-mode pure-Python reference; synthetic data only",
+  "unit_test_cases": 27,
+  "unit_test_failures": 0,
+  "unit_test_errors": 0,
+  "unit_test_skips": 0,
+  "policy_schema_fixture_checks": [
+    {
+      "case": "state",
+      "expected_valid": true,
+      "actual_valid": true,
+      "passed": true
+    },
+    {
+      "case": "exact",
+      "expected_valid": true,
+      "actual_valid": true,
+      "passed": true
+    },
+    {
+      "case": "forward_forbidden",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    },
+    {
+      "case": "fallback_forbidden",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    },
+    {
+      "case": "negative_age",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    },
+    {
+      "case": "unknown_property",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    },
+    {
+      "case": "missing_policy_identity",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    },
+    {
+      "case": "empty_policy_identity",
+      "expected_valid": false,
+      "actual_valid": false,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "production_claims": [],
+  "file_sha256": {
+    "alignment.py": "8c0e1bb779e827a0a5045cc54ff38b003d72877a3be6d4f4f503c03db541e859",
+    "test_alignment.py": "f2b96c922139042bbe6ce8e104dd8fa3d47b68d9d030c212dc66b92eb8d3020f",
+    "input_alignment_policy.schema.json": "48da291d805003d0ba26c94e6559740e34c6fec5f918621f21e7ea5358318fa9"
+  }
+}

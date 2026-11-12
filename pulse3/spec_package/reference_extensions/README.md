@@ -1,0 +1,15 @@
+# 严格payload与有限语义参考
+
+五个定义位于contracts/supplemental.schema.json，基础UUID、Decimal、Timestamp、ArtifactRef继续引用不变的v3 schema。extension_bindings.json列出唯一实际SQL槽位和API消费路径。不存在新的HTTP handler或数据库表。
+
+运行 `python -m unittest -v test_semantics.py`。26个作者用例验证明确概率、目标/预测哈希、到期标签、Brier数值、关系实体类型、图层估计类型、基础能力要求及MACD参数；本轮新增4例还覆盖复权枚举、qualified claim合同分派、主体/谓词/断言匹配，以及晚到预测的真实平台可得性。代码不计算MACD、不识别真实帖文真假、不验证数据源真实性。
+
+生产Repository必须将具体artifact的contract_id/schema_version、capabilities、instrument_ids、window、coverage与available_at核实并绑定当前manifest。参考函数传入的global capabilities和(ref,hash)可得时间只是受信上下文，没有实现这条实际查询链。verification/extension_independent_results.json保留3个尚未实现部分的探针，不能算生产通过。
+
+CommunityForecast使用外层claim_revision_id与source_document_revision_id、source_evidence_ordinal完整定位原文证据。claim_schema_version存`pulse.community_forecast@1.0`或`pulse.convertible_relation@1.0`，由extension_bindings唯一解析到core.contract_version复合身份，不能只写1.0。`validate_bound_claim`检查此绑定和主体/谓词/断言类型；数据库注册和完整Repository仍未实现。
+
+`forecast_as_of`是原文版本证据支持的原预测信息截点。平台晚几秒接收或解析，不改写原预测，也不倒填document/claim的实际available_at。`forecast_known_at`只使用传入的可信时刻检查平台何时已经知道该预测；它不证明原文真实性，也不表示预测仍可行动。后来发现的历史预测须在Repository分为独立回顾样本，不能当作前向收集。
+
+`canonical_payload_bytes`用固定UTF-8、键排序及JSON分隔符产生规范payload字节，`canonical_hash`对这些字节hash。它不是原文HTTP或文稿字节的hash，不声称RFC8785兼容；正式跨语言实现需共同fixture和同政策保存字节。示例Brier仅支持brier_binary_decimal12_v1，UNKNOWN评分版本被拒绝。
+
+ChartLayerDescriptor的price_basis直接引用base AdjustmentMode并允许非价格层not_applicable。qfq/hfq不是该合同的合法别名，不能绕过FeatureKey复权口径对齐。

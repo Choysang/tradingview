@@ -1,0 +1,160 @@
+{
+ "account_id": "2591a5b9-09ba-5a2d-9bb9-1583e0f4ee7a",
+ "account_version": 3,
+ "actionability_id": "065a6d28-0fc2-5446-9a93-17f51ceba0d7",
+ "actionability_policy_version": "act-fixture-v1",
+ "checked_at": "2026-11-10T02:00:05Z",
+ "entries": [
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "feafd8a8-2798-5a6f-8412-926edc30e08e",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": 1,
+   "actionability_status": "eligible",
+   "checked_quantity_shares": 300,
+   "frozen_action_rank": 1,
+   "instrument_id": "f6922384-a9c5-5cea-b758-5cbc1e7debe4",
+   "plan_ref": {
+    "plan_id": "6c4c3be4-bd5c-5ad1-a6d2-7e858d328125",
+    "plan_version": 1
+   },
+   "reason_codes": [
+    "OK"
+   ],
+   "side": "buy"
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "e0539345-77d0-5089-8281-0c259638dd59",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "b6143ac4-7cec-51ab-b166-02f3e0bd9508",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "a1d30373-3baa-5831-95b0-06947a2c7b33",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "a16e6e25-2090-558e-8ba0-f5cf73840943",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "27bb1a7a-6b38-5195-8998-b755b2d0fdf4",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "0c820176-c9ad-53aa-9587-e56231cc4b4d",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "aa780b24-872f-5bc9-8b33-52f2ed3a168d",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "07a3f65a-9364-50e0-8e7c-9a3edb2a8ae7",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  },
+  {
+   "account_action_rank": null,
+   "actionability_status": "unknown",
+   "checked_quantity_shares": null,
+   "frozen_action_rank": null,
+   "instrument_id": "01d72580-2ba0-5961-9c3b-22b32a2bad58",
+   "plan_ref": null,
+   "reason_codes": [
+    "NO_PLAN"
+   ],
+   "side": null
+  }
+ ],
+ "quote_snapshot_id": "7a8377b7-59f4-5e64-8225-22883e70b806",
+ "ranking_id": "3720ac0e-5708-5ccd-a301-db0cb021ff7e",
+ "release_id": "6aa1a225-6252-526f-8306-85ffc1891b29",
+ "valid_until": "2026-11-10T02:01:05Z"
+}

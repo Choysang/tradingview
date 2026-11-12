@@ -1,0 +1,791 @@
+{
+  "schema_version": "3.0.0",
+  "scope": "Economic ledger migration seed field semantics; not a statutory ledger or full OMS.",
+  "table_count": 7,
+  "field_count": 68,
+  "tables": [
+    {
+      "table": "execution.account_head",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "账户稳定UUID；各入口共享同一身份，账户隔离和顺序锁以此为作用域。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "base_currency",
+          "postgres_type": "char(3)",
+          "meaning": "账户本位币；此参考仅支持人民币现金账户。",
+          "unit": "ISO 4217",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "current_sequence",
+          "postgres_type": "bigint",
+          "meaning": "已原子提交的最新账户事件序号；0为开户状态，不能以事件时间或最大已收到序号替代。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "trading_date",
+          "postgres_type": "date",
+          "meaning": "当前账户交易会话所属交易所日期；可卖资格按交易日历和Asia/Shanghai核对。",
+          "unit": "exchange trading date",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "cash_reuse_policy",
+          "postgres_type": "text",
+          "meaning": "可用资金视图政策：sale_proceeds_reusable允许卖出应收复用，settled_only只用已交收资金；不定义可取资金。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "ledger_policy_version",
+          "postgres_type": "text",
+          "meaning": "复式经济账本、成本基础与损益分类规则的不可歧义版本引用。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "numeric_policy_version",
+          "postgres_type": "text",
+          "meaning": "Decimal计算、尺度与舍入政策版本；参考采用precision50、scale12和HALF_EVEN。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "meaning": "账户头最后提交更新的实际时间；不是成交发生时刻。",
+          "unit": "UTC instant",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.account_event",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "事件所属账户UUID，与账户头关联。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "account_sequence",
+          "postgres_type": "bigint",
+          "meaning": "账户内连续协调的规范事件版本；0仅对应opening，不声称数据库序列就是提交顺序。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "event_id",
+          "postgres_type": "uuid",
+          "meaning": "本系统规范事件UUID；在同一账户内唯一，作为账务及更正血缘标识。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "event_type",
+          "postgres_type": "text",
+          "meaning": "已规范化的账户事件类型；与参考输入kind显式映射，opening为序号0。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "source_event_id",
+          "postgres_type": "text",
+          "meaning": "来源提供或适配器按政策生成的稳定事件标识；与source_id和account_id共同去重。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "meaning": "来源身份，例如特定券商回报或历史回放适配器；不同来源标识空间不混用。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "payload_digest",
+          "postgres_type": "text",
+          "meaning": "规范payload的SHA-256；相同去重身份但不同内容应判定冲突而非覆盖。",
+          "unit": "SHA-256 hex",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "payload",
+          "postgres_type": "jsonb",
+          "meaning": "通过版本合同校验的规范事件载荷；原始券商消息另行永久保存，不把无法归约的事实丢弃。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "effective_at",
+          "postgres_type": "timestamptz",
+          "meaning": "该规范经济事实的业务生效时刻；允许与实际收到/记录时间不同，参考按顺序协调后处理。",
+          "unit": "UTC instant",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "recorded_at",
+          "postgres_type": "timestamptz",
+          "meaning": "系统实际保存规范事件的时间；保留迟到与重放可审计性。",
+          "unit": "UTC instant",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "market_rules_version",
+          "postgres_type": "text",
+          "meaning": "事件所适用市场规则版本，如交易单位、可卖限制、有效交易日；不以内核当前默认替换历史版本。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "cost_policy_version",
+          "postgres_type": "text",
+          "meaning": "本事件成本、收费、税率与舍入政策版本；不能当成全市场永恒费率。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "execution_policy_version",
+          "postgres_type": "text",
+          "meaning": "生成规范成交事实的执行/撮合或回报适配政策版本，保留不同入口成交假设来源。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "input_manifest_id",
+          "postgres_type": "text",
+          "meaning": "本次输入运行清单引用，载明数据与政策血缘；当前为text引用，DDL未伪造不存在的外键。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "ledger_policy_version",
+          "postgres_type": "text",
+          "meaning": "归约该事件时实际采用的唯一账本政策版本。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "numeric_policy_version",
+          "postgres_type": "text",
+          "meaning": "归约该事件采用的精度和舍入政策版本。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "correction_of_event_id",
+          "postgres_type": "uuid",
+          "meaning": "若为追加更正，指向同账户原规范事件；DDL保留血缘，有限参考尚未实现一般券商撤销更正。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.journal_entry",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "该复式凭证所属账户，与事件引用保持相同账户。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "entry_id",
+          "postgres_type": "uuid",
+          "meaning": "凭证UUID，在账户内唯一。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "event_id",
+          "postgres_type": "uuid",
+          "meaning": "生成凭证的规范账户事件UUID；触发器校验与account_sequence指向同一事件。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "account_sequence",
+          "postgres_type": "bigint",
+          "meaning": "该凭证对应账户事件的序号；与event_id联合语义由触发器校验。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "currency",
+          "postgres_type": "char(3)",
+          "meaning": "凭证记账币种，本范围仅CNY；每行币种必须与凭证一致。",
+          "unit": "ISO 4217",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "effective_at",
+          "postgres_type": "timestamptz",
+          "meaning": "凭证经济生效时刻，关联源事件业务时钟。",
+          "unit": "UTC instant",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "recorded_at",
+          "postgres_type": "timestamptz",
+          "meaning": "凭证实际落库时刻，不替代经济生效时刻。",
+          "unit": "UTC instant",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "ledger_policy_version",
+          "postgres_type": "text",
+          "meaning": "生成该凭证使用的账户和损益分类政策版本。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "numeric_policy_version",
+          "postgres_type": "text",
+          "meaning": "凭证金额计算与尺度政策版本。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "reversal_of_entry_id",
+          "postgres_type": "uuid",
+          "meaning": "冲销凭证对应的原凭证UUID，必须在同一账户；保留追加更正关系而不覆盖旧凭证。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "created_xid",
+          "postgres_type": "xid8",
+          "meaning": "PostgreSQL创建事务ID，由触发器强制生成；禁止在提交后向旧凭证追加分录，不是业务事件序号。",
+          "unit": "PostgreSQL xid8",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.journal_line",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "分录所属账户，与凭证主键共同限定归属。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "entry_id",
+          "postgres_type": "uuid",
+          "meaning": "所属复式凭证UUID。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "line_no",
+          "postgres_type": "smallint",
+          "meaning": "凭证内从1开始的稳定行号。",
+          "unit": "ordinal",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "ledger_account",
+          "postgres_type": "text",
+          "meaning": "经济科目，如已交收现金、交易应收/应付、证券成本、已实现损益、股息、费用或外部资本；可用/可取现金不是额外资产。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "meaning": "证券相关分录的稳定证券UUID；一般现金/费用分录可空，集成迁移补core.instrument外键。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "currency",
+          "postgres_type": "char(3)",
+          "meaning": "分录币种，需与所属凭证一致，本参考仅CNY。",
+          "unit": "ISO 4217",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "debit",
+          "postgres_type": "numeric(38, 12)",
+          "meaning": "非负借方金额；本行只能借/贷之一严格为正，同一凭证提交时借贷合计严格相等。",
+          "unit": "CNY",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "credit",
+          "postgres_type": "numeric(38, 12)",
+          "meaning": "非负贷方金额；与debit互斥，不接受NaN、Infinity或负金额。",
+          "unit": "CNY",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.position_projection",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "持仓视图所属账户。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "meaning": "该持仓对应的稳定证券UUID。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "quantity",
+          "postgres_type": "bigint",
+          "meaning": "账户当前经济持仓总股数，包含当日尚不可卖的新买库存。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "sellable_quantity",
+          "postgres_type": "bigint",
+          "meaning": "已达到可卖条件的库存总股数，尚未减去卖单预留；需与reserved_sell_quantity共同计算可再委托额度。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "reserved_sell_quantity",
+          "postgres_type": "bigint",
+          "meaning": "已有活动卖单占用的可卖股数；不能再次用于另一卖单或第二条做T腿。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "cost_basis",
+          "postgres_type": "numeric(38, 12)",
+          "meaning": "剩余库存的加权平均毛成本总额；交易费用独立费用化，成本不等于市值。",
+          "unit": "CNY",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "applied_sequence",
+          "postgres_type": "bigint",
+          "meaning": "该投影完整应用到账户的事件版本；读取必须与其他账户投影对齐。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.quantity_lot",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "数量资格批次所属账户。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "lot_id",
+          "postgres_type": "uuid",
+          "meaning": "可卖资格批次UUID；这是数量/资格批次，不是另一套税务成本或FIFO成本账。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "meaning": "该批次数量所属的稳定证券UUID。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "originating_event_id",
+          "postgres_type": "uuid",
+          "meaning": "创建该数量批次的同账户规范事件，保留买入或开户来源。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "acquired_on",
+          "postgres_type": "date",
+          "meaning": "取得该批次的交易所交易日。",
+          "unit": "exchange trading date",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "eligible_on",
+          "postgres_type": "date",
+          "meaning": "按证券与市场规则及交易日历确定的最早可卖交易日；不能直接假设自然日加1。",
+          "unit": "exchange trading date",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "remaining_quantity",
+          "postgres_type": "bigint",
+          "meaning": "此资格批次尚存的股数；可卖消费与拆股事件均需更新同一数量子账。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "applied_sequence",
+          "postgres_type": "bigint",
+          "meaning": "此批次投影已处理到的账户规范事件序号。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "execution.order_reservation",
+      "fields": [
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "meaning": "订单资源预留所属账户；最终检查与预留必须在账户锁内同事务完成。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "order_id",
+          "postgres_type": "uuid",
+          "meaning": "活动或历史订单的稳定UUID；当前迁移没有伪造完整OMS订单表。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "meaning": "该订单作用于的稳定证券UUID。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "side",
+          "postgres_type": "text",
+          "meaning": "买卖方向buy或sell；方向分别约束现金预留或可卖库存预留。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "original_quantity",
+          "postgres_type": "bigint",
+          "meaning": "订单创建时的原始股数，严格大于0。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "remaining_quantity",
+          "postgres_type": "bigint",
+          "meaning": "仍活动的待成交股数；终态清零以释放预留，累计已成交仍应从事件事实读取，不能误用原始减剩余推断撤单成交。",
+          "unit": "shares",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "reserved_cash",
+          "postgres_type": "numeric(38, 12)",
+          "meaning": "买单占用的现金承诺，按剩余数量、限价与未耗用费用预算计算；不是费用或第二笔资产，卖单为0。",
+          "unit": "CNY",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "status",
+          "postgres_type": "text",
+          "meaning": "资源预留状态active/filled/cancelled/expired；终态剩余活动数量与预留现金均为0，不冒充完整交易所OMS状态机。",
+          "unit": null,
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        },
+        {
+          "name": "applied_sequence",
+          "postgres_type": "bigint",
+          "meaning": "预留视图已完整应用的账户事件版本。",
+          "unit": "account event sequence",
+          "semantic_source": [
+            "execution/execution_standard.md",
+            "execution/ledger_schema.sql",
+            "execution/unified_ledger.py"
+          ]
+        }
+      ]
+    }
+  ]
+}

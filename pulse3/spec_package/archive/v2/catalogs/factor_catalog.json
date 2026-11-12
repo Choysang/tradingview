@@ -1,0 +1,4781 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_type": "factor_catalog",
+  "as_of": "2026-11-10",
+  "scope": "16个规格因素族各6个候选，共96个；全部为待接入待验证设计定义。",
+  "clock_semantics": "event_available uses parsed/model output availability; source publication is not system availability",
+  "global_status": "design_candidates_only",
+  "families": [
+    {
+      "family_id": "F01",
+      "name": "国内流动性与财政"
+    },
+    {
+      "family_id": "F02",
+      "name": "国内宏观"
+    },
+    {
+      "family_id": "F03",
+      "name": "市场制度"
+    },
+    {
+      "family_id": "F04",
+      "name": "海外金融条件"
+    },
+    {
+      "family_id": "F05",
+      "name": "国际产业映射"
+    },
+    {
+      "family_id": "F06",
+      "name": "地缘与贸易"
+    },
+    {
+      "family_id": "F07",
+      "name": "产业与技术"
+    },
+    {
+      "family_id": "F08",
+      "name": "商品与库存"
+    },
+    {
+      "family_id": "F09",
+      "name": "公司经营与股权"
+    },
+    {
+      "family_id": "F10",
+      "name": "公司治理与监管"
+    },
+    {
+      "family_id": "F11",
+      "name": "资金与筹码"
+    },
+    {
+      "family_id": "F12",
+      "name": "A股情绪"
+    },
+    {
+      "family_id": "F13",
+      "name": "技术与量价"
+    },
+    {
+      "family_id": "F14",
+      "name": "订单微观结构"
+    },
+    {
+      "family_id": "F15",
+      "name": "日历与注意力"
+    },
+    {
+      "family_id": "F16",
+      "name": "叙事与突发"
+    }
+  ],
+  "count": 96,
+  "entries": [
+    {
+      "factor_id": "F001",
+      "slug": "policy_rate_surprise",
+      "name": "国内政策利率预期差",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "market"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "policy.instrument",
+        "policy.rate",
+        "policy.prior_rate",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "basis_points",
+      "definition": "当期首次公布政策利率减公告前冻结的同工具预期；工具期限变化另建版本",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "人民银行政策公告及事前一致预期数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F002",
+      "slug": "reserve_requirement_change",
+      "name": "存款准备金率变动",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "policy.institution_scope",
+        "policy.rrr_before",
+        "policy.rrr_after",
+        "policy.effective_from"
+      ],
+      "output_unit": "basis_points",
+      "definition": "按机构范围计算降准幅度及生效日，不将口头预告视为已经实施",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "人民银行原文及附件",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F003",
+      "slug": "omo_net_injection",
+      "name": "公开市场净投放",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "market"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "omo.operation_id",
+        "omo.tenor",
+        "omo.amount",
+        "omo.maturity_date",
+        "omo.rate"
+      ],
+      "output_unit": "CNY",
+      "definition": "按实际结算日汇总投放减到期，保留期限结构和政策工具定义版本",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "人民银行公开市场操作公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F004",
+      "slug": "credit_impulse",
+      "name": "信用脉冲",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.tsf_flow",
+        "macro.gdp",
+        "macro.release_version"
+      ],
+      "output_unit": "ratio",
+      "definition": "以当时已发布社融和GDP构造滚动信用扩张变化，分母和修订版本必须可回放",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "人民银行及国家统计局时点数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F005",
+      "slug": "fiscal_impulse",
+      "name": "财政支出与发债脉冲",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "fiscal.spend",
+        "fiscal.revenue",
+        "bond.issuance",
+        "bond.maturity",
+        "budget.version"
+      ],
+      "output_unit": "ratio",
+      "definition": "分别计算支出增速和国债地方债净发行，不把预算目标与实际支出相加",
+      "source_refs": [
+        "A28"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "财政部财政收支与发行公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F006",
+      "slug": "tax_subsidy_exposure",
+      "name": "税费补贴政策暴露",
+      "family_id": "F01",
+      "family_name": "国内流动性与财政",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "policy.tax_or_subsidy",
+        "policy.scope",
+        "issuer.revenue_exposure",
+        "policy.effective_from"
+      ],
+      "output_unit": "score",
+      "definition": "将政策适用产品与公司当时可知业务暴露映射，补贴目标与实际补贴分开",
+      "source_refs": [
+        "A28",
+        "A29"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "财政部发改委及公司业务分部",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F007",
+      "slug": "gdp_surprise",
+      "name": "GDP首发预期差",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.gdp_first_release",
+        "macro.period",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "percentage_points",
+      "definition": "实际首次公布增速减事前冻结预期；修订形成独立revision而不覆盖历史",
+      "source_refs": [
+        "A12"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统计局新闻首发和合法一致预期数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F008",
+      "slug": "inflation_surprise",
+      "name": "CPI与PPI首发预期差",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.cpi",
+        "macro.ppi",
+        "macro.period",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "percentage_points",
+      "definition": "分别计算消费端与生产端通胀预期差，保留同比环比口径",
+      "source_refs": [
+        "A12"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统计局CPI及PPI发布",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F009",
+      "slug": "pmi_breadth",
+      "name": "PMI及分项扩散",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.pmi",
+        "macro.new_orders",
+        "macro.production",
+        "macro.inventory"
+      ],
+      "output_unit": "index_points",
+      "definition": "分开记录PMI水平、变化及订单库存差，避免跨机构口径混合",
+      "source_refs": [
+        "A12"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统计局PMI首发",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F010",
+      "slug": "domestic_demand",
+      "name": "内需与工业增长",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.retail_sales",
+        "macro.industrial_output",
+        "macro.fixed_investment",
+        "macro.period"
+      ],
+      "output_unit": "percentage_points",
+      "definition": "按首次发布值计算需求与生产的历史标准化变化；累计和单月值独立",
+      "source_refs": [
+        "A12"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统计局国民经济运行新闻稿",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F011",
+      "slug": "property_cycle",
+      "name": "房地产销售投资周期",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.property_sales",
+        "macro.property_investment",
+        "macro.new_starts",
+        "issuer.exposure"
+      ],
+      "output_unit": "score",
+      "definition": "结合当时已知销售投资开工变化映射地产链；城市周频样本与全国月频不直接拼接",
+      "source_refs": [
+        "A12"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统计局及有覆盖定义的房地产数据",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F012",
+      "slug": "trade_growth",
+      "name": "进出口与目的地需求",
+      "family_id": "F02",
+      "family_name": "国内宏观",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "trade.exports",
+        "trade.imports",
+        "trade.currency",
+        "trade.destination",
+        "issuer.export_share"
+      ],
+      "output_unit": "ratio",
+      "definition": "按币种和目的地分解贸易增长，再按公司历史业务暴露聚合",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "海关总署及公司分部披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F013",
+      "slug": "market_rule_version",
+      "name": "交易制度有效版本",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "instrument",
+        "account"
+      ],
+      "clock": {
+        "trigger": "session_open",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "rules.exchange",
+        "rules.board",
+        "rules.security_status",
+        "rules.effective_from",
+        "rules.version"
+      ],
+      "output_unit": "category",
+      "definition": "按交易日和证券状态解析MarketRules；2026-07-06前后规则独立",
+      "source_refs": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "沪深交易所正式规则及业务参数",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F014",
+      "slug": "equity_supply",
+      "name": "IPO与再融资供给",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "offer.type",
+        "offer.amount",
+        "offer.status",
+        "offer.subscription_date",
+        "offer.list_date"
+      ],
+      "output_unit": "CNY",
+      "definition": "按已公开进度构建未来供给日历和实际发行强度，不将所有申请视为已发行",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所审核公告及公司融资公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F015",
+      "slug": "reduction_rule_change",
+      "name": "减持回购制度变更",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "regulation.rule_id",
+        "regulation.changed_clause",
+        "regulation.scope",
+        "regulation.effective_from"
+      ],
+      "output_unit": "category",
+      "definition": "规则变更形成版本化事件并映射受影响持股结构，不把征求意见当生效",
+      "source_refs": [
+        "A01",
+        "A03"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "证监会及交易所规则",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F016",
+      "slug": "margin_eligibility",
+      "name": "两融资格与保证金变化",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "margin.eligible",
+        "margin.ratio",
+        "margin.effective_from",
+        "margin.source_version"
+      ],
+      "output_unit": "category",
+      "definition": "记录证券入选移出和保证金变化；资格可用性与资金净流入是不同特征",
+      "source_refs": [
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所两融标的及业务公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F017",
+      "slug": "index_membership",
+      "name": "指数成分变更暴露",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "index.announcement",
+        "index.effective_date",
+        "index.old_members",
+        "index.new_members",
+        "index.weight"
+      ],
+      "output_unit": "ratio",
+      "definition": "按公布时点识别纳入剔除及权重变化，公告前不得使用未来成分",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "指数公司调样公告及历史成分",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F018",
+      "slug": "calendar_session_status",
+      "name": "交易会话与可交易状态",
+      "family_id": "F03",
+      "family_name": "市场制度",
+      "scope": [
+        "instrument",
+        "account"
+      ],
+      "clock": {
+        "trigger": "session_open",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "session.kind",
+        "session.exchange",
+        "session.status",
+        "instrument.halt_status",
+        "rules.version"
+      ],
+      "output_unit": "category",
+      "definition": "解析竞价午休盘后固定价及临时停牌状态，适用时段限制作为行动条件",
+      "source_refs": [
+        "A01",
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所日历及实时状态",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F019",
+      "slug": "foreign_rate_surprise",
+      "name": "海外央行决议预期差",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "central_bank.rate",
+        "central_bank.guidance",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "basis_points",
+      "definition": "分别编码利率决议与前瞻指引变化，预期必须来自发布前快照",
+      "source_refs": [
+        "A13"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "Fed ECB BOJ BOE官方公告与事前预期",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F020",
+      "slug": "us_macro_surprise",
+      "name": "美国通胀就业预期差",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "macro.cpi",
+        "macro.payrolls",
+        "macro.unemployment",
+        "consensus.value",
+        "macro.vintage"
+      ],
+      "output_unit": "score",
+      "definition": "首次公布值相对冻结预期标准化，修订值独立；公告首发与API到达时间分开",
+      "source_refs": [
+        "A14",
+        "A15",
+        "A16",
+        "A17",
+        "A30"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "BLS发布和FRED ALFRED历史版本",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F021",
+      "slug": "global_yield_curve",
+      "name": "海外利率与曲线变化",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bond.yield_2y",
+        "bond.yield_10y",
+        "bond.currency",
+        "bond.timestamp"
+      ],
+      "output_unit": "basis_points",
+      "definition": "计算水平和期限利差变化；日频官方统计不冒充盘中可交易报价",
+      "source_refs": [
+        "A13",
+        "A15"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "官方利率统计及授权债券行情",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F022",
+      "slug": "fx_exposure",
+      "name": "人民币与美元汇率暴露",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "fx.pair",
+        "fx.price",
+        "fx.session",
+        "issuer.currency_revenue",
+        "issuer.currency_cost"
+      ],
+      "output_unit": "ratio",
+      "definition": "分开CNY CNH与美元指数，按净业务暴露推断方向并保留证据",
+      "source_refs": [
+        "A13",
+        "A15"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权外汇报价及公司分部数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F023",
+      "slug": "global_risk_appetite",
+      "name": "全球波动与风险偏好",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "global.vol_index",
+        "global.equity_returns",
+        "global.credit_spread",
+        "global.session"
+      ],
+      "output_unit": "score",
+      "definition": "按实际已结束海外会话计算多资产状态，不前移尚未收盘的全球指数",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权全球指数波动率与利差数据",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F024",
+      "slug": "offshore_china_signal",
+      "name": "境外中国资产映射",
+      "family_id": "F04",
+      "family_name": "海外金融条件",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "global.a50_futures",
+        "global.hsi",
+        "global.hstech",
+        "global.china_adr",
+        "global.session"
+      ],
+      "output_unit": "ratio",
+      "definition": "对已可得海外中国资产收益按会话对齐，开盘跳空和开盘后收益分别评估",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权A50港股及ADR行情",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F025",
+      "slug": "foreign_earnings_surprise",
+      "name": "海外龙头业绩与指引",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "foreign_issuer.earnings",
+        "foreign_issuer.guidance",
+        "consensus.value",
+        "relationship.edge_version"
+      ],
+      "output_unit": "score",
+      "definition": "将已公开海外业绩预期差映射至有证据的A股客户供应商关系",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "海外公司IR SEC披露及供应链证据",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F026",
+      "slug": "foreign_capex_signal",
+      "name": "海外资本开支及订单",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "foreign_issuer.capex",
+        "foreign_issuer.orders",
+        "relationship.product",
+        "relationship.edge_version"
+      ],
+      "output_unit": "score",
+      "definition": "区分资本开支承诺实际支出和订单，结合对应产品暴露与交付期",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "海外IR和公司产业链披露",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F027",
+      "slug": "foreign_product_launch",
+      "name": "海外产品技术发布",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "product.spec",
+        "product.release_state",
+        "product.volume_plan",
+        "relationship.edge_version"
+      ],
+      "output_unit": "category",
+      "definition": "保留正式发布测试传闻量产状态，评估替代与受益方向而非只打利好标签",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司发布会产品页及监管批准",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F028",
+      "slug": "supply_chain_exposure",
+      "name": "供应链证据权重",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "relationship.counterparty",
+        "relationship.type",
+        "relationship.evidence",
+        "relationship.effective_from",
+        "issuer.revenue_share"
+      ],
+      "output_unit": "ratio_or_unknown",
+      "definition": "只对有可追溯证据关系赋权；无收入占比时输出未知而不猜数",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司年报公告及海外客户公开资料",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F029",
+      "slug": "global_peer_relative_strength",
+      "name": "海外同行相对强度",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "foreign_peer.returns",
+        "benchmark.returns",
+        "relationship.peer_set_version"
+      ],
+      "output_unit": "ratio",
+      "definition": "用事前登记同行篮子计算相对收益，剔除尚未结束交易会话",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权海外行情及行业分类",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F030",
+      "slug": "supply_substitution",
+      "name": "供给替代与国产化线索",
+      "family_id": "F05",
+      "family_name": "国际产业映射",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "supply.restriction",
+        "supply.alternative",
+        "product.qualification",
+        "relationship.evidence"
+      ],
+      "output_unit": "score",
+      "definition": "将限制事件与已证实可供货替代品相连；概念相同不足以确认替代能力",
+      "source_refs": [
+        "A29"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "监管文件产品认证及公司披露",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F031",
+      "slug": "tariff_exposure",
+      "name": "关税调整暴露",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "tariff.hs_code",
+        "tariff.country",
+        "tariff.rate_before",
+        "tariff.rate_after",
+        "issuer.trade_exposure"
+      ],
+      "output_unit": "basis_points",
+      "definition": "以商品税号与目的地映射税率变化，公布与实施日期分开",
+      "source_refs": [
+        "A28"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "关税税则委员会及海关公开信息",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F032",
+      "slug": "export_control_exposure",
+      "name": "出口管制与制裁暴露",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "restriction.entity",
+        "restriction.product",
+        "restriction.scope",
+        "restriction.effective_from",
+        "relationship.edge_version"
+      ],
+      "output_unit": "score",
+      "definition": "依据正式实体和产品清单识别受影响订单与替代链，保留豁免细则",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "商务部及海外主管机关原文",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F033",
+      "slug": "conflict_exposure",
+      "name": "冲突与地域经营暴露",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "geopolitics.location",
+        "geopolitics.event_type",
+        "issuer.facility_location",
+        "issuer.sales_region"
+      ],
+      "output_unit": "score",
+      "definition": "把核实事件与经营地点和运输路线关联，信息发现与事实确认分开",
+      "source_refs": [
+        "A20"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "官方消息及国际新闻原文",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F034",
+      "slug": "shipping_disruption",
+      "name": "航道与物流中断",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "route.status",
+        "route.location",
+        "freight.rate",
+        "issuer.route_exposure"
+      ],
+      "output_unit": "score",
+      "definition": "按受影响航线和恢复进度估计成本与交付方向，不预设航运和出口企业同向",
+      "source_refs": [
+        "A20"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "航运运营方港口公告及运价数据",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F035",
+      "slug": "trade_negotiation_state",
+      "name": "贸易谈判状态变化",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "negotiation.parties",
+        "negotiation.stage",
+        "negotiation.signed_text",
+        "negotiation.effective_from"
+      ],
+      "output_unit": "category",
+      "definition": "传闻接触框架正式协议实施分别建事件阶段，修订保留历史",
+      "source_refs": [
+        "A28",
+        "A20"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "政府官方发布与协议文本",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F036",
+      "slug": "cross_border_policy_surprise",
+      "name": "跨境政策预期兑现",
+      "family_id": "F06",
+      "family_name": "地缘与贸易",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "policy.announced_terms",
+        "expectation.frozen_terms",
+        "market.prior_move",
+        "evidence.ids"
+      ],
+      "output_unit": "score",
+      "definition": "对比正式条款与事前冻结预期及已发生价格反应，模型判断保留版本",
+      "source_refs": [
+        "A28",
+        "A13"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "官方政策原文与事前证据快照",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F037",
+      "slug": "industrial_policy_strength",
+      "name": "产业政策覆盖与兑现",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "policy.funding",
+        "policy.scope",
+        "policy.stage",
+        "policy.timeline",
+        "issuer.exposure"
+      ],
+      "output_unit": "score",
+      "definition": "区分规划目标资金安排申报实施兑现，以量化条款和业务映射构建特征",
+      "source_refs": [
+        "A29",
+        "A28"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "产业主管部门正式政策",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F038",
+      "slug": "tender_award_intensity",
+      "name": "招标中标强度",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "tender.budget",
+        "tender.winner",
+        "tender.contract_amount",
+        "issuer.trailing_revenue"
+      ],
+      "output_unit": "ratio",
+      "definition": "已公告合同额相对当时已发布收入；联合体金额按明确份额，无份额则未知",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "招标平台及公司合同公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F039",
+      "slug": "regulatory_product_approval",
+      "name": "产品注册与监管批准",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "approval.product",
+        "approval.stage",
+        "approval.agency",
+        "issuer.economic_rights"
+      ],
+      "output_unit": "category",
+      "definition": "注册受理试验进展批准上市分别标记并关联实际经济权益",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "药监等主管机构和公司公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F040",
+      "slug": "standard_change",
+      "name": "行业标准变化",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "standard.version",
+        "standard.required_specs",
+        "standard.effective_from",
+        "issuer.product_specs"
+      ],
+      "output_unit": "score",
+      "definition": "比较新旧标准和公司产品适配证据，草案与正式生效分开",
+      "source_refs": [
+        "A29"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "行业主管部门标准文本",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F041",
+      "slug": "technology_commercialization",
+      "name": "技术商业化阶段",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "technology.claim",
+        "technology.validation",
+        "technology.production",
+        "technology.orders",
+        "evidence.ids"
+      ],
+      "output_unit": "category",
+      "definition": "论文演示试产量产和收入实现分别编码，不能以技术宣称替代销售",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "原始论文产品测试与公司披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F042",
+      "slug": "industry_price_competition",
+      "name": "产业价格战与提价",
+      "family_id": "F07",
+      "family_name": "产业与技术",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "product.price",
+        "product.spec",
+        "product.volume",
+        "issuer.cost_exposure",
+        "industry.capacity"
+      ],
+      "output_unit": "ratio",
+      "definition": "比较同规格产品价格变化和成本暴露，价格下降对上下游分别估计",
+      "source_refs": [
+        "A29"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "厂家价目及授权产业报价",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F043",
+      "slug": "energy_return",
+      "name": "能源价格变化",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "commodity.contract",
+        "commodity.price",
+        "commodity.currency",
+        "issuer.energy_exposure"
+      ],
+      "output_unit": "ratio",
+      "definition": "原油天然气煤分别建连续合约及现货序列，换月规则固定且可回放",
+      "source_refs": [
+        "A18"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "EIA及授权能源期现货报价",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F044",
+      "slug": "metal_return",
+      "name": "金属与锂价格变化",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "commodity.product",
+        "commodity.price",
+        "commodity.contract",
+        "issuer.metal_exposure"
+      ],
+      "output_unit": "ratio",
+      "definition": "金铜铝锂等各自标准化，期货现货不能直接拼接为同一价格",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所及有规格说明的现货报价",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F045",
+      "slug": "inventory_surprise",
+      "name": "商品库存预期差",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "inventory.first_release",
+        "inventory.period",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "physical_units",
+      "definition": "实际库存变化减事前预期，原始首发与晚到API分别保存available_at",
+      "source_refs": [
+        "A18",
+        "A19"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "EIA库存首发与对应历史数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F046",
+      "slug": "commodity_curve",
+      "name": "商品期限结构",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "futures.near_price",
+        "futures.far_price",
+        "futures.expiry",
+        "futures.contract_id"
+      ],
+      "output_unit": "annualized_ratio",
+      "definition": "同商品近远月价差按期限归一，交易日和临近到期换月显式处理",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权商品期货行情",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F047",
+      "slug": "production_capacity",
+      "name": "产能开停与利用率",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "industry.capacity",
+        "industry.utilization",
+        "facility.status",
+        "issuer.facility_share"
+      ],
+      "output_unit": "ratio",
+      "definition": "按可确认的投产检修停产与产量变动构造供给变化，名义产能与实际产量分开",
+      "source_refs": [
+        "A12",
+        "A29"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "官方工业能源统计及公司公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F048",
+      "slug": "input_output_spread",
+      "name": "产业投入产出价差",
+      "family_id": "F08",
+      "family_name": "商品与库存",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "product.output_price",
+        "input.prices",
+        "process.fixed_coefficients",
+        "issuer.product_mix"
+      ],
+      "output_unit": "CNY_per_unit",
+      "definition": "用预登记工艺系数计算产品原料价差，缺系数时保持行业代理标签",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "产品原料报价与工艺证据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F049",
+      "slug": "earnings_surprise",
+      "name": "公司盈利预期差",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "financial.first_profit",
+        "financial.period",
+        "consensus.value",
+        "consensus.known_at"
+      ],
+      "output_unit": "ratio",
+      "definition": "首次公布盈利相对冻结预期或已登记历史基线标准化，不用后修订一致预期",
+      "source_refs": [
+        "A24",
+        "T07"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司公告及有时点的一致预期",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F050",
+      "slug": "earnings_revision",
+      "name": "业绩预告修正",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "forecast.old_low",
+        "forecast.old_high",
+        "forecast.new_low",
+        "forecast.new_high",
+        "forecast.revision"
+      ],
+      "output_unit": "ratio",
+      "definition": "保留预告区间上下界变化和修正原因，所有版本按真实发布时点可见",
+      "source_refs": [
+        "A24",
+        "T07"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "业绩预告及修正公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F051",
+      "slug": "order_revenue_ratio",
+      "name": "订单与收入比",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "contract.verified_value",
+        "contract.share",
+        "contract.period",
+        "financial.trailing_revenue"
+      ],
+      "output_unit": "ratio",
+      "definition": "公司可归属合同额除当时已发布收入，框架协议与确定订单分开",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司合同公告及财务披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F052",
+      "slug": "buyback_progress",
+      "name": "回购计划与实施进度",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "buyback.announced_low",
+        "buyback.announced_high",
+        "buyback.executed",
+        "buyback.end_date"
+      ],
+      "output_unit": "ratio",
+      "definition": "计划强度实施进度与实际回购金额分别登记，不将计划上限当已买入",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "回购方案和进展公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F053",
+      "slug": "shareholder_supply",
+      "name": "减持与解禁供给",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "shareholder.reduction_plan",
+        "shareholder.executed",
+        "unlock.shares",
+        "shares.float"
+      ],
+      "output_unit": "ratio",
+      "definition": "分别计算可解禁份额计划减持和实际减持，状态依据已公开文件",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "解禁减持及股本公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F054",
+      "slug": "fundamental_quality_value",
+      "name": "质量价值与分红向量",
+      "family_id": "F09",
+      "family_name": "公司经营与股权",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "financial.earnings",
+        "financial.cashflow",
+        "financial.equity",
+        "financial.debt",
+        "dividend.cash",
+        "price.raw",
+        "shares.total"
+      ],
+      "output_unit": "feature_vector",
+      "definition": "按可用财报计算估值盈利成长现金流负债和股息率；非正分母输出缺值或独立类别",
+      "source_refs": [
+        "A24",
+        "T07",
+        "T19"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "时点财报公司行动与行情",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F055",
+      "slug": "management_change",
+      "name": "管理层变动",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "management.role",
+        "management.change_type",
+        "management.reason",
+        "management.effective_from"
+      ],
+      "output_unit": "category",
+      "definition": "记录职位和变化原因，公告未披露的动机不得由模型补成事实",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司董事监事高管公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F056",
+      "slug": "litigation_exposure",
+      "name": "诉讼金额与进展",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "litigation.amount",
+        "litigation.stage",
+        "litigation.claim_type",
+        "financial.net_assets"
+      ],
+      "output_unit": "ratio",
+      "definition": "已披露涉诉金额相对净资产及进展分别记录，判决与预期赔付区分",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司及司法公开信息",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F057",
+      "slug": "audit_opinion",
+      "name": "审计意见与会计修正",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "audit.opinion",
+        "audit.period",
+        "accounting.restatement",
+        "audit.report_revision"
+      ],
+      "output_unit": "category",
+      "definition": "审计意见会计差错和重述形成版本化事件，历史财务版本不可覆盖",
+      "source_refs": [
+        "A24",
+        "T07"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "审计报告及财报更正",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F058",
+      "slug": "regulatory_inquiry",
+      "name": "问询调查处罚事件",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "regulator.event_type",
+        "regulator.status",
+        "regulator.response_due",
+        "regulator.document_id"
+      ],
+      "output_unit": "category",
+      "definition": "问询立案处罚结案各自状态，事实和模型解释独立",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所问询及监管原文",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F059",
+      "slug": "security_status_change",
+      "name": "风险警示停复牌状态",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "instrument.status_before",
+        "instrument.status_after",
+        "instrument.effective_from",
+        "rules.version"
+      ],
+      "output_unit": "category",
+      "definition": "证券状态改变后重新解析交易规则及股票池；公布时间与生效时间分开",
+      "source_refs": [
+        "A01",
+        "A03",
+        "A04",
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所业务状态及公司公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F060",
+      "slug": "disclosure_correction",
+      "name": "公告澄清与撤回",
+      "family_id": "F10",
+      "family_name": "公司治理与监管",
+      "scope": [
+        "instrument",
+        "event"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "document.replaces_id",
+        "document.claim_status",
+        "document.reason",
+        "event.cluster_id"
+      ],
+      "output_unit": "category",
+      "definition": "澄清否认纠错撤回指向原始claim并触发后续影响重评，保留原决策",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公司澄清更正公告",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F061",
+      "slug": "etf_share_change",
+      "name": "ETF份额变化",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "etf.shares",
+        "etf.nav",
+        "etf.share_date",
+        "etf.holdings_version"
+      ],
+      "output_unit": "ratio",
+      "definition": "计算披露份额变化并按历史成分映射，不用成交额代替净申购或推断投资者身份",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "基金公司和交易所份额及组合披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F062",
+      "slug": "institutional_holdings",
+      "name": "机构持仓披露变化",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "holder.position",
+        "holder.report_period",
+        "holder.published_at",
+        "shares.float"
+      ],
+      "output_unit": "ratio",
+      "definition": "季报年报持仓只在公开后可用，报告截止日不是系统获知日",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "基金和公司持仓披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F063",
+      "slug": "margin_balance_change",
+      "name": "融资融券余额变化",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "instrument",
+        "market"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "margin.balance",
+        "margin.purchase",
+        "margin.repayment",
+        "margin.date"
+      ],
+      "output_unit": "ratio",
+      "definition": "按公开日终口径算融资变化，不能把未发布当日日终数用于盘中",
+      "source_refs": [
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所日度两融数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F064",
+      "slug": "dragon_tiger_exposure",
+      "name": "龙虎榜席位暴露",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "disclosure.reason",
+        "seat.buy_value",
+        "seat.sell_value",
+        "disclosure.published_at"
+      ],
+      "output_unit": "CNY",
+      "definition": "按公开披露原因和席位计算净额；席位类型不等于已识别最终投资者",
+      "source_refs": [
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所盘后公开交易信息",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F065",
+      "slug": "block_trade_discount",
+      "name": "大宗交易折溢价",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "block.price",
+        "block.quantity",
+        "block.trade_date",
+        "reference.price",
+        "block.published_at"
+      ],
+      "output_unit": "ratio",
+      "definition": "盘后公布大宗价格对同日参考价的折溢价与数量，发布时间后才可用于决策",
+      "source_refs": [
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所大宗交易披露",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F066",
+      "slug": "northbound_disclosed_holdings",
+      "name": "北向公开持仓变化",
+      "family_id": "F11",
+      "family_name": "资金与筹码",
+      "scope": [
+        "instrument",
+        "market"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "northbound.holdings",
+        "northbound.report_quarter",
+        "northbound.available_at",
+        "shares.float"
+      ],
+      "output_unit": "ratio",
+      "definition": "仅对实际公布的季度持仓计算变化；不构造官方实时净流入伪字段",
+      "source_refs": [
+        "A07",
+        "A08"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "HKEX季度北向持仓公开数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F067",
+      "slug": "limit_up_breadth",
+      "name": "涨跌停与市场广度",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "quote.price",
+        "quote.limit_up",
+        "quote.limit_down",
+        "instrument.status",
+        "universe.version"
+      ],
+      "output_unit": "ratio",
+      "definition": "以当日真实涨跌停价和时点股票池计算广度，停牌与无价格限制状态独立",
+      "source_refs": [
+        "A01",
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "行情价格限制字段及证券主数据",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F068",
+      "slug": "consecutive_limit_ladder",
+      "name": "连板梯队与高度",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "market",
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.close",
+        "bar.limit_up",
+        "instrument.status",
+        "calendar.previous_session"
+      ],
+      "output_unit": "count",
+      "definition": "依据可得收盘涨停状态计连板并追踪梯队，每次状态按当时可见数据建立",
+      "source_refs": [
+        "A01",
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "日线与市场规则",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F069",
+      "slug": "board_promotion_rate",
+      "name": "连板晋级率",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "market",
+        "sector"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "prior.ladder_members",
+        "current.limit_up_status",
+        "universe.version"
+      ],
+      "output_unit": "ratio",
+      "definition": "昨日各高度股票中今日符合预先定义晋级条件比例，分母按昨日可知集合冻结",
+      "source_refs": [
+        "A01",
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "历史连板梯队与行情",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F070",
+      "slug": "break_reseal_rate",
+      "name": "炸板与回封结构",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "market",
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "trade.timestamp",
+        "quote.limit_up",
+        "quote.best_bid",
+        "quote.best_ask",
+        "orderbook.depth"
+      ],
+      "output_unit": "ratio",
+      "definition": "依次识别触板封板开板回封；快照只能报告可观察下界，不声称捕获全部瞬时事件",
+      "source_refs": [
+        "A09"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "真实逐笔与盘口或明确标注快照",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F071",
+      "slug": "leader_episode_state",
+      "name": "龙头生命周期状态",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "leader.relative_strength",
+        "leader.turnover",
+        "leader.ladder",
+        "theme.diffusion",
+        "episode.previous_state"
+      ],
+      "output_unit": "probability_vector",
+      "definition": "按过去可见证据更新首次识别扩散分歧高潮退潮修复，禁止事后指定最终龙头",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "市场特征和时点题材关系",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F072",
+      "slug": "theme_diffusion",
+      "name": "题材扩散与昨日溢价",
+      "family_id": "F12",
+      "family_name": "A股情绪",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "theme.member_version",
+        "member.relative_returns",
+        "prior.limit_up_members",
+        "member.turnover"
+      ],
+      "output_unit": "score",
+      "definition": "冻结题材成员和昨日集合，计算强度扩散与溢价，板块当天补标签不得回填过去",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "行情与带known_at的题材分类",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F073",
+      "slug": "trend_momentum",
+      "name": "多周期均线与动量",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.close_adjusted",
+        "bar.is_final",
+        "bar.timeframe",
+        "adjustment.version"
+      ],
+      "output_unit": "feature_vector",
+      "definition": "计算登记参数的SMA EMA及收益动量；最终周期策略仅消费已完成K线",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统一K线内核",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F074",
+      "slug": "macd_state",
+      "name": "MACD状态",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.close_adjusted",
+        "bar.is_final",
+        "indicator.ema_seed",
+        "indicator.fast",
+        "indicator.slow",
+        "indicator.signal"
+      ],
+      "output_unit": "price_units",
+      "definition": "DIF=EMA快线减慢线，DEA为DIF的EMA；柱是否乘2写进定义版本",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统一K线与指标内核",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F075",
+      "slug": "oscillator_volatility",
+      "name": "RSI ATR与波动状态",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.open",
+        "bar.high",
+        "bar.low",
+        "bar.close",
+        "bar.is_final",
+        "indicator.params"
+      ],
+      "output_unit": "feature_vector",
+      "definition": "按固定平滑初始化计算RSI ATR BOLL及波动率，预热不足输出缺值",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统一K线与指标内核",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F076",
+      "slug": "breakout_structure",
+      "name": "通道箱体与价格结构",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.high",
+        "bar.low",
+        "bar.close",
+        "bar.is_final",
+        "structure.lookback",
+        "structure.confirmation_delay"
+      ],
+      "output_unit": "score",
+      "definition": "突破阈值使用此前窗口；分型确认延迟和重绘禁止条件写入定义",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "统一K线内核",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F077",
+      "slug": "volume_turnover",
+      "name": "量能量比换手",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.volume_shares",
+        "bar.turnover_cny",
+        "shares.float",
+        "bar.session_scope",
+        "bar.is_final"
+      ],
+      "output_unit": "feature_vector",
+      "definition": "股数成交额分别计算；同会话量比与历史有效流通股换手，盘后量额最终版本单独",
+      "source_refs": [
+        "A04",
+        "A06"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "行情股本与会话版本",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F078",
+      "slug": "vwap_distance",
+      "name": "VWAP偏离与收复",
+      "family_id": "F13",
+      "family_name": "技术与量价",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.turnover_cny",
+        "bar.volume_shares",
+        "bar.close",
+        "bar.session_scope"
+      ],
+      "output_unit": "ratio",
+      "definition": "会话VWAP=累计成交额除累计股数，单位统一；盘后是否纳入由session_scope决定",
+      "source_refs": [
+        "A04"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "分钟或逐笔价量",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F079",
+      "slug": "spread_depth",
+      "name": "买卖价差与深度",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "book.best_bid",
+        "book.best_ask",
+        "book.bid_sizes",
+        "book.ask_sizes",
+        "book.sequence"
+      ],
+      "output_unit": "feature_vector",
+      "definition": "以有效双边报价计算价差与深度，缺一侧标为单边盘口而不是零价差",
+      "source_refs": [
+        "A09"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权L2或真实盘口",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F080",
+      "slug": "order_flow_imbalance",
+      "name": "订单流失衡",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "order.side",
+        "order.action",
+        "order.price",
+        "order.quantity",
+        "order.sequence"
+      ],
+      "output_unit": "ratio",
+      "definition": "按预定义窗口统计新增撤单成交造成的供需变化，缺完整订单流则不可计算同名因子",
+      "source_refs": [
+        "A09"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "订单流与逐笔成交关联",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F081",
+      "slug": "queue_ahead_estimate",
+      "name": "排队前量估计",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument",
+        "order"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "order.submitted_at",
+        "order.ack_at",
+        "book.level_orders",
+        "orderflow.cancel",
+        "trade.quantity"
+      ],
+      "output_unit": "shares",
+      "definition": "基于可见队列及自身延迟估计前量区间，不能将估计标成真实队列位置",
+      "source_refs": [
+        "A09",
+        "T15"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "授权盘口订单流及订单日志",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F082",
+      "slug": "auction_imbalance",
+      "name": "集合竞价供需",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "auction.indicative_price",
+        "auction.matched_volume",
+        "auction.unmatched_volume",
+        "auction.side",
+        "exchange_time"
+      ],
+      "output_unit": "ratio",
+      "definition": "按竞价观察时点计算供需；09:20前后的可撤单阶段分别编码",
+      "source_refs": [
+        "A04",
+        "A09"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "真实竞价快照及规则",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F083",
+      "slug": "realized_market_impact",
+      "name": "成交冲击与滑点",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument",
+        "order"
+      ],
+      "clock": {
+        "trigger": "quote",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "order.arrival_mid",
+        "fill.price",
+        "fill.quantity",
+        "book.depth",
+        "trade.participation"
+      ],
+      "output_unit": "basis_points",
+      "definition": "相对下单时参考中价计算成交偏离，分离费用等待价格变动与冲击",
+      "source_refs": [
+        "T13",
+        "T15"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "订单成交日志及行情",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F084",
+      "slug": "intraday_liquidity_shape",
+      "name": "盘中流动性曲线",
+      "family_id": "F14",
+      "family_name": "订单微观结构",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "bar.minute_of_session",
+        "bar.volume",
+        "bar.spread",
+        "calendar.session"
+      ],
+      "output_unit": "ratio",
+      "definition": "按实际会话分钟计算历史同时间成交分布，午休与盘后分别建模",
+      "source_refs": [
+        "A04",
+        "A06"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "分钟行情与交易日历",
+      "data_readiness": "requires_higher_granularity_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F085",
+      "slug": "scheduled_event_distance",
+      "name": "会议展会与发布倒计时",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "market",
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "scheduled",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "calendar.event_id",
+        "calendar.announced_at",
+        "calendar.scheduled_at",
+        "calendar.revision",
+        "calendar.timezone"
+      ],
+      "output_unit": "trading_sessions",
+      "definition": "使用当时公布日程计算距事件的可交易会话数，延期形成revision",
+      "source_refs": [
+        "A12",
+        "A13",
+        "A30"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "会议主办方和官方发布日历",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F086",
+      "slug": "expiry_calendar",
+      "name": "期货期权到期日历",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "market"
+      ],
+      "clock": {
+        "trigger": "scheduled",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "contract.id",
+        "contract.expiry",
+        "contract.calendar_version",
+        "calendar.holiday_adjustment"
+      ],
+      "output_unit": "trading_sessions",
+      "definition": "按当前合约官方日历计算距到期日；旧规则只能背景参考，不能生成未经核实的2026到期表",
+      "source_refs": [
+        "A27"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "中金所等交易所现行合约日历待接入",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F087",
+      "slug": "reporting_season",
+      "name": "财报季与预约披露",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "scheduled",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "report.appointment_date",
+        "report.revision",
+        "report.published_at",
+        "calendar.session"
+      ],
+      "output_unit": "trading_sessions",
+      "definition": "按当时已知预约日期计算事件窗口，实际披露另建事实事件",
+      "source_refs": [
+        "A24"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所预约披露日程",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F088",
+      "slug": "holiday_month_end",
+      "name": "假期月末季末位置",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "market"
+      ],
+      "clock": {
+        "trigger": "scheduled",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "calendar.trading_sessions",
+        "calendar.holidays",
+        "calendar.month",
+        "calendar.quarter"
+      ],
+      "output_unit": "category",
+      "definition": "由交易所日历构造位置变量，不预设周四或假期前必涨跌",
+      "source_refs": [
+        "A04",
+        "A05"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "交易所官方日历",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F089",
+      "slug": "attention_growth",
+      "name": "独立注意力增速",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "sector",
+        "instrument",
+        "event"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "document.event_id",
+        "document.author_id",
+        "document.source_id",
+        "document.first_seen_at",
+        "document.repost_parent"
+      ],
+      "output_unit": "ratio",
+      "definition": "按独立作者和来源去重后的新增讨论算增长，转载数另列而非独立事实",
+      "source_refs": [
+        "A10",
+        "A20",
+        "A21",
+        "A22",
+        "A25",
+        "A26"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "已获权限的媒体社区源",
+      "data_readiness": "definition_specified_data_not_connected",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F090",
+      "slug": "sentiment_disagreement",
+      "name": "市场叙事分歧",
+      "family_id": "F15",
+      "family_name": "日历与注意力",
+      "scope": [
+        "sector",
+        "instrument",
+        "event"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "claim.direction",
+        "claim.model_version",
+        "claim.author_group",
+        "claim.evidence",
+        "claim.available_at"
+      ],
+      "output_unit": "score",
+      "definition": "对去重来源的情感与机制分歧度编码，模型标签不是事实且按版本保存",
+      "source_refs": [
+        "A10",
+        "A20",
+        "A21",
+        "A22"
+      ],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "新闻社区语料及保存的模型输出",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F091",
+      "slug": "zodiac_homophone",
+      "name": "生肖与名称谐音叙事",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "theme",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "theme.first_public_mention",
+        "instrument.name_history",
+        "calendar.lunar_mapping",
+        "theme.member_version"
+      ],
+      "output_unit": "score",
+      "definition": "仅在主题已公开出现后按冻结字词匹配候选，羊洋阳等作为候选族不预设收益",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "公开主题讨论历史名称和核验农历映射",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F092",
+      "slug": "year_end_cluster",
+      "name": "跨年抱团叙事",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "theme",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "bar_close",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "is_final=true for declared completed timeframe",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "calendar.trading_sessions",
+        "theme.first_public_mention",
+        "leader.episode",
+        "theme.turnover_concentration"
+      ],
+      "output_unit": "score",
+      "definition": "结合事前跨年话题和当时集中度构建状态，最终跨年龙不能回填先前标签",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "时点社区记录与市场数据",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F093",
+      "slug": "anniversary_narrative",
+      "name": "纪念日题材传播",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "theme",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "anniversary.calendar_type",
+        "anniversary.reference_date",
+        "theme.first_public_mention",
+        "theme.diffusion"
+      ],
+      "output_unit": "score",
+      "definition": "公历农历纪念日明确区分；预告话题和实际传播达到条件后才形成信号",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "可追溯日历原始依据及公开讨论",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F094",
+      "slug": "weather_disaster",
+      "name": "天气灾害经营暴露",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "weather.location",
+        "weather.warning_level",
+        "weather.issued_at",
+        "issuer.facility_location"
+      ],
+      "output_unit": "score",
+      "definition": "官方预警与已发生灾害分开，按工厂航线零售地域暴露匹配",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "气象与应急部门及公司公告",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F095",
+      "slug": "power_logistics_disruption",
+      "name": "电力物流突发中断",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "disruption.location",
+        "disruption.type",
+        "disruption.start",
+        "disruption.expected_end",
+        "issuer.exposure"
+      ],
+      "output_unit": "score",
+      "definition": "基于运营方公告记录中断恢复和持续时间，模型推测持续期单列",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "电网物流港口运营方原始公告",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    },
+    {
+      "factor_id": "F096",
+      "slug": "public_health_demand",
+      "name": "公共事件需求变化",
+      "family_id": "F16",
+      "family_name": "叙事与突发",
+      "scope": [
+        "sector",
+        "instrument"
+      ],
+      "clock": {
+        "trigger": "event_available",
+        "timezone": "Asia/Shanghai",
+        "as_of_rule": "all inputs available_at <= decision_at; use only versions known at that time",
+        "bar_requirement": "not_applicable",
+        "revision_policy": "append_only_revisions"
+      },
+      "required_fields": [
+        "public_event.type",
+        "public_event.scope",
+        "public_event.status",
+        "issuer.product_exposure"
+      ],
+      "output_unit": "score",
+      "definition": "区分公共事实与行业需求假设，按实际产品和地域暴露映射",
+      "source_refs": [],
+      "source_refs_role": "supports_source_access_or_market_mechanics_not_predictive_efficacy",
+      "proposed_feed": "卫生主管机构及公司产品披露",
+      "data_readiness": "requires_research_definition_and_data",
+      "implementation_status": "not_implemented",
+      "validation_status": "unvalidated",
+      "availability_status": "not_connected",
+      "missing_handling": {
+        "output": null,
+        "quality_state": "unknown",
+        "reason_required": true,
+        "missing_is_zero": false,
+        "trigger_behavior": "unknown does not satisfy an entry condition",
+        "fallback": "only explicitly registered proxy with distinct feature_id and provenance; otherwise no substitution"
+      },
+      "minimum_acceptance": [
+        "字段单位与源时间可复核",
+        "修订及available_at回放一致",
+        "缺值不会触发交易",
+        "定义版本及输入manifest有记录"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "version": "3.2",
+  "as_of": "2026-11-11",
+  "scope": "implementation specification and bounded references; not a deployed platform",
+  "authorities": {
+    "product_and_end_to_end": [
+      "spec/FINAL_SYSTEM_SPEC.md",
+      "spec/ADDENDUM_V31.md",
+      "spec/REFERENCE_RECONCILIATION_V32.md"
+    ],
+    "api_and_domain_types": [
+      "contracts/openapi.json",
+      "contracts/v3.schema.json",
+      "contracts/api_bindings.json"
+    ],
+    "database_and_mapping": [
+      "database/core_schema.sql",
+      "database/field_dictionary.json",
+      "database/source_mapping_examples.json",
+      "database/database_design.md"
+    ],
+    "source_sector_taxonomy": [
+      "sources_sectors/sources_sectors_schema.sql",
+      "sources_sectors/sources_sectors_fields.json",
+      "sources_sectors/sources_sectors_design.md",
+      "catalogs/source_catalog_v3.json",
+      "catalogs/taxonomy.json"
+    ],
+    "economic_account_and_execution": [
+      "execution/unified_ledger.py",
+      "execution/ledger_schema.sql",
+      "execution/execution_standard.md",
+      "execution/field_dictionary.json",
+      "execution/golden_fixtures.json"
+    ],
+    "publication_quote_research_integration": [
+      "integration/integration_schema.sql",
+      "integration/field_dictionary.json",
+      "integration/all_fields.json",
+      "integration/INTEGRATION_GUIDE.md"
+    ],
+    "shared_feature_reference": [
+      "reference_features/feature_store.py",
+      "reference_features/FEATURE_STRATEGY_PROTOCOLS.md"
+    ],
+    "data_plane_reference": [
+      "reference_system/normalization.py",
+      "reference_system/release_store.py",
+      "reference_system/source_health.py"
+    ],
+    "strategy_roles_and_candidates": [
+      "catalogs/strategy_catalog_v3.json",
+      "catalogs/factor_catalog_v3.json",
+      "spec/STRATEGY_LEAGUE_SPEC.md"
+    ],
+    "research_and_evidence": [
+      "research/papers_registry.json",
+      "research/hypotheses.json",
+      "research/source_index.json",
+      "research/supplemental_method_review.json"
+    ],
+    "implementation_and_gates": [
+      "spec/IMPLEMENTATION_GUIDE_V3.md",
+      "verification/verification_report.md",
+      "traceability/work_packages.json",
+      "traceability/work_packages_v32_extension.json",
+      "traceability/milestones_v32.json"
+    ],
+    "supplement_decisions": [
+      "spec/PROPOSAL_DECISIONS_V31.md",
+      "traceability/proposal_decisions_v31.json"
+    ],
+    "typed_extension_payloads": [
+      "contracts/supplemental.schema.json",
+      "contracts/extension_bindings.json",
+      "reference_extensions/semantic_validation.py"
+    ],
+    "input_alignment_reference": [
+      "reference_alignment/alignment.py",
+      "reference_alignment/input_alignment_policy.schema.json",
+      "reference_alignment/README.md"
+    ],
+    "eleven_volume_reconciliation": [
+      "review_v32/decisions.json",
+      "review_v32/coverage.json",
+      "review_v32/product_subfeature_mapping.json",
+      "review_v32/product_api_mapping.json",
+      "review_v32/product_extension_cards.json",
+      "review_v32/dataset_job_page_mapping.json",
+      "review_v32/appendix_item_mapping.json",
+      "research/reference_papers_v32.json"
+    ],
+    "ranking_continuity_reference": [
+      "reference_transition/continuity.py",
+      "reference_transition/README.md"
+    ]
+  },
+  "migration_order": [
+    "database/core_schema.sql",
+    "execution/ledger_schema.sql",
+    "sources_sectors/sources_sectors_schema.sql",
+    "integration/integration_schema.sql"
+  ],
+  "conflict_policy": "Apply explicit v3.2 corrections to v3/v3.1 prose. Public contracts, SQL and the sole ledger remain authoritative for implemented fields. Uploaded reference inputs never override these authorities. Planned extension cards must enter the same contract before implementation.",
+  "historical_only": [
+    "archive/v2",
+    "spec/CODE_AUDIT.md",
+    "spec/CODE_AUDIT_V2.md",
+    "patches",
+    "traceability/code_inventory.json",
+    "traceability/symbol_inventory.json",
+    "reference_input",
+    "research/supplement_review",
+    "review_v32/reference_input",
+    "review_v32/baseline_v31",
+    "review_v32/qa",
+    "verification/document_review"
+  ],
+  "explicit_non_authorities": [
+    "archive/v2/contracts",
+    "archive/v2/reference_models"
+  ],
+  "reference_status": {
+    "sql": "static_parse_not_postgres_execution",
+    "api": "contract_seed_not_deployed",
+    "sources": "unconfigured",
+    "strategy_candidates": "not_implemented",
+    "papers": "reproduction_not_started"
+  },
+  "evidence_counts": {
+    "source_records": 304,
+    "unique_source_urls": 288,
+    "core_papers": 46,
+    "supplement_named_method_items": 10,
+    "identified_supplement_works": 9,
+    "unresolved_supplement_items": 1,
+    "reference_v32_items": 55,
+    "review_v32_substantive_units": 1524,
+    "review_v32_decisions": 590
+  },
+  "compatibility": {
+    "public_contract_version": "3.0.0",
+    "unchanged_public_schema_definitions": 142,
+    "unchanged_sql_tables": 80,
+    "unchanged_sql_columns": 883,
+    "unchanged_http_operations": 31,
+    "new_registered_payload_definitions": 5,
+    "new_internal_alignment_policy_schema": 1
+  },
+  "public_contract_status": "3.0.0 remains the checked baseline; named product extensions are explicit implementation cards, not falsely advertised as current public operations."
+}

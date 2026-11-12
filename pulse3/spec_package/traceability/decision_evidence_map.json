@@ -1,0 +1,833 @@
+{
+  "schema_version": "3.1.decision-evidence-map",
+  "reviewed_at": "2026-11-11",
+  "scope": "P01-P50 external-fact/source mapping and internal reasoning provenance; does not add paper/source counts or imply independent experiment replication.",
+  "source_registry_path": "research/source_index.json",
+  "source_registry_sha256": "3c982f4a8c1e69eb42b0d39a76bb4112eb82f6754f62216a96e04a0bd405a837",
+  "decision_matrix_sha256_at_review": "2687359f40677b09dda43e8ec11b7f76a46763102da3d87c5b8f31c36bfb4ad7",
+  "evidence_kind_is_multi_label": true,
+  "source_refs_policy": "Only existing source_index IDs whose source directly supports an explicitly named external fact. A source does not endorse the whole decision or project profitability. Empty references are intentional for pure design/mathematical reasoning or repository-only evidence.",
+  "repository_snapshot": {
+    "repository": "https://github.com/Choysang/tradingview",
+    "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+    "read_only_static_checks": true,
+    "legacy_experiments_rerun": false
+  },
+  "count": 50,
+  "decisions": [
+    {
+      "decision_id": "P01",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "独立重写与保留历史证据是本项目工程选择；不声称存在证明“唯一正确”的外部研究。旧研究未由本轮重新执行。",
+      "internal_evidence_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P02",
+      "source_refs": [],
+      "evidence_kind": [
+        "repository_snapshot",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "独立读取本地 Git 提交6f5c57f8df73c58f0340dab6977b95c05d21740c：picks.py位于backend/app/playbooks；experiments.jsonl解析为92条，最后E092；E048/E049/E051内容存在。git树未定位calendar_sync.ps1，git grep未定位15:33:33。搜索未定位不等于证明所有历史版本不存在；没有重跑旧实验。",
+      "internal_evidence_paths": [
+        "spec/CODE_AUDIT_V2.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P03",
+      "source_refs": [
+        "T03",
+        "DB06"
+      ],
+      "evidence_kind": [
+        "existing_contract",
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "T03仅支持JetStream持久化/回放/消费者语义，DB06仅支持DuckLake内部事务语义。分层职责和何时增加缓存或数据库由现有设计及负载验收决定，不由产品文档证明任意规模性能。",
+      "internal_evidence_paths": [
+        "database/database_design.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P04",
+      "source_refs": [
+        "CR03"
+      ],
+      "evidence_kind": [
+        "design_reasoning",
+        "primary_source",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "6000×250×240×10=3,600,000,000行，×8字节=28.8GB是声明假设下的十进制逻辑容量估算，不是实测市场行数或文件大小。CR03明确外存分组会溢写磁盘；不能推出500MB容纳全部数据或任意回测延迟。附件性能数值没有可复现工作负载。",
+      "internal_evidence_paths": [
+        "database/database_design.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P05",
+      "source_refs": [
+        "CR02",
+        "CR03",
+        "CR04",
+        "CR05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract"
+      ],
+      "evidence_note": "独立再次打开四个官方页面：DuckDB2.0于2026-10-21发布；Polars2.1于10-27发布；Pydantic10-30公告称V3尚无发布日期；PG19公告仍为RC，GA计划11-19。上述是截至11-11的版本事实，不是本项目已完成兼容或负载验证。PG18是保留的项目合同基线。",
+      "internal_evidence_paths": [
+        "spec/IMPLEMENTATION_GUIDE_V3.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P06",
+      "source_refs": [
+        "CR07",
+        "DB13"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "Arrow官方资料支持类型化列式表示及同进程共享与IPC的边界；不证明网络零成本。JSON Schema/OpenAPI作为唯一公共合同及其他类型生成是本项目设计决策。",
+      "internal_evidence_paths": [
+        "contracts/v3.schema.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P07",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "稳定UUID与版本化外部别名由现有数据库身份合同支持。这里是身份及迁移设计理由，不宣称UUID比所有证券代码体系在所有场景都优越。",
+      "internal_evidence_paths": [
+        "database/core_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P08",
+      "source_refs": [
+        "A14",
+        "T07"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "ALFRED版本时间和Qlib PIT支持“历史观察存在修订/当时可得版本”的外部事实。实际available_at、决策截点及重建policy_usable_at区分由本项目合同规定；两时间戳不足的反例是逻辑构造。",
+      "internal_evidence_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P09",
+      "source_refs": [
+        "CR06",
+        "SP-S05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "PostgreSQL明确numeric精确、float非精确；SP-S05可转债最小价格变动0.001元支持“不同产品不可统一按分处理”。Decimal精度、舍入和分析FLOAT64政策属于项目规范，不是数据库替项目保证会计正确。",
+      "internal_evidence_paths": [
+        "execution/execution_standard.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P10",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "有参数/复权/周期版本的特征与事实bar分离、missing不等于0，是本项目数据语义与可重建投影设计；无需借指标文档作为架构正确性的证明。",
+      "internal_evidence_paths": [
+        "database/core_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P11",
+      "source_refs": [
+        "SP-S01",
+        "SP-S05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "交易所规则提供产品tick与交易会话依据；低价股一个tick可超过0.01%是可手算反例。异步时点、转引同源与固定阈值的局限属于对账设计推理，不能从三家数值接近推出真实性。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P12",
+      "source_refs": [
+        "DB09",
+        "DB10"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "Tushare官方daily文档与rt_k文档分别使用手/千元及股/元，直接支持同名字段单位不同。附件腾讯f58未提供精确端点/版本/fixture，保持未核实；本包映射示例是官方定义加合成fixture，并未调用真实行情接口。",
+      "internal_evidence_paths": [
+        "database/source_mapping_examples.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P13",
+      "source_refs": [
+        "CR01"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "Polars官方ASOF支持backward/forward/nearest、分组与tolerance。只允许因果向后、会话隔离、可得性及最新invalid处理是本项目参考实现规定；库的ASOF函数本身不自动证明金融PIT正确。",
+      "internal_evidence_paths": [
+        "reference_alignment/alignment.py"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P14",
+      "source_refs": [
+        "A17",
+        "A19",
+        "A20",
+        "NS18"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "BLS限制/延迟、EIA接口滞后及GDELT15分钟更新支持来源刷新和额度不相同。HTTP标准只支持条件请求等协议语义；令牌桶、抖动、分类故障、补录是本项目设计，不承诺全源秒级更新。NS18不是429专用规范，不用于宣称特定限流实现保证。",
+      "internal_evidence_paths": [
+        "reference_system/source_health.py"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P15",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "官方首发可以暂时单源、多个转载可以同源是逻辑反例；没有引用某个未验证具体谣言案例。证据原始性、origin聚类及revision处理来自现有主张合同，不用报道数量定义事实真伪。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P16",
+      "source_refs": [
+        "A13"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "美联储官方RSS支持其决议/讲话可作为原始发布源这一例子。事实可信度、标的相关性与预测效用分离是设计推理；没有给任何国家或媒体未经校准的普适分数。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P17",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "共同原因可以造成价格联动，图/LLM解释不能独立识别因果，是识别逻辑；本项目先登记可观察暴露与关联假说，再另行设计识别实验。没有宣称已经得到实证因果矩阵。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P18",
+      "source_refs": [
+        "SP-S09"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "东方财富官方FAQ直接支持资金流为软件方法计算且算法不同。评论不等于全体持仓者、Var(Za-Zf)=2-2ρ、同窗/零方差/小样本约束是本项目方法推导；来源不支持“散户接盘概率”或阈值2的盈利性。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P19",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "会话观点冻结和严格二元Brier评分是本项目可检验机制；(p-y)^2是声明的评分定义，不把无概率的态度文本编成概率。实际原文解析、来源获取、历史标签和生产评分服务未实现。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P20",
+      "source_refs": [
+        "SP-S10",
+        "NS12"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "repository_snapshot",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "SP-S10支持龙虎榜披露范围仅竞价成交，NS12支持席位统计窗口定义；均不能证明总持仓或最终投资者身份。E051旧记录确有与主书几乎无交集结论，未重新执行、不能升级为独立复现。附件78%未附样本/分母/时点，未采信。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P21",
+      "source_refs": [
+        "NS11",
+        "SP-S10"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "官方披露示例支持报告内标签、营业部与买卖金额对象；汇总披露不能唯一还原最终账户身份的结论是可识别性推理。“前东路”未唯一解析，不猜自然人、席位或资金意图。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P22",
+      "source_refs": [
+        "SP-S02",
+        "SP-S03"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "上交所ETF FAQ区分二级成交和一级申赎；PCF栏目规定披露清单属性，不能解释为分钟实际执行流水。30至60秒领先及国家队身份未验证。F102是成交脉冲候选，未接入或训练。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P23",
+      "source_refs": [
+        "SP-S05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "上交所可转债细则支持当日回转、每百元面值报价、100元一张及0.001元tick等制度单位。该来源不证明领先正股或套利收益；债股相对信号与同步/零尺度校验是待研究定义，首期未开放转债下单。",
+      "internal_evidence_paths": [
+        "contracts/supplemental.schema.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P24",
+      "source_refs": [],
+      "evidence_kind": [
+        "design_reasoning",
+        "existing_contract"
+      ],
+      "evidence_note": "rank方向、母集变化和二阶差分尺度是明确公式的数学性质。F098只登记升温分量与冻结比较身份，尚无真实提前量、误报率或净收益证据。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P25",
+      "source_refs": [
+        "A04"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "深交所正式规则支持不同板块涨跌幅制度及例外；用户可推荐母集、观察母集和Top10不足时返回实际数量由项目政策规定。“机构主导”不由成交规模推定。",
+      "internal_evidence_paths": [
+        "sources_sectors/sources_sectors_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P26",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "主题群体状态是F071/F072的新增组合作用域，不是已证最优阶段规则。最终标签、概率向量与校准必须注册；任何未校准启发式分数不能冒充已校准概率。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P27",
+      "source_refs": [
+        "VM-S12"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "TradingView官方repainting文档直接支持需要右侧bar确认的pivot与回画位置的区别。EMA种子、hist倍率和共振等级是版本化指标/评估合同；当前没有胜率校准结果，等级若宣称概率必须另行验证。",
+      "internal_evidence_paths": [
+        "reference_features/FEATURE_STRATEGY_PROTOCOLS.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P28",
+      "source_refs": [],
+      "evidence_kind": [
+        "design_reasoning",
+        "existing_contract"
+      ],
+      "evidence_note": "AVWAP是指定锚点和成交加权公式的定义；公开汇总不能识别某主力平均持仓成本是信息不足的推理。锚点确认时间约束防止未来选择，不以外部文献冒称该线有已证净收益。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P29",
+      "source_refs": [
+        "VM-S10"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "TradingView官方解释其volume profile使用较低周期bar估计价位成交，up/down不是实际买卖主体。F100逐笔聚合/仅bar时估计、区间与分箱身份是项目合同；成交分布不等于剩余持仓。",
+      "internal_evidence_paths": [
+        "contracts/supplemental.schema.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P30",
+      "source_refs": [
+        "VM-S11"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "券商CYQ说明明确使用近似换手计算；其说明只能支撑“估计模型”属性，不能证明真实账户持仓成本。衰减/初始化/公司行动与敏感性验收是项目研究协议。",
+      "internal_evidence_paths": [
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P31",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "网格在旧设计正文已有，但v3目录未独立注册此ATR库存策略；新增S061解决分类和路由缺口。1.5%/1.8%与0.35/0.45×ATR来自附件试验参数，未证明最优。经济总财富/未配对库存对照由统一账本定义，未运行策略收益回测。",
+      "internal_evidence_paths": [
+        "catalogs/strategy_catalog_v3.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P32",
+      "source_refs": [
+        "SP-S01",
+        "SP-S05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "交易所规则支持按产品tick和成交机制处理；触发条件不等于保证成交。Kelly所需概率/收益分布与未校准Alpha分不可混用是模型输入语义，项目未计算验证任何Kelly最优仓位。",
+      "internal_evidence_paths": [
+        "database/core_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P33",
+      "source_refs": [
+        "A19"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "EIA官方接口延迟说明直接示范上游可得时间不受本站控制；不是说全部来源都有同样延迟。阶段延迟拆分、幂等与晚到不覆盖是设计要求，三秒内完整大模型发布没有实测证明。",
+      "internal_evidence_paths": [
+        "integration/integration_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P34",
+      "source_refs": [
+        "CR08",
+        "CR09",
+        "EXS05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "GIPS官方范围支持业绩计算/呈现与合规要求；FIX官方订单状态文件支持状态、累计量及成交更正语义，不能当A股清算账本。加权平均经济成本及复式分录是本项目政策，并非声称GIPS强制FIFO或本包获得GIPS认证。",
+      "internal_evidence_paths": [
+        "execution/execution_standard.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P35",
+      "source_refs": [
+        "EXS09",
+        "EXS11"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "上交所费表区分具体产品与支付主体，官方投资者说明区分券商佣金和其他费用及可能包含关系。客户账户实际费率仍需合同核验；不把附件万1.5/5元写成全市场事实，也不把交易所向会员费用再无条件重复加到佣金。",
+      "internal_evidence_paths": [
+        "execution/execution_standard.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P36",
+      "source_refs": [
+        "A09",
+        "T15"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "L2产品和Nautilus官方撮合文档支持订单/逐笔能力及仿真需按book类型、流动性等设置；不能据此宣称本站已有完整队列。缺失≠零、单快照不能唯一还原排队、同bar多路径是可识别性与仿真设计理由。",
+      "internal_evidence_paths": [
+        "execution/execution_standard.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P37",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "即便所有候选差也必有前20%是排名性质；不同职责/期限不应一律20日IC是目标匹配推理。瑞士轮仅分配实验，正式准入尚需独立样本及组合增量，未宣称当前已经检验成功。",
+      "internal_evidence_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P38",
+      "source_refs": [
+        "VM-S13",
+        "VM-S14"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "CFA直接支持Information Ratio的主动收益/跟踪误差定义；Qlib官方基准区分IC/ICIR与组合IR。Calmar需由项目明确年化收益、最大回撤绝对值、窗口和零分母约定，不能让IR或ICIR来源为所有Calmar实现背书。",
+      "internal_evidence_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P39",
+      "source_refs": [
+        "T08",
+        "T09",
+        "VM-S15"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "DSR/PBO研究支持多重搜索/选择偏差问题，SciPy官方permutation_test解释随机检验的有限抽样p值约定。匹配同当时母集/成本/换手等是项目零假设设计；1000次或p<0.05不能自动消除依赖、窥探和选择偏差，也没有已运行1000次实盘样本。",
+      "internal_evidence_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P40",
+      "source_refs": [],
+      "evidence_kind": [
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "同一簇35%是附件候选常数，没有普适去拥挤保证；跨簇持同股票或同信息的反例是逻辑构造。实际集中/容量/暴露仍需组合数据，未提供已验证最优阈值。",
+      "internal_evidence_paths": [
+        "database/core_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P41",
+      "source_refs": [
+        "VM-S01",
+        "VM-S04",
+        "VM-S06a",
+        "VM-S09",
+        "VM-S03"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "对应支持MERA/HRFT的WWW2025 Companion身份、DeepScalper的CIKM2022、FinMem的2024 Symposium以及SAMBA的ICASSP2025。Stock-Pretrain缺完整身份且检索未唯一定位，保留unresolved；不把未定位等同证明论文不存在。完整10名称/9识别/1未识别在补充审阅表，未增加46篇核心论文。",
+      "internal_evidence_paths": [
+        "research/supplemental_method_review.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P42",
+      "source_refs": [
+        "VM-S07",
+        "VM-S05"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "RAM官方摘要给出财富比较对象而非最大回撤上界；HSN已读方法是Hawkes做市环境下记忆滤波与PPO报价。迁移到A股T+1、库存网格或15至30分钟价位属于新任务假说，不能扩大理论保证；未复现作者训练。",
+      "internal_evidence_paths": [
+        "research/supplemental_method_review.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P43",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "自动发现到AST/fixture/实验/独立准入是本项目生命周期；“编译成功不等于有效策略”是逻辑区分，不需把任何论文或高点赞帖子当普适证明。未上线自动下载后发布代码管线。",
+      "internal_evidence_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P44",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "结构合法而股票/时点/单位错误是可构造反例。Schema与可信Repository语义验证分工由合同及独立反例说明；参考实现只检查提供的已验证上下文，不证明来源原文真实性或生产历史回放。",
+      "internal_evidence_paths": [
+        "integration/integration_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P45",
+      "source_refs": [
+        "DB03"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "PostgreSQL唯一约束约束指定列的语义支持UNIQUE(symbol_id)只能保留单一身份的问题。多用户/账户/布局分离、账本唯一资产真相与投影缓存是项目设计，未声明新的生产数据库已经部署。",
+      "internal_evidence_paths": [
+        "database/core_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P46",
+      "source_refs": [
+        "SP-S06",
+        "SP-S07"
+      ],
+      "evidence_kind": [
+        "primary_source",
+        "design_reasoning"
+      ],
+      "evidence_note": "TradingView官方比较与插件文档支持Lightweight Charts为渲染库，可扩展但不自带本项目行情/指标/历史社区数据库。图层所需artifacts、范围和可得时点必须由Repository验证；库插件存在不等于本包已实现全部终端功能。",
+      "internal_evidence_paths": [
+        "contracts/supplemental.schema.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P47",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning",
+        "unresolved_proposal"
+      ],
+      "evidence_note": "10工作包、单合同负责人、独占写入边界是本项目并行开发设计；并发数和15分钟完成时间不构成可验证的零冲突保证。未以模型能力或名称虚构已完成开发速度。",
+      "internal_evidence_paths": [
+        "traceability/work_packages.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P48",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "模型能力适配器、版本政策与重放由现有设计支持。用户列举的未来模型名是愿景，不是本轮已核验发布事实或依赖条件，也未据此增加runtime自治Agent。",
+      "internal_evidence_paths": [
+        "integration/integration_schema.sql"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P49",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "直接计数共享taxonomy有41个facets，strategy catalog有6个role_contracts；holding_overlay作为holding形式。计数来自包内结构，不是外部分类标准授予项目的完备性。",
+      "internal_evidence_paths": [
+        "catalogs/taxonomy.json"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    },
+    {
+      "decision_id": "P50",
+      "source_refs": [],
+      "evidence_kind": [
+        "existing_contract",
+        "design_reasoning"
+      ],
+      "evidence_note": "事实可信度、热度、收益预测和执行质量是不同目标/量纲；百分制均值不自动成为概率。职责组合、共享账户与成本后增量是项目合同，未宣称已得到“最优操作”或盈利性。",
+      "internal_evidence_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md"
+      ],
+      "production_implemented": false,
+      "profitability_validated": false
+    }
+  ]
+}

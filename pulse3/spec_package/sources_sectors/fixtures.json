@@ -1,0 +1,151 @@
+{
+  "schema_version": "3.0",
+  "data_kind": "synthetic_only",
+  "real_security_recommendations": false,
+  "document_deliveries": [
+    {
+      "source_id": "wire_a",
+      "source_record_id": "wire-001",
+      "revision": 1,
+      "payload_hash": "hash-v1",
+      "transport": "push",
+      "event_time": "2026-11-09T00:00:00+00:00"
+    },
+    {
+      "source_id": "wire_a",
+      "source_record_id": "wire-001",
+      "revision": 1,
+      "payload_hash": "hash-v1",
+      "transport": "poll",
+      "event_time": "2026-11-09T00:00:00+00:00"
+    },
+    {
+      "source_id": "wire_a",
+      "source_record_id": "wire-002",
+      "revision": 1,
+      "payload_hash": "hash-next",
+      "transport": "push",
+      "event_time": "2026-11-09T00:10:00+00:00"
+    },
+    {
+      "source_id": "wire_a",
+      "source_record_id": "wire-001",
+      "revision": 2,
+      "payload_hash": "hash-v2",
+      "transport": "backfill",
+      "event_time": "2026-11-09T00:00:00+00:00"
+    }
+  ],
+  "expected_unique_document_revisions": 3,
+  "origin_evidence": [
+    {
+      "document": "wire-original",
+      "origin_group": "origin-1",
+      "status": "confirmed_original"
+    },
+    {
+      "document": "portal-copy-1",
+      "origin_group": "origin-1",
+      "status": "republication"
+    },
+    {
+      "document": "portal-copy-2",
+      "origin_group": "origin-1",
+      "status": "republication"
+    },
+    {
+      "document": "reporter-independent",
+      "origin_group": "origin-2",
+      "status": "confirmed_independent_report"
+    },
+    {
+      "document": "unresolved-copy",
+      "origin_group": null,
+      "status": "unknown"
+    }
+  ],
+  "expected_independent_origins": 2,
+  "amount_observations": [
+    {
+      "provider": "exchange",
+      "raw_value": "12.34",
+      "raw_unit": "CNY_10000",
+      "expected_cny": "123400"
+    },
+    {
+      "provider": "disclosure_platform",
+      "raw_value": "123400",
+      "raw_unit": "CNY",
+      "expected_cny": "123400"
+    }
+  ],
+  "funding_metrics": [
+    {
+      "provider": "vendor_a",
+      "metric": "main_net_flow",
+      "methodology": "order-v1"
+    },
+    {
+      "provider": "vendor_b",
+      "metric": "main_net_flow",
+      "methodology": "trade-v1"
+    }
+  ],
+  "lhb": {
+    "available_at": "2026-11-09T10:10:00+00:00",
+    "intraday_decision": "2026-11-09T02:00:00+00:00",
+    "next_day_decision": "2026-11-10T01:00:00+00:00",
+    "same_report_rows": [
+      {
+        "side": "buy",
+        "seat_id": "verified-seat-a",
+        "amount_cny": "123400"
+      },
+      {
+        "side": "sell",
+        "seat_id": "verified-seat-a",
+        "amount_cny": "23400"
+      }
+    ],
+    "expected_net_cny": "100000"
+  },
+  "community": {
+    "post_created_at": "2026-11-06T01:00:00+00:00",
+    "engagement_sampled_at": "2026-11-09T01:00:00+00:00",
+    "available_at": "2026-11-09T01:00:01+00:00",
+    "early_decision": "2026-11-06T01:10:00+00:00"
+  },
+  "membership": {
+    "instrument": "synthetic-stock-a",
+    "sector": "theme-a",
+    "effective_from": "2026-11-01T00:00:00+00:00",
+    "available_at": "2026-11-09T00:00:00+00:00",
+    "historical_decision": "2026-11-05T00:00:00+00:00"
+  },
+  "candidate_hysteresis": {
+    "parameters_are_synthetic": true,
+    "entry_threshold": "0.75",
+    "exit_threshold": "0.55",
+    "required_entry_windows": 2,
+    "scores": [
+      "0.70",
+      "0.76",
+      "0.78",
+      "0.70",
+      "0.56",
+      "0.54",
+      "0.76",
+      "0.77"
+    ],
+    "expected_states": [
+      "observing",
+      "observing",
+      "qualified",
+      "qualified",
+      "qualified",
+      "cooling",
+      "cooling",
+      "qualified"
+    ]
+  }
+}

@@ -1,0 +1,732 @@
+{
+  "version": "3.1.review",
+  "as_of": "2026-11-11",
+  "count": 20,
+  "entries": [
+    {
+      "proposal_id": "VM-01",
+      "attachment_claim": "RFD = 热度标准分 − 主力净流入标准分，超过 2 判为接盘陷阱",
+      "decision": "modify_and_add",
+      "comparison_with_v3": "修改并加入 F097；v3 有注意力和资金方法，尚无明确合成条目",
+      "reason": "观察到的是讨论样本与供应商资金代理，不是交易者身份。固定同窗、方法和归一校准；保留连续分值，验证条件分布后再成为策略输入。两个标准分之差的方差为 2−2ρ，阈值 2 不能自动解释为两个标准差或固定风险概率。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §5",
+        "catalogs/factor_catalog_v3.json F089",
+        "contracts/v3.schema.json FundFlowObservation"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F097",
+      "input_requirements": [
+        "AttentionWindow",
+        "ComparableFlowWindow",
+        "FrozenCalibration"
+      ],
+      "output_contract_or_semantics": "dimensionless feature + quality + dependencies",
+      "existing_operations_affected": [
+        "getStockCommunity",
+        "getStockFundFlow",
+        "getStockWorkspace"
+      ],
+      "acceptance_cases": [
+        "duplicate authors do not add independent counts",
+        "zero variance and zero turnover produce UNKNOWN",
+        "future observations do not alter past outputs"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": [
+        "research_v4/catalog_additions/F097.json"
+      ]
+    },
+    {
+      "proposal_id": "VM-02",
+      "attachment_claim": "资金二阶导、排名跳升 15 位、毫秒挑出补涨股",
+      "decision": "modify_and_add",
+      "comparison_with_v3": "修改并加入 F098；v3 升温池已覆盖",
+      "reason": "名次数字越小越优，方向必须写清；母集数量与成分变化会制造假跃升。累计流量二次差分与“区间净流量”不是同一种输入；先规范后计算，再冻结标准化和平滑。提前量只按真实可得时点评估。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §6",
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F098",
+      "input_requirements": [
+        "SectorRankingWindow",
+        "SectorFlowWindow",
+        "SectorBreadthLeadership"
+      ],
+      "output_contract_or_semantics": "versioned feature components, then existing sector score/pool projection",
+      "existing_operations_affected": [
+        "getSectorOverview",
+        "getSectorRanking",
+        "getCandidatePool"
+      ],
+      "acceptance_cases": [
+        "20 to 5 is positive rank improvement",
+        "membership change invalidates naive rank delta",
+        "constant flow increments yield zero second difference"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": [
+        "research_v4/catalog_additions/F098.json"
+      ]
+    },
+    {
+      "proposal_id": "VM-03",
+      "attachment_claim": "全周期共振等同 S 级买点",
+      "decision": "refine_existing",
+      "comparison_with_v3": "细化既有 F073/F074/S005，不另造共振引擎",
+      "reason": "月/周未闭合值与已确认值必须分开。多个价格派生指标高度重叠，只增加命中条数不产生独立证据。S 级是展示等级；若要解释为成功概率，必须另做目标/期限一致的校准。",
+      "v3_anchors": [
+        "catalogs/factor_catalog_v3.json F073/F074",
+        "catalogs/strategy_catalog_v3.json S005"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F073/F074/S005",
+      "input_requirements": [
+        "completed multi-timeframe bars",
+        "FeatureKey",
+        "forecast target"
+      ],
+      "output_contract_or_semantics": "calibrated same-target forecast or explicit conjunction, not probability by indicator count",
+      "existing_operations_affected": [
+        "getStockBars",
+        "getStockWorkspace",
+        "getTradePlan"
+      ],
+      "acceptance_cases": [
+        "unfinished monthly bar cannot masquerade as closed",
+        "duplicating one feature does not add independent evidence"
+      ],
+      "source_ids": [
+        "VM-S12"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-04",
+      "attachment_claim": "MACD 跨峰背离自动连线，形成当时买点",
+      "decision": "refine_existing",
+      "comparison_with_v3": "细化 F074 与条件 AST；现有协议已规定 EMA 初始化和柱倍率",
+      "reason": "拐点确认通常需要右侧观察，图上位置不是信息可用时间。新增明确 left/right 参数、最小幅度、确认时间、反向失效与 provisional 状态；禁止把确认后的线回填为枢轴当天已发出的信号。[VM-S12]",
+      "v3_anchors": [
+        "reference_features/FEATURE_STRATEGY_PROTOCOLS.md §1",
+        "catalogs/factor_catalog_v3.json F074",
+        "spec/FINAL_SYSTEM_SPEC.md §7"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F074 refinement",
+      "input_requirements": [
+        "pivot left/right policy",
+        "MACD parameters",
+        "final bars"
+      ],
+      "output_contract_or_semantics": "confirmed signal with pivot_at and available_at semantics",
+      "existing_operations_affected": [
+        "getStockBars",
+        "getTradePlan"
+      ],
+      "acceptance_cases": [
+        "right-side confirmation bars delay signal",
+        "history published before confirmation remains unchanged"
+      ],
+      "source_ids": [
+        "VM-S12"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-05",
+      "attachment_claim": "锚定 VWAP 透视游资平均成本",
+      "decision": "modify_and_add",
+      "comparison_with_v3": "加入 F099，并替换身份解释",
+      "reason": "量加权成交价是给定交易范围的平均交易价格。它不跟踪某名席位的剩余库存。区别于 F078 的会话偏离，F099 还明确事件锚点、锚点可得时间、跨会话范围和价格水平单位。",
+      "v3_anchors": [
+        "catalogs/factor_catalog_v3.json F078",
+        "spec/PLATFORM_SYNTHESIS.md"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F099",
+      "input_requirements": [
+        "AnchorDefinition",
+        "AnchoredTradeWindow"
+      ],
+      "output_contract_or_semantics": "quote_currency_per_share derived value",
+      "existing_operations_affected": [
+        "getStockBars",
+        "getStockWorkspace"
+      ],
+      "acceptance_cases": [
+        "manual amount/volume fixture matches",
+        "future selected anchor cannot support earlier trade"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": [
+        "research_v4/catalog_additions/F099.json"
+      ]
+    },
+    {
+      "proposal_id": "VM-06",
+      "attachment_claim": "VPVR、筹码峰是真实持仓成本",
+      "decision": "modify_and_add",
+      "comparison_with_v3": "拆成 F100 与 F101",
+      "reason": "成交量分布累计历史交易，CYQ 根据换手/留存假设估计剩余成本密度；同一股可以多次转手。两者必须有不同定义、分辨率和标签，不能作为“已观测主力成本”入事实表。TradingView 官方也区分 lower-timeframe bar 方向代理与真实买卖分类；券商帮助说明 CYQ 只是近似。[VM-S10][VM-S11]",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §5/7"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F100/F101",
+      "input_requirements": [
+        "VolumeProfileWindow",
+        "VolumeAllocationPolicy",
+        "TurnoverCostModel"
+      ],
+      "output_contract_or_semantics": "separate volume histogram and estimated retained-cost density",
+      "existing_operations_affected": [
+        "getStockBars",
+        "getStockWorkspace"
+      ],
+      "acceptance_cases": [
+        "histogram volume conservation",
+        "CYQ nonnegative normalized masses",
+        "source precision and estimate labels preserved"
+      ],
+      "source_ids": [
+        "VM-S10",
+        "VM-S11"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-07",
+      "attachment_claim": "ATR、VWAP、席位、热度共同精确预报未来高低点",
+      "decision": "retain_existing_replace_claim",
+      "comparison_with_v3": "保留条件计划，拒绝确定预测",
+      "reason": "条件计划可精确到有效 tick，但这只是委托报价精度，不等于预测误差很小。需要预测分布与可成交条件时另登记目标；由账户约束决定数量，不由解释强度决定。v3 已有。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §7"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "retain TradePlan",
+      "input_requirements": [
+        "typed prediction/condition",
+        "account snapshot",
+        "market rules"
+      ],
+      "output_contract_or_semantics": "conditional plan at valid tick with unknown outcomes",
+      "existing_operations_affected": [
+        "getTradePlan",
+        "getAccountActionability"
+      ],
+      "acceptance_cases": [
+        "precision never interpreted as certainty",
+        "no unsupported numeric field enters published plan"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-08",
+      "attachment_claim": "1.5%/1.8% 与 0.35/0.45×ATR 是自适应网格参数",
+      "decision": "add_catalog_candidate",
+      "comparison_with_v3": "加入 S061；替换为未验证 trial 参数",
+      "reason": "v3 正文已有网格，但 60 条目录没有独立 ATR 网格条目。新增 holding/grid 候选补齐“规范→可追踪研究对象”。原参数只保留为候选族；每格仍需核算两腿手续费、点差、滑点、库存和未完成腿，不承诺降低经济成本。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §7.2",
+        "catalogs/strategy_catalog_v3.json S058/S059"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "S061",
+      "input_requirements": [
+        "GridDefinition",
+        "F075",
+        "F018",
+        "F084",
+        "shared account"
+      ],
+      "output_contract_or_semantics": "InventoryOverlayIntent, executed by existing kernel",
+      "existing_operations_affected": [
+        "listStrategies",
+        "getTradePlan",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "unfilled second leg counted",
+        "same initial inventory/cash hold baseline",
+        "bar crossing order is explicit or uncertain"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": [
+        "research_v4/catalog_additions/S061.json"
+      ]
+    },
+    {
+      "proposal_id": "VM-09",
+      "attachment_claim": "同一特征簇权重不超过 35% 可从根源消除拥挤",
+      "decision": "modify_unvalidated_rule",
+      "comparison_with_v3": "修改既有组合政策",
+      "reason": "人工标签不能证明独立；35% 没有样本支撑，而且股票仓位、预测权重与策略预算是不同对象。保留标签分组，另测预测/收益/持仓重叠和边际贡献。权重上限作为有版本的研究参数，比较不设上限与简单去重基线。",
+      "v3_anchors": [
+        "spec/STRATEGY_LEAGUE_SPEC.md §7"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "composition policy refinement",
+      "input_requirements": [
+        "prediction correlations",
+        "portfolio holdings overlap",
+        "shared factors"
+      ],
+      "output_contract_or_semantics": "frozen typed combiner and strategy budget",
+      "existing_operations_affected": [
+        "listStrategies",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "same-feature duplicated candidate cannot multiply evidence",
+        "35 percent cap tested as parameter, not enforced theorem"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-10",
+      "attachment_claim": "瑞士轮前 20% 自动进入生产，连续 3 轮垫底直接证伪",
+      "decision": "retain_existing_reject_automatic_promotion",
+      "comparison_with_v3": "保留 v3 的独立晋级条件，不采纳比例自动准入",
+      "reason": "即使所有候选都亏损，总存在前 20%；强策略也可能在不擅长状态暂时靠后。瑞士轮调度与样本外、影子验证、账户增量分开。晋级可为零名；退役不删试验。",
+      "v3_anchors": [
+        "spec/STRATEGY_LEAGUE_SPEC.md §5/6",
+        "spec/FINAL_SYSTEM_SPEC.md §9"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "retain league admission separation",
+      "input_requirements": [
+        "EvaluationContext",
+        "league schedule",
+        "independent heldout/forward evidence"
+      ],
+      "output_contract_or_semantics": "research scheduling rank and independently reasoned lifecycle event",
+      "existing_operations_affected": [
+        "getLeague",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "all losing candidates can yield zero promotions",
+        "immature labels cannot decide winner"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-11",
+      "attachment_claim": "每周比较净 Sharpe、ICIR、Calmar 与 1000 次随机 p 值",
+      "decision": "refine_existing",
+      "comparison_with_v3": "细化基准，修正指标语义",
+      "reason": "ICIR 是时序 IC 均值/标准差，IR 是组合主动收益/跟踪误差；两者不是同名。短窗口的高噪声估计不能按精确整数排名。随机对照要匹配历史可投资池、持有期、费用、换手、行业/风格并保留失败 trial；单次 p<0.05 不能抵消反复挑选。",
+      "v3_anchors": [
+        "spec/STRATEGY_LEAGUE_SPEC.md §3/6"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "metric definitions refinement",
+      "input_requirements": [
+        "frozen return series",
+        "IC series",
+        "benchmark returns",
+        "sampling design"
+      ],
+      "output_contract_or_semantics": "distinct IR/ICIR/Calmar and uncertainty records",
+      "existing_operations_affected": [
+        "getEvaluation",
+        "getLeague"
+      ],
+      "acceptance_cases": [
+        "zero denominator represented explicitly",
+        "consistent annualization",
+        "all failed trials retained"
+      ],
+      "source_ids": [
+        "VM-S13",
+        "VM-S14",
+        "VM-S15"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-12",
+      "attachment_claim": "三重基准均战胜即证明策略可生产",
+      "decision": "refine_existing",
+      "comparison_with_v3": "增加 matched-random 规格，保留 v3 更完整门槛",
+      "reason": "正确比较需要同样初始资金、真实可投资约束、总回报/分红、费用与再平衡。不同行业等权不等于可投资 ETF。现金、简单规则、当前冠军、组合增量及实现验证仍不可省略。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §8"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "matched-random benchmark refinement",
+      "input_requirements": [
+        "PIT investable universe",
+        "exposure constraints",
+        "shared ledger/cost model",
+        "prespecified statistic"
+      ],
+      "output_contract_or_semantics": "reference null distribution with stated exchangeability limits",
+      "existing_operations_affected": [
+        "createExperiment",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "same fees and initial wealth across samples",
+        "B resamples do not generate zero p by omission",
+        "unmatched days explicitly recorded"
+      ],
+      "source_ids": [
+        "VM-S15"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-13",
+      "attachment_claim": "股吧一致看多 + L2 大单净出能识别散户接盘",
+      "decision": "replace_inference_with_hypothesis",
+      "comparison_with_v3": "把结论降为待检验假说，原始代理照常保留",
+      "reason": "成交每笔都有买卖双方；订单大小或报价方向不证明最后受益人。同一交易员拆单后分类会变化，公开评论作者也不等于账户持有人。保留“讨论与流量代理背离”的可测量含义。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §5"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "retain observation-vs-hypothesis separation",
+      "input_requirements": [
+        "community samples",
+        "provider funding methods"
+      ],
+      "output_contract_or_semantics": "measured proxy disagreement + conditional hypothesis",
+      "existing_operations_affected": [
+        "getStockCommunity",
+        "getStockFundFlow",
+        "getStockEvidence"
+      ],
+      "acceptance_cases": [
+        "different source methods not summed",
+        "no assertion of beneficial owner from large order size"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-14",
+      "attachment_claim": "机构专用双向成交/研报密度可判真假机构",
+      "decision": "reject_identity_claim",
+      "comparison_with_v3": "不采纳身份判断；可借鉴异常行为特征",
+      "reason": "这些公开代理不能唯一识别最终账户或租用关系。改为席位行为异常或披露结构，不输出真假机构事实，也不据此硬编码清仓。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §5.2"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "reject fake-identity detector label",
+      "input_requirements": [
+        "seat disclosures",
+        "research coverage",
+        "bidirectional amounts"
+      ],
+      "output_contract_or_semantics": "seat-behavior anomaly hypothesis only",
+      "existing_operations_affected": [
+        "getStockSeats",
+        "getStockEvidence"
+      ],
+      "acceptance_cases": [
+        "no natural-person/fund identity created from ambiguous seat",
+        "hypothesis remains distinguishable from source fact"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-15",
+      "attachment_claim": "ETF 成交额能实时表示申赎和国家队护盘",
+      "decision": "reject_equivalence",
+      "comparison_with_v3": "不采纳等同；沿用 v3 资金披露与代理区分",
+      "reason": "二级交易额、份额变化、申购赎回及投资者身份是不同变量。成交脉冲本身可以加入观察/条件预测；不能声称已观测国家队，或预先承诺 30—60 秒领先。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §5"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "retain ETF observation separation",
+      "input_requirements": [
+        "secondary turnover",
+        "disclosed fund shares",
+        "creation/redemption data if available"
+      ],
+      "output_contract_or_semantics": "separate features with source/availability and no inferred state buyer identity",
+      "existing_operations_affected": [
+        "getStockFundFlow",
+        "getStockEvidence"
+      ],
+      "acceptance_cases": [
+        "turnover spike cannot populate subscription field",
+        "unavailable owner identity remains unknown"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-16",
+      "attachment_claim": "可转债必然领先正股 1—3 分钟，可套利",
+      "decision": "research_only",
+      "comparison_with_v3": "仅作为跨资产研究候选",
+      "reason": "同时控制正股、转股溢价、赎回/下修条款、波动、流动性及不同交易制度；检验时间领先能否在真实可得延迟后保留。不能把同向相关解释为可兑现无风险套利。",
+      "v3_anchors": [
+        "catalogs/factor_catalog_v3.json F029"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "cross-asset research candidate only",
+      "input_requirements": [
+        "bond-stock mapping",
+        "conversion terms",
+        "event times",
+        "market-specific execution policy"
+      ],
+      "output_contract_or_semantics": "tested lead-lag feature; distinct from arbitrage guarantee",
+      "existing_operations_affected": [
+        "createExperiment",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "returns adjusted for available timing",
+        "leading effect survives source latency and cost controls"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-17",
+      "attachment_claim": "题材生命周期五阶段固定对应最佳买卖点",
+      "decision": "refine_existing",
+      "comparison_with_v3": "细化已有 F071/F072/S016；可解释的状态假说",
+      "reason": "阶段有价值，但应允许 unknown、阶段回退和不确定性；转移阈值从历史训练冻结，不能后见之明标记“初生”。每阶段对收益的影响需条件验证。",
+      "v3_anchors": [
+        "catalogs/factor_catalog_v3.json F071/F072"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "F071/F072 state policy refinement",
+      "input_requirements": [
+        "frozen sector data",
+        "regime transition policy"
+      ],
+      "output_contract_or_semantics": "state hypothesis + uncertainty + transition history",
+      "existing_operations_affected": [
+        "getSectorOverview",
+        "getCandidatePool"
+      ],
+      "acceptance_cases": [
+        "future theme success cannot label past initial stage",
+        "unknown and reversal transitions supported"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-18",
+      "attachment_claim": "大模型数值围栏 = 可信数字",
+      "decision": "refine_existing",
+      "comparison_with_v3": "保留 v3 并细化字段引用校验",
+      "reason": "JSON Schema 只验证结构。输出数字应引用已冻结 feature/evidence ID，校验币种、单位、值、时间和变换。模型对来源理解正确不意味着其收益预测已校准。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §7"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "numeric provenance validation refinement",
+      "input_requirements": [
+        "frozen structured features",
+        "evidence IDs",
+        "model response"
+      ],
+      "output_contract_or_semantics": "schema-valid and value-bound model explanation",
+      "existing_operations_affected": [
+        "getModelRun",
+        "getStockWorkspace"
+      ],
+      "acceptance_cases": [
+        "wrong unit or stale release rejected",
+        "schema-valid invented number not accepted"
+      ],
+      "source_ids": [],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-19",
+      "attachment_claim": "论文按顶会名字直接转生产算子",
+      "decision": "correct_bibliography_and_research_mapping",
+      "comparison_with_v3": "采纳方法线索，重做准确书目及迁移实验",
+      "reason": "研究问题、市场、动作空间、成本假设与理论保证不同。下节逐篇给出准确身份和边界；没有执行的论文不记作已复现，不增加“核心全文章节已读”数量。",
+      "v3_anchors": [
+        "spec/FINAL_SYSTEM_SPEC.md §10",
+        "research/papers_registry.json"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "review bibliography mapping",
+      "input_requirements": [
+        "official paper identity",
+        "actual read depth",
+        "task/market/assumptions"
+      ],
+      "output_contract_or_semantics": "research registry update without claiming replication",
+      "existing_operations_affected": [
+        "listPapers",
+        "createExperiment"
+      ],
+      "acceptance_cases": [
+        "Stock-Pretrain unresolved does not count verified",
+        "historical years kept",
+        "theoretical guarantee accurately named"
+      ],
+      "source_ids": [
+        "VM-S01",
+        "VM-S02",
+        "VM-S03",
+        "VM-S04",
+        "VM-S05",
+        "VM-S06",
+        "VM-S07",
+        "VM-S08",
+        "VM-S09"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    },
+    {
+      "proposal_id": "VM-20",
+      "attachment_claim": "Graph-Mamba 可直接构建龙头—补涨毫秒传导图",
+      "decision": "replace_method_mapping",
+      "comparison_with_v3": "修改为两类独立研究",
+      "reason": "SAMBA 原论文图节点是 daily features，实验为美股；它不等于 A 股供应链或个股 lead–lag 图。可借鉴高效时序表示；产业实体图必须来自另有证据的关系合同和时点数据。[VM-S03]",
+      "v3_anchors": [
+        "catalogs/strategy_catalog_v3.json S048/S049"
+      ],
+      "implementation_reference": "methods_review.md §3; catalog additions where applicable",
+      "evidence_level": "project_reasoning_with_listed_primary_sources",
+      "validation_required": true,
+      "implementation_status": "not_implemented",
+      "production_enabled": false,
+      "target": "SAMBA interpretation correction",
+      "input_requirements": [
+        "past-only daily feature graph",
+        "separate instrument relation graph if supported"
+      ],
+      "output_contract_or_semantics": "separate representation and causal/lead-lag research tasks",
+      "existing_operations_affected": [
+        "createExperiment",
+        "getEvaluation"
+      ],
+      "acceptance_cases": [
+        "feature nodes not renamed stocks without a new model",
+        "US prediction RMSE not presented as A-share transaction result"
+      ],
+      "source_ids": [
+        "VM-S03",
+        "VM-S03a"
+      ],
+      "api_migration": "No automatic endpoint/schema migration. New semantic definitions must be registered and bound through existing typed feature/artifact contracts before calculation.",
+      "file_changes_proposed": []
+    }
+  ],
+  "catalog_additions": [
+    "F097",
+    "F098",
+    "F099",
+    "F100",
+    "F101",
+    "S061"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T02:58:22.007141+00:00",
+  "read_only_stage": true,
+  "issue_id": "CL-AD01",
+  "status": "closed",
+  "closure_level": "specification_only",
+  "supersedes_pending_status_in": "research_v5/qa/cold_ledger_arch_data_checks.json",
+  "evidence": [
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/spec/REFERENCE_RECONCILIATION_V32.md",
+      "line": 43,
+      "sha256": "ea9793918ae0bc803416243a6366baf6f57d6e9741217dd04132c195a244b706",
+      "observed_text": "暂存和COMMITTED_UNPUBLISHED批次也必须持有对象pin或有期限租约。GC与publish在同一目录/对象引用的事务锁或CAS状态下决定删除资格；不能“先查无READY引用、随后删文件”而与正在发布的批次竞态。过期租约的回收先确认对应作业无有效owner，再重查完整引用闭包。"
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/database/database_design.md",
+      "line": 141,
+      "sha256": "e06eb5070fc803a2cb0c516d42ccd30f2983ebe8f7393a48a5a89e82eb44da57",
+      "observed_text": "暂存和待发布批次也持对象pin/lease，GC与publish按同一目录锁或CAS协调；无READY引用不等于可删。"
+    }
+  ],
+  "reason": "待发布对象持有保护引用，回收与发布共享锁/CAS，过期租约先检查有效owner；这消除了原规范允许的无READY引用即删除的检查—使用竞态。",
+  "acceptance_still_required_in_implementation": "对象校验后、READY事务前插入GC：只能GC让位或发布因已标删除而退出并重建，不得READY引用已删除对象。验证共享锁/CAS覆盖租约失效及恢复者接管的状态转移。",
+  "limits": "仅窄回读两份规范；没有执行并发实现或生产测试，未修改stage。"
+}

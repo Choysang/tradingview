@@ -1,0 +1,221 @@
+{
+  "review_date": "2026-11-11",
+  "target": "deliverables/Pulse_Rewrite_Package_v31_build",
+  "review_type": "targeted independent source/catalog/mathematical-semantics cold read",
+  "checks_passed": 21,
+  "checks": [
+    {
+      "check": "source_registry_counts",
+      "passed": true,
+      "detail": {
+        "records": 231,
+        "unique_ids": 231,
+        "distinct_exact_urls": 218
+      }
+    },
+    {
+      "check": "source_evidence_paths_exist",
+      "passed": true,
+      "detail": "All declared evidence_file paths resolve inside staging."
+    },
+    {
+      "check": "catalog_counts",
+      "passed": true,
+      "detail": "61 strategy entries and 105 factor entries; scope strings agree."
+    },
+    {
+      "check": "catalog_identifiers_unique",
+      "passed": true,
+      "detail": "Catalog IDs and strategy UUIDs unique."
+    },
+    {
+      "check": "catalog_source_reference_closure",
+      "passed": true,
+      "detail": "Every catalog source_refs ID resolves; empty references are explicit project hypotheses, not empirical validation."
+    },
+    {
+      "check": "strategy_factor_reference_closure",
+      "passed": true,
+      "detail": "All required strategy factor IDs resolve."
+    },
+    {
+      "check": "all_catalog_entries_unimplemented_unvalidated",
+      "passed": true,
+      "detail": "No catalog entry claims a completed implementation or validated return."
+    },
+    {
+      "check": "strategy_production_routes_off",
+      "passed": true,
+      "detail": "All 61 production routes remain false."
+    },
+    {
+      "check": "new_factor_routes_off",
+      "passed": true,
+      "detail": "F097-F105 production_route_enabled=false and not_connected."
+    },
+    {
+      "check": "original_strategy_entries_unchanged",
+      "passed": true,
+      "detail": "All original 60 entries structurally unchanged."
+    },
+    {
+      "check": "original_factor_entries_unchanged",
+      "passed": true,
+      "detail": "All original 96 entries structurally unchanged."
+    },
+    {
+      "check": "S061_identity_policy",
+      "passed": true,
+      "detail": "UUIDv5 uses the retained namespace and strategy/S061 name."
+    },
+    {
+      "check": "core_paper_registry_unchanged",
+      "passed": true,
+      "detail": {
+        "count": 46,
+        "sha256": "9c81b4887c0426d68283d6e2a9477e907f2ba96daf14bc428dcf5965025e047d"
+      }
+    },
+    {
+      "check": "supplement_paper_accounting",
+      "passed": true,
+      "detail": {
+        "identified": 9,
+        "unresolved": 1
+      }
+    },
+    {
+      "check": "supplement_status_and_refs",
+      "passed": true,
+      "detail": "All nine identified works plus unresolved lead remain unimplemented and unvalidated; references resolve."
+    },
+    {
+      "check": "submission_dates_not_availability",
+      "passed": true,
+      "detail": "Five arXiv submission dates explicitly distinguished from unknown independently verified first public availability."
+    },
+    {
+      "check": "decision_ids_and_dispositions",
+      "passed": true,
+      "detail": {
+        "revise": 29,
+        "covered": 3,
+        "reject": 14,
+        "adopt": 4
+      }
+    },
+    {
+      "check": "decision_claim_bounds",
+      "passed": true,
+      "detail": "All 50 decisions distinguish design adoption from production implementation/profitability."
+    },
+    {
+      "check": "decision_evidence_map",
+      "passed": true,
+      "detail": "50 mapped decisions, 31 with directly supporting primary-source IDs; no source-count change."
+    },
+    {
+      "check": "decision_internal_paths",
+      "passed": true,
+      "detail": "Every mapped internal_evidence_path exists."
+    },
+    {
+      "check": "taxonomy_roles",
+      "passed": true,
+      "detail": "41 facets and six roles; no seventh holding_overlay role."
+    }
+  ],
+  "catalog_validator": {
+    "passed": 20,
+    "description": "python catalogs/validate_catalogs.py; candidates only"
+  },
+  "modifications": [
+    {
+      "path": "catalogs/factor_catalog_v3.json",
+      "items": [
+        "F103",
+        "F104",
+        "F105"
+      ],
+      "reason": "Complete zero-scale/fitted-model semantics, typed probability-vector normalization, and instrument/sector forecast-scope plus prospective/retrospective cohort boundaries."
+    },
+    {
+      "path": "catalogs/factor_catalog_v3.json",
+      "items": [
+        "F102",
+        "F103",
+        "F104",
+        "F105"
+      ],
+      "reason": "Explicit production_route_enabled=false for all four new source/product candidates."
+    },
+    {
+      "path": "research/supplemental_method_review.json",
+      "reason": "Rename five first_public_date fields to first_arxiv_submission_date; unknown independently verified public availability remains null."
+    },
+    {
+      "path": "research/supplement_review/methods_review.md",
+      "reason": "Match arXiv submission-date wording."
+    },
+    {
+      "path": "spec/ADDENDUM_V31.md",
+      "reason": "Match TradingAgents/FinMem arXiv first-submission versus formal-publication wording."
+    }
+  ],
+  "untouched": [
+    "contracts/",
+    "reference_extensions/",
+    "research/papers_registry.json",
+    "all original S001-S060 catalog entries",
+    "all original F001-F096 catalog entries"
+  ],
+  "limits": [
+    "This is a static/reference audit, not real-source ingestion or strategy training/backtesting.",
+    "Core 46-paper file equality was verified; this task does not claim to re-read all 46 primary papers.",
+    "The original v3 reference evidence is preserved; old repository experiments were inspected but not rerun.",
+    "Production Repository validation and original-source/time/coverage verification remain distinct from JSON Schema and supplied-context reference tests.",
+    "Word/PDF visual QA is separate and not yet performed by this reviewer."
+  ],
+  "fresh_primary_rechecks": [
+    {
+      "id": "CR02",
+      "ref": "turn192view0",
+      "url": "https://duckdb.org/2026/10/21/announcing-duckdb-200"
+    },
+    {
+      "id": "CR03",
+      "ref": "turn192view1",
+      "url": "https://pola.rs/posts/polars-2-1-changelog/"
+    },
+    {
+      "id": "CR04",
+      "ref": "turn192view2",
+      "url": "https://pydantic.dev/articles/pydantic-validation-next-steps"
+    },
+    {
+      "id": "CR05",
+      "ref": "turn192view3",
+      "url": "https://www.postgresql.org/about/news/postgresql-19-rc-1-released-3409/"
+    },
+    {
+      "topic": "SAMBA submission history",
+      "ref": "turn195view0",
+      "url": "https://arxiv.org/abs/2410.03707"
+    },
+    {
+      "id": "VM-S06b",
+      "ref": "turn195view1",
+      "url": "https://arxiv.org/abs/2201.09058"
+    },
+    {
+      "id": "VM-S05a",
+      "ref": "turn195view2",
+      "url": "https://arxiv.org/abs/2610.16524"
+    },
+    {
+      "id": "VM-S09a",
+      "ref": "turn195view3",
+      "url": "https://arxiv.org/abs/2311.13743"
+    }
+  ]
+}

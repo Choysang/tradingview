@@ -1,0 +1,302 @@
+[
+  {
+    "id": "A01",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml",
+    "title": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓",
+    "supports": "正式2026规则 2026-07-06生效及部分此前条文继续暂缓"
+  },
+  {
+    "id": "A02",
+    "url": "https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20260424_10816474.shtml",
+    "title": "官方说明ST 5%改10% 盘后固定价扩容",
+    "supports": "官方说明ST 5%改10% 盘后固定价扩容"
+  },
+  {
+    "id": "A03",
+    "url": "https://investor.szse.cn/lawrules/rule/trade/t20260424_620190.html",
+    "title": "深证上〔2026〕551号 2026-07-06生效",
+    "supports": "深证上〔2026〕551号 2026-07-06生效"
+  },
+  {
+    "id": "A04",
+    "url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf",
+    "title": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后",
+    "supports": "正式深交所2026交易规则全文 时段/数量/价格/T+1/盘后"
+  },
+  {
+    "id": "A05",
+    "url": "https://www.szse.cn/English/services/trading/tradOverview/",
+    "title": "现行交易时段 主板10% 创业板20%",
+    "supports": "现行交易时段 主板10% 创业板20%"
+  },
+  {
+    "id": "A06",
+    "url": "https://one.sse.com.cn/onething/gptz/",
+    "title": "沪市A股盘后固定价15:05–15:30",
+    "supports": "沪市A股盘后固定价15:05–15:30"
+  },
+  {
+    "id": "A07",
+    "url": "https://www.hkex.com.hk/News/Market-Communications/2024/2404122news?sc_lang=en",
+    "title": "北向实时买卖及总成交不再提供 季度持股披露",
+    "supports": "北向实时买卖及总成交不再提供 季度持股披露"
+  },
+  {
+    "id": "A08",
+    "url": "https://www.hkex.com.hk/-/media/HKEX-Market/News/News-Release/2025/250227news/250227_FY-Results_e.pdf",
+    "title": "2024披露调整实际生效日期",
+    "supports": "2024披露调整实际生效日期"
+  },
+  {
+    "id": "A09",
+    "url": "https://www.sseinfo.com/services/assortment/level2/",
+    "title": "L2包含逐笔/订单关联等 专网协议",
+    "supports": "L2包含逐笔/订单关联等 专网协议"
+  },
+  {
+    "id": "A10",
+    "url": "https://tushare.pro/document/2?doc_id=143",
+    "title": "news来源 最大1500条 需独立新闻权限",
+    "supports": "news来源 最大1500条 需独立新闻权限"
+  },
+  {
+    "id": "A11",
+    "url": "https://tushare.pro/document/1?doc_id=290",
+    "title": "积分与独立权限分离 分钟/公告/新闻非同一权限",
+    "supports": "积分与独立权限分离 分钟/公告/新闻非同一权限"
+  },
+  {
+    "id": "A12",
+    "url": "https://www.stats.gov.cn/sj/fbrc/bnxxfb/",
+    "title": "2026发布日程 数据库更新与新闻首发有时差",
+    "supports": "2026发布日程 数据库更新与新闻首发有时差"
+  },
+  {
+    "id": "A13",
+    "url": "https://www.federalreserve.gov/feeds/feeds.htm",
+    "title": "官方货币政策/讲话/统计RSS",
+    "supports": "官方货币政策/讲话/统计RSS"
+  },
+  {
+    "id": "A14",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/realtime_period.html",
+    "title": "ALFRED当时已知版本 realtime_start/end",
+    "supports": "ALFRED当时已知版本 realtime_start/end"
+  },
+  {
+    "id": "A15",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/series.html",
+    "title": "FRED API key和参数",
+    "supports": "FRED API key和参数"
+  },
+  {
+    "id": "A16",
+    "url": "https://www.bls.gov/audience/developers.htm",
+    "title": "BLS官方HTTPS GET/POST JSON数据API",
+    "supports": "BLS官方HTTPS GET/POST JSON数据API"
+  },
+  {
+    "id": "A17",
+    "url": "https://www.bls.gov/bls/api_features.htm",
+    "title": "BLS API限制和API可用延迟说明",
+    "supports": "BLS API限制和API可用延迟说明"
+  },
+  {
+    "id": "A18",
+    "url": "https://www.eia.gov/opendata/documentation.php",
+    "title": "EIA APIv2 免费key及接口结构",
+    "supports": "EIA APIv2 免费key及接口结构"
+  },
+  {
+    "id": "A19",
+    "url": "https://www.eia.gov/opendata/faqs.php",
+    "title": "EIA库存报告API可能滞后至两小时 秒级首发另有服务",
+    "supports": "EIA库存报告API可能滞后至两小时 秒级首发另有服务"
+  },
+  {
+    "id": "A20",
+    "url": "https://gdeltproject.org/data.html",
+    "title": "GDELT2.0 65语言 15分钟更新",
+    "supports": "GDELT2.0 65语言 15分钟更新"
+  },
+  {
+    "id": "A21",
+    "url": "https://developers.google.com/youtube/data/getting-started",
+    "title": "YouTube官方API配额机制",
+    "supports": "YouTube官方API配额机制"
+  },
+  {
+    "id": "A22",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/14945211791892-Developer-Platform-Accessing-Reddit-Data",
+    "title": "Reddit数据API须批准/认证 商业需对应权限",
+    "supports": "Reddit数据API须批准/认证 商业需对应权限"
+  },
+  {
+    "id": "A23",
+    "url": "https://support.reddithelp.com/hc/en-us/articles/16471395473812-Moderation-Bots-Tooling",
+    "title": "Reddit开发者批准和使用条件",
+    "supports": "Reddit开发者批准和使用条件"
+  },
+  {
+    "id": "A24",
+    "url": "https://www.cninfo.com.cn/new/index?lang=en",
+    "title": "巨潮公开数据/API/商城入口",
+    "supports": "巨潮公开数据/API/商城入口"
+  },
+  {
+    "id": "A25",
+    "url": "https://developer.open-douyin.com/docs/resource/zh-CN/dop/develop/openapi/douyin-search-capability/",
+    "title": "抖音视频搜索接口与scope",
+    "supports": "抖音视频搜索接口与scope"
+  },
+  {
+    "id": "A26",
+    "url": "https://partner.open-douyin.com/docs/resource/zh-CN/dop/ability/search-management/item-search",
+    "title": "抖音搜索能力页面仍标实验不对外开放",
+    "supports": "抖音搜索能力页面仍标实验不对外开放"
+  },
+  {
+    "id": "A27",
+    "url": "https://www.cffex.com.cn/u/cms/www/202003/27165505w3j5.pdf",
+    "title": "CFFEX 2020沪深300股指期货交易细则 历史背景",
+    "supports": "仅支持历史规则背景；2026现行合约日历和规则仍须另行核实"
+  },
+  {
+    "id": "A28",
+    "url": "https://www.mof.gov.cn/zhengwuxinxi/",
+    "title": "财政部政策发布和政策解读栏目",
+    "supports": "财政部政策发布和政策解读栏目"
+  },
+  {
+    "id": "A29",
+    "url": "https://www.ndrc.gov.cn/xxgk/zcfb/tz/wap_index.html",
+    "title": "发改委政策通知栏目",
+    "supports": "发改委政策通知栏目"
+  },
+  {
+    "id": "A30",
+    "url": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+    "title": "BLS发布日历 美国东部时区 可订阅ICS",
+    "supports": "BLS发布日历 美国东部时区 可订阅ICS"
+  },
+  {
+    "id": "T01",
+    "url": "https://docs.temporal.io/workflow-definition",
+    "title": "Temporal Workflow Definition",
+    "supports": "Workflow须确定性；外部API/LLM/DB交互应放Activity"
+  },
+  {
+    "id": "T02",
+    "url": "https://docs.temporal.io/activity-definition",
+    "title": "Temporal Activity Definition",
+    "supports": "Activity会重试、多次执行；幂等由业务端实现"
+  },
+  {
+    "id": "T03",
+    "url": "https://docs.nats.io/concepts/jetstream",
+    "title": "NATS JetStream",
+    "supports": "持久化、回放、至少一次交付、消费者独立进度"
+  },
+  {
+    "id": "T04",
+    "url": "https://docs.pola.rs/user-guide/lazy/using/",
+    "title": "Polars Lazy API",
+    "supports": "整体查询优化、流式与schema检查"
+  },
+  {
+    "id": "T05",
+    "url": "https://duckdb.org/docs/stable/data/parquet/overview",
+    "title": "DuckDB Parquet",
+    "supports": "直接读写Parquet，按列/过滤扫描"
+  },
+  {
+    "id": "T06",
+    "url": "https://www.tradingview.com/charting-library-docs/latest/getting_started/product-comparison/",
+    "title": "TradingView Product Comparison",
+    "supports": "Lightweight Charts不自带行情或指标"
+  },
+  {
+    "id": "T07",
+    "url": "https://qlib.readthedocs.io/en/latest/advanced/PIT.html",
+    "title": "Qlib PIT",
+    "supports": "修订财报版本的时点读取；当前主要季/年因子"
+  },
+  {
+    "id": "T08",
+    "url": "https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf",
+    "title": "Bailey & López de Prado DSR paper",
+    "supports": "多重试验选择偏差与非正态修正"
+  },
+  {
+    "id": "T09",
+    "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+    "title": "Bailey et al PBO paper",
+    "supports": "回测过拟合概率与CSCV方法"
+  },
+  {
+    "id": "T10",
+    "url": "https://github.com/microsoft/qlib",
+    "title": "Microsoft Qlib",
+    "supports": "ML量化研究管线与模型/数据/回测组织"
+  },
+  {
+    "id": "T11",
+    "url": "https://github.com/microsoft/RD-Agent",
+    "title": "Microsoft RD-Agent",
+    "supports": "因子/模型提出、实现与联合研究流程"
+  },
+  {
+    "id": "T12",
+    "url": "https://vectorbt.dev/",
+    "title": "vectorbt",
+    "supports": "数组化批量策略与参数研究；注意免费和PRO能力差别"
+  },
+  {
+    "id": "T13",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+    "title": "LEAN Trade Fills",
+    "supports": "fill与slippage职责；默认完全成交、部分成交自定义"
+  },
+  {
+    "id": "T14",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/",
+    "title": "NautilusTrader Backtesting",
+    "supports": "回测共享核心组件，流数据驱动"
+  },
+  {
+    "id": "T15",
+    "url": "https://nautilustrader.io/docs/latest/concepts/backtesting/fill-models/",
+    "title": "NautilusTrader Fill Models",
+    "supports": "book type、触价成交概率、滑点、流动性消耗约束"
+  },
+  {
+    "id": "T16",
+    "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/master/docs/source/finrl_meta/overview.rst",
+    "title": "FinRL Training Testing Trading",
+    "supports": "DRL训练、测试、交易的阶段分离"
+  },
+  {
+    "id": "T17",
+    "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx",
+    "title": "MCP Tools Specification",
+    "supports": "工具定义有inputSchema/outputSchema，稳定工具顺序有利缓存"
+  },
+  {
+    "id": "T18",
+    "url": "https://github.com/a2aproject/A2A/blob/main/docs/specification.md",
+    "title": "A2A Specification",
+    "supports": "Agent Card、任务、跨独立Agent系统交互"
+  },
+  {
+    "id": "T19",
+    "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/research-guide",
+    "title": "QuantConnect Research Guide",
+    "supports": "财务发布日期、复权价格、动态股票池与生存偏差"
+  },
+  {
+    "id": "T20",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "title": "PostgreSQL Transaction Isolation",
+    "supports": "事务隔离含义；作为交易与版本状态库的基础"
+  }
+]

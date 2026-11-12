@@ -1,0 +1,4770 @@
+{
+  "schema_version": "3.0-field-dictionary.1",
+  "checked_at": "2026-11-10",
+  "scope": "all columns in the delivered 37-table PostgreSQL seed, plus cross-store canonical market fields; not a claim that every future production table is implemented",
+  "source_sql_sha256": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2",
+  "naming_rules": {
+    "sql_and_json_fields": "lower_snake_case",
+    "identity": "stable *_id; never display names or mutable exchange symbols as PK",
+    "version_dimensions": [
+      "schema_version",
+      "mapping_version",
+      "observation_revision",
+      "snapshot_id",
+      "strategy_version",
+      "plan_version",
+      "release_id",
+      "account_version"
+    ],
+    "units": "encode material units in field names; price_raw must travel with currency and adjustment_mode=raw",
+    "time": "all *_at and event_time timestamp instants use UTC; trade_date belongs to the exchange calendar; never infer timestamp precision",
+    "array_order": "only meaningful when the contract defines it; rank and event ordinal explicit",
+    "foreign_keys": "same stable identifier at API/domain/database boundary; no duplicate stock/security ID namespaces"
+  },
+  "field_status_enum": [
+    "observed",
+    "derived",
+    "missing",
+    "invalid",
+    "not_applicable",
+    "disputed"
+  ],
+  "field_status_definitions": {
+    "observed": "a source fact after reversible normalization; retain source lineage",
+    "derived": "an explicitly specified computation over versioned observations, never a newly invented source fact",
+    "missing": "the field applies but was not available",
+    "invalid": "the source supplied a value that violates its field/type/unit/semantic contract",
+    "not_applicable": "field has no meaning for this instrument/event/context under a named policy",
+    "disputed": "aligned independent observations conflict beyond the versioned tolerance"
+  },
+  "separate_status_dimensions": {
+    "observation_quality": [
+      "valid",
+      "partial",
+      "invalid",
+      "disputed"
+    ],
+    "freshness": [
+      "current",
+      "stale",
+      "unknown",
+      "not_expected"
+    ],
+    "source_runtime": [
+      "healthy",
+      "degraded",
+      "unavailable",
+      "auth_required",
+      "paused",
+      "unconfigured"
+    ],
+    "strategy_implementation": [
+      "not_implemented",
+      "prototype",
+      "implemented"
+    ]
+  },
+  "missing_value_rules": [
+    "SQL NULL is never implicitly zero. Zero is a valid observation only when supported by the source and session/instrument semantics.",
+    "Canonical nulls require field_quality status and reason. Invalid original values remain in immutable raw objects.",
+    "Alternate source completion remains observed with value_origin=alternate_source, source ID, raw reference and alignment trace.",
+    "Model estimates are derived in a separate namespace and cannot overwrite OHLC, amount, volume, published time, company facts or source evidence."
+  ],
+  "canonical_market_fields": [
+    {
+      "name": "price_raw",
+      "type": "decimal string",
+      "unit": "currency per share",
+      "requirements": [
+        "currency",
+        "adjustment_mode=raw"
+      ],
+      "meaning": "generic unadjusted price; concrete bars use open_price_raw/high_price_raw/low_price_raw/close_price_raw; quotes use last_price_raw"
+    },
+    {
+      "name": "volume_shares",
+      "type": "safe nonnegative JSON integer",
+      "unit": "shares",
+      "meaning": "interval or cumulative meaning must be declared by contract; cumulative intraday snapshots cannot be appended and summed as interval bars"
+    },
+    {
+      "name": "turnover_amount_cny",
+      "type": "nonnegative decimal string",
+      "unit": "CNY yuan",
+      "meaning": "never mix thousands of yuan with yuan"
+    },
+    {
+      "name": "exchange_reference_price_raw",
+      "type": "nullable positive decimal string",
+      "meaning": "exchange adjusted previous reference price when the source states that definition; not the prior bar raw close"
+    },
+    {
+      "name": "change_ratio",
+      "type": "nullable finite decimal string",
+      "unit": "fraction, 2%=0.02"
+    },
+    {
+      "name": "turnover_ratio",
+      "type": "nullable finite decimal string",
+      "unit": "fraction, 1.25%=0.0125; denominator policy/version required"
+    },
+    {
+      "name": "adjustment_mode",
+      "type": "enum",
+      "values": [
+        "raw",
+        "forward_adjusted",
+        "backward_adjusted"
+      ],
+      "meaning": "raw and adjusted datasets are separate; adjustment factor version is required for adjusted datasets"
+    },
+    {
+      "name": "field_quality",
+      "type": "object",
+      "meaning": "per canonical path: status, raw_value, raw_unit, origin/source/raw_object refs, conversion, mapping_version, precision, reason and optional conflict references"
+    }
+  ],
+  "domains": [
+    {
+      "name": "core.finite_decimal",
+      "base_type": "numeric(38, 12)",
+      "constraints": [
+        "CHECK (CAST(value AS text) NOT IN ('NaN', 'Infinity', '-Infinity'))"
+      ]
+    },
+    {
+      "name": "core.price_raw",
+      "base_type": "numeric(38, 12)",
+      "constraints": [
+        "CHECK (value > 0 AND CAST(value AS text) NOT IN ('NaN', 'Infinity', '-Infinity'))"
+      ]
+    },
+    {
+      "name": "core.nonnegative_amount",
+      "base_type": "numeric(38, 12)",
+      "constraints": [
+        "CHECK (value >= 0 AND CAST(value AS text) NOT IN ('NaN', 'Infinity', '-Infinity'))"
+      ]
+    },
+    {
+      "name": "core.sha256_hex",
+      "base_type": "text",
+      "constraints": [
+        "CHECK (value ~ '^[0-9a-f]{64}$')"
+      ]
+    }
+  ],
+  "feature_key_contract": {
+    "schema_ref": "../contracts/v3.schema.json#/$defs/FeatureKey",
+    "dimensions": [
+      "feature_id",
+      "definition_version",
+      "implementation_digest",
+      "parameter_digest",
+      "instrument_ids",
+      "timeframe",
+      "adjustment_mode",
+      "snapshot_id",
+      "decision_as_of",
+      "availability_policy_version",
+      "session_policy_version",
+      "input_revision",
+      "input_schema_version",
+      "dependency_digest",
+      "universe_policy_version",
+      "calendar_version",
+      "adjustment_version",
+      "market_rules_version",
+      "numeric_policy_version"
+    ],
+    "instrument_order": "Preserve declared order. Only explicitly unordered feature definitions may apply stable sorting as part of definition_version."
+  },
+  "tables": [
+    {
+      "table": "core.contract_version",
+      "column_count": 6,
+      "table_constraints": [
+        "PRIMARY KEY (contract_id, schema_version)",
+        "CHECK (jsonb_typeof(schema_document) = 'object')"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "contract_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范合同稳定名称；生产者与消费者共享，不含供应商临时列名",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "合同版本；与策略版本、数据修订版本分开",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_document",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "实际JSON Schema；不得只存自然语言字段表",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范序列化后的合同内容摘要",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "compatibility_policy",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "兼容性规则版本；含严格消费者的新增字段处理",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "合同登记时刻，UTC语义",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.source",
+      "column_count": 5,
+      "table_constraints": [],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "稳定来源标识，如tushare或akshare_eastmoney",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "展示名称，不用于关联主键",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "provider_uri",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "供应商或发布方官方入口",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "default_origin_group",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "已知原始内容产生者；未知为null，不填供应商猜测",
+          "column_constraints": []
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "来源登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.source_endpoint",
+      "column_count": 14,
+      "table_constraints": [
+        "PRIMARY KEY (source_id, endpoint_id, source_schema_version, mapping_version)",
+        "FOREIGN KEY (contract_id, schema_version) REFERENCES core.contract_version",
+        "CHECK (transport_kind IN ('stream', 'poll', 'webhook', 'batch', 'manual_import'))",
+        "CHECK (poll_interval_seconds IS NULL OR poll_interval_seconds > 0)",
+        "CHECK (stale_after_seconds > 0)",
+        "CHECK (jsonb_typeof(policy_document) = 'object')"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "来源注册标识",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.source (source_id)"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "精确接口标识；同供应商daily与rt_k不共享单位配置",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始字段结构或文档观测版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "解析、单位转换、时区、代码映射政策版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "contract_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "该适配器输出的规范合同",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "输出合同版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "映射规则摘要；变更后不能覆盖旧记录",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "enabled",
+          "postgres_type": "boolean",
+          "nullable": false,
+          "json_type": "boolean",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "用户或部署政策期望启用，不能当健康状态",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "credential_ref",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "凭据引用，不保存明文密钥",
+          "column_constraints": []
+        },
+        {
+          "name": "transport_kind",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "stream/poll/webhook等传输类型",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "poll_interval_seconds",
+          "postgres_type": "integer",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": "seconds",
+          "description_zh": "轮询起始间隔，受源限额与会话政策约束",
+          "column_constraints": []
+        },
+        {
+          "name": "stale_after_seconds",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": "seconds",
+          "description_zh": "端点时效判定阈值配置；不是保证源一定更新",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "policy_document",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "时区、日历、空结果、回看窗、配额和会话边界政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此端点版本登记时刻",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.instrument",
+      "column_count": 8,
+      "table_constraints": [
+        "CHECK (delisted_on IS NULL OR listed_on IS NULL OR delisted_on >= listed_on)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "内部稳定证券身份；不使用会复用或变更的代码当唯一身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "instrument_type",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "equity/etf/index等；交易规则按类型选择",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "venue_code",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范交易场所标识，如XSHE/XSHG",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "currency",
+          "postgres_type": "char(3)",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "计价币种；A股CNY，海外数据另存各自币种",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "exchange_timezone",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "IANA时区；交易日历负责会话与日期",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "listed_on",
+          "postgres_type": "date",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "YYYY-MM-DD exchange trading date when named trade_date",
+          "unit": null,
+          "description_zh": "上市日期；未知保留null",
+          "column_constraints": []
+        },
+        {
+          "name": "delisted_on",
+          "postgres_type": "date",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "YYYY-MM-DD exchange trading date when named trade_date",
+          "unit": null,
+          "description_zh": "退市日期；历史证券不可因退市从股票池历史中删除",
+          "column_constraints": []
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "内部身份登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.instrument_alias",
+      "column_count": 9,
+      "table_constraints": [
+        "UNIQUE (source_id, source_symbol, effective_from, revision)",
+        "CHECK (effective_to IS NULL OR effective_to > effective_from)",
+        "CHECK (revision > 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "alias_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一次来源代码映射修订的身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "别名所属来源",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.source (source_id)"
+          ]
+        },
+        {
+          "name": "source_symbol",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始证券代码，保留前导零、大小写和后缀",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "解析后的稳定身份",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "effective_from",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "代码映射的业务生效区间起点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "effective_to",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "生效区间终点，不含该时刻",
+          "column_constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "系统何时知道这个映射版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "revision",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "同一映射的修订号",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_anchor",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "支持此映射的原始记录定位",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.instrument_state",
+      "column_count": 10,
+      "table_constraints": [
+        "PRIMARY KEY (instrument_id, state_version)",
+        "CHECK (state_version > 0)",
+        "CHECK (effective_to IS NULL OR effective_to > effective_from)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "证券身份",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "state_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "证券状态修订号",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "board_code",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "主板/创业板/科创板等规范板块编码",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "该历史状态的证券简称",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "is_risk_warning",
+          "postgres_type": "boolean",
+          "nullable": false,
+          "json_type": "boolean",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "当时适用的风险警示状态，不从当前名称倒填历史",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "trading_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "active/suspended/delisted等明确状态",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "effective_from",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "状态生效时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "effective_to",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "状态业务终止时间",
+          "column_constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此状态可用于系统决策的最早时点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evidence_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "公告或主数据原文引用",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.taxonomy",
+      "column_count": 6,
+      "table_constraints": [
+        "PRIMARY KEY (taxonomy_id, taxonomy_version)",
+        "CHECK (taxonomy_version > 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "taxonomy_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "分类体系身份，如行业、概念、策略方法；不同提供方不强行合并",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "分类体系版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_kind",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "industry/concept/strategy_method/horizon/market_regime等",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "owner_source_id",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "已知外部分类提供者；本站自定义可为null",
+          "column_constraints": [
+            "REFERENCES core.source"
+          ]
+        },
+        {
+          "name": "definition",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "分类方法、层级与适用范围",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "分类版本可得时点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.taxonomy_node",
+      "column_count": 6,
+      "table_constraints": [
+        "PRIMARY KEY (taxonomy_id, taxonomy_version, node_id)",
+        "FOREIGN KEY (taxonomy_id, taxonomy_version) REFERENCES core.taxonomy",
+        "FOREIGN KEY (taxonomy_id, taxonomy_version, parent_node_id) REFERENCES core.taxonomy_node",
+        "CHECK (parent_node_id IS NULL OR parent_node_id <> node_id)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "taxonomy_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "所属分类体系",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "所属体系版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "node_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "节点稳定编码；中文显示名不是主键",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parent_node_id",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "同一体系版本中的父节点，根节点为null",
+          "column_constraints": []
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "节点名称",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "definition",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "节点精确定义与纳入标准",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "core.instrument_tag",
+      "column_count": 11,
+      "table_constraints": [
+        "FOREIGN KEY (taxonomy_id, taxonomy_version, node_id) REFERENCES core.taxonomy_node",
+        "CHECK (effective_to IS NULL OR effective_to > effective_from)",
+        "CHECK (assertion_kind IN ('observed', 'inferred', 'user_declared'))",
+        "UNIQUE (instrument_id, taxonomy_id, taxonomy_version, node_id, effective_from, available_at)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "assignment_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "证券与分类节点的一次有时点依据的关联",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "被分类证券",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "taxonomy_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "分类体系，保留提供方口径",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "分类版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "node_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "行业、概念等节点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "effective_from",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "业务归属起点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "effective_to",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "业务归属终点",
+          "column_constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "当时何时知道该归属",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "assertion_kind",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "observed/inferred/user_declared，事实与推断不混同",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evidence_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "归属来源或推断记录",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "weight",
+          "postgres_type": "core.finite_decimal",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "defined by versioned scoring/weight policy; never assume probability",
+          "description_zh": "分类有权重时使用；未定义权重则null",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "ingest.batch",
+      "column_count": 14,
+      "table_constraints": [
+        "FOREIGN KEY (source_id, endpoint_id, source_schema_version, mapping_version) REFERENCES core.source_endpoint",
+        "CHECK (batch_state IN ('INGESTING', 'RAW_COMMITTED', 'NORMALIZED', 'FAILED'))",
+        "CHECK (expected_count IS NULL OR expected_count >= 0)",
+        "CHECK (received_count >= 0)",
+        "CHECK (batch_state NOT IN ('RAW_COMMITTED', 'NORMALIZED') OR raw_committed_at IS NOT NULL)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "batch_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一次可恢复采集/规范化批次身份，重试沿用",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "采集来源",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "精确接口",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "本次原始结构版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "本次规范化映射版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "partition_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "流分片或查询范围，如证券批/交易日",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "cursor_before",
+          "postgres_type": "jsonb",
+          "nullable": true,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "批次前供应商游标；保留不透明结构",
+          "column_constraints": []
+        },
+        {
+          "name": "cursor_after",
+          "postgres_type": "jsonb",
+          "nullable": true,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "全部原始对象持久化后可提交的游标",
+          "column_constraints": []
+        },
+        {
+          "name": "batch_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "INGESTING/RAW_COMMITTED/NORMALIZED/FAILED",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "expected_count",
+          "postgres_type": "bigint",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "源给出的预期条数；无证据不得猜全量",
+          "column_constraints": []
+        },
+        {
+          "name": "received_count",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "已收取并可核对的原始条数",
+          "column_constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "started_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "批次实际开始",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "raw_committed_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "原始对象及成员清单持久化完成",
+          "column_constraints": []
+        },
+        {
+          "name": "failure_code",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "失败分类；不以空结果隐藏异常",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "ingest.raw_object",
+      "column_count": 13,
+      "table_constraints": [
+        "UNIQUE (source_id, endpoint_id, source_schema_version, source_record_key, content_hash)",
+        "CHECK (ingested_at >= first_seen_at)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "raw_object_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "原始材料不可变身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始取得来源",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.source"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "来源接口；同源不同端点独立去重空间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始结构观测版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_record_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "供应商ID或明确构造的自然键；保留构造规则版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "content_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始字节内容哈希，修订保留新版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "storage_uri",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始对象地址，业务事件只传引用",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mime_type",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "JSON、HTML、PDF等内容格式",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "origin_group",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "确认后的原始事实来源；不是转载站数量",
+          "column_constraints": []
+        },
+        {
+          "name": "published_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "已知真实发布时间；只有日期时保留精度信息不伪造时分秒",
+          "column_constraints": []
+        },
+        {
+          "name": "source_time_precision",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "second/minute/date/unknown等时间精度",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "first_seen_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "本系统首次收到该原始版本的时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "ingested_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "原始材料持久化时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ingest.batch_member",
+      "column_count": 3,
+      "table_constraints": [
+        "PRIMARY KEY (batch_id, raw_object_id)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "batch_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "本次批次",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.batch"
+          ]
+        },
+        {
+          "name": "raw_object_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "原始对象可在重复拉取批次中被再次引用",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.raw_object"
+          ]
+        },
+        {
+          "name": "received_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "该批次实际观察到这份原文的时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ingest.source_cursor",
+      "column_count": 10,
+      "table_constraints": [
+        "PRIMARY KEY (source_id, endpoint_id, source_schema_version, mapping_version, partition_key)",
+        "FOREIGN KEY (source_id, endpoint_id, source_schema_version, mapping_version) REFERENCES core.source_endpoint",
+        "CHECK (cursor_version >= 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "端点来源",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "端点身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "原始结构版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "映射版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "partition_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "游标所属流或范围",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "committed_cursor",
+          "postgres_type": "jsonb",
+          "nullable": true,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "已持久化原文对应的最后连续游标，不能用最大已见值替代",
+          "column_constraints": []
+        },
+        {
+          "name": "committed_batch_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "推进依据的RAW_COMMITTED批次",
+          "column_constraints": [
+            "REFERENCES ingest.batch"
+          ]
+        },
+        {
+          "name": "source_event_watermark",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "源事件时间水位；未知保留null",
+          "column_constraints": []
+        },
+        {
+          "name": "cursor_version",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "比较更新版本，避免并发采集者覆盖",
+          "column_constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "游标成功提交时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ingest.source_health",
+      "column_count": 15,
+      "table_constraints": [
+        "PRIMARY KEY (source_id, endpoint_id, source_schema_version, mapping_version, partition_key)",
+        "FOREIGN KEY (source_id, endpoint_id, source_schema_version, mapping_version) REFERENCES core.source_endpoint",
+        "CHECK (runtime_state IN ('healthy', 'degraded', 'unavailable', 'auth_required', 'paused', 'unconfigured'))",
+        "CHECK (freshness_state IN ('current', 'stale', 'unknown', 'not_expected'))",
+        "CHECK (consecutive_failures >= 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "来源",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "健康必须细到端点，不能用供应商首页可达证明数据流健康",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "监测配置版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "适配映射版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "partition_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "单流或分片身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "runtime_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "healthy/degraded/unavailable/auth_required/paused/unconfigured",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "freshness_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "current/stale/unknown/not_expected，独立于进程存活",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "last_attempt_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近拉取或订阅尝试",
+          "column_constraints": []
+        },
+        {
+          "name": "last_transport_ok_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近传输成功；HTTP200不自动更新数据新鲜度",
+          "column_constraints": []
+        },
+        {
+          "name": "last_new_record_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近发现新原始记录",
+          "column_constraints": []
+        },
+        {
+          "name": "last_canonical_ready_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近有效规范数据发布",
+          "column_constraints": []
+        },
+        {
+          "name": "consecutive_failures",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "连续错误次数，用于退避/恢复判断",
+          "column_constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "next_attempt_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "计划重试或轮询时间",
+          "column_constraints": []
+        },
+        {
+          "name": "last_error_code",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "错误分类，如rate_limited/schema_changed/auth_expired",
+          "column_constraints": []
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此健康投影刷新时刻",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ingest.observation",
+      "column_count": 16,
+      "table_constraints": [
+        "FOREIGN KEY (contract_id, schema_version) REFERENCES core.contract_version",
+        "UNIQUE (raw_object_id, contract_id, schema_version, mapping_version, natural_key, observation_revision)",
+        "CHECK (observation_revision > 0)",
+        "CHECK (quality_status IN ('valid', 'partial', 'invalid', 'disputed'))",
+        "CHECK (jsonb_typeof(canonical_payload) = 'object' AND jsonb_typeof(field_quality) = 'object')"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "observation_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一个规范观测修订的稳定身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "raw_object_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "原始事实可回查",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.raw_object"
+          ]
+        },
+        {
+          "name": "contract_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范观测合同",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范合同版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "使用的字段映射版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "entity_type",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "instrument/issuer/sector/macro/news等领域对象类别",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "entity_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "该领域的稳定身份；实体识别不明时不得假填证券",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "natural_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "对象业务键，用于版本重建与差异定位",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "observation_revision",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "追加修订号，不覆盖旧结果",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "event_time",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "事实实际发生时刻；原始源未给时可为null",
+          "column_constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此规范化版本完成并可供使用的时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "recorded_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此观测写入事务时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "quality_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "valid/partial/invalid/disputed；字段级状态在field_quality",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "canonical_payload",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "已通过对应Schema的有类型载荷，不是任意字段大杂烩",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "field_quality",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "字段missing/invalid/not_applicable/derived等及来源、转换、精度",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "content_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规范内容摘要，用于同版本复算和对账",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "market.dataset_manifest",
+      "column_count": 16,
+      "table_constraints": [
+        "FOREIGN KEY (contract_id, schema_version) REFERENCES core.contract_version",
+        "UNIQUE (dataset_id, manifest_version)",
+        "UNIQUE (dataset_id, batch_id)",
+        "CHECK (manifest_version > 0)",
+        "CHECK (manifest_state IN ('INGESTING', 'COMMITTED_UNPUBLISHED', 'READY', 'FAILED'))",
+        "CHECK (row_count IS NULL OR row_count >= 0)",
+        "CHECK (manifest_state <> 'READY' OR (ready_at IS NOT NULL AND row_count IS NOT NULL AND content_hash IS NOT NULL AND (storage_uri IS NOT NULL OR (lake_catalog_id IS NOT NULL AND lake_snapshot_id IS NOT NULL))))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "平台级不可变数据快照身份，不使用会变化的latest别名",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "dataset_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "数据集名称，如bars_raw_1m或news_events",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "manifest_version",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "该数据集发布版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "batch_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "本次快照发布对应批次",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.batch"
+          ]
+        },
+        {
+          "name": "manifest_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "INGESTING/COMMITTED_UNPUBLISHED/READY/FAILED",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lake_catalog_id",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "分析目录身份；DuckLake快照号只在目录内唯一",
+          "column_constraints": []
+        },
+        {
+          "name": "lake_snapshot_id",
+          "postgres_type": "bigint",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "已提交DuckLake目录快照号",
+          "column_constraints": []
+        },
+        {
+          "name": "storage_uri",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "文件清单或小数据集对象引用",
+          "column_constraints": []
+        },
+        {
+          "name": "content_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "所引用不可变文件清单的摘要",
+          "column_constraints": []
+        },
+        {
+          "name": "contract_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "数据集行合同",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "数据集行Schema版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "row_count",
+          "postgres_type": "bigint",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "完成校验的行数，0允许表示已确认空集",
+          "column_constraints": []
+        },
+        {
+          "name": "available_watermark",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "已处理到的可用时间，不代表所有源都覆盖完整",
+          "column_constraints": []
+        },
+        {
+          "name": "coverage_document",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "证券、时段、缺失、修订和供应商覆盖清单",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "快照登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "ready_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "READY事务提交时间，发布事件与此状态同事务",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "market.dataset_dependency",
+      "column_count": 3,
+      "table_constraints": [
+        "PRIMARY KEY (snapshot_id, input_snapshot_id, dependency_role)",
+        "CHECK (snapshot_id <> input_snapshot_id)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "当前派生数据快照",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "input_snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "被依赖的确切输入快照",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "dependency_role",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "bars/corporate_action/calendar/source_evidence等依赖职责",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "market.bar_projection",
+      "column_count": 19,
+      "table_constraints": [
+        "PRIMARY KEY (trade_date, instrument_id, timeframe, session_scope, bar_open_time, snapshot_id)",
+        "CHECK (bar_close_time > bar_open_time)",
+        "CHECK (currency = 'CNY')",
+        "CHECK (quality_status IN ('valid', 'partial', 'disputed', 'invalid'))",
+        "CHECK (quality_status <> 'valid' OR (open_price_raw IS NOT NULL AND high_price_raw IS NOT NULL AND low_price_raw IS NOT NULL AND close_price_raw IS NOT NULL AND volume_shares IS NOT NULL AND turnover_amount_cny IS NOT NULL))",
+        "CHECK (NOT is_final OR available_at >= bar_close_time)",
+        "CHECK (volume_shares IS NULL OR volume_shares >= 0)",
+        "CHECK (high_price_raw IS NULL OR low_price_raw IS NULL OR high_price_raw >= low_price_raw)",
+        "CHECK (open_price_raw IS NULL OR high_price_raw IS NULL OR open_price_raw <= high_price_raw)",
+        "CHECK (close_price_raw IS NULL OR high_price_raw IS NULL OR close_price_raw <= high_price_raw)",
+        "CHECK (open_price_raw IS NULL OR low_price_raw IS NULL OR open_price_raw >= low_price_raw)",
+        "CHECK (close_price_raw IS NULL OR low_price_raw IS NULL OR close_price_raw >= low_price_raw)"
+      ],
+      "partitioning": "range (trade_date)",
+      "fields": [
+        {
+          "name": "trade_date",
+          "postgres_type": "date",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "YYYY-MM-DD exchange trading date when named trade_date",
+          "unit": null,
+          "description_zh": "交易所交易日；也是此热投影分区键",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "证券身份",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "timeframe",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "1m/5m/1d/1w/1mo/1y；不能用m同时表示分钟与月",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "session_scope",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "会话定义版本对应的范围，含不含盘后明确",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "bar_open_time",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "bar左边界",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "bar_close_time",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "bar右边界；不等于源实际发布时刻",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "这一投影所依据的已发布不可变数据版本",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "currency",
+          "postgres_type": "char(3)",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "本A股热表当前限定CNY",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "open_price_raw",
+          "postgres_type": "core.price_raw",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "currency per share; unadjusted",
+          "description_zh": "原始未复权开盘价，未知为null",
+          "column_constraints": []
+        },
+        {
+          "name": "high_price_raw",
+          "postgres_type": "core.price_raw",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "currency per share; unadjusted",
+          "description_zh": "原始最高价",
+          "column_constraints": []
+        },
+        {
+          "name": "low_price_raw",
+          "postgres_type": "core.price_raw",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "currency per share; unadjusted",
+          "description_zh": "原始最低价",
+          "column_constraints": []
+        },
+        {
+          "name": "close_price_raw",
+          "postgres_type": "core.price_raw",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "currency per share; unadjusted",
+          "description_zh": "原始收盘或尚未完成bar的最新价",
+          "column_constraints": []
+        },
+        {
+          "name": "volume_shares",
+          "postgres_type": "bigint",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": "shares",
+          "description_zh": "区间成交股数；不是手，也不是累计快照未差分的值",
+          "column_constraints": []
+        },
+        {
+          "name": "turnover_amount_cny",
+          "postgres_type": "core.nonnegative_amount",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "CNY",
+          "description_zh": "区间成交额，人民币元",
+          "column_constraints": []
+        },
+        {
+          "name": "exchange_reference_price_raw",
+          "postgres_type": "core.price_raw",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "currency per share; unadjusted",
+          "description_zh": "交易所/源明确的除权参考昨收；与上一bar close不同",
+          "column_constraints": []
+        },
+        {
+          "name": "is_final",
+          "postgres_type": "boolean",
+          "nullable": false,
+          "json_type": "boolean",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "会话及源完整性政策确认的终结状态",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此bar版本的可用时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "quality_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "valid/partial/disputed等质量，不混同新鲜度",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "observation_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "规范观测来源",
+          "column_constraints": [
+            "REFERENCES ingest.observation"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "market.feature_result",
+      "column_count": 12,
+      "table_constraints": [
+        "CHECK (result_state IN ('RUNNING', 'READY', 'FAILED'))",
+        "CHECK (lease_epoch > 0)",
+        "CHECK (result_state <> 'READY' OR (result_uri IS NOT NULL AND result_hash IS NOT NULL AND computed_at IS NOT NULL))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "feature_key_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "包含19维及依赖闭包的规范计算身份摘要",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "feature_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "特征定义身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "definition_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "算法定义版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "full_key",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "严格符合v3 FeatureKey的19维字段；保留instrument_ids声明顺序，使用timeframe/adjustment_mode/universe_policy_version，不只存哈希",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "输入数据快照",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "decision_as_of",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "历史可见性边界",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "availability_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "可得性过滤政策版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "result_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "RUNNING/READY/FAILED；失败不登记为空成功结果",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lease_epoch",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "分布式提交权令牌，旧worker不得覆盖新结果",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "result_uri",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "不可变Arrow/Parquet或小结果引用",
+          "column_constraints": []
+        },
+        {
+          "name": "result_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "结果内容摘要",
+          "column_constraints": []
+        },
+        {
+          "name": "computed_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "本次成功计算完成时间",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "strategy.definition",
+      "column_count": 10,
+      "table_constraints": [
+        "PRIMARY KEY (strategy_id, strategy_version)",
+        "CHECK (strategy_version > 0)",
+        "CHECK (role IN ('selection', 'allocation', 'entry', 'holding', 'execution', 'exit'))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "strategy_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "方法稳定身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "strategy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "不可变定义版本；调参另建instance版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "名称用于检索展示，不能代替形式化定义",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "role",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "selection/allocation/entry/holding/execution/exit之一",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "method_family",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "规则、统计、ML、RL、LLM等可检索方法族",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "forecast_target",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "预测/行动目标；不同目标不能直接平均分数",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "horizon_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "明确持有/预测期限定义身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "specification",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "类型化输入、输出、条件、状态与实验政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "definition_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "定义内容摘要",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "strategy.instance",
+      "column_count": 11,
+      "table_constraints": [
+        "FOREIGN KEY (strategy_id, strategy_version) REFERENCES strategy.definition",
+        "CHECK (lifecycle IN ('discovered', 'specified', 'data_ready', 'screened', 'validated', 'shadow', 'active', 'paused', 'retired'))",
+        "CHECK (implementation_status IN ('not_implemented', 'prototype', 'implemented'))",
+        "CHECK (reproduction_status IN ('not_started', 'running', 'reproduced', 'failed'))",
+        "CHECK (health IN ('healthy', 'degraded', 'unavailable'))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "instance_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "固定定义、参数、股票池、模型与政策后的实验/运行实例",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "strategy_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "定义身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "strategy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "确切定义版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parameters",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "规范参数，实例发布后不原地修改",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parameter_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "参数摘要",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "universe_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "股票池过滤政策版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lifecycle",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "研究晋级状态；实现/复现/健康另列",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "implementation_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "not_implemented/prototype/implemented",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "reproduction_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "not_started/running/reproduced/failed",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "health",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "healthy/degraded/unavailable，不能代替paused",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "实例登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "strategy.tag_assignment",
+      "column_count": 6,
+      "table_constraints": [
+        "PRIMARY KEY (strategy_id, strategy_version, taxonomy_id, taxonomy_version, node_id)",
+        "FOREIGN KEY (strategy_id, strategy_version) REFERENCES strategy.definition",
+        "FOREIGN KEY (taxonomy_id, taxonomy_version, node_id) REFERENCES core.taxonomy_node"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "strategy_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "被分类的策略定义",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "strategy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "被分类定义的版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "方法/状态/数据要求等分类体系",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "分类版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "node_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "分类节点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "reason_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "分类依据或ReasonRecord",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "strategy.routing_policy",
+      "column_count": 7,
+      "table_constraints": [
+        "PRIMARY KEY (routing_policy_id, routing_policy_version)",
+        "CHECK (routing_policy_version > 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "routing_policy_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "场景路由政策身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "routing_policy_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "版本化路由规则",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "market_regime_contract",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "输入市场状态定义版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "eligible_roles",
+          "postgres_type": "text[]",
+          "nullable": false,
+          "json_type": "array",
+          "wire_format": "typed array; duplicates handled by domain contract",
+          "unit": null,
+          "description_zh": "允许参与的职责集合，应用层验证与role枚举一致",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "routing_ast",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "数据覆盖、市场状态、期限、预算等类型条件",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "calibration_manifest_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "权重/阈值校准数据及训练窗口引用",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "可用于在线选择的时刻",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "decision.release",
+      "column_count": 10,
+      "table_constraints": [
+        "CHECK (release_state IN ('BUILDING', 'READY', 'FAILED', 'SUPERSEDED'))",
+        "CHECK (release_state NOT IN ('READY', 'SUPERSEDED') OR (published_at IS NOT NULL AND release_hash IS NOT NULL))",
+        "CHECK (published_at IS NULL OR published_at >= created_at)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一次对外一致发布的决策资料包",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "release_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "BUILDING/READY/FAILED/SUPERSEDED",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "decision_as_of",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "全包共同的可见性截止时点",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "availability_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "全包历史可用性政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "universe_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "候选股票池定义",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "market_rules_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "适用交易规则版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "required_components",
+          "postgres_type": "text[]",
+          "nullable": false,
+          "json_type": "array",
+          "wire_format": "typed array; duplicates handled by domain contract",
+          "unit": null,
+          "description_zh": "完整发布必需的组件名，不能靠页面自行猜依赖",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "release_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "所有组件引用与版本的摘要",
+          "column_constraints": []
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "开始构建时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "published_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "完整READY后统一对外发布的时间",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "decision.release_component",
+      "column_count": 9,
+      "table_constraints": [
+        "PRIMARY KEY (release_id, component_key)",
+        "CHECK (component_state IN ('READY', 'MISSING', 'FAILED', 'STALE'))",
+        "CHECK (component_state <> 'READY' OR (artifact_hash IS NOT NULL AND computed_at IS NOT NULL))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "所属决策资料包",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "component_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "如market_state/ranking/plans/bars/evidence/sector_membership",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "component_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "READY/MISSING/FAILED/STALE，由发布政策评估是否允许",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "artifact_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "不可变对象引用或明确缺失对象记录",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "artifact_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "有效对象摘要",
+          "column_constraints": []
+        },
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "组件依赖的数据快照，非数据类组件允许null",
+          "column_constraints": [
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "input_version_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "输入闭包版本摘要",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "computed_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "组件计算完成时间",
+          "column_constraints": []
+        },
+        {
+          "name": "valid_until",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "组件有效期，非普适TTL",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "decision.trade_plan",
+      "column_count": 9,
+      "table_constraints": [
+        "PRIMARY KEY (plan_id, plan_version)",
+        "CHECK (plan_version > 0)",
+        "CHECK (state IN ('watching', 'actionable', 'holding', 'superseded', 'expired'))",
+        "CHECK (expected_account_version IS NULL OR expected_account_version >= 0)",
+        "CHECK ((account_id IS NULL) = (expected_account_version IS NULL))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "plan_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "计划稳定身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "plan_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "计划版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "目标证券",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "若针对账户，引用execution.account；外键由集成迁移添加",
+          "column_constraints": []
+        },
+        {
+          "name": "state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "沿用v1/v2正式TradePlan状态",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "plan_payload",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "已通过TradePlan Schema的条件、期限、价格区间、依赖等",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "based_on_release_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "编译输入资料包",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "expected_account_version",
+          "postgres_type": "bigint",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "编译时账户版本；实际订单触发时仍需再次验证",
+          "column_constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "正式计划可用时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "decision.ranking_run",
+      "column_count": 12,
+      "table_constraints": [
+        "FOREIGN KEY (taxonomy_id, taxonomy_version) REFERENCES core.taxonomy",
+        "FOREIGN KEY (taxonomy_id, taxonomy_version, node_id) REFERENCES core.taxonomy_node",
+        "CHECK (ranking_scope IN ('market', 'sector', 'sector_overview', 'watchlist', 'account'))",
+        "CHECK (ranking_scope <> 'sector' OR (taxonomy_id IS NOT NULL AND taxonomy_version IS NOT NULL AND node_id IS NOT NULL AND membership_snapshot_id IS NOT NULL))",
+        "CHECK (ranking_scope <> 'sector_overview' OR (taxonomy_id IS NOT NULL AND taxonomy_version IS NOT NULL AND node_id IS NULL AND membership_snapshot_id IS NOT NULL))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "ranking_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一次不可变排序结果",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "与个股工作台共用的发布包",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "ranking_scope",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "market/sector/sector_overview/watchlist/account，sector_overview排序对象是板块而非证券",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "scope_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "市场、板块、关注池或账户具体身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "taxonomy_id",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "板块榜使用的分类体系",
+          "column_constraints": []
+        },
+        {
+          "name": "taxonomy_version",
+          "postgres_type": "integer",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "板块分类版本",
+          "column_constraints": []
+        },
+        {
+          "name": "node_id",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "板块节点",
+          "column_constraints": []
+        },
+        {
+          "name": "horizon_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "当前比较期限",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "forecast_target",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "排名目标，不能混合短线做T与长期价值分数",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "ranking_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "排序校准、成本与并列处理政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "membership_snapshot_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "当时板块成分，不使用今日成分回填历史",
+          "column_constraints": [
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "排名生成完成时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "decision.ranking_entry",
+      "column_count": 10,
+      "table_constraints": [
+        "PRIMARY KEY (ranking_id, instrument_id)",
+        "UNIQUE (ranking_id, alpha_rank)",
+        "UNIQUE (ranking_id, action_rank)",
+        "FOREIGN KEY (plan_id, plan_version) REFERENCES decision.trade_plan",
+        "CHECK (alpha_rank > 0 AND (action_rank IS NULL OR action_rank > 0))",
+        "CHECK (calibrated_probability IS NULL OR calibrated_probability BETWEEN 0 AND 1)",
+        "CHECK ((plan_id IS NULL) = (plan_version IS NULL))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "ranking_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "所属同目标同期限排序",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES decision.ranking_run"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "候选证券",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "alpha_rank",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "研究机会顺序",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "action_rank",
+          "postgres_type": "integer",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "满足可行动条件的顺序，未可行动为null",
+          "column_constraints": []
+        },
+        {
+          "name": "relative_rank_score",
+          "postgres_type": "core.finite_decimal",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "defined by versioned scoring/weight policy; never assume probability",
+          "description_zh": "相对排名分，不宣称上涨概率",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "calibrated_probability",
+          "postgres_type": "core.finite_decimal",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "finite decimal string; no exponent, NaN or Infinity",
+          "unit": "ratio in [0,1]",
+          "description_zh": "有明确事件与校准依据才填写概率",
+          "column_constraints": []
+        },
+        {
+          "name": "action_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "watching/actionable/blocked/missing_data等状态",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "explanation_ref",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "证据、策略贡献与排名变化理由",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "plan_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "关联正式个股计划",
+          "column_constraints": []
+        },
+        {
+          "name": "plan_version",
+          "postgres_type": "integer",
+          "nullable": true,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "明确计划版本，不默认最新",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "decision.workspace_projection",
+      "column_count": 8,
+      "table_constraints": [
+        "PRIMARY KEY (instrument_id, release_id, view_kind, scope_key, projection_version)",
+        "CHECK (projection_version > 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "个股工作台证券",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "全页固定的一致资料包",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "view_kind",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "public_research/account_holding等投影视图类别",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "scope_key",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "public或账户/用户作用域，防止共享错误账户投影",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "projection_version",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "投影算法版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "projection_payload",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "图表引用、证据卡、计划引用与质量信息，不复制巨大行情矩阵",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "projection_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "当前投影内容摘要/ETag依据",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "generated_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "投影构建完成时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ops.outbox",
+      "column_count": 15,
+      "table_constraints": [
+        "UNIQUE (aggregate_type, aggregate_id, aggregate_version, event_ordinal)",
+        "CHECK (aggregate_version >= 0 AND event_ordinal >= 0 AND publication_attempts >= 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "event_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "业务事件唯一身份；重发沿用，不依靠短期消息去重窗口",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "event_type",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "小写点分名称；subject由此和schema major唯一生成",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "事件载荷合同版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "aggregate_type",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "账户、计划、快照、发布包等聚合类别",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "aggregate_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "聚合身份，作用域内稳定",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "aggregate_version",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "聚合内单调版本；允许0表示开户/引导事件，消费者检测后续缺口",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "event_ordinal",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "同聚合版本内多事件的明确次序",
+          "column_constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "occurred_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "业务事实发生时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "recorded_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "业务事务落库时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "producer_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "生产者实现版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "payload",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "小载荷或内容引用；不搬运整个DataFrame",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "payload_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "同ID不同内容必须报冲突",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "published_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "收到发布确认后登记；未登记的事件可重复发送",
+          "column_constraints": []
+        },
+        {
+          "name": "publication_attempts",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "发布尝试次数",
+          "column_constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "next_attempt_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "退避后的重发时间",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "ops.consumer_inbox",
+      "column_count": 4,
+      "table_constraints": [
+        "PRIMARY KEY (consumer_id, event_id)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "consumer_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "逻辑消费者身份；不同模块独立，模块内worker共享",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "event_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "消费的业务事件",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "payload_hash",
+          "postgres_type": "core.sha256_hex",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "同ID不同内容的检测依据",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "applied_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "业务效果与此记录在同一事务成功",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ops.consumer_checkpoint",
+      "column_count": 7,
+      "table_constraints": [
+        "PRIMARY KEY (consumer_id, stream_name, stream_epoch)",
+        "CHECK (contiguous_stream_sequence >= 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "consumer_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "逻辑消费者",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "stream_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "流身份",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "stream_epoch",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "重建流时区分旧序号空间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "contiguous_stream_sequence",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "连续确认水位，不能用并行处理最大序号替代",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "last_effective_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近真正完成业务效果的事件时间",
+          "column_constraints": []
+        },
+        {
+          "name": "oldest_pending_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最老未完成事件时间，用于积压告警",
+          "column_constraints": []
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "检查点持久化时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ops.reconciliation_result",
+      "column_count": 9,
+      "table_constraints": [
+        "CHECK (reconciliation_status IN ('matched', 'disputed', 'unverifiable'))",
+        "CHECK (independent_origin_count >= 0)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "reconciliation_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "一次可追溯的字段/数据集校验",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "reconciliation_status",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "matched/disputed/unverifiable，未对齐不能伪造匹配",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "field_path",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "核验字段或明确的集合口径",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "alignment_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "证券、时间、币种、单位、会话、复权对齐政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "tolerance_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "字段精度对应的容差，不用统一百分比掩盖数量级错误",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "chosen_observation_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "选定规范值来源；争议未决可null",
+          "column_constraints": [
+            "REFERENCES ingest.observation"
+          ]
+        },
+        {
+          "name": "normalization_trace",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "各来源值、变换和差异详情",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "independent_origin_count",
+          "postgres_type": "integer",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "独立原始事实源数，不是网址数或模型数",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "decided_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "此校验结论可用时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ops.reconciliation_member",
+      "column_count": 3,
+      "table_constraints": [
+        "PRIMARY KEY (reconciliation_id, observation_id)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "reconciliation_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "校验记录",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ops.reconciliation_result"
+          ]
+        },
+        {
+          "name": "observation_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "被比较的原始观测版本",
+          "column_constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.observation"
+          ]
+        },
+        {
+          "name": "comparison_role",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "primary/secondary/revision/derived等",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ops.data_issue",
+      "column_count": 11,
+      "table_constraints": [
+        "CHECK (issue_state IN ('open', 'acknowledged', 'resolved', 'rejected'))"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "issue_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "数据问题可追踪身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "batch_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "涉及批次",
+          "column_constraints": [
+            "REFERENCES ingest.batch"
+          ]
+        },
+        {
+          "name": "raw_object_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "原始问题数据",
+          "column_constraints": [
+            "REFERENCES ingest.raw_object"
+          ]
+        },
+        {
+          "name": "observation_id",
+          "postgres_type": "uuid",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "涉及规范观测",
+          "column_constraints": [
+            "REFERENCES ingest.observation"
+          ]
+        },
+        {
+          "name": "issue_code",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "missing_required_field/unit_mismatch/schema_drift/duplicate_conflict等",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "field_path",
+          "postgres_type": "text",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "具体字段；集合级问题可null",
+          "column_constraints": []
+        },
+        {
+          "name": "severity",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "阻止哪个发布范围由政策决定，不一律停全站",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "issue_payload",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "期待值、实际值、来源、修复依据；不自动编造替代事实",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "issue_state",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "open/acknowledged/resolved/rejected",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "问题登记时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "resolved_at",
+          "postgres_type": "timestamptz",
+          "nullable": true,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "追加修订确认完成的时间",
+          "column_constraints": []
+        }
+      ]
+    },
+    {
+      "table": "core.api_binding",
+      "column_count": 8,
+      "table_constraints": [
+        "FOREIGN KEY (response_contract_id, response_schema_version) REFERENCES core.contract_version",
+        "UNIQUE (http_method, path_template)"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "operation_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "OpenAPI唯一操作名，前端生成客户端按此调用",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "http_method",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "HTTP方法",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "path_template",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "唯一路由模板；不另建同义股票资源",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_contract_id",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "响应规范合同",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_schema_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "响应版本",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "application_service",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "唯一业务服务入口，API不能复制策略计算",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "read_model",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "读取的投影/账本/分析端口，不意味着一张表等于一个API",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "freshness_policy_version",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "响应时效、回退和版本一致政策",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    },
+    {
+      "table": "ui.workspace_layout",
+      "column_count": 7,
+      "table_constraints": [
+        "CHECK (layout_version > 0)",
+        "CHECK (jsonb_typeof(layout_document) = 'object')"
+      ],
+      "partitioning": null,
+      "fields": [
+        {
+          "name": "layout_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "用户保存的个股/多图布局身份",
+          "column_constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "principal_id",
+          "postgres_type": "uuid",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "uuid",
+          "unit": null,
+          "description_zh": "所有者身份，认证域外键由集成迁移添加",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "layout_version",
+          "postgres_type": "bigint",
+          "nullable": false,
+          "json_type": "integer",
+          "wire_format": "JSON safe integer; contract maximum <= 9007199254740991",
+          "unit": null,
+          "description_zh": "乐观并发版本，避免多终端覆盖",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": null,
+          "unit": null,
+          "description_zh": "用户布局名称",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "layout_document",
+          "postgres_type": "jsonb",
+          "nullable": false,
+          "json_type": "object",
+          "wire_format": "must validate its registered JSON Schema; column name determines schema",
+          "unit": null,
+          "description_zh": "面板、周期、画线与指标配置，不包含重新计算的市场事实",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "初次保存时间",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "nullable": false,
+          "json_type": "string",
+          "wire_format": "RFC3339 UTC; explicit Z; preserve known precision separately",
+          "unit": null,
+          "description_zh": "最近一次明确保存",
+          "column_constraints": [
+            "NOT NULL"
+          ]
+        }
+      ]
+    }
+  ],
+  "validation_limits": [
+    "pglast parses PostgreSQL SQL syntax; it does not execute the migration, resolve live constraints, execute trigger bodies, prove concurrency or measure throughput.",
+    "JSONB values require registered schema validation in the service; JSONB storage alone is not schema enforcement.",
+    "External execution.account and authentication principal foreign keys are integration migrations, not present in this seed."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "status": "passed_static_contract_card_checks",
+  "resource_cards": 16,
+  "proposed_operations": 41,
+  "proposed_types": 40,
+  "persistence_definitions": 27,
+  "proposed_new_sql_tables": 14,
+  "existing_public_operation_count": 31,
+  "existing_sql_table_count": 80,
+  "verified_existing_column_bindings": 24,
+  "unchanged_public_contract_and_sql_hashes": {
+    "contracts/openapi.json": "8ed3c090c7b10a36998a0f3773c81c1509d772bb3ca5f7d1ffcd81ffd94713da",
+    "contracts/v3.schema.json": "7f0e55a4dd430232dd5b97325b804326e1056c8a38e6130e822e0cc5ca63309b",
+    "contracts/api_bindings.json": "dfaa2ab0886cd0eabe31422e1580ac1f99097f57fbe21eb9d5809b6535525d87",
+    "database/core_schema.sql": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2",
+    "execution/ledger_schema.sql": "0639b4fa05274633691961e407911418cd5f8e3bad611bd26812e32411cd8e85",
+    "sources_sectors/sources_sectors_schema.sql": "71f36e99075a7ccd26fcc1ec06afc2c256157ec36e336d3178705c1052e2b354",
+    "integration/integration_schema.sql": "ce2c2189f8197416b0bdbb6f179b0e7d095907e5495f59973a8300be9df0c758"
+  },
+  "checks": [
+    "所有当前operationId属于实际31操作",
+    "所有复用表属于实际80表",
+    "W01-W10角色与work_packages一致",
+    "24个重点已有字段绑定逐一在DDL定义中存在",
+    "全部输入输出类型引用闭合",
+    "16资源均有权限/幂等/版本冲突/存储/验收",
+    "D27完整查询上下文身份、D24完整导出spec、BrokerFill三分支结构均显式",
+    "未修改公共v3、OpenAPI、API绑定或SQL"
+  ],
+  "limits": [
+    "设计卡不是运行中的API",
+    "尚未生成新公开版本与迁移",
+    "没有连接目标数据库或真实数据源"
+  ]
+}

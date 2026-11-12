@@ -1,0 +1,1473 @@
+{
+  "schema_version": "3.0",
+  "as_of": "2026-11-10",
+  "migration": "sources_sectors_schema.sql",
+  "apply_after": "database/core_schema.sql",
+  "table_count": 12,
+  "total_fields": 184,
+  "references": {
+    "source": "core.source(source_id text)",
+    "instrument": "core.instrument(instrument_id uuid)",
+    "taxonomy": "core.taxonomy(taxonomy_id text, taxonomy_version integer)",
+    "taxonomy_node": "core.taxonomy_node(taxonomy_id text, taxonomy_version integer, node_id text)",
+    "raw_object": "ingest.raw_object(raw_object_id uuid, source_id text)",
+    "snapshot": "market.dataset_manifest(snapshot_id uuid)",
+    "release": "decision.release(release_id uuid)",
+    "ranking_run": "decision.ranking_run(ranking_id uuid)",
+    "trade_plan": "decision.trade_plan(plan_id uuid, plan_version integer)"
+  },
+  "units_and_time_policy": {
+    "canonical_money": "CNY yuan; exact finite numeric, decimal string on JSON transport",
+    "lhb_raw_units": {
+      "CNY": "1",
+      "CNY_10000": "10000"
+    },
+    "timestamp": "PostgreSQL timestamptz with UTC semantics; source precision is explicit",
+    "report_date_window": "inclusive start and inclusive end trading dates",
+    "sampling_time_window": "half-open [start, end)",
+    "unknown": "null with field-quality reason, not numeric zero",
+    "future_evidence": "Observed mode uses actual available_at; explicitly declared research reconstruction mode uses policy_usable_at, and must not be described as historical real-time observation.",
+    "availability_at_semantics": "available_at is the actual completed availability of original/canonical/model records, never a reconstructed publication-time assumption.",
+    "historical_reconstruction": "Derive separate policy_usable_at under availability_policy_version and explicit latency assumptions; mark research reconstruction mode and preserve actual available_at."
+  },
+  "reuse_not_duplicate": [
+    "No raw-body table: use ingest.raw_object and source-paired FK.",
+    "No second source health/cursor table: use ingest.source_health and ingest.source_cursor.",
+    "No second industry membership table: use core.taxonomy_node and core.instrument_tag with snapshots.",
+    "No second stock ranking table: use decision.ranking_run / ranking_entry.",
+    "sector_rank_entry ranks taxonomy nodes only; parent scope must be sector_overview.",
+    "No independent execution ledger or fill model is introduced."
+  ],
+  "publication_gates": [
+    {
+      "gate_id": "SS-G01",
+      "enforcement": "service_transaction_required",
+      "rule": "Claim availability is no earlier than actual evidence/parse completion. Observed historical use filters actual available_at; explicitly registered reconstruction uses policy_usable_at with availability_policy_version and latency assumptions without rewriting actual timestamps."
+    },
+    {
+      "gate_id": "SS-G02",
+      "enforcement": "service_transaction_required",
+      "rule": "Event dependencies refer to exact claim versions and determine event earliest availability."
+    },
+    {
+      "gate_id": "SS-G03",
+      "enforcement": "service_transaction_required",
+      "rule": "All publication snapshots and release components meet shared READY/coverage/PIT rules."
+    },
+    {
+      "gate_id": "SS-G04",
+      "enforcement": "service_transaction_required",
+      "rule": "Pool state transition uses per(pool_id,instrument_id) lock or compare-and-set; previous_state and event_sequence match actual prior event; policy permits transition."
+    },
+    {
+      "gate_id": "SS-G05",
+      "enforcement": "service_transaction_required",
+      "rule": "Actionable pool event plan instrument, release, account scope and precise plan version must agree."
+    },
+    {
+      "gate_id": "SS-G06",
+      "enforcement": "sector_entry_and_parent_triggers_plus_PIT_publication_validator",
+      "rule": "SQL triggers enforce parent scope=sector_overview, one rank_kind, taxonomy/version/member snapshot equality and immutable READY/SUPERSEDED entries under the shared release lock; the publication service additionally proves snapshot readiness, coverage and PIT availability."
+    },
+    {
+      "gate_id": "SS-G07",
+      "enforcement": "core_ranking_entry_trigger",
+      "rule": "Core guard_ranking_entry rejects stock ranking_entry under sector_overview; the extension separately guards sector rows and later parent metadata changes."
+    },
+    {
+      "gate_id": "SS-G08",
+      "enforcement": "service_transaction_required",
+      "rule": "Seat identity version must be available by research snapshot and applicable to the disclosure period; unresolved names cannot be forced to stable IDs."
+    },
+    {
+      "gate_id": "SS-G09",
+      "enforcement": "service_transaction_required",
+      "rule": "Overlapping multi-day and one-day LHB reports remain separate; derived aggregates prove non-overlapping scope before summation."
+    },
+    {
+      "gate_id": "SS-G10",
+      "enforcement": "schema_validator_required",
+      "rule": "Every JSON payload uses the named registered JSON Schema version; jsonb_typeof alone does not implement field-level validation."
+    },
+    {
+      "gate_id": "SS-G11",
+      "enforcement": "source_adapter_and_reconciler_required",
+      "rule": "Community and funding revisions retain source IDs, verified units, methodology and actual observation availability."
+    },
+    {
+      "gate_id": "SS-G12",
+      "enforcement": "dependency_invalidation_required",
+      "rule": "Withdrawal/correction triggers rebuilding affected feature, ranking and trade-plan versions before promoting a replacement release."
+    }
+  ],
+  "tables": [
+    {
+      "table": "intelligence.document_revision",
+      "field_count": 20,
+      "fields": [
+        {
+          "field": "document_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "document_revision_id uuid PRIMARY KEY",
+          "meaning": "文稿版本身份，所有证据引用精确版本"
+        },
+        {
+          "field": "document_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "document_id uuid NOT NULL",
+          "meaning": "同一逻辑文稿的稳定身份"
+        },
+        {
+          "field": "source_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_id text NOT NULL REFERENCES core.source",
+          "meaning": "实际接入来源"
+        },
+        {
+          "field": "source_record_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_record_id text NOT NULL",
+          "meaning": "来源原始文稿ID；缺ID时使用有版本的稳定键政策"
+        },
+        {
+          "field": "revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "revision integer NOT NULL",
+          "meaning": "追加修订号，推送和轮询重复使用同一版本"
+        },
+        {
+          "field": "raw_object_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "raw_object_id uuid NOT NULL",
+          "meaning": "完整原文只引用公共原始层"
+        },
+        {
+          "field": "document_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "document_status text NOT NULL",
+          "meaning": "published/corrected/withdrawn/deleted_at_source/unknown"
+        },
+        {
+          "field": "origin_group",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "origin_group text",
+          "meaning": "已识别的原始事实传播链，未知不能凭媒体名称猜测"
+        },
+        {
+          "field": "origin_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "origin_status text NOT NULL",
+          "meaning": "confirmed_original/confirmed_independent_report/republication/unknown"
+        },
+        {
+          "field": "original_publisher_source_id",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "original_publisher_source_id text REFERENCES core.source",
+          "meaning": "可核验原始发布机构，未知为null"
+        },
+        {
+          "field": "title",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "title text",
+          "meaning": "获准保存的标题，可缺失并在field_quality说明"
+        },
+        {
+          "field": "language_code",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "language_code text",
+          "meaning": "语言标记，未知保留null"
+        },
+        {
+          "field": "published_at",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "published_at timestamptz",
+          "meaning": "来源公布时间，不能替代实际可得时间"
+        },
+        {
+          "field": "published_time_precision",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "published_time_precision text NOT NULL",
+          "meaning": "date/minute/second/microsecond/unknown"
+        },
+        {
+          "field": "event_time",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "event_time timestamptz",
+          "meaning": "现实事件时间，可能与发布不同或未知"
+        },
+        {
+          "field": "first_seen_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "first_seen_at timestamptz NOT NULL",
+          "meaning": "本平台首次见到该版本"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "规范版本可供本平台决策的最早时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "规范行写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "valid/partial/disputed/invalid，与时效分开"
+        },
+        {
+          "field": "field_quality",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "field_quality jsonb NOT NULL",
+          "meaning": "缺字段、纠正和补齐来源，按公共字段质量契约"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.claim_revision",
+      "field_count": 16,
+      "fields": [
+        {
+          "field": "claim_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "claim_revision_id uuid PRIMARY KEY",
+          "meaning": "一个已规范化主张版本"
+        },
+        {
+          "field": "claim_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "claim_id uuid NOT NULL",
+          "meaning": "主张稳定身份，不等同文稿ID"
+        },
+        {
+          "field": "revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "revision integer NOT NULL",
+          "meaning": "主张事实或核验状态修订"
+        },
+        {
+          "field": "subject_kind",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "subject_kind text NOT NULL",
+          "meaning": "instrument/issuer/sector/macro/event/unresolved等"
+        },
+        {
+          "field": "subject_key",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "subject_key text",
+          "meaning": "未解析实体为null，不能伪造证券身份"
+        },
+        {
+          "field": "predicate",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "predicate text NOT NULL",
+          "meaning": "版本化谓词，如宣布订单或报告收入"
+        },
+        {
+          "field": "object_payload",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "object_payload jsonb NOT NULL",
+          "meaning": "按claim_schema_version验证的对象值、期间和必要上下文"
+        },
+        {
+          "field": "claim_schema_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "claim_schema_version text NOT NULL",
+          "meaning": "主张结构合同版本"
+        },
+        {
+          "field": "assertion_type",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "assertion_type text NOT NULL",
+          "meaning": "official_disclosure/independently_reported/attributed_statement/opinion/forecast/rumor"
+        },
+        {
+          "field": "claim_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "claim_status text NOT NULL",
+          "meaning": "supported/contradicted/disputed/unverified/not_falsifiable_yet"
+        },
+        {
+          "field": "verification_policy_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "verification_policy_version text NOT NULL",
+          "meaning": "多源核验和冲突处理政策"
+        },
+        {
+          "field": "model_version",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "model_version text",
+          "meaning": "如使用模型解析则记录，确定性解析可为null"
+        },
+        {
+          "field": "event_time",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "event_time timestamptz",
+          "meaning": "所指事实时间，可未知"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "已收到必要证据且计算完成后的可用时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "此规范版本写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "数据有效性与主张真假状态分别记录"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.claim_evidence",
+      "field_count": 8,
+      "fields": [
+        {
+          "field": "claim_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "claim_revision_id uuid NOT NULL REFERENCES intelligence.claim_revision",
+          "meaning": "被支持或反驳的主张精确版本"
+        },
+        {
+          "field": "document_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "document_revision_id uuid NOT NULL REFERENCES intelligence.document_revision",
+          "meaning": "证据文稿精确版本"
+        },
+        {
+          "field": "evidence_ordinal",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "evidence_ordinal integer NOT NULL",
+          "meaning": "同文稿多处证据的位置序号"
+        },
+        {
+          "field": "relation",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "relation text NOT NULL",
+          "meaning": "supports/refutes/attributes/context，转载不是额外独立票"
+        },
+        {
+          "field": "evidence_span",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "evidence_span jsonb NOT NULL",
+          "meaning": "字段路径和原文偏移；只保存许可的短引文或指针"
+        },
+        {
+          "field": "extraction_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "extraction_version text NOT NULL",
+          "meaning": "解析器或模型版本"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "此证据关联可用于决策的时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "关联写入时间"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.event_revision",
+      "field_count": 13,
+      "fields": [
+        {
+          "field": "event_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "event_revision_id uuid PRIMARY KEY",
+          "meaning": "聚合事件精确版本"
+        },
+        {
+          "field": "event_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "event_id uuid NOT NULL",
+          "meaning": "跨稿件事件稳定身份"
+        },
+        {
+          "field": "revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "revision integer NOT NULL",
+          "meaning": "新证据、纠正和传播路径改变均追加版本"
+        },
+        {
+          "field": "event_category",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "event_category text NOT NULL",
+          "meaning": "taxonomy.json中的版本化事件分类"
+        },
+        {
+          "field": "taxonomy_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "taxonomy_version text NOT NULL",
+          "meaning": "事件分类合同版本"
+        },
+        {
+          "field": "event_time",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "event_time timestamptz",
+          "meaning": "事件发生时间，可未知"
+        },
+        {
+          "field": "event_time_end",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "event_time_end timestamptz",
+          "meaning": "持续事件结束时间，可未知"
+        },
+        {
+          "field": "analysis_payload",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "analysis_payload jsonb NOT NULL",
+          "meaning": "已验证Schema的实体、传播路径、期限与竞争解释"
+        },
+        {
+          "field": "analysis_schema_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "analysis_schema_version text NOT NULL",
+          "meaning": "分析载荷合同版本"
+        },
+        {
+          "field": "analysis_model_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "analysis_model_version text NOT NULL",
+          "meaning": "确定性或模型分析实现版本"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "引用证据与分析输出都已可用的时点"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "版本写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "数据质量，不混同事件正负方向"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.event_claim",
+      "field_count": 3,
+      "fields": [
+        {
+          "field": "event_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "event_revision_id uuid NOT NULL REFERENCES intelligence.event_revision",
+          "meaning": "聚合事件精确版本"
+        },
+        {
+          "field": "claim_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "claim_revision_id uuid NOT NULL REFERENCES intelligence.claim_revision",
+          "meaning": "依赖主张精确版本，修订不能偷换"
+        },
+        {
+          "field": "relation",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "relation text NOT NULL",
+          "meaning": "core_fact/context/competing_explanation"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.community_observation",
+      "field_count": 23,
+      "fields": [
+        {
+          "field": "community_observation_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "community_observation_id uuid PRIMARY KEY",
+          "meaning": "一次帖子版本及互动采样观察"
+        },
+        {
+          "field": "source_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_id text NOT NULL REFERENCES core.source",
+          "meaning": "社区平台接入来源"
+        },
+        {
+          "field": "raw_object_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "raw_object_id uuid NOT NULL",
+          "meaning": "引用公共原始层，正文不再重复保存"
+        },
+        {
+          "field": "post_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "post_id text NOT NULL",
+          "meaning": "平台帖子或稳定引用ID"
+        },
+        {
+          "field": "post_revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "post_revision integer NOT NULL",
+          "meaning": "帖子内容修订号"
+        },
+        {
+          "field": "author_pseudonym",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "author_pseudonym text",
+          "meaning": "必需时保存平台匿名标识，不是真实账户身份"
+        },
+        {
+          "field": "post_created_at",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "post_created_at timestamptz",
+          "meaning": "平台声称的首次发表时间"
+        },
+        {
+          "field": "post_edited_at",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "post_edited_at timestamptz",
+          "meaning": "平台提供的修改时间"
+        },
+        {
+          "field": "sampled_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "sampled_at timestamptz NOT NULL",
+          "meaning": "点赞、评论等互动数据所对应的实际采样时间"
+        },
+        {
+          "field": "sampling_entry",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "sampling_entry text NOT NULL",
+          "meaning": "页面、流或导出入口，便于解释覆盖"
+        },
+        {
+          "field": "sampling_sort",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "sampling_sort text NOT NULL",
+          "meaning": "最新/热门等排序方式，防止样本口径隐匿变化"
+        },
+        {
+          "field": "sampling_window_start",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "sampling_window_start timestamptz NOT NULL",
+          "meaning": "抽样窗口起点"
+        },
+        {
+          "field": "sampling_window_end",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "sampling_window_end timestamptz NOT NULL",
+          "meaning": "抽样窗口终点，不含该时刻"
+        },
+        {
+          "field": "coverage_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "coverage_status text NOT NULL",
+          "meaning": "complete_for_declared_scope/partial/unknown"
+        },
+        {
+          "field": "like_count",
+          "sql_type": "bigint",
+          "nullable": true,
+          "sql_declaration": "like_count bigint",
+          "meaning": "该次采样的点赞数，未知为null"
+        },
+        {
+          "field": "reply_count",
+          "sql_type": "bigint",
+          "nullable": true,
+          "sql_declaration": "reply_count bigint",
+          "meaning": "该次采样的回复数，未知为null"
+        },
+        {
+          "field": "unique_participant_count",
+          "sql_type": "bigint",
+          "nullable": true,
+          "sql_declaration": "unique_participant_count bigint",
+          "meaning": "平台确实提供时才填写，不能用发帖数代替"
+        },
+        {
+          "field": "analysis_payload",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "analysis_payload jsonb NOT NULL",
+          "meaning": "观点、反讽、去重与主张引用，按版本Schema验证"
+        },
+        {
+          "field": "analysis_schema_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "analysis_schema_version text NOT NULL",
+          "meaning": "社区分析载荷版本"
+        },
+        {
+          "field": "analysis_model_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "analysis_model_version text NOT NULL",
+          "meaning": "情绪/观点模型版本"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "本次观察及其分析真正可用时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "规范行写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "数据有效性，与观点正确性不同"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.funding_observation",
+      "field_count": 30,
+      "fields": [
+        {
+          "field": "funding_observation_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "funding_observation_id uuid PRIMARY KEY",
+          "meaning": "一次资金观测版本"
+        },
+        {
+          "field": "source_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_id text NOT NULL REFERENCES core.source",
+          "meaning": "供应商或正式披露机构"
+        },
+        {
+          "field": "raw_object_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "raw_object_id uuid NOT NULL",
+          "meaning": "原始披露或数据响应"
+        },
+        {
+          "field": "source_record_key",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_record_key text NOT NULL",
+          "meaning": "来源记录的稳定业务键"
+        },
+        {
+          "field": "revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "revision integer NOT NULL",
+          "meaning": "观测修订号"
+        },
+        {
+          "field": "instrument_id",
+          "sql_type": "uuid",
+          "nullable": true,
+          "sql_declaration": "instrument_id uuid REFERENCES core.instrument",
+          "meaning": "个股指标对象，市场指标时为null"
+        },
+        {
+          "field": "market_key",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "market_key text",
+          "meaning": "市场或方向统计对象，与instrument_id二选一"
+        },
+        {
+          "field": "metric_namespace",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "metric_namespace text NOT NULL",
+          "meaning": "供应商和指标族命名空间"
+        },
+        {
+          "field": "metric_name",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "metric_name text NOT NULL",
+          "meaning": "精确指标名，不能只叫资金流"
+        },
+        {
+          "field": "methodology_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "methodology_id text NOT NULL",
+          "meaning": "分类/统计算法身份"
+        },
+        {
+          "field": "methodology_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "methodology_version text NOT NULL",
+          "meaning": "方法变更产生新版本，不静默拼接"
+        },
+        {
+          "field": "measurement_class",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "measurement_class text NOT NULL",
+          "meaning": "disclosed_observation/provider_derived/research_inference"
+        },
+        {
+          "field": "side_convention",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "side_convention text NOT NULL",
+          "meaning": "买卖方向、主动方、委托分类或无方向总额等"
+        },
+        {
+          "field": "trade_or_order_basis",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "trade_or_order_basis text NOT NULL",
+          "meaning": "trade/order/holding/report/not_applicable/unknown"
+        },
+        {
+          "field": "session_scope",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "session_scope text NOT NULL",
+          "meaning": "竞价、全天、报告统计期等明确范围"
+        },
+        {
+          "field": "market_direction",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "market_direction text NOT NULL",
+          "meaning": "northbound/southbound/domestic/not_applicable/unknown"
+        },
+        {
+          "field": "observation_window_start",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "observation_window_start timestamptz NOT NULL",
+          "meaning": "统计区间起点"
+        },
+        {
+          "field": "observation_window_end",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "observation_window_end timestamptz NOT NULL",
+          "meaning": "统计区间终点；瞬时观测允许等于起点"
+        },
+        {
+          "field": "period_end",
+          "sql_type": "date",
+          "nullable": true,
+          "sql_declaration": "period_end date",
+          "meaning": "季报等统计期末，与披露时间区分"
+        },
+        {
+          "field": "raw_value",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "raw_value text",
+          "meaning": "原始数值文本及格式，不覆盖"
+        },
+        {
+          "field": "raw_unit",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "raw_unit text NOT NULL",
+          "meaning": "原始单位，如CNY_10000或shares"
+        },
+        {
+          "field": "canonical_value",
+          "sql_type": "core.finite_decimal",
+          "nullable": true,
+          "sql_declaration": "canonical_value core.finite_decimal",
+          "meaning": "标准值，未知不填0"
+        },
+        {
+          "field": "canonical_unit",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "canonical_unit text NOT NULL",
+          "meaning": "标准单位，必须由指标合同定义"
+        },
+        {
+          "field": "currency",
+          "sql_type": "char(3)",
+          "nullable": true,
+          "sql_declaration": "currency char(3)",
+          "meaning": "金额需币种，份额等非金额可以null"
+        },
+        {
+          "field": "missing_reason",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "missing_reason text",
+          "meaning": "canonical_value为null时必填"
+        },
+        {
+          "field": "published_at",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "published_at timestamptz",
+          "meaning": "来源实际公开时间，可未知"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "平台可使用此版本的时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "规范行写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "值质量与数据新鲜度分开"
+        },
+        {
+          "field": "field_quality",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "field_quality jsonb NOT NULL",
+          "meaning": "字段补齐、单位和缺失证明"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.seat_entity_version",
+      "field_count": 12,
+      "fields": [
+        {
+          "field": "seat_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "seat_id uuid NOT NULL",
+          "meaning": "已确认营业部或交易单位的稳定身份，不是最终账户"
+        },
+        {
+          "field": "seat_version",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "seat_version integer NOT NULL",
+          "meaning": "名称或实体证据修订号"
+        },
+        {
+          "field": "entity_kind",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "entity_kind text NOT NULL",
+          "meaning": "broker_branch/trading_unit，未知名称不插入确定实体"
+        },
+        {
+          "field": "canonical_name",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "canonical_name text NOT NULL",
+          "meaning": "已核验完整名称"
+        },
+        {
+          "field": "broker_legal_name",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "broker_legal_name text NOT NULL",
+          "meaning": "已核验券商法人名称"
+        },
+        {
+          "field": "city_code",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "city_code text",
+          "meaning": "营业部分支需城市；交易单位可不适用"
+        },
+        {
+          "field": "effective_from",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "effective_from timestamptz NOT NULL",
+          "meaning": "名称或组织版本实际生效起点"
+        },
+        {
+          "field": "effective_to",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "effective_to timestamptz",
+          "meaning": "生效终点，不含该时刻"
+        },
+        {
+          "field": "evidence_raw_object_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "evidence_raw_object_id uuid NOT NULL REFERENCES ingest.raw_object",
+          "meaning": "别名和实体解析证据"
+        },
+        {
+          "field": "alias_evidence",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "alias_evidence jsonb NOT NULL",
+          "meaning": "别名、迁址、券商更名等有证据关系，不是交易者身份"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "平台何时知道该实体版本"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "实体版本写入时间"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.seat_report",
+      "field_count": 16,
+      "fields": [
+        {
+          "field": "report_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "report_revision_id uuid PRIMARY KEY",
+          "meaning": "一份龙虎榜披露的精确版本"
+        },
+        {
+          "field": "source_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_id text NOT NULL REFERENCES core.source",
+          "meaning": "实际取得来源"
+        },
+        {
+          "field": "raw_object_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "raw_object_id uuid NOT NULL",
+          "meaning": "原始报告引用"
+        },
+        {
+          "field": "source_report_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "source_report_id text NOT NULL",
+          "meaning": "来源报告ID或规范业务键"
+        },
+        {
+          "field": "revision",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "revision integer NOT NULL",
+          "meaning": "披露修订号"
+        },
+        {
+          "field": "exchange_code",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "exchange_code text NOT NULL",
+          "meaning": "交易所"
+        },
+        {
+          "field": "instrument_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "instrument_id uuid NOT NULL REFERENCES core.instrument",
+          "meaning": "已解析证券"
+        },
+        {
+          "field": "window_start",
+          "sql_type": "date",
+          "nullable": false,
+          "sql_declaration": "window_start date NOT NULL",
+          "meaning": "榜单统计交易日起点，含当日"
+        },
+        {
+          "field": "window_end",
+          "sql_type": "date",
+          "nullable": false,
+          "sql_declaration": "window_end date NOT NULL",
+          "meaning": "榜单统计交易日终点，含当日"
+        },
+        {
+          "field": "disclosure_reason",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "disclosure_reason text NOT NULL",
+          "meaning": "原始原因或已核验代码，不硬编码未来规则"
+        },
+        {
+          "field": "rule_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "rule_version text NOT NULL",
+          "meaning": "该披露适用的规则版本"
+        },
+        {
+          "field": "trade_scope",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "trade_scope text NOT NULL",
+          "meaning": "auction_only/explicit_other/unknown"
+        },
+        {
+          "field": "published_at",
+          "sql_type": "timestamptz",
+          "nullable": true,
+          "sql_declaration": "published_at timestamptz",
+          "meaning": "来源公布时间，可未知"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "平台可用时间，盘后资料不能进入当日盘中"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "规范报告写入时间"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "榜单完整性与字段有效性"
+        }
+      ]
+    },
+    {
+      "table": "intelligence.seat_report_row",
+      "field_count": 11,
+      "fields": [
+        {
+          "field": "report_revision_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "report_revision_id uuid NOT NULL REFERENCES intelligence.seat_report",
+          "meaning": "精确报告版本"
+        },
+        {
+          "field": "side",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "side text NOT NULL",
+          "meaning": "buy/sell，同营业部可在两边分别出现"
+        },
+        {
+          "field": "rank",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "rank integer NOT NULL",
+          "meaning": "榜内排名"
+        },
+        {
+          "field": "raw_seat_name",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "raw_seat_name text NOT NULL",
+          "meaning": "完整原始披露名称，不能自动纠正前东路"
+        },
+        {
+          "field": "raw_amount",
+          "sql_type": "core.finite_decimal",
+          "nullable": false,
+          "sql_declaration": "raw_amount core.finite_decimal NOT NULL",
+          "meaning": "来源原始金额"
+        },
+        {
+          "field": "raw_unit",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "raw_unit text NOT NULL",
+          "meaning": "CNY/CNY_10000，接口映射明确"
+        },
+        {
+          "field": "canonical_amount_cny",
+          "sql_type": "core.finite_decimal",
+          "nullable": false,
+          "sql_declaration": "canonical_amount_cny core.finite_decimal NOT NULL",
+          "meaning": "标准金额，单位人民币元"
+        },
+        {
+          "field": "resolution_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "resolution_status text NOT NULL",
+          "meaning": "resolved/ambiguous/unresolved/report_local_label"
+        },
+        {
+          "field": "seat_id",
+          "sql_type": "uuid",
+          "nullable": true,
+          "sql_declaration": "seat_id uuid",
+          "meaning": "已确认稳定实体；未知或通用机构局部标签为null"
+        },
+        {
+          "field": "seat_version",
+          "sql_type": "integer",
+          "nullable": true,
+          "sql_declaration": "seat_version integer",
+          "meaning": "实体版本，不能默认最新"
+        },
+        {
+          "field": "resolution_evidence",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "resolution_evidence jsonb NOT NULL",
+          "meaning": "解析证据或无法解析原因"
+        }
+      ]
+    },
+    {
+      "table": "decision.candidate_pool_event",
+      "field_count": 20,
+      "fields": [
+        {
+          "field": "pool_event_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "pool_event_id uuid PRIMARY KEY",
+          "meaning": "候选池状态变化事件身份，重复投递沿用"
+        },
+        {
+          "field": "pool_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "pool_id uuid NOT NULL",
+          "meaning": "候选池稳定身份"
+        },
+        {
+          "field": "instrument_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "instrument_id uuid NOT NULL REFERENCES core.instrument",
+          "meaning": "被观察证券"
+        },
+        {
+          "field": "event_sequence",
+          "sql_type": "bigint",
+          "nullable": false,
+          "sql_declaration": "event_sequence bigint NOT NULL",
+          "meaning": "此池此证券的单调状态序号，CAS提交"
+        },
+        {
+          "field": "policy_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "policy_id text NOT NULL",
+          "meaning": "进入退出和滞回政策"
+        },
+        {
+          "field": "policy_version",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "policy_version text NOT NULL",
+          "meaning": "冻结参数及验证结果版本"
+        },
+        {
+          "field": "taxonomy_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "taxonomy_id text NOT NULL",
+          "meaning": "板块体系"
+        },
+        {
+          "field": "taxonomy_version",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "taxonomy_version integer NOT NULL",
+          "meaning": "当时体系版本"
+        },
+        {
+          "field": "node_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "node_id text NOT NULL",
+          "meaning": "板块节点"
+        },
+        {
+          "field": "membership_snapshot_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "membership_snapshot_id uuid NOT NULL REFERENCES market.dataset_manifest",
+          "meaning": "当时已知成分输入快照"
+        },
+        {
+          "field": "release_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "release_id uuid NOT NULL REFERENCES decision.release",
+          "meaning": "与榜单和工作台同一资料包"
+        },
+        {
+          "field": "previous_state",
+          "sql_type": "text",
+          "nullable": true,
+          "sql_declaration": "previous_state text",
+          "meaning": "首事件为null；后续必须与上一事件当前状态一致"
+        },
+        {
+          "field": "current_state",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "current_state text NOT NULL",
+          "meaning": "observing/qualified/actionable/cooling/removed"
+        },
+        {
+          "field": "trigger_code",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "trigger_code text NOT NULL",
+          "meaning": "入池、维持、降温、过期或硬失效原因"
+        },
+        {
+          "field": "trigger_payload",
+          "sql_type": "jsonb",
+          "nullable": false,
+          "sql_declaration": "trigger_payload jsonb NOT NULL",
+          "meaning": "可重放的阈值输入、窗口、计数和证据引用"
+        },
+        {
+          "field": "plan_id",
+          "sql_type": "uuid",
+          "nullable": true,
+          "sql_declaration": "plan_id uuid",
+          "meaning": "actionable必须引用已验证个股计划"
+        },
+        {
+          "field": "plan_version",
+          "sql_type": "integer",
+          "nullable": true,
+          "sql_declaration": "plan_version integer",
+          "meaning": "精确计划版本"
+        },
+        {
+          "field": "decision_as_of",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "decision_as_of timestamptz NOT NULL",
+          "meaning": "本次评估使用的历史信息截止点"
+        },
+        {
+          "field": "available_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "available_at timestamptz NOT NULL",
+          "meaning": "此状态事件完成并可对外使用的时间"
+        },
+        {
+          "field": "recorded_at",
+          "sql_type": "timestamptz",
+          "nullable": false,
+          "sql_declaration": "recorded_at timestamptz NOT NULL",
+          "meaning": "事件写入时间"
+        }
+      ]
+    },
+    {
+      "table": "decision.sector_rank_entry",
+      "field_count": 12,
+      "fields": [
+        {
+          "field": "ranking_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "ranking_id uuid NOT NULL REFERENCES decision.ranking_run",
+          "meaning": "父run必须为sector_overview，和个股榜同一release机制"
+        },
+        {
+          "field": "taxonomy_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "taxonomy_id text NOT NULL",
+          "meaning": "板块体系"
+        },
+        {
+          "field": "taxonomy_version",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "taxonomy_version integer NOT NULL",
+          "meaning": "体系版本"
+        },
+        {
+          "field": "node_id",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "node_id text NOT NULL",
+          "meaning": "被排名板块，不是instrument_id"
+        },
+        {
+          "field": "rank_kind",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "rank_kind text NOT NULL",
+          "meaning": "sector_opportunity_rank/sector_attention_rank/sector_rising_rank"
+        },
+        {
+          "field": "rank",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "rank integer NOT NULL",
+          "meaning": "本run中唯一顺序"
+        },
+        {
+          "field": "score",
+          "sql_type": "core.finite_decimal",
+          "nullable": false,
+          "sql_declaration": "score core.finite_decimal NOT NULL",
+          "meaning": "特定目标内的相对分，不自动是概率"
+        },
+        {
+          "field": "member_count",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "member_count integer NOT NULL",
+          "meaning": "此成分快照中的成员数"
+        },
+        {
+          "field": "observed_member_count",
+          "sql_type": "integer",
+          "nullable": false,
+          "sql_declaration": "observed_member_count integer NOT NULL",
+          "meaning": "关键指标有覆盖的成员数"
+        },
+        {
+          "field": "membership_snapshot_id",
+          "sql_type": "uuid",
+          "nullable": false,
+          "sql_declaration": "membership_snapshot_id uuid NOT NULL REFERENCES market.dataset_manifest",
+          "meaning": "成分版本与数据可得性"
+        },
+        {
+          "field": "explanation_ref",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "explanation_ref text NOT NULL",
+          "meaning": "优势、集中度、消息独立性和缺数据解释"
+        },
+        {
+          "field": "quality_status",
+          "sql_type": "text",
+          "nullable": false,
+          "sql_declaration": "quality_status text NOT NULL",
+          "meaning": "valid/partial/disputed/invalid"
+        }
+      ]
+    }
+  ],
+  "validation_scope": "Field dictionary generated from migration; references checked against core_schema.sql. pglast parses SQL and the two PLpgSQL bodies. No PostgreSQL migration, trigger execution or production source integration has been performed.",
+  "runtime_transaction_contract": {
+    "write_and_publish_isolation": "READ COMMITTED",
+    "serialization_lock": "decision.release row",
+    "read_order": "Lock release first, then issue a subsequent statement to read current parent/child metadata.",
+    "other_isolation_levels": "Not certified by this seed; require separate invariant/concurrency proof before use.",
+    "real_postgres_concurrency_tests_executed": false
+  }
+}

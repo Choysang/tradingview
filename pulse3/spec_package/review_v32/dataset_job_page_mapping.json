@@ -1,0 +1,1457 @@
+[
+  {
+    "mapping_id": "DJ01",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-076",
+    "input_line": 100,
+    "input_datasets": "`ref.instrument`、`ref.calendar`、`ref.rule`、`ref.fee`、`ref.adj_factor`、`ref.share_capital`、`ref.corp_action`",
+    "input_job": "主源日更（worker）；规则与费用为人工维护的数据",
+    "milestone": "M0–M1",
+    "pages": "全部",
+    "target_owner_tables": [
+      "core.instrument",
+      "core.instrument_state",
+      "core.contract_version",
+      "market.dataset_manifest",
+      "market.dataset_dependency"
+    ],
+    "table_definition_sources": {
+      "core.instrument": "database/core_schema.sql",
+      "core.instrument_state": "database/core_schema.sql",
+      "core.contract_version": "database/core_schema.sql",
+      "market.dataset_manifest": "database/core_schema.sql",
+      "market.dataset_dependency": "database/core_schema.sql"
+    },
+    "normalized_job": "主数据/日历/制度/股本/权益版本作业",
+    "work_package_owners": [
+      "W03",
+      "W04",
+      "W07",
+      "W02"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息",
+      "W04": "行情与特征",
+      "W07": "执行与账本",
+      "W02": "数据库"
+    },
+    "consuming_operation_ids": [
+      "getDataStatus",
+      "getStockWorkspace"
+    ],
+    "trigger_freshness_and_failure_policy": "依官方公布和交易日更新；日历/规则/费用/股本/公司行为需新增内部数据集行合同，不能声称已有execution.ruleset或cost_profile表；缺身份/有效规则不得生成可行动计划",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M0–M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-pre-cutover",
+    "target_milestones": [
+      "M0",
+      "M1",
+      "M2",
+      "M5",
+      "M6"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M0",
+        "meaning": "契约",
+        "deliverable": "锁定证券身份、日历、制度、费用、股本和公司行为的字段及版本合同。"
+      },
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "建立首发证券母集所需的有效时间/可得时间数据。"
+      },
+      {
+        "milestone": "M2",
+        "meaning": "账本",
+        "deliverable": "唯一账本消费同一规则、费用和公司行为版本。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "逐键核对母集、制度、费用与权益事件。"
+      },
+      {
+        "milestone": "M6",
+        "meaning": "切换",
+        "deliverable": "切换点固定这些版本及账本依赖。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "首发母集与启用计划所需身份、日历、规则、费用和权益链必须完整。",
+      "explicit_exclusions": [
+        "所有历史证券全量补齐",
+        "所有国际市场制度接入"
+      ]
+    },
+    "post_cutover_scope": "新市场和更长历史按独立capability加入。",
+    "milestone_mapping_reason": "基础事实先于账本和排名；切换只绑定声明的首发依赖。"
+  },
+  {
+    "mapping_id": "DJ02",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-077",
+    "input_line": 101,
+    "input_datasets": "`ref.sector_member`（申万）",
+    "input_job": "主源日更（worker）",
+    "milestone": "M1",
+    "pages": "板块、推荐榜、工作台",
+    "target_owner_tables": [
+      "core.taxonomy",
+      "core.taxonomy_node",
+      "core.instrument_tag"
+    ],
+    "table_definition_sources": {
+      "core.taxonomy": "database/core_schema.sql",
+      "core.taxonomy_node": "database/core_schema.sql",
+      "core.instrument_tag": "database/core_schema.sql"
+    },
+    "normalized_job": "行业成分规范作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getSectorOverview",
+      "getSectorRanking"
+    ],
+    "trigger_freshness_and_failure_policy": "按原始版本与可得时间维护；不把最新成分回填历史",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M0",
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M0",
+        "meaning": "契约",
+        "deliverable": "选择首发行业分类及版本合同。"
+      },
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "摄取该分类成分与有效期。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "排名与板块算法消费同一成分版本。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "页面显示同一身份与覆盖状态。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账板块分母、成员和排序。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "启用的行业榜须有对应成分版本，不要求所有分类供应商接通。",
+      "explicit_exclusions": [
+        "全部分类供应商",
+        "不可取得的完整历史成分"
+      ]
+    },
+    "post_cutover_scope": "其他分类体系、供应商及更长历史。",
+    "milestone_mapping_reason": "板块榜需要统一版本，多分类扩展不是默认首发依赖。"
+  },
+  {
+    "mapping_id": "DJ03",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-078",
+    "input_line": 102,
+    "input_datasets": "`ref.sector_member`（题材）",
+    "input_job": "题材成分每日存档（worker）",
+    "milestone": "M1 起前向积累",
+    "pages": "板块",
+    "target_owner_tables": [
+      "core.taxonomy",
+      "core.instrument_tag"
+    ],
+    "table_definition_sources": {
+      "core.taxonomy": "database/core_schema.sql",
+      "core.instrument_tag": "database/core_schema.sql"
+    },
+    "normalized_job": "题材成分观察与快照作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getSectorRanking",
+      "getCandidatePool"
+    ],
+    "trigger_freshness_and_failure_policy": "前向保存日内/逐日变更与来源；历史缺口显式",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1 起前向积累",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "开始记录选定题材体系的前向成分快照。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "按实际已知成分构造候选池。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "题材页显示覆盖和历史缺口。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "核对题材变更、入池与as-of行为。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "仅对首发启用题材榜验证身份、时点和缺口；缺历史不能伪装完整回测。",
+      "explicit_exclusions": [
+        "多年题材历史已积累",
+        "所有题材平台接通"
+      ]
+    },
+    "post_cutover_scope": "更多题材来源和长窗条件表现。",
+    "milestone_mapping_reason": "前向积累从M1开始，积累长度不是M6统一时间门槛。"
+  },
+  {
+    "mapping_id": "DJ04",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-079",
+    "input_line": 103,
+    "input_datasets": "`mkt.bar_1d`、`mkt.index_bar_1d`、`mkt.fund_bar_1d`",
+    "input_job": "收盘快照日更 + 主源核对（worker）",
+    "milestone": "M1",
+    "pages": "全部",
+    "target_owner_tables": [
+      "market.dataset_manifest",
+      "market.bar_projection"
+    ],
+    "table_definition_sources": {
+      "market.dataset_manifest": "database/core_schema.sql",
+      "market.bar_projection": "database/core_schema.sql"
+    },
+    "normalized_job": "真实日线规范/复权派生作业",
+    "work_package_owners": [
+      "W04",
+      "W03"
+    ],
+    "owner_roles": {
+      "W04": "行情与特征",
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockBars"
+    ],
+    "trigger_freshness_and_failure_policy": "所有产品按会话完成时点；指数/ETF/股票规则不同",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "取得首发股票母集和选定基准的真实日线、复权因子及会话完成状态。"
+      },
+      {
+        "milestone": "M2",
+        "meaning": "账本",
+        "deliverable": "账本原始价与图表复权价分开。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "共享特征消费固定日线版本。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "图表与周期派生共用合同。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账OHLCV、复权、缺失和比较区间。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "冻结主干和声明产品使用的股票/基准覆盖须满足；非依赖ETF或指数缺失不阻塞全站。",
+      "explicit_exclusions": [
+        "全球指数",
+        "所有ETF和全部历史"
+      ]
+    },
+    "post_cutover_scope": "额外指数、基金、行情商与更长历史。",
+    "milestone_mapping_reason": "日线是首发主干依赖，输入行所列全部资产类别不自动成为首发范围。"
+  },
+  {
+    "mapping_id": "DJ05",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-080",
+    "input_line": 104,
+    "input_datasets": "`mkt.snapshot_l1`、`mkt.bar_1m`",
+    "input_job": "盘中录制与分钟合成（collector）",
+    "milestone": "M1",
+    "pages": "今日、工作台、组合",
+    "target_owner_tables": [
+      "market.quote_projection",
+      "market.dataset_manifest",
+      "market.bar_projection"
+    ],
+    "table_definition_sources": {
+      "market.quote_projection": "integration/integration_schema.sql",
+      "market.dataset_manifest": "database/core_schema.sql",
+      "market.bar_projection": "database/core_schema.sql"
+    },
+    "normalized_job": "报价录制与分钟聚合作业",
+    "work_package_owners": [
+      "W04",
+      "W03"
+    ],
+    "owner_roles": {
+      "W04": "行情与特征",
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockQuote",
+      "getStockBars"
+    ],
+    "trigger_freshness_and_failure_policy": "真实分钟与采样近似分数据集和capability",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M2",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "建立首发报价覆盖和所选分钟能力，采样近似分开标识。"
+      },
+      {
+        "milestone": "M2",
+        "meaning": "账本",
+        "deliverable": "启用盘中成交研究时验证真实分钟/逐笔能力。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "报价、周期图及新鲜度一致。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "核对断流、恢复、会话边界和真实/近似标签。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "基础盘中页满足声明新鲜度；只有启用分钟成交/回放时才要求对应真实数据能力。",
+      "explicit_exclusions": [
+        "全市场逐笔或全深度盘口",
+        "全市场多年分钟全量历史",
+        "PF03回放增强先完成"
+      ]
+    },
+    "post_cutover_scope": "更广分钟历史、逐笔与深度行情；独立回放增强按PF03实施。",
+    "milestone_mapping_reason": "基础盘中显示与高级可成交回放需求不同，不能按一个M1标签强制全量建设。"
+  },
+  {
+    "mapping_id": "DJ06",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-081",
+    "input_line": 105,
+    "input_datasets": "`mkt.limit_pool`",
+    "input_job": "涨停池采集与自算校验（collector、worker）",
+    "milestone": "M1",
+    "pages": "情绪与社区、板块、今日",
+    "target_owner_tables": [
+      "market.feature_result",
+      "market.dataset_manifest"
+    ],
+    "table_definition_sources": {
+      "market.feature_result": "database/core_schema.sql",
+      "market.dataset_manifest": "database/core_schema.sql"
+    },
+    "normalized_job": "涨跌停与市场广度作业",
+    "work_package_owners": [
+      "W04"
+    ],
+    "owner_roles": {
+      "W04": "行情与特征"
+    },
+    "consuming_operation_ids": [
+      "getMarketRanking",
+      "getSectorOverview"
+    ],
+    "trigger_freshness_and_failure_policy": "每次固定母集/分母/限价规则；数据不足不得当零",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-pre-cutover",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "保留涨跌停事实及母集、规则和报价。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "共享作业计算涨跌停、市场广度及分母。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "情绪、板块和今日页消费同一结果。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账有效限价规则、停牌/缺失分母和来源差异。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "首发广度和涨跌停统计按同一母集与有效规则复算，未知不得当零。",
+      "explicit_exclusions": [
+        "所有商业涨停池接口",
+        "所有专有热度指标"
+      ]
+    },
+    "post_cutover_scope": "额外供应商核验和市场结构指标。",
+    "milestone_mapping_reason": "核心是同口径可重放统计，不是接通涨停池接口的数量。"
+  },
+  {
+    "mapping_id": "DJ07",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-082",
+    "input_line": 106,
+    "input_datasets": "`mkt.xasset_quote`",
+    "input_job": "外盘与期货采集（collector）",
+    "milestone": "M1",
+    "pages": "今日",
+    "target_owner_tables": [
+      "ingest.observation",
+      "market.dataset_manifest"
+    ],
+    "table_definition_sources": {
+      "ingest.observation": "database/core_schema.sql",
+      "market.dataset_manifest": "database/core_schema.sql"
+    },
+    "normalized_job": "跨市场采集和时区对齐作业",
+    "work_package_owners": [
+      "W03",
+      "W04"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息",
+      "W04": "行情与特征"
+    },
+    "consuming_operation_ids": [
+      "getStockEvidence"
+    ],
+    "trigger_freshness_and_failure_policy": "交易日历、延迟和来源时区分开记录；外盘保留currency/unit/multiplier，不写入限定CNY的A股热表",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "post-cutover",
+    "target_milestones": [],
+    "target_milestone_deliverables": [],
+    "cutover_gate": {
+      "scope": "not-a-default-cutover-gate",
+      "requirement": "默认不作为M6门槛；如首发明确选中某外盘指标作为生产依赖，仅单独验收该指标的时区、单位、可得性和缺失策略。",
+      "explicit_exclusions": [
+        "全部外盘和期货品种",
+        "国际行情全覆盖"
+      ]
+    },
+    "post_cutover_scope": "按来源权限与策略需求逐批接入跨市场行情；国际新闻仍通过DJ11/DJ12基础链进入。",
+    "milestone_mapping_reason": "全量外盘采集属可选外部能力；原文M1不强制其成为首发范围，选定生产依赖单独核定。"
+  },
+  {
+    "mapping_id": "DJ08",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-083",
+    "input_line": 107,
+    "input_datasets": "`evt.lhb_stock`、`evt.lhb_seat`、`seat_profile`",
+    "input_job": "龙虎榜日更（worker）；画像作业（worker）",
+    "milestone": "M1、M3",
+    "pages": "龙虎榜与席位、工作台",
+    "target_owner_tables": [
+      "intelligence.seat_entity_version",
+      "intelligence.seat_report",
+      "intelligence.seat_report_row"
+    ],
+    "table_definition_sources": {
+      "intelligence.seat_entity_version": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.seat_report": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.seat_report_row": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "席位规范与条件表现作业",
+    "work_package_owners": [
+      "W03",
+      "W09"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息",
+      "W09": "研究与联赛"
+    },
+    "consuming_operation_ids": [
+      "getStockSeats"
+    ],
+    "trigger_freshness_and_failure_policy": "盘后公开时间后可用；不反演真实持仓天数",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1、M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "规范选定龙虎榜报告、席位身份与实际公开时间。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "搭建条件表现和研究资格基础，未知席位不合并。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "报告及可解释画像连接页面。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "核对公开时点、修订、局部标签及可观察指标。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "启用席位页时首发报告须可追溯；样本不足的画像保持未验证，不阻止基础报告切换。",
+      "explicit_exclusions": [
+        "所有营业部形成稳定战法",
+        "每种席位风格统计晋级"
+      ]
+    },
+    "post_cutover_scope": "长窗画像、跨标的条件比较和额外榜单来源。",
+    "milestone_mapping_reason": "报告事实与战法有效性分阶段实现，不以传闻和不可观察持仓作为切换事实。"
+  },
+  {
+    "mapping_id": "DJ09",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-084",
+    "input_line": 108,
+    "input_datasets": "`evt.announcement`、`evt.calendar`、`evt.unlock`、`evt.suspension`",
+    "input_job": "采集（collector）",
+    "milestone": "M1",
+    "pages": "消息、今日、工作台",
+    "target_owner_tables": [
+      "intelligence.event_revision",
+      "intelligence.document_revision",
+      "core.instrument_state",
+      "market.dataset_manifest"
+    ],
+    "table_definition_sources": {
+      "intelligence.event_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.document_revision": "sources_sectors/sources_sectors_schema.sql",
+      "core.instrument_state": "database/core_schema.sql",
+      "market.dataset_manifest": "database/core_schema.sql"
+    },
+    "normalized_job": "公告/日历/公司行为摄取作业",
+    "work_package_owners": [
+      "W03",
+      "W07"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息",
+      "W07": "执行与账本"
+    },
+    "consuming_operation_ids": [
+      "getStockEvidence"
+    ],
+    "trigger_freshness_and_failure_policy": "计划公布与实际事件分开；日历/公司行为行合同须登记，变更追加修订",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-pre-cutover",
+    "target_milestones": [
+      "M0",
+      "M1",
+      "M2",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M0",
+        "meaning": "契约",
+        "deliverable": "定义公告、预定日历、实际事件、停牌和权益合同。"
+      },
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "摄取首发官方事实与修订。"
+      },
+      {
+        "milestone": "M2",
+        "meaning": "账本",
+        "deliverable": "影响库存/现金的确认权益事件进入唯一账本。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "事件和日历按同一版本展示。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账预定/实际/修订时点、停复牌与权益处理。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "影响启用证券可交易性及账本的事实可追溯；公告缺字段只阻断相应功能。",
+      "explicit_exclusions": [
+        "全部公告类别深层模型",
+        "所有日历网站同时可用"
+      ]
+    },
+    "post_cutover_scope": "额外日历源、公告主题和深层事件分析。",
+    "milestone_mapping_reason": "公司行为及可交易事实是基础依赖，分析深度不能替代账本正确性。"
+  },
+  {
+    "mapping_id": "DJ10",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-085",
+    "input_line": 109,
+    "input_datasets": "`evt.margin`、`evt.block_trade`、`evt.holder_change`、`evt.buyback`、`evt.survey`、`evt.etf_share`",
+    "input_job": "采集（worker，日频）",
+    "milestone": "M6",
+    "pages": "工作台的资金面区块",
+    "target_owner_tables": [
+      "intelligence.funding_observation",
+      "intelligence.event_revision"
+    ],
+    "table_definition_sources": {
+      "intelligence.funding_observation": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.event_revision": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "资金事实规范作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockFundFlow"
+    ],
+    "trigger_freshness_and_failure_policy": "按数据源可得频率；ETF份额非实盘净买入",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M6",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "post-cutover",
+    "target_milestones": [],
+    "target_milestone_deliverables": [],
+    "cutover_gate": {
+      "scope": "not-a-default-cutover-gate",
+      "requirement": "资金增强作业默认不作为M6门槛；某已启用策略依赖其中字段时，只对该字段补数据和资格验证。",
+      "explicit_exclusions": [
+        "融资/大宗/股东/回购/调研/ETF份额六类全接通",
+        "全部资金衍生指标"
+      ]
+    },
+    "post_cutover_scope": "按字段可得性逐类接入资金事实；回购等公告原文可先在DJ09展示。",
+    "milestone_mapping_reason": "原输入M6意指后续增强，v3.2M6意指切换，故显式改为post-cutover。"
+  },
+  {
+    "mapping_id": "DJ11",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-086",
+    "input_line": 110,
+    "input_datasets": "`intel.item`",
+    "input_job": "快讯与官方源采集（collector）",
+    "milestone": "M1（三路快讯）、M3（官方与通讯社）",
+    "pages": "消息",
+    "target_owner_tables": [
+      "intelligence.document_revision",
+      "ingest.raw_object"
+    ],
+    "table_definition_sources": {
+      "intelligence.document_revision": "sources_sectors/sources_sectors_schema.sql",
+      "ingest.raw_object": "database/core_schema.sql"
+    },
+    "normalized_job": "快讯/官方原文采集作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockEvidence"
+    ],
+    "trigger_freshness_and_failure_policy": "enabled/传输成功/新内容/READY分别监控",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M1（三路快讯）、M3（官方与通讯社）",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M0",
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M0",
+        "meaning": "契约",
+        "deliverable": "锁定首发快讯与官方源的能力、许可、时间和字段。"
+      },
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "运行选定来源的持续采集、归档、心跳和补洞。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "为排名和计划提供可追溯消息输入。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "来源状态、事件与证据连接页面。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "演练断流、重复旧内容、恢复补采与主张核验。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "声明的首发消息链和真实核验依据须可用；按主张核对事实，不能以转载数量冒充独立多源。",
+      "explicit_exclusions": [
+        "来源目录所有媒体接通",
+        "固定三家快讯数量",
+        "全部历史文章补齐"
+      ]
+    },
+    "post_cutover_scope": "更多媒体、通讯社、地区与专题来源。",
+    "milestone_mapping_reason": "关键官方事实应在基础消息链中可用；首发锁定来源子集而非全部目录。"
+  },
+  {
+    "mapping_id": "DJ12",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-087",
+    "input_line": 111,
+    "input_datasets": "`intel.cluster`、`intel.event`",
+    "input_job": "消息管线（stream）",
+    "milestone": "M3",
+    "pages": "消息、今日、工作台、告警",
+    "target_owner_tables": [
+      "intelligence.claim_revision",
+      "intelligence.event_revision",
+      "intelligence.claim_evidence"
+    ],
+    "table_definition_sources": {
+      "intelligence.claim_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.event_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.claim_evidence": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "主张抽取核验与事件聚类作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockEvidence"
+    ],
+    "trigger_freshness_and_failure_policy": "转载链去重；未链接股票可关联行业市场",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "保留规范文档、修订及来源关系输入。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "实现主张/事件版本、转载去重、规则快路和异步模型增强。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "证据、事件聚类和计划更新共享引用。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "核对更正、未决主张、模型超时与重复通知。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "生产事件可追溯，失败不得伪装本轮成功；规则快路与模型降级边界明确。",
+      "explicit_exclusions": [
+        "所有模型及事件类型达到统一高准确率",
+        "全部消息关联唯一股票"
+      ]
+    },
+    "post_cutover_scope": "更多事件类型、语义模型及跨语言聚类。",
+    "milestone_mapping_reason": "先完成可核对消息闭环，模型增强按能力逐类加入。"
+  },
+  {
+    "mapping_id": "DJ13",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-088",
+    "input_line": 112,
+    "input_datasets": "`intel.heat`",
+    "input_job": "人气榜采样（collector）",
+    "milestone": "M3（人气榜）、M6（其他平台）",
+    "pages": "情绪与社区、工作台",
+    "target_owner_tables": [
+      "intelligence.community_observation"
+    ],
+    "table_definition_sources": {
+      "intelligence.community_observation": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "社区热度采样作业",
+    "work_package_owners": [
+      "W03"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息"
+    },
+    "consuming_operation_ids": [
+      "getStockCommunity"
+    ],
+    "trigger_freshness_and_failure_policy": "按平台基线与覆盖计算；缺采样不填零",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3（人气榜）、M6（其他平台）",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "采样首发选定社区/人气数据并记录覆盖。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "按平台基线计算热度与缺失状态。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "显示来源、观察时间和可比范围。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "验证重复、删除、断流及覆盖变化不伪造热度跳变。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "仅已启用来源满足采样和展示合同；生产模型使用热度时按该capability验收。",
+      "explicit_exclusions": [
+        "所有评论区和社交平台抓取",
+        "平台活跃人数口径完全相同"
+      ]
+    },
+    "post_cutover_scope": "其他平台、评论形态和细分参与度。",
+    "milestone_mapping_reason": "人气榜与其他平台分期合理，但其他平台原M6必须读作切换后扩展。"
+  },
+  {
+    "mapping_id": "DJ14",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-089",
+    "input_line": 113,
+    "input_datasets": "`intel.opinion`",
+    "input_job": "观点抽取与对账（stream、worker）",
+    "milestone": "M6",
+    "pages": "情绪与社区",
+    "target_owner_tables": [
+      "intelligence.claim_revision",
+      "intelligence.community_observation"
+    ],
+    "table_definition_sources": {
+      "intelligence.claim_revision": "sources_sectors/sources_sectors_schema.sql",
+      "intelligence.community_observation": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "观点冻结和到期评分作业",
+    "work_package_owners": [
+      "W03",
+      "W09"
+    ],
+    "owner_roles": {
+      "W03": "来源与消息",
+      "W09": "研究与联赛"
+    },
+    "consuming_operation_ids": [
+      "getStockCommunity"
+    ],
+    "trigger_freshness_and_failure_policy": "无明确概率不编造概率；未到期pending",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M6",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "post-cutover",
+    "target_milestones": [],
+    "target_milestone_deliverables": [],
+    "cutover_gate": {
+      "scope": "not-a-default-cutover-gate",
+      "requirement": "默认不作为M6门槛；社区原始信息先按DJ13展示，观点到期评分需独立合同、时间窗及前向证据。",
+      "explicit_exclusions": [
+        "所有观点有到期结果",
+        "每个讨论者形成可靠评分",
+        "未到期观点自动晋级"
+      ]
+    },
+    "post_cutover_scope": "观点冻结、条件解析、到期评分和作者条件表现。",
+    "milestone_mapping_reason": "观点评分有自然到期时间，不能强行成为基础选股平台切换条件。"
+  },
+  {
+    "mapping_id": "DJ15",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-090",
+    "input_line": 114,
+    "input_datasets": "`feat.panel_1d`、`feat.intraday`",
+    "input_job": "特征作业（worker、stream）",
+    "milestone": "M3",
+    "pages": "筛选器、工作台",
+    "target_owner_tables": [
+      "market.feature_result"
+    ],
+    "table_definition_sources": {
+      "market.feature_result": "database/core_schema.sql"
+    },
+    "normalized_job": "共享日线/盘中特征作业",
+    "work_package_owners": [
+      "W04"
+    ],
+    "owner_roles": {
+      "W04": "行情与特征"
+    },
+    "consuming_operation_ids": [
+      "getStockWorkspace"
+    ],
+    "trigger_freshness_and_failure_policy": "按policy_usable_at或真实available分模式；统一公式缓存",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M1",
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M1",
+        "meaning": "数据",
+        "deliverable": "准备首发特征依赖的合格数据和版本。"
+      },
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "实现冻结主干及首发工作台所需共享特征。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "技术指标和排名共用公式与缓存身份。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账可得时点、窗口、空值、单位与特征值。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "冻结主干及生产策略特征闭包完整；额外因子保持研究或缺能力状态。",
+      "explicit_exclusions": [
+        "全部因素目录接通",
+        "所有论文特征已复现",
+        "全部旧4300因子迁移"
+      ]
+    },
+    "post_cutover_scope": "新因子、周期与研究模型逐个登记试验族。",
+    "milestone_mapping_reason": "先实现真正被消费的特征闭包，目录覆盖不是无界首发门槛。"
+  },
+  {
+    "mapping_id": "DJ16",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-091",
+    "input_line": 115,
+    "input_datasets": "`sig.signal`、`sig.market_state`、`sig.sector_strength`",
+    "input_job": "信号作业（worker、stream）",
+    "milestone": "M3",
+    "pages": "今日、板块、推荐榜、工作台",
+    "target_owner_tables": [
+      "market.feature_result",
+      "strategy.instance"
+    ],
+    "table_definition_sources": {
+      "market.feature_result": "database/core_schema.sql",
+      "strategy.instance": "database/core_schema.sql"
+    },
+    "normalized_job": "状态/板块/策略信号作业",
+    "work_package_owners": [
+      "W04",
+      "W05"
+    ],
+    "owner_roles": {
+      "W04": "行情与特征",
+      "W05": "选股与板块"
+    },
+    "consuming_operation_ids": [
+      "getSectorOverview",
+      "getStockWorkspace"
+    ],
+    "trigger_freshness_and_failure_policy": "类型、coverage和角色明确；负证据不同于缺失",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "实现状态、板块及所选策略信号的类型、角色和路由。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "解释层显示来源、覆盖和职责。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "验证不跨职责抢权，缺失和负证据行为一致。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "首发信号与默认路由可复算；新策略无资格时保留批准主干，不要求新模型一定晋级。",
+      "explicit_exclusions": [
+        "全部强化学习/大模型方案接入",
+        "全部状态路由均已证明有效"
+      ]
+    },
+    "post_cutover_scope": "新状态模型、行业路由及论文衍生策略。",
+    "milestone_mapping_reason": "M3建立可组合基础，生产权重仍由资格而非模型数量决定。"
+  },
+  {
+    "mapping_id": "DJ17",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-092",
+    "input_line": 116,
+    "input_datasets": "`score.strategy`、`score.ensemble`、`picks_report`",
+    "input_job": "策略运行与融合（worker）",
+    "milestone": "M3",
+    "pages": "推荐榜、板块、工作台",
+    "target_owner_tables": [
+      "decision.ranking_run",
+      "decision.ranking_entry",
+      "decision.sector_rank_entry"
+    ],
+    "table_definition_sources": {
+      "decision.ranking_run": "database/core_schema.sql",
+      "decision.ranking_entry": "database/core_schema.sql",
+      "decision.sector_rank_entry": "sources_sectors/sources_sectors_schema.sql"
+    },
+    "normalized_job": "排序主干与批准候选融合作业",
+    "work_package_owners": [
+      "W05"
+    ],
+    "owner_roles": {
+      "W05": "选股与板块"
+    },
+    "consuming_operation_ids": [
+      "getMarketRanking",
+      "getSectorRanking"
+    ],
+    "trigger_freshness_and_failure_policy": "baseline残余明确；本身失效不发新READY",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-pre-cutover",
+    "target_milestones": [
+      "M3",
+      "M4",
+      "M5",
+      "M6"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "重建冻结主干、批准候选预算、残余权重和无候选行为。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "推荐榜、板块、候选池与计划引用同一release。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "平行对账排序、并列、缺失、预算和资格；零合格候选合法。"
+      },
+      {
+        "milestone": "M6",
+        "meaning": "切换",
+        "deliverable": "在一致数据/发布切点切换排名与页面指针。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "批准主干及依赖有效且无未解释差异；主干失效不得发布新READY。",
+      "explicit_exclusions": [
+        "至少一个新策略晋级",
+        "候选预算必须用满",
+        "全部论文复现完成"
+      ]
+    },
+    "post_cutover_scope": "经前向证据批准的新候选持续按同一协议进入。",
+    "milestone_mapping_reason": "此作业的M6是真正切换，不得与原参考的增强M6混用。"
+  },
+  {
+    "mapping_id": "DJ18",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-093",
+    "input_line": 117,
+    "input_datasets": "订单、成交、分录、机会账本、`portfolio_snapshot`",
+    "input_job": "纸面撮合与结算（worker）",
+    "milestone": "M2–M3",
+    "pages": "组合、复盘",
+    "target_owner_tables": [
+      "execution.account_head",
+      "execution.account_event",
+      "execution.journal_entry",
+      "execution.journal_line",
+      "execution.position_projection",
+      "execution.quantity_lot",
+      "execution.order_reservation",
+      "research.metric_value"
+    ],
+    "table_definition_sources": {
+      "execution.account_head": "execution/ledger_schema.sql",
+      "execution.account_event": "execution/ledger_schema.sql",
+      "execution.journal_entry": "execution/ledger_schema.sql",
+      "execution.journal_line": "execution/ledger_schema.sql",
+      "execution.position_projection": "execution/ledger_schema.sql",
+      "execution.quantity_lot": "execution/ledger_schema.sql",
+      "execution.order_reservation": "execution/ledger_schema.sql",
+      "research.metric_value": "integration/integration_schema.sql"
+    },
+    "normalized_job": "唯一仿真账本与评价作业",
+    "work_package_owners": [
+      "W07",
+      "W09",
+      "W06"
+    ],
+    "owner_roles": {
+      "W07": "执行与账本",
+      "W09": "研究与联赛",
+      "W06": "计划与组合"
+    },
+    "consuming_operation_ids": [
+      "getAccountProjection",
+      "getEvaluation"
+    ],
+    "trigger_freshness_and_failure_policy": "真实经济事件、T+1、费用和外部流分段；机会账本是新增可追踪研究对象，不能把现有分录表称作已支持",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M2–M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M2",
+      "M4",
+      "M5",
+      "M6"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M2",
+        "meaning": "账本",
+        "deliverable": "完成唯一现金、库存、成交、费用与权益内核和权威账本。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "账户与计划通过同一授权投影读取。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "对账经济事件、T+1、部分成交、费用、现金、库存和NAV。"
+      },
+      {
+        "milestone": "M6",
+        "meaning": "切换",
+        "deliverable": "固定账户版本及数据/发布切点，保留一致恢复关系。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "首发经济路径通过唯一账本对账；高级机会评分尚未实现不伪装已有，也不阻塞基础账本。",
+      "explicit_exclusions": [
+        "全部券商接通",
+        "全部机会成本/反事实模型完成",
+        "实盘自动下单开启"
+      ]
+    },
+    "post_cutover_scope": "丰富机会比较、券商适配和额外研究评价对象。",
+    "milestone_mapping_reason": "M2账本先于产品与资格，模拟和真实回填共用内核，可选适配不强制首发。"
+  },
+  {
+    "mapping_id": "DJ19",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-094",
+    "input_line": 118,
+    "input_datasets": "联赛各表",
+    "input_job": "联赛结算（worker）",
+    "milestone": "M3",
+    "pages": "策略库与联赛",
+    "target_owner_tables": [
+      "research.league_definition",
+      "research.league_round",
+      "research.league_pairing",
+      "research.promotion_decision"
+    ],
+    "table_definition_sources": {
+      "research.league_definition": "integration/integration_schema.sql",
+      "research.league_round": "integration/integration_schema.sql",
+      "research.league_pairing": "integration/integration_schema.sql",
+      "research.promotion_decision": "integration/integration_schema.sql"
+    },
+    "normalized_job": "联赛结算作业",
+    "work_package_owners": [
+      "W09"
+    ],
+    "owner_roles": {
+      "W09": "研究与联赛"
+    },
+    "consuming_operation_ids": [
+      "getLeague"
+    ],
+    "trigger_freshness_and_failure_policy": "固定比较窗口/职责；统计证据而非名次直接配权",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M3",
+      "M4",
+      "M5"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "建立联赛登记、窗口、分组配对、证据状态和晋级记录基础。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "显示研究、试用及生产资格和原因。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "验证同条件比较、资格和无合格策略时的主干连续性。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "状态机与资格流程可执行；证据未成熟可保持研究/试用，M6不等待某策略获胜或全部研究完成。",
+      "explicit_exclusions": [
+        "55篇论文全部复现",
+        "92条旧实验全部通过",
+        "每个策略家族都有生产冠军"
+      ]
+    },
+    "post_cutover_scope": "按优先级复现论文、增加策略与持续评估。",
+    "milestone_mapping_reason": "新M3包含联赛基础，新M5评估资格；流程验收不等于所有研究结论成熟。"
+  },
+  {
+    "mapping_id": "DJ20",
+    "input_file": "08-build-plan.md",
+    "input_unit_id": "R08-095",
+    "input_line": 119,
+    "input_datasets": "`trade_plan`、`alert`",
+    "input_job": "计划生成与重评估、告警（stream）",
+    "milestone": "M3–M4",
+    "pages": "工作台、告警",
+    "target_owner_tables": [
+      "decision.trade_plan",
+      "ops.outbox"
+    ],
+    "table_definition_sources": {
+      "decision.trade_plan": "database/core_schema.sql",
+      "ops.outbox": "database/core_schema.sql"
+    },
+    "normalized_job": "计划版本与通知意图作业",
+    "work_package_owners": [
+      "W06",
+      "W08"
+    ],
+    "owner_roles": {
+      "W06": "计划与组合",
+      "W08": "前端与工作台"
+    },
+    "consuming_operation_ids": [
+      "getTradePlan",
+      "pollUpdates"
+    ],
+    "trigger_freshness_and_failure_policy": "告警持久扩展另立迁移；计划修订不得重复资金",
+    "status": "required_implementation_not_claimed_running",
+    "input_milestone": "M3–M4",
+    "milestone_basis": "input-reference",
+    "target_milestone_basis": "v3.2-unified-M0-M6",
+    "target_phase": "core-plus-post-cutover-enhancements",
+    "target_milestones": [
+      "M3",
+      "M4",
+      "M5",
+      "M6"
+    ],
+    "target_milestone_deliverables": [
+      {
+        "milestone": "M3",
+        "meaning": "排名与联赛基础",
+        "deliverable": "建立计划生成/重评估版本、依赖与通知意图。"
+      },
+      {
+        "milestone": "M4",
+        "meaning": "产品页面",
+        "deliverable": "核心计划、持仓提示及已发布更新合同连接页面。"
+      },
+      {
+        "milestone": "M5",
+        "meaning": "并行对账与资格评估",
+        "deliverable": "验证旧输入不产生新行动计划，重复事件不重复资金/业务通知。"
+      },
+      {
+        "milestone": "M6",
+        "meaning": "切换",
+        "deliverable": "计划和通知游标随数据、发布与账户切点一致切换。"
+      }
+    ],
+    "cutover_gate": {
+      "scope": "declared-launch-dependency-closure-only",
+      "requirement": "核心站内计划及更新一致；外发、画线告警和新增事件各自按授权/新合同启用。",
+      "explicit_exclusions": [
+        "所有外部通知渠道",
+        "PF01画线增强告警完成",
+        "未发布的新事件已经可推送"
+      ]
+    },
+    "post_cutover_scope": "外部推送、画线告警和新增公开事件版本。",
+    "milestone_mapping_reason": "计划属于核心闭环，后续通知增强不借原M3-M4标签扩大切换门槛。"
+  }
+]

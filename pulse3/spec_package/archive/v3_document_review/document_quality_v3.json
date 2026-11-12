@@ -1,0 +1,102 @@
+{
+  "checked_at": "2026-11-10T08:01:34.874690+00:00",
+  "docx_sha256": "d2006a6002eaefdcf97200d2862635236f3dfc35cae16c409561140fd095bb4c",
+  "final_pages": 112,
+  "tables": 31,
+  "figures": 1,
+  "navigation_bookmarks": 15,
+  "external_link_targets": 178,
+  "initial_full_page_visual_review": {
+    "pages": 114,
+    "ranges": [
+      [
+        1,
+        38
+      ],
+      [
+        39,
+        76
+      ],
+      [
+        77,
+        114
+      ]
+    ]
+  },
+  "second_revision": {
+    "pages": 113,
+    "identical_body_pages": 66,
+    "actual_changed_pages_visually_reviewed": [
+      4,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      46,
+      49,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      71,
+      98,
+      101,
+      102,
+      103,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113
+    ]
+  },
+  "final_revision": {
+    "pages": 112,
+    "identical_body_pages": 106,
+    "actual_changed_pages_visually_reviewed": [
+      22,
+      25,
+      26,
+      32,
+      33,
+      34
+    ]
+  },
+  "geometry_flags": [],
+  "all_final_body_pages_covered_by_visual_review_or_exact_pixel_equivalence": true,
+  "resolved_items": [
+    "old v2 authority reference",
+    "literal backticks in bold",
+    "interface and SQL field column wraps",
+    "reference punctuation and separators",
+    "near-empty chapter tails",
+    "source missing reason and ranking/taxonomy field mappings"
+  ],
+  "limits": "Word layout validated with the available LibreOffice renderer; different fonts/renderers may paginate differently."
+}

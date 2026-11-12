@@ -1,0 +1,26 @@
+{
+  "as_of": "2026-11-11",
+  "strategies": 61,
+  "factors": 105,
+  "strategy_primary_role_counts": {
+    "entry": 18,
+    "selection": 32,
+    "allocation": 3,
+    "execution": 1,
+    "exit": 4,
+    "holding": 3
+  },
+  "strategy_method_counts": {
+    "rule_based": 42,
+    "hybrid": 2,
+    "statistical": 9,
+    "supervised_learning": 4,
+    "llm_assisted": 2,
+    "reinforcement_learning": 2
+  },
+  "production_routes_enabled": 0,
+  "implemented_strategies": 0,
+  "implemented_factors": 0,
+  "uuid_namespace": "a3e1be70-41e2-5df8-b4da-33b31a3a1857",
+  "capitalization_basis": "circulating_market_cap"
+}

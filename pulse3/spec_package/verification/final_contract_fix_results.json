@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-11-11",
+  "author_tests_before": 22,
+  "author_tests_after": 26,
+  "author_failures": 0,
+  "author_errors": 0,
+  "author_skipped": 0,
+  "base_files_unchanged": {
+    "contracts/v3.schema.json": true,
+    "contracts/openapi.json": true,
+    "contracts/api_bindings.json": true,
+    "database/core_schema.sql": true,
+    "execution/ledger_schema.sql": true,
+    "sources_sectors/sources_sectors_schema.sql": true,
+    "integration/integration_schema.sql": true,
+    "integration/all_fields.json": true
+  },
+  "extension_generator_matches_staging": true,
+  "independent_probe": {
+    "documented_cases": 13,
+    "implemented_boundary_checks": 10,
+    "known_repository_gap_demonstrations": 3,
+    "all_documented_boundaries_match": true
+  },
+  "changed_file_sha256": {
+    "contracts/supplemental.schema.json": "81e891f23ed8a28524f180f038823f5646ca2b92ac51f7dd0d2e58353cc8ceff",
+    "contracts/extension_bindings.json": "2a75937ecd000f397609366040485cc06f97b67fdc3f5ebc1b84c6c1d61626fd",
+    "reference_extensions/semantic_validation.py": "816f658d597af84db823e760814193a32f17fc9d62087c58044f8975fd2ff38a",
+    "reference_extensions/test_semantics.py": "11a8e0f15abdd36da1383a721225f0cc4eb84346ba688ff94a8d13e0dccf1457",
+    "reference_extensions/README.md": "b1f4b068154d42f2ccb435b62854514959464fe309dd6b58b323e7343c4128e6",
+    "spec/ADDENDUM_V31.md": "32ddb1e587299ec30e1f0d9cf2baaca33d5fc1054beeab9cc492ba6d9a79a62c",
+    "spec/PROPOSAL_DECISIONS_V31.md": "a99f1b5721773bcdd9329817367de48cb94d1430e0b1145c0149f0b08cb3dcac",
+    "traceability/proposal_decisions_v31.json": "2687359f40677b09dda43e8ec11b7f76a46763102da3d87c5b8f31c36bfb4ad7"
+  },
+  "scope": "FSR01-05 targeted fixes; no base schema, SQL, OpenAPI, ledger or production connector changes",
+  "passed": true
+}

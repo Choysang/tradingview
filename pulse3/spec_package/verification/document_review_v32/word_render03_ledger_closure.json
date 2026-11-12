@@ -1,0 +1,181 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "reviewed_at_utc": "2026-11-11T03:13:44.546642+00:00",
+  "review_kind": "narrow_visual_closure_after_render03",
+  "source": {
+    "render_directory": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03",
+    "render_page_count": 167,
+    "docx": "/workspace/scratch/5ac6aa9eb6c9/deliverables/Pulse_Ashare_Rewrite_2026_v32_build.docx",
+    "docx_sha256_at_review": "78a105451465af49aac1dcb829503b4af4965a7e84fb8bbab9b9c61df7d46f7f",
+    "comparison_record": "/workspace/scratch/5ac6aa9eb6c9/research_v5/qa/word_render03_comparison.json",
+    "comparison_record_sha256": "94c249c009d83b5f8994ab519a273c92e67803f43b6e06475744e5e73fa20b79"
+  },
+  "scope": {
+    "requested_pages": [
+      13,
+      14,
+      40,
+      41,
+      42
+    ],
+    "actually_viewed_pages": [
+      13,
+      14,
+      40,
+      41,
+      42
+    ],
+    "coverage": "5/5",
+    "viewing": "原尺寸 PNG；每次最多两张；没有缩略图或文本替代。"
+  },
+  "result": "pass_for_assigned_closure_scope",
+  "remaining_required_fix_pages": [],
+  "closures": [
+    {
+      "issue_id": "FWQA01",
+      "prior_issue": "WQA01",
+      "prior_render": "report_render_v32_02",
+      "prior_page": 14,
+      "status": "closed_in_render03",
+      "visual_evidence_pages": [
+        13,
+        14
+      ],
+      "reason": "最终第 13 页结束第一部分，第 14 页直接开始第二部分，原仅两行重复入口说明的近空白页已移除。"
+    },
+    {
+      "issue_id": "FWQA02",
+      "prior_issue": "WQA02",
+      "prior_render": "report_render_v32_02",
+      "prior_page": 43,
+      "status": "closed_in_render03",
+      "visual_evidence_pages": [
+        40,
+        41,
+        42
+      ],
+      "reason": "账本结论与短引用完整留在最终第 41 页，第 42 页直接开始第五部分，旧两行引用尾页已移除。"
+    }
+  ],
+  "pages": [
+    {
+      "page": 13,
+      "visually_opened": true,
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "status": "pass",
+      "notes": "第一部分在最终验收段落正常收尾；M0–M6 完整可读，没有尾段另占一页，也无底部裁切。",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03/page-13.png",
+      "image_sha256": "2a141b5ac96b3493b412f0f41f49b73bf632d0e131ba4eb7f6be51998e41d610",
+      "selected_body_comparison": {
+        "body_sha256": "d1ae14d01ba7f09950b3c2f4ebecd5e94cd7c2e450a5acad37bea564484febf0",
+        "matches_comparison_manifest": true,
+        "previous_body_page_refs": [
+          13
+        ],
+        "independently_equal_to_previous_body": true
+      }
+    },
+    {
+      "page": 14,
+      "visually_opened": true,
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "status": "pass",
+      "notes": "直接进入第二部分“数据库与共享数据标准”，标题、正文及职责表正常，旧第 14 页两行短尾已消失。",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03/page-14.png",
+      "image_sha256": "7383fefb059f0f618fadc2d225d89884314628d8524b33e81428e7610a26006f",
+      "selected_body_comparison": {
+        "body_sha256": "13bcbe92e153fe5ad9ca2767fabdd79e9b2debcc2e9e85bf79c9b77c0bf49681",
+        "matches_comparison_manifest": true,
+        "previous_body_page_refs": [
+          15
+        ],
+        "independently_equal_to_previous_body": true
+      }
+    },
+    {
+      "page": 40,
+      "visually_opened": true,
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "status": "pass",
+      "notes": "账本取消/更正、TWR 分段示例及做 T 比较正文完整，页眉页脚正常，无裁切或重叠。",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03/page-40.png",
+      "image_sha256": "bcea0967d3238abace0df4f2c2830213e2187539844033e83a20bff8b6e14508",
+      "selected_body_comparison": {
+        "body_sha256": "053dd552a7b69b5977b05a893f2238a3f6631fb9e12cb54cd6ab2356f2d70833",
+        "matches_comparison_manifest": true,
+        "previous_body_page_refs": [
+          41
+        ],
+        "independently_equal_to_previous_body": true
+      }
+    },
+    {
+      "page": 41,
+      "visually_opened": true,
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "status": "pass",
+      "notes": "四层 Benchmark 表与参考实现交付边界完整；修订结论和简短证据引用均留在本页，末行可读且不碰页脚。",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03/page-41.png",
+      "image_sha256": "9f10eae70933170afa81b1a2848838f4bfb7a1970ed4e28ddc3087941ed7f646",
+      "selected_body_comparison": {
+        "body_sha256": "8870cc85a8e4efaf92ac18900cd2bf8b8d24da3a0c6e1024ad63384871a3a41e",
+        "matches_comparison_manifest": true,
+        "previous_body_page_refs": []
+      }
+    },
+    {
+      "page": 42,
+      "visually_opened": true,
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "status": "pass",
+      "notes": "直接进入第五部分“特征共享与六类策略职责”，标题和特征身份表完整，未夹入旧第 43 页两行引用短尾。",
+      "image_path": "/workspace/scratch/5ac6aa9eb6c9/report_render_v32_03/page-42.png",
+      "image_sha256": "6e0d52ada964488388eb19e1c8442e14615c823737fd5b693740dae8c130c148",
+      "selected_body_comparison": {
+        "body_sha256": "83a0ecfbdb74e7aeff0aa9cb6a371a29e2a093ca0386f565d907febc7ce41498",
+        "matches_comparison_manifest": true,
+        "previous_body_page_refs": [
+          44
+        ],
+        "independently_equal_to_previous_body": true
+      }
+    }
+  ],
+  "comparison_context": {
+    "source": "parent-produced word_render03_comparison.json",
+    "reported_total_pages": 167,
+    "reported_identical_body_pages": 166,
+    "reported_changed_body_pages": [
+      41
+    ],
+    "method": "Exact RGB pixel SHA256 on full width, y=100..1879; fixed header/footer excluded.",
+    "independent_verification_scope": "仅对所查五页独立重算正文哈希，并对四个已匹配页逐像素比较旧图正文；变动第 41 页已原尺寸视觉核查。",
+    "not_claimed": "未声称本人在本轮重新逐页打开全部 167 页，也未独立重新计算全部 167 页的比较。"
+  },
+  "history_policy": {
+    "preserved_reports": [
+      "research_v5/qa/word_audit_final_v32.json",
+      "research_v5/qa/word_audit_final_v32.md"
+    ],
+    "supersedes_scope": "仅关闭 render02 中 FWQA01、FWQA02 对 render03 最终排版的待修状态；历史报告保留其实际所见。"
+  },
+  "limits": [
+    "本次只做已分配五页及两处短尾的版式关闭，不开展新的内容审计。",
+    "未修改 DOCX、正文规范或渲染图。"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "as_of": "2026-11-10",
+  "provenance": "Earlier reference examples authored for this rewrite package; not old repository business code.",
+  "renames": {
+    "instruments": "instrument_ids",
+    "interval": "timeframe",
+    "price_mode": "adjustment_mode",
+    "universe_version": "universe_policy_version"
+  },
+  "behavior_change": false,
+  "files": [
+    {
+      "file": "feature_store.py",
+      "source_sha256": "2ce4928536549200b8989e6c63ee3f317c7c5ea73cdb4523456a693d5187af67",
+      "target_sha256": "8983d6d33af8c4ad6e407c1667e507dde8ff37723a86edf3c05529e45e45b10a",
+      "transformation": "only the four explicit whole-token renames"
+    },
+    {
+      "file": "test_feature_store.py",
+      "source_sha256": "c51550b0b712449929e10052ae58377bb516633341097c85dd1e035815906763",
+      "target_sha256": "a5328344c4245e83adfe2874a66e29e98e58c5c0032450d6f764b1ce5bcfad74",
+      "transformation": "only the four explicit whole-token renames"
+    }
+  ],
+  "test_command": "python -m unittest discover -s reference_features -p test_feature_store.py -v",
+  "tests_passed": 19,
+  "mechanically_verified_only_declared_renames": true,
+  "feature_key_fields": [
+    "feature_id",
+    "definition_version",
+    "implementation_digest",
+    "parameter_digest",
+    "instrument_ids",
+    "timeframe",
+    "adjustment_mode",
+    "snapshot_id",
+    "decision_as_of",
+    "availability_policy_version",
+    "session_policy_version",
+    "input_revision",
+    "input_schema_version",
+    "dependency_digest",
+    "universe_policy_version",
+    "calendar_version",
+    "adjustment_version",
+    "market_rules_version",
+    "numeric_policy_version"
+  ],
+  "feature_key_dimension_count": 19
+}

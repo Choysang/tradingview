@@ -1,0 +1,20 @@
+{
+  "reviewer": "/root/v32_arch_data",
+  "root_json_sha256": "9317affe22734d33c5fa35967b79ce2a060277e8b6ddfaf00371f597eb1a62f2",
+  "spec_sha256": "a64c5ce796c6e995f1a3cf595de9d8eb9d20b1275436d3ea48100ced98492c62",
+  "coverage": {
+    "expected": 475,
+    "covered": 475,
+    "missing": [],
+    "duplicates": [],
+    "foreign": []
+  },
+  "paper_shells": {
+    "range": "RP082-RP136",
+    "count": 55,
+    "unique_reason_count": 1
+  },
+  "evidence_kinds": {
+    "input": 191
+  }
+}

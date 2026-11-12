@@ -1,0 +1,97 @@
+{
+  "input_files": 11,
+  "input_lines": 2836,
+  "structural_units": 1984,
+  "substantive_units": 1524,
+  "decision_count": 590,
+  "covered_units": 1524,
+  "uncovered_units": [],
+  "duplicate_assignments": [],
+  "by_file": [
+    {
+      "file": "README.md",
+      "lines": 90,
+      "substantive_units": 58,
+      "covered": 58,
+      "sha256": "b5613eb492614a1212cc7b20680c6c27ed32a1ecfc80fe2d3bca81fab5ad9a2e"
+    },
+    {
+      "file": "01-audit.md",
+      "lines": 248,
+      "substantive_units": 156,
+      "covered": 156,
+      "sha256": "589d42d69f35fa432e716a2428fea324928c891e597356530cb86f4b149eb550"
+    },
+    {
+      "file": "02-product.md",
+      "lines": 197,
+      "substantive_units": 100,
+      "covered": 100,
+      "sha256": "041299423a0f07d6d74081b19b5e0dd38b70ef6f7b1371b3bc76e7bb691c279c"
+    },
+    {
+      "file": "03-architecture.md",
+      "lines": 291,
+      "substantive_units": 116,
+      "covered": 116,
+      "sha256": "eba3e4542b45735abbd86d84ec9344d8288e8b2eb3369753b993463cdd95f3fd"
+    },
+    {
+      "file": "04-data.md",
+      "lines": 414,
+      "substantive_units": 219,
+      "covered": 219,
+      "sha256": "58e48358d772f6b4b06c764d77496e6f032e45026b172b12c08932019ee7d15a"
+    },
+    {
+      "file": "05-signals.md",
+      "lines": 361,
+      "substantive_units": 185,
+      "covered": 185,
+      "sha256": "eabcf54ff3c6640ebd36de0cd11111841b54e2b95b4bf44368d1f8aa65e8e65d"
+    },
+    {
+      "file": "06-strategy.md",
+      "lines": 429,
+      "substantive_units": 219,
+      "covered": 219,
+      "sha256": "f3599493506e9cacad1db136db46adc856fa9b1ec187bcb71c10d50b68702abe"
+    },
+    {
+      "file": "07-sim-ledger.md",
+      "lines": 291,
+      "substantive_units": 154,
+      "covered": 154,
+      "sha256": "99df3537f95b1b7dbe2e2984a460975b012e8db1eb703b43e3fff49c9eac0ff0"
+    },
+    {
+      "file": "08-build-plan.md",
+      "lines": 221,
+      "substantive_units": 127,
+      "covered": 127,
+      "sha256": "3c32cd50d66a373fcdfa954efda3e6b713996eda71c42705a710931c87f7fd16"
+    },
+    {
+      "file": "09-evidence.md",
+      "lines": 251,
+      "substantive_units": 163,
+      "covered": 163,
+      "sha256": "f104ccb253e2133f61f7c5a7c68f0df0026537e12769204a12501915f5d44afb"
+    },
+    {
+      "file": "10-decisions.md",
+      "lines": 43,
+      "substantive_units": 27,
+      "covered": 27,
+      "sha256": "506d49ace8b8518b8c5e71edf689dc951c3046ab6cf6456a8a42537e58acbc52"
+    }
+  ],
+  "dispositions": {
+    "revise": 459,
+    "covered": 41,
+    "adopt": 69,
+    "reject": 19,
+    "unresolved": 2
+  },
+  "scope": "All substantive textual units assigned once; compound named items have dedicated sub-maps. Not an assertion of independent strategy reproduction."
+}

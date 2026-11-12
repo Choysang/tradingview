@@ -1,0 +1,125 @@
+{
+  "checked_at": "2026-11-11",
+  "reviewed_sha256": {
+    "contracts/supplemental.schema.json": "81e891f23ed8a28524f180f038823f5646ca2b92ac51f7dd0d2e58353cc8ceff",
+    "contracts/extension_bindings.json": "2a75937ecd000f397609366040485cc06f97b67fdc3f5ebc1b84c6c1d61626fd",
+    "reference_extensions/semantic_validation.py": "816f658d597af84db823e760814193a32f17fc9d62087c58044f8975fd2ff38a",
+    "reference_extensions/test_semantics.py": "11a8e0f15abdd36da1383a721225f0cc4eb84346ba688ff94a8d13e0dccf1457"
+  },
+  "cases": [
+    {
+      "case_id": "X00",
+      "kind": "control",
+      "description": "Baseline estimated minute-bar volume profile",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X01",
+      "kind": "local_semantic_contradiction",
+      "description": "Cost-distribution estimate relabelled observed with no assumptions",
+      "validator_result": "rejected",
+      "error": "ValueError: cost distribution remains an estimate",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X02",
+      "kind": "local_capability_contract_gap",
+      "description": "Community layer satisfied by minute bars alone",
+      "validator_result": "rejected",
+      "error": "ValueError: community layer needs observed historical samples",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X03",
+      "kind": "local_semantic_contradiction",
+      "description": "AVWAP price layer with not_applicable price basis",
+      "validator_result": "rejected",
+      "error": "ValueError: price layer requires an explicit price basis",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X04",
+      "kind": "local_resolution_contract_gap",
+      "description": "Minute-bar allocated volume profile classified as deterministic exact result",
+      "validator_result": "rejected",
+      "error": "ValueError: bar allocation is an estimated volume profile",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X05",
+      "kind": "repository_context_gap",
+      "description": "Full-order capability exists somewhere in caller global set, but only minute-bar artifact bound",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X06",
+      "kind": "equivalent_timestamp_false_rejection",
+      "description": "Same horizon instant, allowed UTC Z spelling with zero fractional seconds",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X07",
+      "kind": "scoring_policy_registry_gap",
+      "description": "Arbitrary scoring version still executes fixed Brier quantization",
+      "validator_result": "rejected",
+      "error": "ValidationError: 'brier_binary_decimal12_v1' was expected",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X08",
+      "kind": "repository_coverage_gap",
+      "description": "Available volume profile claims future data window without a coverage context",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X09",
+      "kind": "repository_artifact_type_gap",
+      "description": "Known ref/hash with altered artifact contract identity still accepted",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X11",
+      "kind": "fixed_identity_required",
+      "description": "Missing document identity is rejected by strict forecast schema",
+      "validator_result": "rejected",
+      "error": "ValidationError: 'source_document_revision_id' is a required property",
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X12",
+      "kind": "control",
+      "description": "Baseline explicit forecast and hand-computed Brier with supported policy",
+      "validator_result": "accepted",
+      "error": null,
+      "matches_documented_boundary": true
+    },
+    {
+      "case_id": "X10",
+      "kind": "identity_contract_gap",
+      "description": "Ordinal-only source pointer matches two legal claim_evidence rows",
+      "old_ordinal_only_matching_rows": 2,
+      "full_identity_matching_rows": 1,
+      "validator_result": "historical_issue_fixed_by_source_document_revision_id",
+      "evidence_primary_key": [
+        "claim_revision_id",
+        "document_revision_id",
+        "evidence_ordinal"
+      ],
+      "matches_documented_boundary": true
+    }
+  ],
+  "implemented_boundary_checks": 10,
+  "known_repository_gap_demonstrations": 3,
+  "all_documented_boundaries_match": true,
+  "scope": "Synthetic contract/semantic boundaries only; repository checks are not implemented and are not presumed proven."
+}

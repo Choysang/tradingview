@@ -1,0 +1,124 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T02:58:22.007141+00:00",
+  "scope": "Quant-Arena v1 Table 2及相关结论/R32-P09/RP090窄核对",
+  "primary_url": "https://arxiv.org/html/2610.30113v1",
+  "actual_reading_level": "targeted_full_text: Abstract, §1 claim, §2.4, §3.1, Table 2, §3.2, §5",
+  "web_refs": [
+    "turn249view0",
+    "turn250view0",
+    "turn250view1"
+  ],
+  "reference_id": "R32-P09",
+  "related_decision_id": "RP090",
+  "input_unit_id": "R09-065",
+  "stage_modified": false,
+  "checks": [
+    {
+      "check_id": "NQ01",
+      "claim": "所有38个迭代配置均未跑赢等权市场",
+      "verdict": "refuted_by_table_and_body",
+      "evidence_locator": "Table 2; §3.2 paragraph immediately after Table 2; §5 Conclusion",
+      "reported_values": {
+        "configuration": "GPT-6 Sol / medium / iterative",
+        "sealed_year": 2024,
+        "ARR_percent": 18.4,
+        "gross_equal_weight_market_ARR_percent": 17.1,
+        "reported_excess_pp": 1.4,
+        "winning_iterative_configurations": 1,
+        "iterative_configurations": 38
+      },
+      "interpretation": "应明确这一例外；不能继续写所有配置都失败。"
+    },
+    {
+      "check_id": "NQ02",
+      "claim": "摘要概括与表格/正文一致",
+      "verdict": "internal_inconsistency",
+      "evidence_locator": "Abstract paragraph 3; §1 contributions; §3.2; §5",
+      "short_quotes": [
+        {
+          "location": "§1 contributions; same claim in Abstract",
+          "quote": "No model beats the equal-weight market in 2024"
+        },
+        {
+          "location": "§3.2 opening after Table 2",
+          "quote": "only one beats the market"
+        }
+      ],
+      "interpretation": "摘要/引言的无模型胜出与表格及结论的一例胜出不一致。§3.1将后续诊断限定到每模型最高总分配置，但不能自行断定这就是摘要未注明的本意。"
+    },
+    {
+      "check_id": "NQ03",
+      "claim": "比较基准已经同成本",
+      "verdict": "refuted",
+      "evidence_locator": "§2.4 Financial Evaluation and Metrics",
+      "interpretation": "保留旧冷审的成本边界修正：策略计成本与模拟冲击，等权参照是毛收益。"
+    },
+    {
+      "check_id": "NQ04",
+      "claim": "18.4减17.1精确等于1.4个百分点",
+      "verdict": "not_supported_by_displayed_precision",
+      "displayed_arithmetic_pp": "1.3",
+      "interpretation": "+1.4是作者超额栏报告值。未取得未舍入数值，不能断言差异来源；不修改作者报告值，也不把1.4写成我们按显示值算出的差额。"
+    }
+  ],
+  "supersedes": [
+    {
+      "path": "research_v5/reviews/papers_root_cold_review.json",
+      "scope": "reviews[reference_id=R32-P09].findings[0].correction, supported_claim, proposed_decision_reason",
+      "reason": "这些字段沿用了未跑赢的绝对概括；成本边界修正仍保留。",
+      "retention": "原冷审保持不变，本文件作为有明确来源定位的更正。"
+    },
+    {
+      "path": "research_v5/reviews/papers_root_cold_review.md",
+      "scope": "Quant-Arena小节，原第29行“其未跑赢等权的结论可以准确转述”",
+      "reason": "缺少配置例外，不能继续作为全配置事实使用。",
+      "retention": "不抹去历史文件，发布说明标记由本次窄核对替代。"
+    }
+  ],
+  "current_materials": [
+    {
+      "path": "research_v5/evidence/papers_root.json",
+      "locator": "[reference_id=R32-P09]",
+      "status": "already_corrected_main_fact",
+      "action": "保留例外与未复现边界；可补摘要冲突定位。"
+    },
+    {
+      "path": "research_v5/reviews/root.json",
+      "locator": "decisions[decision_id=RP090]",
+      "status": "generic_pointer_not_a_specific_no_winner_claim",
+      "action": "不把这个原始通用指针误报为已写错数值。"
+    },
+    {
+      "path": "research_v5/reviews/root_final.json",
+      "locator": "decisions[decision_id=RP090]",
+      "status": "already_corrected_main_fact_and_cost_boundary",
+      "action": "保留现文；主文不必额外解释未经核实的舍入原因。"
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/research/reference_papers_v32.json",
+      "locator": "items[reference_id=R32-P09]",
+      "status": "already_corrected_main_fact_and_cost_boundary",
+      "action": "原input_claim作为被审材料保留；不要删改成采用结论。"
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/research/REFERENCE_PAPERS_V32.md",
+      "locator": "R32-P09 subsection",
+      "status": "already_corrected_main_fact_and_cost_boundary",
+      "action": "保留18.4及超额栏+1.4的区分。"
+    }
+  ],
+  "recommended_cold_review_replacement": "采用封存年度与统一现金账户评估；必须撤回“所有配置均未跑赢”的概括。Table 2在38个迭代配置中列出GPT-6 Sol medium一例胜出，ARR18.4%，毛等权参照17.1%，超额栏报告+1.4个百分点；§3.2和结论均明确此例外。摘要/引言的绝对概括与此不一致，不能作为全配置结论。参赛策略承担成本与模拟冲击，参照不扣成本；不宣称同成本比较，不据单年单配置结果授予生产有效性。",
+  "reviewed_file_hashes": {
+    "research_v5/evidence/papers_root.json": "c4808884a844c72e7b5b6e59da38c8d15a97641cc3587e910a6617353a08a4d3",
+    "research_v5/reviews/root.json": "9317affe22734d33c5fa35967b79ce2a060277e8b6ddfaf00371f597eb1a62f2",
+    "research_v5/reviews/root_final.json": "46b16f1d3300be9f1b9636102823e19385b38f96dc82af5a66acbfc60ebb9526",
+    "research_v5/reviews/papers_root_cold_review.json": "2c34117da6714219e3044d08f79b1536c1617aa8329a85818a95262f7efb2f94",
+    "research_v5/reviews/papers_root_cold_review.md": "04ea56791ebf2706be48ced24e6fe41ba48cfb9687d918b19685d80bd05eadc6",
+    "deliverables/Pulse_Rewrite_Package_v32_build/research/reference_papers_v32.json": "22ad5c4ac6d29b930b4d6ed63a7ce6b7ada169a593d65f1164d6c15a57d12ce9",
+    "deliverables/Pulse_Rewrite_Package_v32_build/research/REFERENCE_PAPERS_V32.md": "a680f0dae37fe0fab7c1d6a1b1aa421f3322f110f6dfef11ab7f36a3419ad84d"
+  },
+  "independent_reproduction": false,
+  "production_efficacy_verified": false,
+  "limits": "仅核该论文v1所列数据与内部表述；未下载/重跑作者策略、订单簿或原始精度数据，未核全部one-shot配置；本次结果不能证明持续超额收益或解释摘要作者意图。"
+}

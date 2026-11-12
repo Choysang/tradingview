@@ -1,0 +1,26 @@
+{
+  "fixture_kind": "synthetic_contract_boundary_example",
+  "canonical_bar": {
+    "instrument_id": "00000000-0000-4000-8000-000000000001",
+    "trade_date": "2026-11-10",
+    "timeframe": "1m",
+    "session_scope": "continuous-v1",
+    "bar_open_time": "2026-11-10T02:00:00Z",
+    "bar_close_time": "2026-11-10T02:01:00Z",
+    "snapshot_id": "00000000-0000-4000-8000-000000000002",
+    "currency": "CNY",
+    "adjustment_mode": "raw",
+    "open_price_raw": "10",
+    "high_price_raw": "10.1",
+    "low_price_raw": "9.9",
+    "close_price_raw": "10.05",
+    "volume_shares": 1000,
+    "turnover_amount_cny": "10000",
+    "exchange_reference_price_raw": null,
+    "is_final": true,
+    "available_at": "2026-11-10T02:01:01Z",
+    "quality_status": "valid",
+    "field_quality": {}
+  },
+  "not_live_market_data": true
+}

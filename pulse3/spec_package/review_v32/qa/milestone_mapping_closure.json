@@ -1,0 +1,27 @@
+{
+  "scope": "Only changed milestone/phase fields and existing name/identity bindings; no business algorithm retest.",
+  "checks": {
+    "twenty_dataset_ids_unchanged": true,
+    "input_milestones_exact_and_compatibility_alias_retained": true,
+    "targets_use_unified_milestones": true,
+    "every_row_has_specific_target_gate_exclusions_reason": true,
+    "optional_datasets_explicit_post_cutover": true,
+    "twenty_one_feature_ids_unchanged": true,
+    "three_features_preserve_input_decision_and_are_optional": true,
+    "no_current_decision_uses_old_m6": true,
+    "api_and_cards_unchanged": true,
+    "source_work_package_hash_current": true,
+    "all_paper_reproduction_not_launch_gate": true
+  },
+  "passed": true,
+  "dataset_rows": 20,
+  "feature_rows": 21,
+  "current_hashes": {
+    "product_subfeature_mapping.json": "3f0be080606107db40e8136aead3ed91ce4d8012f1b95c4d77d8f66e071ad3e4",
+    "product_api_mapping.json": "e881cf69c8f18caeae4b625be6549afd8e49773b2944d8b110cc44973c3ef289",
+    "dataset_job_page_mapping.json": "4d28e4e899993660a8565e88c640c64e4b5e0f3e161551835ed3147cc22b2d73",
+    "product_mapping_validation.json": "8cf00ea825e70705634edeb5a283fcedafb08ec0d89fb59c63cbda996aa26d03",
+    "product_extension_cards.json": "2e2ad27908429e24f9ecf7d43adf36c352fe7fecb192ad10383f6fd17375b45e",
+    "product_extension_cards_validation.json": "dbb37c7a00aa629554d77079349546b0c2e322972783ccb2dd4365ca45b2e66b"
+  }
+}

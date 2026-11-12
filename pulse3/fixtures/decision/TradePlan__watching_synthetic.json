@@ -1,0 +1,154 @@
+{
+ "account_id": null,
+ "available_at": "2026-11-10T02:00:00Z",
+ "based_on_release_id": "bda53bdc-df77-5bf2-bbf0-478073e78f6e",
+ "entry_conditions": {
+  "clock": {
+   "kind": "bar_close",
+   "session_policy_version": "cn-session-v1",
+   "timeframe": "1m"
+  },
+  "left": {
+   "definition_version": "1",
+   "feature_id": "px.close",
+   "field_path": "close",
+   "initial_feature_key_hash": null,
+   "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+   "kind": "feature",
+   "resolution_policy_version": "latest-completed-bar-v1",
+   "timeframe": "1d",
+   "unit": "CNY"
+  },
+  "node": "compare",
+  "operator": "lte",
+  "right": {
+   "kind": "constant",
+   "unit": "CNY",
+   "value": "10"
+  }
+ },
+ "entry_price_zone": {
+  "adjustment_mode": "raw",
+  "currency": "CNY",
+  "lower_price_raw": "9.5",
+  "upper_price_raw": "10"
+ },
+ "evidence_revision_ids": [],
+ "exit_conditions": {
+  "clock": {
+   "kind": "bar_close",
+   "session_policy_version": "cn-session-v1",
+   "timeframe": "1m"
+  },
+  "left": {
+   "definition_version": "1",
+   "feature_id": "px.close",
+   "field_path": "close",
+   "initial_feature_key_hash": null,
+   "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+   "kind": "feature",
+   "resolution_policy_version": "latest-completed-bar-v1",
+   "timeframe": "1d",
+   "unit": "CNY"
+  },
+  "node": "compare",
+  "operator": "gte",
+  "right": {
+   "kind": "constant",
+   "unit": "CNY",
+   "value": "11"
+  }
+ },
+ "expected_account_version": null,
+ "expires_at": "2026-11-15T02:00:00Z",
+ "holding_horizon": {
+  "horizon_id": "5td",
+  "unit": "trading_days",
+  "value": 5
+ },
+ "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+ "invalidation": {
+  "clock": {
+   "kind": "bar_close",
+   "session_policy_version": "cn-session-v1",
+   "timeframe": "1m"
+  },
+  "left": {
+   "definition_version": "1",
+   "feature_id": "px.close",
+   "field_path": "close",
+   "initial_feature_key_hash": null,
+   "instrument_id": "9947881e-988e-59ab-9988-38c2e59a9e6d",
+   "kind": "feature",
+   "resolution_policy_version": "latest-completed-bar-v1",
+   "timeframe": "1d",
+   "unit": "CNY"
+  },
+  "node": "compare",
+  "operator": "lt",
+  "right": {
+   "kind": "constant",
+   "unit": "CNY",
+   "value": "9"
+  }
+ },
+ "model_run_id": null,
+ "plan_id": "6c4c3be4-bd5c-5ad1-a6d2-7e858d328125",
+ "plan_version": 1,
+ "position_side": "long",
+ "replace_policy": "keep_existing",
+ "sizing": {
+  "kind": "fixed_shares",
+  "quantity_shares": 100
+ },
+ "state": "watching",
+ "strategy_refs": [
+  {
+   "instance_id": "eeea87a1-1960-57d6-9522-421d7f61242d",
+   "strategy_id": "74804aef-45c6-5044-a543-3bcbadc50177",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "de42d03c-c980-5300-9bf6-0d0d8f305341",
+   "strategy_id": "7a0b77ee-d004-5bd4-ae95-cae2884a658b",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "b127902e-6ac8-518a-a63c-73b2832e0788",
+   "strategy_id": "a459eed4-40fa-53fb-a310-7c48bbfb5616",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "838be718-392d-523d-9d3e-e4876fc29360",
+   "strategy_id": "fa4bb460-484c-56fb-b44a-d44e5bcff331",
+   "strategy_version": 1
+  },
+  {
+   "instance_id": "77592b51-06b0-57fd-a365-69c4626d5d8a",
+   "strategy_id": "733e08c7-362e-5f4e-88c4-d8131f14464e",
+   "strategy_version": 1
+  }
+ ],
+ "supersedes": null,
+ "trigger_policy": {
+  "fire_mode": "on_transition_to_true",
+  "max_fires": 1,
+  "min_interval_ms": 0,
+  "pending_order_policy": "block_retrigger",
+  "rearm": {
+   "cooldown_ms": 0,
+   "mode": "never"
+  },
+  "require_final_bar": true,
+  "trigger_id": "t",
+  "unknown_policy": "do_not_fire"
+ },
+ "valid_from": "2026-11-10T02:00:00Z",
+ "validation": {
+  "evaluation_id": null,
+  "policy_version": "val-v1",
+  "result_ref": null,
+  "status": "pending",
+  "validated_at": null
+ }
+}

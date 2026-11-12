@@ -1,0 +1,327 @@
+{
+  "version": "3.1",
+  "paths_are": "planned fresh implementation repository paths, not claims that these production folders exist in the handoff",
+  "work_packages": [
+    {
+      "work_package_id": "W01",
+      "owner_role": "契约与集成",
+      "allowed_paths": [
+        "contracts/",
+        "src/application/ports/"
+      ],
+      "dependencies": [],
+      "deliverables": [
+        "统一schema与API绑定",
+        "兼容性差异",
+        "客户端生成"
+      ],
+      "acceptance": "合同引用闭合且消费者能编译",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Register 5 strict payloads and InputAlignmentPolicy; generated client roundtrips preserve Decimal/null/time/units."
+      ]
+    },
+    {
+      "work_package_id": "W02",
+      "owner_role": "数据库",
+      "allowed_paths": [
+        "migrations/",
+        "src/adapters/postgres/"
+      ],
+      "dependencies": [
+        "W01"
+      ],
+      "deliverables": [
+        "迁移与回滚/恢复",
+        "隔离/触发器实测",
+        "连接池预算"
+      ],
+      "acceptance": "目标PG上并发、唯一性与发布协议通过",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Execute extension registration and Repository identity/time/JSON-reference checks on real PostgreSQL."
+      ]
+    },
+    {
+      "work_package_id": "W03",
+      "owner_role": "来源与消息",
+      "allowed_paths": [
+        "src/adapters/sources/",
+        "src/domains/evidence/"
+      ],
+      "dependencies": [
+        "W01",
+        "W02"
+      ],
+      "deliverables": [
+        "精确源合同",
+        "原文与游标",
+        "轮询补采对账"
+      ],
+      "acceptance": "至少一条官方事件真实回放与断流恢复",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Bind endpoint capability to each input manifest; enforce ASOF/late revision/flow gap rules and ETF versus bond units."
+      ]
+    },
+    {
+      "work_package_id": "W04",
+      "owner_role": "行情与特征",
+      "allowed_paths": [
+        "src/domains/market/",
+        "src/domains/features/"
+      ],
+      "dependencies": [
+        "W01",
+        "W02"
+      ],
+      "deliverables": [
+        "报价与K线",
+        "复权多周期",
+        "依赖计算共享"
+      ],
+      "acceptance": "窗口完整性和PIT多源单位校验通过",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Implement F097-F105 as separately versioned candidates; freeze indicator/pivot policy and all required input contracts."
+      ]
+    },
+    {
+      "work_package_id": "W05",
+      "owner_role": "选股与板块",
+      "allowed_paths": [
+        "src/domains/ranking/",
+        "src/domains/sectors/"
+      ],
+      "dependencies": [
+        "W01",
+        "W03",
+        "W04"
+      ],
+      "deliverables": [
+        "全市场榜",
+        "板块榜",
+        "候选池"
+      ],
+      "acceptance": "同一release下排序、成分和计划一致",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Use comparable sector universes, decomposed surge and theme state; preserve default mainboard eligibility."
+      ]
+    },
+    {
+      "work_package_id": "W06",
+      "owner_role": "计划与组合",
+      "allowed_paths": [
+        "src/domains/plans/",
+        "src/domains/portfolio/"
+      ],
+      "dependencies": [
+        "W01",
+        "W05",
+        "W07"
+      ],
+      "deliverables": [
+        "三值条件",
+        "六职责组合",
+        "actionability"
+      ],
+      "acceptance": "现金库存报价版本共同约束且无重复占用",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Compile S061 grid intents through shared inventory; show typed layers and matured community outcomes."
+      ]
+    },
+    {
+      "work_package_id": "W07",
+      "owner_role": "执行与账本",
+      "allowed_paths": [
+        "src/domains/execution/",
+        "src/adapters/brokers/"
+      ],
+      "dependencies": [
+        "W01",
+        "W02"
+      ],
+      "deliverables": [
+        "规则与费用版本",
+        "唯一账本",
+        "真实回报对账"
+      ],
+      "acceptance": "golden、恒等式与实际回报差异可解释",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Evaluate grid under same terminal wealth and incomplete-leg scenarios; do not change ledger cost basis."
+      ]
+    },
+    {
+      "work_package_id": "W08",
+      "owner_role": "前端与工作台",
+      "allowed_paths": [
+        "apps/web/",
+        "src/application/bff/"
+      ],
+      "dependencies": [
+        "W01",
+        "W05",
+        "W06"
+      ],
+      "deliverables": [
+        "生成客户端",
+        "持久布局",
+        "断线恢复"
+      ],
+      "acceptance": "各页面同包切换，quote覆盖层可辨识",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Review 10 supplemental method names with exact source/venue/guarantee; run registered matched-random baselines."
+      ]
+    },
+    {
+      "work_package_id": "W09",
+      "owner_role": "研究与联赛",
+      "allowed_paths": [
+        "src/domains/research/",
+        "src/domains/strategy_registry/"
+      ],
+      "dependencies": [
+        "W01",
+        "W03",
+        "W04",
+        "W07"
+      ],
+      "deliverables": [
+        "试验登记",
+        "比较上下文",
+        "配对晋级与组合"
+      ],
+      "acceptance": "保留集、成熟标签和同预算证明闭环",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Render capability-driven layers, disclosure-time overlays and explicit analysis-pending state."
+      ]
+    },
+    {
+      "work_package_id": "W10",
+      "owner_role": "独立验收",
+      "allowed_paths": [
+        "tests/integration/",
+        "tests/conformance/",
+        "benchmarks/"
+      ],
+      "dependencies": [
+        "W01"
+      ],
+      "deliverables": [
+        "反例与合成贯通",
+        "真实环境集成",
+        "混合负载与恢复"
+      ],
+      "acceptance": "按traceability/milestones_v32.json的M0-M6证据齐备，不以静态解析代替运行",
+      "base_contract_version": "3.0.0",
+      "evidence_requirements": [
+        "exact commit/version",
+        "commands and exit codes",
+        "scope and unresolved items"
+      ],
+      "out_of_scope": [
+        "silent contract forks",
+        "second economic ledger",
+        "undeclared source/model assumptions"
+      ],
+      "v31_supplement_tasks": [
+        "Run real payload bindings, per-artifact coverage checks, latency/load profiles and regression gates."
+      ]
+    }
+  ]
+}

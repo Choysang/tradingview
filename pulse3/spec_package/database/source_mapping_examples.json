@@ -1,0 +1,393 @@
+{
+  "schema_version": "3.0-source-mapping.1",
+  "checked_at": "2026-11-10",
+  "scope": "官方字段定义加合成数字fixture；没有发起实际行情接口请求。适配器应以source_id + endpoint_id + source_schema_version + mapping_version选择映射。",
+  "fixtures_are_synthetic": true,
+  "canonical_contract": {
+    "money_and_price_json": "decimal string, no float round-trip",
+    "volume_shares": "integer >= 0, shares, not lots",
+    "turnover_amount_cny": "decimal string >= 0, CNY yuan",
+    "price_raw": "通用单价；bar字段使用open_price_raw/high_price_raw/low_price_raw/close_price_raw；quote使用last_price_raw；必须adjustment_mode=raw",
+    "change_ratio": "fraction; 2%=0.02, not 2",
+    "null": "数值null与field_status搭配，禁止用0代表未知",
+    "field_status_enum": [
+      "observed",
+      "derived",
+      "missing",
+      "invalid",
+      "not_applicable",
+      "disputed"
+    ],
+    "quality_status_separate": "质量是字段/记录有效性；freshness_state独立表示current/stale/unknown；source_health独立表示源状态。",
+    "units_only_equalities": "下列金额/数量相等仅证明单位变换。历史日线、盘中累计和收盘快照在时点/会话/终结状态未对齐前不能判为同一条观测。"
+  },
+  "mapping_profiles": [
+    {
+      "profile_id": "tushare_daily_20261110_v1",
+      "source_id": "tushare",
+      "endpoint_id": "daily",
+      "source_schema_version": "document-27-checked-20261110",
+      "mapping_version": "1.0.0",
+      "official_source": "https://tushare.pro/document/2?doc_id=27",
+      "evidence_id": "DB09",
+      "source_semantics": {
+        "vol": "手",
+        "amount": "千元",
+        "pre_close": "除权参考昨收；并非恒等于前一日原始close",
+        "pct_chg": "百分数，基于除权参考昨收",
+        "trade_date": "YYYYMMDD",
+        "price_mode": "官方说明未复权",
+        "session_scope": "需接入时核实常规/盘后量额聚合边界，不凭接口名推断"
+      },
+      "operations": [
+        {
+          "source": "ts_code",
+          "target": "instrument_id",
+          "op": "resolve_identifier_at_trade_date"
+        },
+        {
+          "source": "trade_date",
+          "target": "trade_date",
+          "op": "parse_date_yyyymmdd"
+        },
+        {
+          "source": "open",
+          "target": "open_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "high",
+          "target": "high_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "low",
+          "target": "low_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "close",
+          "target": "close_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "vol",
+          "target": "volume_shares",
+          "op": "decimal_multiply_then_require_integer",
+          "factor": "100"
+        },
+        {
+          "source": "amount",
+          "target": "turnover_amount_cny",
+          "op": "decimal_multiply",
+          "factor": "1000"
+        },
+        {
+          "source": "pct_chg",
+          "target": "change_ratio",
+          "op": "decimal_divide",
+          "factor": "100"
+        },
+        {
+          "source": "pre_close",
+          "target": "exchange_reference_price_raw",
+          "op": "decimal_exact"
+        }
+      ],
+      "synthetic_raw": {
+        "ts_code": "000001.SZ",
+        "trade_date": "20261110",
+        "open": "10.00",
+        "high": "10.50",
+        "low": "9.80",
+        "close": "10.20",
+        "pre_close": "10.00",
+        "pct_chg": "2.00",
+        "vol": "100.25",
+        "amount": "100.25"
+      },
+      "canonical_expected": {
+        "instrument_id": "00000000-0000-4000-8000-000000000001",
+        "currency": "CNY",
+        "adjustment_mode": "raw",
+        "open_price_raw": "10.00",
+        "high_price_raw": "10.50",
+        "low_price_raw": "9.80",
+        "close_price_raw": "10.20",
+        "volume_shares": 10025,
+        "turnover_amount_cny": "100250.00",
+        "trade_date": "2026-11-10",
+        "exchange_reference_price_raw": "10.00",
+        "change_ratio": "0.02"
+      },
+      "must_not_fill": {
+        "published_at": "endpoint未提供实际发布时刻，保留null",
+        "source_revision": "无供应商修订号时使用原始内容哈希记录本地版本，不伪造供应商版本",
+        "is_final": "由源完整性与交易会话finalization政策确认，不因HTTP200或日期已过就设true"
+      },
+      "endpoint_optional_fields": {
+        "ah_vol": "盘后成交量，手→股；是否已被vol包含必须另行核实",
+        "ah_amount": "盘后成交额，千元→元；不得无依据叠加到amount"
+      }
+    },
+    {
+      "profile_id": "tushare_rt_k_20261110_v1",
+      "source_id": "tushare",
+      "endpoint_id": "rt_k",
+      "source_schema_version": "document-372-checked-20261110",
+      "mapping_version": "1.0.0",
+      "official_source": "https://tushare.pro/document/2?doc_id=372",
+      "evidence_id": "DB10",
+      "source_semantics": {
+        "vol": "股",
+        "amount": "元",
+        "num": "开盘以来成交笔数",
+        "close": "收盘价或当前最新价，盘中不能标final",
+        "trade_time": "非默认可选快照时间；未返回时不可用采集时间冒充交易所时间"
+      },
+      "operations": [
+        {
+          "source": "ts_code",
+          "target": "instrument_id",
+          "op": "resolve_identifier_at_observation_time"
+        },
+        {
+          "source": "open",
+          "target": "open_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "high",
+          "target": "high_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "low",
+          "target": "low_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "close",
+          "target": "close_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "vol",
+          "target": "volume_shares",
+          "op": "require_integer",
+          "factor": "1"
+        },
+        {
+          "source": "amount",
+          "target": "turnover_amount_cny",
+          "op": "decimal_exact",
+          "factor": "1"
+        },
+        {
+          "source": "num",
+          "target": "trade_count",
+          "op": "require_integer"
+        }
+      ],
+      "synthetic_raw": {
+        "ts_code": "000001.SZ",
+        "name": "假设名称",
+        "open": "10.00",
+        "high": "10.50",
+        "low": "9.80",
+        "close": "10.20",
+        "vol": 10025,
+        "amount": 100250,
+        "num": 123
+      },
+      "canonical_expected": {
+        "instrument_id": "00000000-0000-4000-8000-000000000001",
+        "currency": "CNY",
+        "adjustment_mode": "raw",
+        "open_price_raw": "10.00",
+        "high_price_raw": "10.50",
+        "low_price_raw": "9.80",
+        "close_price_raw": "10.20",
+        "volume_shares": 10025,
+        "turnover_amount_cny": "100250.00",
+        "trade_count": 123,
+        "is_final": false
+      },
+      "must_not_fill": {
+        "event_time": "未给trade_time则null及time_quality=missing；first_seen_at/ingested_at由系统实际记录",
+        "change_ratio": "样例没有可靠参考价与口径，不填写假设涨幅"
+      },
+      "critical_counterexample": "若复用daily对vol乘100、amount乘1000，会错误得到1002500股、100250000元；两个字段名相同不能证明单位相同。"
+    },
+    {
+      "profile_id": "akshare_stock_zh_a_hist_raw_20261110_v1",
+      "source_id": "akshare_eastmoney",
+      "endpoint_id": "stock_zh_a_hist",
+      "source_schema_version": "official-stock_quote-checked-20261110",
+      "mapping_version": "1.0.0",
+      "official_source": "https://akshare.akfamily.xyz/data/stock/stock_quote.html",
+      "evidence_id": "DB11",
+      "source_semantics": {
+        "成交量": "手",
+        "成交额": "元",
+        "涨跌幅": "百分数",
+        "换手率": "百分数",
+        "股票代码": "不带市场标识",
+        "adjust": "仅adjust为空的raw配置进入raw价格表；qfq/hfq进入独立adjusted数据集"
+      },
+      "request_context": {
+        "symbol": "000001",
+        "period": "daily",
+        "adjust": ""
+      },
+      "operations": [
+        {
+          "source": "股票代码",
+          "target": "instrument_id",
+          "op": "resolve_identifier_with_request_market_and_trade_date"
+        },
+        {
+          "source": "日期",
+          "target": "trade_date",
+          "op": "parse_date_iso"
+        },
+        {
+          "source": "开盘",
+          "target": "open_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "最高",
+          "target": "high_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "最低",
+          "target": "low_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "收盘",
+          "target": "close_price_raw",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "成交量",
+          "target": "volume_shares",
+          "op": "decimal_multiply_then_require_integer",
+          "factor": "100"
+        },
+        {
+          "source": "成交额",
+          "target": "turnover_amount_cny",
+          "op": "decimal_exact"
+        },
+        {
+          "source": "涨跌幅",
+          "target": "change_ratio",
+          "op": "decimal_divide",
+          "factor": "100"
+        },
+        {
+          "source": "换手率",
+          "target": "turnover_ratio",
+          "op": "decimal_divide",
+          "factor": "100"
+        }
+      ],
+      "synthetic_raw": {
+        "日期": "2026-11-10",
+        "股票代码": "000001",
+        "开盘": "10.00",
+        "最高": "10.50",
+        "最低": "9.80",
+        "收盘": "10.20",
+        "成交量": 101,
+        "成交额": "101000.00",
+        "涨跌幅": "2.00",
+        "换手率": "1.25"
+      },
+      "canonical_expected": {
+        "instrument_id": "00000000-0000-4000-8000-000000000001",
+        "currency": "CNY",
+        "adjustment_mode": "raw",
+        "open_price_raw": "10.00",
+        "high_price_raw": "10.50",
+        "low_price_raw": "9.80",
+        "close_price_raw": "10.20",
+        "volume_shares": 10100,
+        "turnover_amount_cny": "101000.00",
+        "trade_date": "2026-11-10",
+        "change_ratio": "0.02",
+        "turnover_ratio": "0.0125"
+      },
+      "must_not_fill": {
+        "exchange": "裸代码与请求上下文/证券时点别名无法唯一映射则quarantine，不能只凭前缀猜全部市场",
+        "published_at": "数据日期不是实际发布时刻"
+      },
+      "origin_independence": "AKShare为适配库，实际内容来源东方财富；与其他东财转载或同源接口不当作独立原始事实。"
+    }
+  ],
+  "negative_and_correction_cases": [
+    {
+      "id": "MAP01",
+      "input": "daily.vol=100.001手",
+      "expected": "10000.1股非整数；invalid，保留原值，不四舍五入成成交量"
+    },
+    {
+      "id": "MAP02",
+      "input": "daily.vol=null",
+      "expected": "volume_shares=null, field_status=missing；不能补0"
+    },
+    {
+      "id": "MAP03",
+      "input": "daily.vol=0且有效停牌/无成交事实",
+      "expected": "volume_shares=0, field_status=observed；与缺失不同"
+    },
+    {
+      "id": "MAP04",
+      "input": "amount=NaN/Infinity/无法解析文本",
+      "expected": "invalid；原始值保留并记录转换失败"
+    },
+    {
+      "id": "MAP05",
+      "input": "qfq close被传入raw映射",
+      "expected": "拒绝raw发布；路由至adjusted数据集并附adjustment_version"
+    },
+    {
+      "id": "MAP06",
+      "input": "一个源15:00快照、另一个源15:30全会话量额",
+      "expected": "unverifiable_until_scope_aligned，不按金额差直接判错"
+    },
+    {
+      "id": "MAP07",
+      "input": "新增未知字段",
+      "expected": "保留raw extra_fields；不自动改canonical schema，产生schema_drift报告"
+    },
+    {
+      "id": "MAP08",
+      "input": "必需字段被改名或单位文档改变",
+      "expected": "该endpoint mapping暂停canonical发布；原文采集继续；版本升级后重放"
+    },
+    {
+      "id": "MAP09",
+      "input": "第二源补齐缺失字段",
+      "expected": "追加field lineage，field_status=observed且value_origin=alternate_source；不改第一源原始记录，不隐藏可得时点"
+    },
+    {
+      "id": "MAP10",
+      "input": "解析修复、供应商更正或公司行动",
+      "expected": "新observation_revision/manifest；以前的snapshot和实验保持引用原版本"
+    },
+    {
+      "id": "MAP11",
+      "input": "所有源该字段缺失",
+      "expected": "保持missing；若策略需要该字段则条件UNKNOWN，不能用LLM生成事实"
+    },
+    {
+      "id": "MAP12",
+      "input": "原始金额已是float且精度丢失",
+      "expected": "保留原始序列化值和precision_limited；不能声称恢复源未提供的精确小数"
+    }
+  ]
+}

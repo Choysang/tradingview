@@ -1,0 +1,54 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "reviewed_at_utc": "2026-11-11T02:47:24.354809+00:00",
+  "independent_of_authorship": true,
+  "scope": "整合卷及另作者05/06审查，重点经济与晋升语义；非旧代码扩审",
+  "documents": [
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/spec/REFERENCE_RECONCILIATION_V32.md",
+      "sha256": "a64c5ce796c6e995f1a3cf595de9d8eb9d20b1275436d3ea48100ced98492c62",
+      "bytes": 24690
+    },
+    {
+      "path": "research_v5/reviews/signals_strategy.json",
+      "sha256": "95577ada5af9ca9d708bb86e228e82f0eb2e8948b7c862eed9ca1176a74a57bc",
+      "bytes": 326821
+    },
+    {
+      "path": "research_v5/reviews/signals_strategy.md",
+      "sha256": "3c89728c73c180d72e83007c704e1003603135c2d164cdb02250dd07b4f7b253",
+      "bytes": 20241
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/execution/execution_standard.md",
+      "sha256": "9f44cc1656d2033eab8c9ec701086b8d3bf0fd5c50777297f7a29bdcaa015552",
+      "bytes": 18251
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/spec/STRATEGY_LEAGUE_SPEC.md",
+      "sha256": "2a6efab544d065d9508f833e9104062d971bc6003b9c11d38669ef236175388a",
+      "bytes": 9240
+    },
+    {
+      "path": "deliverables/Pulse_Rewrite_Package_v32_build/spec/FINAL_SYSTEM_SPEC.md",
+      "sha256": "237e631e7d06b583f874d7b6a09a72b9f1b7dcacd5adfa6569e3b1072fe64e7f",
+      "bytes": 36758
+    }
+  ],
+  "coverage_independent_check": {
+    "required": 404,
+    "seen": 404,
+    "missing": [],
+    "extra": [],
+    "duplicates": {},
+    "invalid_baseline_binding": []
+  },
+  "status": "pass_with_nonblocking_clarifications",
+  "blocking_findings": 0,
+  "clarifications": [
+    "CL-S01 明示weighted_average_gross唯一权威成本，FIFO仅另政策不可混用",
+    "CL-S02 baseline本身缺输入时不发布新完整榜，不能无条件baseline=1",
+    "CL-S03 75/78重测重叠，不再将153视作独立策略总数",
+    "CL-S04 SS082 cash属于资金层，不作为rank score residual"
+  ]
+}

@@ -1,0 +1,801 @@
+{
+  "version": "3.2",
+  "catalog_id": "pulse.engineering_milestones.v3.2",
+  "document_kind": "engineering_acceptance_specification",
+  "status": "definitions_only_implementation_and_passage_not_claimed",
+  "scope": "统一重写项目的工程里程碑、所需退出证据、研究联赛职责分配及旧编号迁移。此文件不证明系统或策略已经通过验收。",
+  "interpretation": {
+    "numbering": "当前工程门槛仅使用 M0–M6；旧 M0–M5 必须带 legacy_v3 命名空间。",
+    "gates_not_start_sequence": "里程碑编号表示退出证据的依赖，不要求所有任务按编号串行开始。",
+    "release_scope": "M0 冻结本次交付的需求、页面、操作、来源与账户能力清单。公共操作数或扩展提案数不是完成度指标；拟议能力只有进入正式合同、持久层与实现并验收后才算交付。",
+    "evidence_not_assumption": "每项退出证据必须绑定实际版本、环境、输入与执行结果；架构文字、候选目录、合成参考测试不能替代真实来源、真实数据库或目标环境的集成结果。",
+    "engineering_vs_strategy": "工程门槛、运行许可、数据健康和策略证据分别记录；工程连续运行或研究联赛可执行不自动证明策略有效或授予生产权限。",
+    "baseline_continuity": "完整定义且符合主规范许可条件的有效 baseline 保持主干连续性。无盈利新候选不阻止工程切换；baseline 缺必需输入或失效时，阻止新的完整 READY 发布，旧版只读 stale 且不得派生新的 actionable 计划。",
+    "no_calendar_promise": "退出条件不是固定日历承诺；统计观察窗依据预注册政策和样本有效性确定。"
+  },
+  "parallelism": {
+    "explicit_parallel_tracks": [
+      {
+        "after": "M0",
+        "milestones": [
+          "M1",
+          "M2"
+        ],
+        "rule": "数据适配与唯一账本可并行。账本使用已冻结合同的规范事件流与手算样例开发，不能等待所有外部来源接通才启动。"
+      }
+    ],
+    "fixture_first_development": [
+      {
+        "milestone": "M3",
+        "may_start_after": "M0",
+        "rule": "共享特征、排名、条件计划和研究调度可用明确标记的合成 fixture 开发；退出仍要求 M1、M2 的实际证据。"
+      },
+      {
+        "milestone": "M4",
+        "may_start_after": "M0",
+        "rule": "前端、页面状态和客户端可基于正式合同及明确标记为 synthetic 的样本并行开发；不能把演示数据当真实选股结果。"
+      },
+      {
+        "milestone": "M5",
+        "may_start_after": "M3",
+        "rule": "数据、政策、版本与运行许可已满足的 shadow 任务可提前启动积累真实前向记录；M5 整体退出仍要求 M4 完成及平行运行、恢复与负载证据。"
+      }
+    ],
+    "dependency_rule": "may_start_after 仅约束可开始的工程工作；exit_requires_passed_milestones 约束整项门槛的通过。上游合同或关键政策变化时，定位并重验受影响证据，不能沿用失效结果。"
+  },
+  "milestones": [
+    {
+      "milestone_id": "M0",
+      "title": "合同、首发范围与迁移基座",
+      "purpose": "建立可并行开发且可以逐项验收的共同语言。",
+      "may_start_after": [
+        "project_authorization"
+      ],
+      "exit_requires_passed_milestones": [],
+      "exit_evidence": [
+        {
+          "evidence_id": "M0-E01",
+          "requirement": "冻结本次交付范围及完整纵向链。",
+          "required_records": [
+            "版本化的需求—页面—操作—持久对象—事件—验收映射",
+            "当前正式能力与 proposal 的独立状态记录"
+          ],
+          "verification": "逐项检查首发功能是否有明确输入、输出、生产者、持久对象、失败表现及验收；排除项有明确边界。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M0-E02",
+          "requirement": "冻结核心合同与数字、身份、时间和版本语义。",
+          "required_records": [
+            "证券身份与命名/单位字典",
+            "价格、数量、金额、费率与舍入政策",
+            "event_time、observed_at、available_at、knowledge_as_of 语义",
+            "OpenAPI、schema、错误与幂等语义版本"
+          ],
+          "verification": "合同生成或校验可运行；金额精度、标识、时间和空值规则在 API、应用对象、SQL 与事件中一致。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M0-E03",
+          "requirement": "在目标 PostgreSQL 建立正式迁移基座。",
+          "required_records": [
+            "目标 PG 与依赖版本及实际运行日志",
+            "按 core → ledger → sources_sectors → integration 顺序运行的正式迁移版本",
+            "月分区、角色权限、唯一键/外键和关键并发约束用例"
+          ],
+          "verification": "从空库执行迁移并核对结构、约束与必要种子；迁移种子文件存在不等于已通过目标 PG 实跑。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M0-E04",
+          "requirement": "登记策略职责与统一实验上下文。",
+          "required_records": [
+            "StrategyDefinition/StrategyInstance/EvaluationContext 合同",
+            "role、horizon、输入 capability、市场/成本/账本政策版本",
+            "PromotionPolicy 与工程门槛的边界说明"
+          ],
+          "verification": "相同策略在不同职责或期限使用明确版本；实验能固定数据、可得性、股票池、经济起点、基准、资源预算与代码版本。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M0-E05",
+          "requirement": "冻结最小输入 fixture 与分工边界。",
+          "required_records": [
+            "真实 schema fixture 和可复用手算样例",
+            "任务 owner、允许写入范围、依赖和验收命令",
+            "合同变更与影响追踪记录"
+          ],
+          "verification": "不同开发任务使用同一合同和同一 fixture；合同变更能识别受影响任务，不要求等待全部论文复现。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "contracts/openapi.json",
+        "contracts/v3.schema.json",
+        "database/core_schema.sql",
+        "execution/ledger_schema.sql",
+        "sources_sectors/sources_sectors_schema.sql",
+        "integration/integration_schema.sql",
+        "traceability/work_packages.json"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M1",
+      "title": "真实数据、可追溯快照与来源能力",
+      "purpose": "让后续分析使用可解释、可重放且当时真实可得的数据。",
+      "may_start_after": [
+        "M0"
+      ],
+      "exit_requires_passed_milestones": [
+        "M0"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M1-E01",
+          "requirement": "接通至少两条适合字段校验职责的行情获取路径和一条官方事件链。",
+          "required_records": [
+            "端点、鉴权、字段、单位、时区、分页、限额、历史深度与实际权限记录",
+            "真实获取与交叉校验样本",
+            "主张级原始来源及同源转载关系"
+          ],
+          "verification": "接口成功、内容新增、规范完成和决策可用分别验证；同源转载不能算独立事实确认，官方公告可确认其自身发布行为。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M1-E02",
+          "requirement": "原始数据、规范映射、修订与实际可用时间完整留痕。",
+          "required_records": [
+            "不可变 raw 引用与内容哈希",
+            "字段映射、校验结果、缺失及冲突原因",
+            "修订关系、观测时间及可用时间"
+          ],
+          "verification": "供应商字段或单位变化、错误载荷、缺失值和修订均能检测；不能以模型补造或静默取旧值完成必需字段。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M1-E03",
+          "requirement": "快照、发布与对象生命周期可恢复。",
+          "required_records": [
+            "批次/快照 manifest 与成员闭包",
+            "staged、COMMITTED_UNPUBLISHED、READY 的状态记录",
+            "pin/lease、GC 与 publish 共锁/CAS 的并发结果"
+          ],
+          "verification": "历史快照不因当前 active 状态变化丢成员；发布前对象不被 GC 抢删；缺必需组件不产生完整 READY。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M1-E04",
+          "requirement": "来源断流、重复、乱序、修订及补洞按依赖传播。",
+          "required_records": [
+            "来源状态与 freshness 指标",
+            "推送、轮询、心跳和补洞演练记录",
+            "故障与恢复的下游传播记录"
+          ],
+          "verification": "HTTP 200 返回旧内容不算恢复；休市和未到公布时间不误报；补采、重试与重复消息不重复产生业务结论。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M1-E05",
+          "requirement": "实际数据能力与策略要求匹配。",
+          "required_records": [
+            "按端点与数据集登记的 capability",
+            "日线、分钟、采样近似、盘口或逐笔能力矩阵",
+            "数据不足的路由拒绝/降级记录"
+          ],
+          "verification": "采样快照不冒充真实分钟 OHLC 或逐笔路径；低能力近似必须作为单独定义和评估等级，未满足必需输入不能 data_ready。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "database/database_design.md",
+        "database/field_dictionary.json",
+        "database/source_mapping_examples.json",
+        "review_v32/dataset_job_page_mapping.json",
+        "spec/REFERENCE_RECONCILIATION_V32.md"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M2",
+      "title": "唯一成交与经济账本",
+      "purpose": "统一所有研究、计划、账户与回放的成交和收益语义。",
+      "may_start_after": [
+        "M0"
+      ],
+      "exit_requires_passed_milestones": [
+        "M0"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M2-E01",
+          "requirement": "规范意图、订单、预留、成交、费用与账户事件共用一个确定性经济内核。",
+          "required_records": [
+            "事件合同与内核版本",
+            "黄金手算场景和独立经济恒等式检查",
+            "相同事件流的重放结果"
+          ],
+          "verification": "现金、库存、可卖批次、费用、持仓成本与 NAV 一致；各入口不能私设持有期、撮合或记账解释。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M2-E02",
+          "requirement": "并发预留、部分成交、撤单与成交更正遵守同一账户状态。",
+          "required_records": [
+            "目标 PG 事务与并发执行记录",
+            "重复输入、部分成交/撤单、取消/更正引用样例",
+            "账户头、序列、幂等与释放轨迹"
+          ],
+          "verification": "同一现金或库存不重复使用；重试不重复记账；撤单只释放相应剩余额度，成交更正保存来源事实与引用关系。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M2-E03",
+          "requirement": "交易日、T+1、交收、公司行为及不可成交状态可重放。",
+          "required_records": [
+            "交易规则与日历版本",
+            "跨日可卖量、到账、分红/送转/拆分场景",
+            "停牌、限价、排队未知及退市未售库存场景"
+          ],
+          "verification": "不把未知排队或最后一根行情假设成必然成交；未能卖出的库存按既定估值和状态处理，不伪造现金强平。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M2-E04",
+          "requirement": "费用、成本权威和外部现金流收益口径明确。",
+          "required_records": [
+            "真实采用的 CostProfile 与 Decimal/舍入政策",
+            "weighted_average_gross 成本与批次用途记录",
+            "带外部流入/流出的分段 TWR 手算和现金核对"
+          ],
+          "verification": "税费、最低佣金和已知/未知费用状态依配置；批次只服务资格与税等规定用途，不另建竞争的 FIFO 损益权威；外部入金不计投资收益。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M2-E05",
+          "requirement": "策略操作改善使用完整账户对照。",
+          "required_records": [
+            "同初始现金/库存/成本的持有对照",
+            "做 T、网格或其他首发操作的相同 EvaluationContext 结果",
+            "未成交、未完成操作腿、费用、现金复用和终值记录"
+          ],
+          "verification": "以成本后总 NAV、TWR 和已声明基准评价增量，不能以显示成本下降、单腿利润或独立策略净值相加证明改善。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "execution/ledger_schema.sql",
+        "database/database_design.md",
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "spec/REFERENCE_RECONCILIATION_V32.md"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M3",
+      "title": "排名、条件计划与研究联赛后端",
+      "purpose": "先形成持续可解释的产品主干，再让候选方法通过统一研究路径贡献增量。",
+      "may_start_after": [
+        "M0"
+      ],
+      "exit_requires_passed_milestones": [
+        "M1",
+        "M2"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M3-E01",
+          "requirement": "共享特征、全市场榜、板块榜与升温备选池形成同一数据链。",
+          "required_records": [
+            "公式及版本、输入 snapshot 与点时股票池",
+            "全市场/板块/备选池结果和选择理由",
+            "确定性重复运行及并列/缺失处理结果"
+          ],
+          "verification": "相同输入和公式复用；板块成分、消息与龙虎榜只在可得时点后参与选择，技术图与排名不各自使用不一致公式。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M3-E02",
+          "requirement": "baseline、候选校准、试用预算和失效回退都有完整定义。",
+          "required_records": [
+            "baseline 完整 manifest 与版本",
+            "候选许可、同目标同期限的校准和冻结缺失政策",
+            "候选失效及 baseline 失效的发布场景"
+          ],
+          "verification": "若试用总预算为 0.10，则 baseline 保留 0.90；候选停止后回到 1.00，不对残余候选自动归一。排序预算不是现金仓位；baseline 失效阻止新完整 READY 及从旧 stale 结果派生 actionable 计划。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M3-E03",
+          "requirement": "条件计划、账户能力与验证结果可追溯。",
+          "required_records": [
+            "PlanCompiler 输入、政策版本与计划结果",
+            "确定性约束与预测性政策的权限记录",
+            "相同数据/内核下的计划验证及状态修订轨迹"
+          ],
+          "verification": "已授权证券/交易/账户约束按职责执行；未获准的预测性 VETO 或减仓只作影子结果，不绕过策略验证；不可成交与未知能力不能伪装确定买卖点。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M3-E04",
+          "requirement": "研究注册、实验、配对、统一评价与全量结果记录贯通。",
+          "required_records": [
+            "策略定义与实例登记",
+            "相同 EvaluationContext 的配对、run_id、预算及结果",
+            "训练/验证/保留区间、失败与淘汰记录"
+          ],
+          "verification": "联赛可输出胜/负/平/证据不足/不可比/执行失败；研究积分只分配研究优先级，不能直接决定个股排名或资金权重。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M3-E05",
+          "requirement": "晋级、暂停、退役、组合与增量评价的后端状态闭环可执行。",
+          "required_records": [
+            "版本化 PromotionPolicy 及适用统计假设",
+            "策略谱系、状态转换和组合版本",
+            "相关家族识别、组合账户重跑与增量记录"
+          ],
+          "verification": "固定样本只验证状态机与重放。真实晋级另需已登记的样本外、成本执行敏感性和前向要求；旧实验失败限定具体实现、样本与政策，不外推为全方法族永远失效。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "spec/REFERENCE_RECONCILIATION_V32.md",
+        "integration/integration_schema.sql",
+        "traceability/work_packages_v32_extension.json"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M4",
+      "title": "统一发布、产品页面与持久状态",
+      "purpose": "把已验证的后端链路连接为用户可以连续使用并追溯的首发产品。",
+      "may_start_after": [
+        "M0"
+      ],
+      "exit_requires_passed_milestones": [
+        "M3"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M4-E01",
+          "requirement": "M0 首发清单内页面和命令逐项连接正式合同与持久对象。",
+          "required_records": [
+            "页面字段—API—应用对象—SQL/对象—事件—验收映射",
+            "实际集成运行与请求/响应记录",
+            "拟议操作正式注册、迁移及实现状态"
+          ],
+          "verification": "无仅存在于页面或提案中的假接口；用户状态重启后可恢复，账户读写权限和对象身份按正式合同验证。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M4-E02",
+          "requirement": "排名、板块、个股计划与研究视图使用一致发布版本。",
+          "required_records": [
+            "release_id、snapshot 与规则/模型版本关联",
+            "完整发布与缺组件场景",
+            "页面 stale/UNKNOWN 与证据抽屉展示"
+          ],
+          "verification": "旧数据可标 stale 只读；不同版本不能混成新完整分析；研究分数、运行状态和证据等级分别显示。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M4-E03",
+          "requirement": "异步回执、结果查询与重放具备完整映射。",
+          "required_records": [
+            "JobReceipt 到资源/运行 ID 和查询操作的对应",
+            "任务完成/失败/取消及重复命令记录",
+            "导出等后台任务持久输入与精确对象版本"
+          ],
+          "verification": "重启后不依赖请求进程内存恢复工作；回执最终能查询实际结果，重试身份和资源版本可追踪。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M4-E04",
+          "requirement": "推送、轮询与页面重连处理重复和乱序。",
+          "required_records": [
+            "同一更新日志的 cursor、event_id、scope、version 和 release_id",
+            "客户端断线恢复、游标失效与整包更新记录",
+            "事务 outbox/inbox 及所采用传输适配器结果"
+          ],
+          "verification": "首发事务 outbox 路径可验收；JetStream/NATS 仅在确实采用时进入适配器验收，不能作为未部署系统的隐含依赖。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M4-E05",
+          "requirement": "研究联赛与账户/计划界面呈现真实能力边界。",
+          "required_records": [
+            "策略目录、实验、配对、失败、晋级、谱系与组合贡献视图",
+            "真实数据与 synthetic 样本标记",
+            "成本、库存、费用、计划变化与来源说明"
+          ],
+          "verification": "页面不把联赛积分写成上涨概率，不把实施完成或工程运行写成已验证盈利；所有首发交互有实际持久对象及可观察结果。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "contracts/openapi.json",
+        "contracts/api_bindings.json",
+        "contracts/extension_bindings.json",
+        "spec/FINAL_SYSTEM_SPEC.md",
+        "review_v32/product_extension_cards.json"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M5",
+      "title": "平行对账、实际恢复负载与真实前向观察",
+      "purpose": "证明真实运行可持续，并开始积累有边界的前向策略证据。",
+      "may_start_after": [
+        "M3"
+      ],
+      "exit_requires_passed_milestones": [
+        "M4"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M5-E01",
+          "requirement": "新旧系统在相同输入与政策截点逐键对账。",
+          "required_records": [
+            "证券母集及剔除理由、数据时间/缺失、因素原值/标准化值、并列及排序差异",
+            "目标持仓、订单、成交、费用、现金、库存与 NAV 差异",
+            "旧缺陷修复、规则版本、精度容差、数据版本及未解释项分类"
+          ],
+          "verification": "Top-K 重合率或相关性只是辅助；相同口径下未解释差异不得静默放行，新系统不必复制已证明错误的旧行为。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M5-E02",
+          "requirement": "目标机器的真实混合负载与中断恢复通过。",
+          "required_records": [
+            "目标硬件、实际数据量、并发查询/写入/分析负载与容量实测",
+            "来源中断、补拉、进程重启、任务接管和游标恢复演练",
+            "吞吐、延迟、积压、资源和重复处理结果"
+          ],
+          "verification": "容量规划算术不代替实测；按 M0 冻结的工作负载及服务目标验收，所选真实组件和数据源纳入证据。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M5-E03",
+          "requirement": "持续操作窗口与业务新鲜度可核对。",
+          "required_records": [
+            "预先登记的操作窗口和覆盖交易日",
+            "逐日完整发布、来源状态、通知幂等和异常闭环记录",
+            "窗口内配置/政策变化记录"
+          ],
+          "verification": "连续 10 个交易日可作为初始工程观察窗口；不是统一的策略样本充分性标准，也不自动触发晋级。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M5-E04",
+          "requirement": "至少一项预注册 shadow 任务产生真实前向记录及观察节点评价。",
+          "required_records": [
+            "启动前冻结的假说、实例、数据/可得性/经济政策和观察节点",
+            "之后实际产生且不可回填冒充当时已知的前向记录",
+            "到预定节点的经济评价、与研究结果差异和证据充分性结论"
+          ],
+          "verification": "记录真实运行和评价是否完成；评价可以失败或证据不足。固定短窗不能替代按持有期、重叠与有效样本定义的 PromotionPolicy。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M5-E05",
+          "requirement": "工程验收与候选生产许可分开收口。",
+          "required_records": [
+            "门槛检查表及未完成/受阻项",
+            "当前 baseline 与候选的许可、输入健康、版本和适用域",
+            "对拟切换范围的差异处理记录"
+          ],
+          "verification": "无盈利新候选不阻止有效 baseline 支撑的工程交付；未成熟候选继续 shadow，未验证的预测性否决不能获得低门槛生产权限。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "spec/REFERENCE_RECONCILIATION_V32.md",
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "spec/IMPLEMENTATION_GUIDE_V3.md",
+        "database/acceptance_scenarios.json"
+      ],
+      "gate_status": "not_evaluated"
+    },
+    {
+      "milestone_id": "M6",
+      "title": "一致切点迁移、回退与持续研究",
+      "purpose": "完成真实运行入口迁移，同时保留可核对的账户、发布和研究连续性。",
+      "may_start_after": [
+        "M5"
+      ],
+      "exit_requires_passed_milestones": [
+        "M5"
+      ],
+      "exit_evidence": [
+        {
+          "evidence_id": "M6-E01",
+          "requirement": "切换记录固定入口、数据、发布、账户与消费游标的一致点。",
+          "required_records": [
+            "版本化切换清单与实际执行记录",
+            "数据 snapshot、release、账户头/序列、消费 cursor 对应",
+            "切换前后待处理任务、通知与外部事实的承接轨迹"
+          ],
+          "verification": "不能只切页面或 API 地址而混入不同账户/数据截点；重复与漏处理均可核对。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M6-E02",
+          "requirement": "拟交付范围的差异已解释并有处理结果。",
+          "required_records": [
+            "M5 差异逐项闭环或明确的范围排除记录",
+            "首发范围最终版本及退出证据引用",
+            "受排除能力的页面与运行限制"
+          ],
+          "verification": "排除需明确改变交付范围，不能隐藏未解释差异；同一账户、完整发布及必需输入的不变量仍须成立。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M6-E03",
+          "requirement": "在一致切点演练回退和切换后读写恢复。",
+          "required_records": [
+            "数据、发布、账本与游标一致回退记录",
+            "恢复后的读写、任务重放、幂等与对账结果",
+            "新旧入口职责和停启记录"
+          ],
+          "verification": "回退不能丢弃已发生的外部成交事实；恢复后的读写与账户状态有独立核对，不能仅凭服务启动判断通过。",
+          "execution_status": "not_claimed_completed"
+        },
+        {
+          "evidence_id": "M6-E04",
+          "requirement": "确认主干与持续研究的交付状态。",
+          "required_records": [
+            "有效 baseline 及已获准候选的最终版本",
+            "仍在研究/证据不足候选和下一观察节点",
+            "研究发现→复现→评价→shadow→晋级/暂停/退役的持续任务归属"
+          ],
+          "verification": "切换不要求出现盈利冠军；新方法继续按相同合同与准入规则加入，工程里程碑完成不改变策略权限。",
+          "execution_status": "not_claimed_completed"
+        }
+      ],
+      "related_package_paths": [
+        "spec/REFERENCE_RECONCILIATION_V32.md",
+        "spec/FINAL_SYSTEM_SPEC.md",
+        "spec/STRATEGY_LEAGUE_SPEC.md"
+      ],
+      "gate_status": "not_evaluated"
+    }
+  ],
+  "research_league_phase_assignment": [
+    {
+      "milestone_id": "M0",
+      "responsibility": "固定策略职责、实例、输入 capability、EvaluationContext、经济内核接口和 PromotionPolicy 结构。",
+      "boundary": "合同和评估规则有定义，不表示候选已经有效。",
+      "gate_evidence_ids": [
+        "M0-E04",
+        "M0-E05"
+      ]
+    },
+    {
+      "milestone_id": "M3",
+      "responsibility": "打通注册、实验、配对、统一评价、全部结果、状态转换、谱系、组合及增量评价的后端闭环。",
+      "boundary": "合成样例可以验证调度和状态机，不能替代真实市场增量与前向证据；联赛积分不直接分配产品资金。",
+      "gate_evidence_ids": [
+        "M3-E04",
+        "M3-E05"
+      ]
+    },
+    {
+      "milestone_id": "M4",
+      "responsibility": "连接目录、实验、配对、失败、晋级、谱系和组合贡献界面，绑定正式 API、持久对象与发布版本。",
+      "boundary": "研究结果、数据健康、工程状态与生产许可独立展示。",
+      "gate_evidence_ids": [
+        "M4-E01",
+        "M4-E02",
+        "M4-E05"
+      ]
+    },
+    {
+      "milestone_id": "M5",
+      "responsibility": "执行至少一项预注册真实 shadow，并在事先约定的观察节点评价，记录样本和假说是否成熟。",
+      "boundary": "工程窗口不自动完成统计认证；结果可以证据不足或无增量，候选保持对应状态。",
+      "gate_evidence_ids": [
+        "M5-E03",
+        "M5-E04",
+        "M5-E05"
+      ]
+    },
+    {
+      "milestone_id": "M6",
+      "responsibility": "携带研究及许可状态一致切换，交付继续发现、复现、前向观察、组合增量、晋级与淘汰的归属。",
+      "boundary": "持续研究在切换后继续；不以盈利新冠军作为整个工程切换的先决条件。",
+      "gate_evidence_ids": [
+        "M6-E04"
+      ]
+    }
+  ],
+  "legacy_migration": {
+    "legacy_namespace": "legacy_v3",
+    "current_namespace": "pulse.engineering_milestones.v3.2",
+    "mapping_granularity": "按退出证据及职责拆分，不是一对一改名。",
+    "source_context": "旧 FINAL_SYSTEM_SPEC §15 与 IMPLEMENTATION_GUIDE_V3 §7 曾采用 M0–M5；当前文字已统一时，本矩阵保留历史含义供旧任务、日志与通过记录迁移。",
+    "matrix": [
+      {
+        "legacy_id": "legacy_v3:M0",
+        "legacy_scope": "合同、规则、迁移与 SQL fixtures。",
+        "targets": [
+          {
+            "milestone_id": "M0",
+            "transferred_scope": "首发合同及迁移基座；补足统一范围、身份/数字/时间/版本、目标 PG 实跑和策略上下文证据。",
+            "evidence_ids": [
+              "M0-E01",
+              "M0-E02",
+              "M0-E03",
+              "M0-E04",
+              "M0-E05"
+            ]
+          }
+        ]
+      },
+      {
+        "legacy_id": "legacy_v3:M1",
+        "legacy_scope": "两条行情路径及一条官方事件源。",
+        "targets": [
+          {
+            "milestone_id": "M1",
+            "transferred_scope": "真实来源、规范映射、可得性、capability、快照闭包及断流/修订恢复。",
+            "evidence_ids": [
+              "M1-E01",
+              "M1-E02",
+              "M1-E03",
+              "M1-E04",
+              "M1-E05"
+            ]
+          }
+        ]
+      },
+      {
+        "legacy_id": "legacy_v3:M2",
+        "legacy_scope": "K 线、共享特征、全市场/板块排名与轻量个股工作台。",
+        "targets": [
+          {
+            "milestone_id": "M3",
+            "transferred_scope": "共享特征、股票池、全市场/板块/升温池排名和相关后端成分。",
+            "evidence_ids": [
+              "M3-E01",
+              "M3-E02"
+            ]
+          },
+          {
+            "milestone_id": "M4",
+            "transferred_scope": "页面、正式接口、持久状态、统一 release 与断线恢复。",
+            "evidence_ids": [
+              "M4-E01",
+              "M4-E02",
+              "M4-E04"
+            ]
+          }
+        ]
+      },
+      {
+        "legacy_id": "legacy_v3:M3",
+        "legacy_scope": "条件计划、账户、唯一账本、黄金用例和做 T/网格对照。",
+        "targets": [
+          {
+            "milestone_id": "M2",
+            "transferred_scope": "成交、预留、费用、交收、成本权威、TWR 与同账户操作对照。",
+            "evidence_ids": [
+              "M2-E01",
+              "M2-E02",
+              "M2-E03",
+              "M2-E04",
+              "M2-E05"
+            ]
+          },
+          {
+            "milestone_id": "M3",
+            "transferred_scope": "条件计划编译、预测政策权限与统一验证。",
+            "evidence_ids": [
+              "M3-E03"
+            ]
+          },
+          {
+            "milestone_id": "M4",
+            "transferred_scope": "账户/计划页面、命令、异步回执与持久状态。",
+            "evidence_ids": [
+              "M4-E01",
+              "M4-E03",
+              "M4-E05"
+            ]
+          }
+        ]
+      },
+      {
+        "legacy_id": "legacy_v3:M4",
+        "legacy_scope": "策略分类、实验、联赛、shadow 与晋级。",
+        "targets": [
+          {
+            "milestone_id": "M3",
+            "transferred_scope": "研究联赛注册、实验、配对、评价、许可状态和组合贡献后端。",
+            "evidence_ids": [
+              "M3-E04",
+              "M3-E05"
+            ]
+          },
+          {
+            "milestone_id": "M4",
+            "transferred_scope": "研究目录、实验、配对、失败、晋级和谱系界面。",
+            "evidence_ids": [
+              "M4-E01",
+              "M4-E05"
+            ]
+          },
+          {
+            "milestone_id": "M5",
+            "transferred_scope": "真实预注册 shadow 记录及观察节点评价；与工程窗口分开判断统计成熟度。",
+            "evidence_ids": [
+              "M5-E03",
+              "M5-E04",
+              "M5-E05"
+            ]
+          }
+        ]
+      },
+      {
+        "legacy_id": "legacy_v3:M5",
+        "legacy_scope": "真实压力、恢复、重放、前端恢复与独立验收。",
+        "targets": [
+          {
+            "milestone_id": "M4",
+            "transferred_scope": "页面字段与持久对象闭合、异步回执、推送及前端恢复。",
+            "evidence_ids": [
+              "M4-E01",
+              "M4-E03",
+              "M4-E04"
+            ]
+          },
+          {
+            "milestone_id": "M5",
+            "transferred_scope": "平行逐键对账、目标环境混合负载及故障恢复和验收收口。",
+            "evidence_ids": [
+              "M5-E01",
+              "M5-E02",
+              "M5-E03",
+              "M5-E05"
+            ]
+          },
+          {
+            "milestone_id": "M6",
+            "transferred_scope": "与迁移有关的旧验收记录作为新一致切换、范围收口及回退验收的输入；旧定义不完整覆盖该门槛。",
+            "evidence_ids": [
+              "M6-E01",
+              "M6-E02",
+              "M6-E03"
+            ]
+          }
+        ]
+      }
+    ],
+    "new_gate_without_one_to_one_predecessor": {
+      "milestone_id": "M6",
+      "reason": "旧 M0–M5 没有单独、完整定义数据、发布、账户和消费游标一致切换的退出门槛；相关旧运维记录可作为证据输入，不能直接视为新 M6 通过。"
+    },
+    "acceptance_transfer_rules": [
+      "保留旧任务/记录 ID、命名空间、定义版本、输入、环境和原始通过结论；不能改名后冒充新门槛已通过。",
+      "逐项把旧证据映射到本文件 evidence_id，并核对实际输入、规则、代码、环境和适用范围；仅复用仍然有效的对应部分。",
+      "缺失或已失效的证据标为待补；需要重新运行的用例记录新 run 与结果，不以旧的整体 PASS 推导新的整体 PASS。",
+      "新门槛只有在全部当前退出证据成立且上游退出依赖已满足时才能单独确认；旧门槛 PASS 不自动继承。",
+      "研究观察完成、统计证据成熟和策略生产权限分别迁移；旧 shadow 记录不能凭改编号获得新晋级。"
+    ]
+  },
+  "evidence_record_requirements": {
+    "purpose": "描述将来验收记录必须携带的内容，不创建新的公共 API 或声称本轮已有这些执行记录。",
+    "required_information": [
+      "milestone_id 与 evidence_id",
+      "合同、代码、规则、数据及模型等实际使用版本",
+      "输入/输出引用与内容哈希",
+      "目标环境及已执行命令或操作",
+      "预先声明的预期与观测结果",
+      "通过、失败、受阻或证据不足及其具体原因",
+      "复核者、复核时间与保留的限制",
+      "旧证据复用时的原始引用、适用性判断及新映射"
+    ],
+    "current_catalog_pass_claim": "none"
+  }
+}

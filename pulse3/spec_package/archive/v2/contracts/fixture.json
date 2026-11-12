@@ -1,0 +1,1006 @@
+{
+  "schema_version": "1.0.0-seed.1",
+  "fixture_kind": "hypothetical",
+  "description": "全部证券、价格、事件、分数、模型、账户、费用和输出均为假设fixture。SAMPLE_MAIN_001不是实际证券。不含行情、模型调用、PlanCompiler或撮合运行实现。",
+  "external_references": [
+    {
+      "object_type": "universe_policy",
+      "object_id": "universe-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "market_state",
+      "object_id": "state-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "bundle",
+      "object_id": "bundle-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "model_policy",
+      "object_id": "policy-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "market_rules",
+      "object_id": "rules-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "cost_profile",
+      "object_id": "cost-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "execution_policy",
+      "object_id": "execution-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T08:00:00+08:00",
+      "description": "hypothetical: 版本目录占位，不包含真实规则或发布包"
+    },
+    {
+      "object_type": "instrument_state",
+      "object_id": "SAMPLE_MAIN_001.state",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T09:00:00+08:00",
+      "description": "hypothetical: 仅示例证券的假设主板状态"
+    },
+    {
+      "object_type": "account",
+      "object_id": "account-paper-sample-001",
+      "version": 7,
+      "available_at": "2026-11-10T10:00:00+08:00",
+      "description": "hypothetical: 假设paper账户版本7；不是用户真实资金"
+    },
+    {
+      "object_type": "dataset_manifest",
+      "object_id": "dataset-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T10:01:02+08:00",
+      "description": "hypothetical: 原始资料与行情输入的逻辑引用，未附真实数据文件"
+    },
+    {
+      "object_type": "evidence_manifest",
+      "object_id": "evidence-manifest-sample-001",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T10:01:02+08:00",
+      "description": "hypothetical: 假设事件10:01收到、10:01:02可用"
+    },
+    {
+      "object_type": "evidence_revision",
+      "object_id": "event-sample-001",
+      "version": "1",
+      "available_at": "2026-11-10T10:01:02+08:00",
+      "description": "hypothetical: 假设订单公告事件第1版"
+    },
+    {
+      "object_type": "quote",
+      "object_id": "quote-sample-001",
+      "version": 101,
+      "available_at": "2026-11-10T10:01:02+08:00",
+      "description": "hypothetical: 模型输入时假设报价10.00元"
+    },
+    {
+      "object_type": "quote",
+      "object_id": "quote-sample-001",
+      "version": 102,
+      "available_at": "2026-11-10T10:01:25+08:00",
+      "description": "hypothetical: 编译重校验时假设报价10.08元"
+    },
+    {
+      "object_type": "dataset_manifest",
+      "object_id": "dataset-sample-002",
+      "version": "1.0.0",
+      "available_at": "2026-11-10T10:01:25+08:00",
+      "description": "hypothetical: 编译时的新行情输入，包含报价版本102；未附真实数据文件"
+    }
+  ],
+  "strategies": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "strategy-sample-001",
+      "created_at": "2026-11-10T09:00:00+08:00",
+      "as_of": "2026-11-10T09:00:00+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": null,
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:strategy-sample-001",
+      "strategy_id": "strategy-sample-001",
+      "version": "1.0.0",
+      "kind": "model_policy",
+      "hypothesis": "hypothetical: 测试消息到结构化计划的连接；不代表策略有效。",
+      "provenance": [
+        {
+          "source_uri": "https://example.invalid/pulse/hypothetical-strategy",
+          "source_version": "fixture.1",
+          "source_kind": "hypothetical_fixture"
+        }
+      ],
+      "universe_policy_ref": {
+        "object_id": "universe-sample-001",
+        "version": "1.0.0"
+      },
+      "required_features": [
+        {
+          "feature_id": "quote.last_raw",
+          "definition_version": "1.0.0",
+          "unit": "CNY_per_share"
+        }
+      ],
+      "decision_clock": {
+        "kind": "quote"
+      },
+      "entry_conditions": {
+        "node": "all",
+        "clock": {
+          "kind": "quote"
+        },
+        "children": [
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "gte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.05",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "lte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.15",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "within_session",
+            "clock": {
+              "kind": "quote"
+            },
+            "session_kinds": [
+              "continuous_am",
+              "continuous_pm"
+            ]
+          },
+          {
+            "node": "event_state",
+            "clock": {
+              "kind": "quote"
+            },
+            "event_id": "event-sample-001",
+            "minimum_revision": 1,
+            "states": [
+              "confirmed"
+            ]
+          }
+        ]
+      },
+      "exit_conditions": {
+        "node": "any",
+        "clock": {
+          "kind": "quote"
+        },
+        "children": [
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "lte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "9.80",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "gte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.80",
+              "unit": "CNY_per_share"
+            }
+          }
+        ]
+      },
+      "sizing": {
+        "mode": "fixed_quantity",
+        "quantity_shares": 100
+      },
+      "holding_horizon": {
+        "unit": "trading_sessions",
+        "count": 1,
+        "counting_rule": "after_first_fill_session",
+        "holding_anchor": "first_fill_at"
+      },
+      "parameters": {},
+      "execution_requirements": {
+        "minimum_data_grade": "M1",
+        "market_rules_ref": {
+          "object_id": "rules-sample-001",
+          "version": "1.0.0"
+        },
+        "execution_policy_ref": {
+          "object_id": "execution-sample-001",
+          "version": "1.0.0"
+        },
+        "buy_lot_size_shares": 100
+      },
+      "model_policy_ref": {
+        "object_id": "policy-sample-001",
+        "version": "1.0.0"
+      }
+    }
+  ],
+  "run_manifests": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "run-model-sample-001",
+      "created_at": "2026-11-10T10:01:02+08:00",
+      "as_of": "2026-11-10T10:01:02+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": null,
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:run-model-sample-001",
+      "run_id": "run-model-sample-001",
+      "purpose": "model_analysis",
+      "execution_mode": "paper",
+      "time_basis": "hypothetical",
+      "code_version": "HYPOTHETICAL_NOT_A_COMMIT",
+      "parameter_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "random_seed": 42,
+      "input_manifest_ids": [
+        "dataset-sample-001",
+        "evidence-manifest-sample-001"
+      ],
+      "strategy_refs": [
+        {
+          "object_id": "strategy-sample-001",
+          "version": "1.0.0"
+        }
+      ],
+      "model_policy_refs": [
+        {
+          "object_id": "policy-sample-001",
+          "version": "1.0.0"
+        }
+      ],
+      "input_model_run_ids": [],
+      "universe_policy_ref": {
+        "object_id": "universe-sample-001",
+        "version": "1.0.0"
+      },
+      "market_rules_ref": {
+        "object_id": "rules-sample-001",
+        "version": "1.0.0"
+      },
+      "cost_profile_ref": {
+        "object_id": "cost-sample-001",
+        "version": "1.0.0"
+      },
+      "execution_policy_ref": {
+        "object_id": "execution-sample-001",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "run-decision-sample-001",
+      "created_at": "2026-11-10T10:01:26+08:00",
+      "as_of": "2026-11-10T10:01:26+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": null,
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:run-decision-sample-001",
+      "run_id": "run-decision-sample-001",
+      "purpose": "decision_compile",
+      "execution_mode": "paper",
+      "time_basis": "hypothetical",
+      "code_version": "HYPOTHETICAL_NOT_A_COMMIT",
+      "parameter_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "random_seed": 42,
+      "input_manifest_ids": [
+        "dataset-sample-002",
+        "evidence-manifest-sample-001"
+      ],
+      "strategy_refs": [
+        {
+          "object_id": "strategy-sample-001",
+          "version": "1.0.0"
+        }
+      ],
+      "model_policy_refs": [
+        {
+          "object_id": "policy-sample-001",
+          "version": "1.0.0"
+        }
+      ],
+      "input_model_run_ids": [
+        "model-run-sample-001"
+      ],
+      "universe_policy_ref": {
+        "object_id": "universe-sample-001",
+        "version": "1.0.0"
+      },
+      "market_rules_ref": {
+        "object_id": "rules-sample-001",
+        "version": "1.0.0"
+      },
+      "cost_profile_ref": {
+        "object_id": "cost-sample-001",
+        "version": "1.0.0"
+      },
+      "execution_policy_ref": {
+        "object_id": "execution-sample-001",
+        "version": "1.0.0"
+      }
+    }
+  ],
+  "model_runs": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "model-run-sample-001",
+      "created_at": "2026-11-10T10:01:25+08:00",
+      "as_of": "2026-11-10T10:01:02+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": "event-sample-001",
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:model-run-sample-001",
+      "model_run_id": "model-run-sample-001",
+      "run_manifest_id": "run-model-sample-001",
+      "provider": "hypothetical_provider",
+      "exact_model_id": "hypothetical_model_not_deployed",
+      "model_policy_ref": {
+        "object_id": "policy-sample-001",
+        "version": "1.0.0"
+      },
+      "prompt_version": "hypothetical-prompt.1",
+      "tool_catalog_version": "hypothetical-tools.1",
+      "input_manifest_id": "evidence-manifest-sample-001",
+      "evidence_ids": [
+        "event-sample-001"
+      ],
+      "request_id": "request-sample-001",
+      "status": "completed",
+      "started_at": "2026-11-10T10:01:02+08:00",
+      "completed_at": "2026-11-10T10:01:25+08:00",
+      "latency_ms": 23000,
+      "sampling": {
+        "temperature": 0,
+        "seed": 42
+      },
+      "usage": {
+        "input_tokens": 1000,
+        "output_tokens": 600
+      },
+      "validation_status": "schema_only",
+      "structured_output": {
+        "schema_version": "1.0.0-seed.1",
+        "object_id": "proposal-sample-001",
+        "created_at": "2026-11-10T10:01:25+08:00",
+        "as_of": "2026-11-10T10:01:02+08:00",
+        "producer_version": "hypothetical-fixture.1",
+        "causation_id": "event-sample-001",
+        "correlation_id": "analysis-sample-001",
+        "idempotency_key": "fixture:proposal-sample-001",
+        "proposal_id": "proposal-sample-001",
+        "proposed_plan_id": "plan-sample-001",
+        "analysis_as_of": "2026-11-10T10:01:02+08:00",
+        "expected_plan_version": 0,
+        "instrument_id": "SAMPLE_MAIN_001",
+        "account_id": "account-paper-sample-001",
+        "strategy_ref": {
+          "object_id": "strategy-sample-001",
+          "version": "1.0.0"
+        },
+        "model_run_id": "model-run-sample-001",
+        "evidence_ids": [
+          "event-sample-001"
+        ],
+        "position_side": "long",
+        "entry_conditions": {
+          "node": "all",
+          "clock": {
+            "kind": "quote"
+          },
+          "children": [
+            {
+              "node": "compare",
+              "clock": {
+                "kind": "quote"
+              },
+              "operator": "gte",
+              "left": {
+                "kind": "feature",
+                "feature_id": "quote.last_raw",
+                "definition_version": "1.0.0",
+                "instrument_id": "SAMPLE_MAIN_001",
+                "unit": "CNY_per_share",
+                "timeframe": "quote"
+              },
+              "right": {
+                "kind": "constant",
+                "value": "10.05",
+                "unit": "CNY_per_share"
+              }
+            },
+            {
+              "node": "compare",
+              "clock": {
+                "kind": "quote"
+              },
+              "operator": "lte",
+              "left": {
+                "kind": "feature",
+                "feature_id": "quote.last_raw",
+                "definition_version": "1.0.0",
+                "instrument_id": "SAMPLE_MAIN_001",
+                "unit": "CNY_per_share",
+                "timeframe": "quote"
+              },
+              "right": {
+                "kind": "constant",
+                "value": "10.15",
+                "unit": "CNY_per_share"
+              }
+            },
+            {
+              "node": "within_session",
+              "clock": {
+                "kind": "quote"
+              },
+              "session_kinds": [
+                "continuous_am",
+                "continuous_pm"
+              ]
+            },
+            {
+              "node": "event_state",
+              "clock": {
+                "kind": "quote"
+              },
+              "event_id": "event-sample-001",
+              "minimum_revision": 1,
+              "states": [
+                "confirmed"
+              ]
+            }
+          ]
+        },
+        "entry_price_zone": {
+          "currency": "CNY",
+          "price_basis": "raw",
+          "lower": "10.05",
+          "upper": "10.15"
+        },
+        "sizing": {
+          "mode": "fixed_quantity",
+          "quantity_shares": 100
+        },
+        "exit_conditions": {
+          "node": "any",
+          "clock": {
+            "kind": "quote"
+          },
+          "children": [
+            {
+              "node": "compare",
+              "clock": {
+                "kind": "quote"
+              },
+              "operator": "lte",
+              "left": {
+                "kind": "feature",
+                "feature_id": "quote.last_raw",
+                "definition_version": "1.0.0",
+                "instrument_id": "SAMPLE_MAIN_001",
+                "unit": "CNY_per_share",
+                "timeframe": "quote"
+              },
+              "right": {
+                "kind": "constant",
+                "value": "9.80",
+                "unit": "CNY_per_share"
+              }
+            },
+            {
+              "node": "compare",
+              "clock": {
+                "kind": "quote"
+              },
+              "operator": "gte",
+              "left": {
+                "kind": "feature",
+                "feature_id": "quote.last_raw",
+                "definition_version": "1.0.0",
+                "instrument_id": "SAMPLE_MAIN_001",
+                "unit": "CNY_per_share",
+                "timeframe": "quote"
+              },
+              "right": {
+                "kind": "constant",
+                "value": "10.80",
+                "unit": "CNY_per_share"
+              }
+            }
+          ]
+        },
+        "holding_horizon": {
+          "unit": "trading_sessions",
+          "count": 1,
+          "counting_rule": "after_first_fill_session",
+          "holding_anchor": "first_fill_at"
+        },
+        "invalidation": {
+          "node": "event_state",
+          "clock": {
+            "kind": "event_available"
+          },
+          "event_id": "event-sample-001",
+          "minimum_revision": 1,
+          "states": [
+            "withdrawn",
+            "superseded"
+          ]
+        },
+        "trigger_policy": {
+          "trigger_id": "entry-sample-001",
+          "fire_mode": "on_transition_to_true",
+          "unknown_policy": "do_not_fire",
+          "rearm": {
+            "mode": "never",
+            "cooldown_ms": 0
+          },
+          "max_fires": 1,
+          "min_interval_ms": 0
+        },
+        "expires_at": "2026-11-10T10:03:00+08:00",
+        "replace_policy": "cancel_remaining_and_reconcile",
+        "hard_dependencies": [
+          {
+            "kind": "account",
+            "object_id": "account-paper-sample-001",
+            "expected_version": 7
+          },
+          {
+            "kind": "instrument_state",
+            "object_id": "SAMPLE_MAIN_001.state",
+            "expected_version": "1.0.0"
+          },
+          {
+            "kind": "market_rules",
+            "object_id": "rules-sample-001",
+            "expected_version": "1.0.0"
+          },
+          {
+            "kind": "evidence_revision",
+            "object_id": "event-sample-001",
+            "expected_version": "1"
+          },
+          {
+            "kind": "strategy",
+            "object_id": "strategy-sample-001",
+            "expected_version": "1.0.0"
+          },
+          {
+            "kind": "model_policy",
+            "object_id": "policy-sample-001",
+            "expected_version": "1.0.0"
+          }
+        ],
+        "soft_dependencies": [
+          {
+            "kind": "quote",
+            "object_id": "quote-sample-001",
+            "expected_version": 101,
+            "observed_at": "2026-11-10T10:01:02+08:00",
+            "reference_price": "10.00"
+          }
+        ],
+        "max_price_deviation_bps": 150,
+        "required_revalidation": [
+          "plan_version",
+          "account_inventory",
+          "instrument_status",
+          "market_rules",
+          "evidence_revision",
+          "price",
+          "fees",
+          "signal"
+        ],
+        "rationale": "hypothetical: 用假设公告和假设价格生成示例条件，未进行投资分析。"
+      }
+    }
+  ],
+  "trade_plans": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "plan-sample-001.v1",
+      "created_at": "2026-11-10T10:01:26+08:00",
+      "as_of": "2026-11-10T10:01:26+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": "proposal-sample-001",
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:plan-sample-001.v1",
+      "plan_id": "plan-sample-001",
+      "version": 1,
+      "proposal_id": "proposal-sample-001",
+      "decision_snapshot_id": "decision-sample-001",
+      "run_manifest_id": "run-decision-sample-001",
+      "instrument_id": "SAMPLE_MAIN_001",
+      "account_id": "account-paper-sample-001",
+      "strategy_ref": {
+        "object_id": "strategy-sample-001",
+        "version": "1.0.0"
+      },
+      "model_run_id": "model-run-sample-001",
+      "evidence_ids": [
+        "event-sample-001"
+      ],
+      "position_side": "long",
+      "entry_conditions": {
+        "node": "all",
+        "clock": {
+          "kind": "quote"
+        },
+        "children": [
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "gte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.05",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "lte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.15",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "within_session",
+            "clock": {
+              "kind": "quote"
+            },
+            "session_kinds": [
+              "continuous_am",
+              "continuous_pm"
+            ]
+          },
+          {
+            "node": "event_state",
+            "clock": {
+              "kind": "quote"
+            },
+            "event_id": "event-sample-001",
+            "minimum_revision": 1,
+            "states": [
+              "confirmed"
+            ]
+          }
+        ]
+      },
+      "entry_price_zone": {
+        "currency": "CNY",
+        "price_basis": "raw",
+        "lower": "10.05",
+        "upper": "10.15"
+      },
+      "sizing": {
+        "mode": "fixed_quantity",
+        "quantity_shares": 100
+      },
+      "exit_conditions": {
+        "node": "any",
+        "clock": {
+          "kind": "quote"
+        },
+        "children": [
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "lte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "9.80",
+              "unit": "CNY_per_share"
+            }
+          },
+          {
+            "node": "compare",
+            "clock": {
+              "kind": "quote"
+            },
+            "operator": "gte",
+            "left": {
+              "kind": "feature",
+              "feature_id": "quote.last_raw",
+              "definition_version": "1.0.0",
+              "instrument_id": "SAMPLE_MAIN_001",
+              "unit": "CNY_per_share",
+              "timeframe": "quote"
+            },
+            "right": {
+              "kind": "constant",
+              "value": "10.80",
+              "unit": "CNY_per_share"
+            }
+          }
+        ]
+      },
+      "holding_horizon": {
+        "unit": "trading_sessions",
+        "count": 1,
+        "counting_rule": "after_first_fill_session",
+        "holding_anchor": "first_fill_at"
+      },
+      "invalidation": {
+        "node": "event_state",
+        "clock": {
+          "kind": "event_available"
+        },
+        "event_id": "event-sample-001",
+        "minimum_revision": 1,
+        "states": [
+          "withdrawn",
+          "superseded"
+        ]
+      },
+      "trigger_policy": {
+        "trigger_id": "entry-sample-001",
+        "fire_mode": "on_transition_to_true",
+        "unknown_policy": "do_not_fire",
+        "rearm": {
+          "mode": "never",
+          "cooldown_ms": 0
+        },
+        "max_fires": 1,
+        "min_interval_ms": 0
+      },
+      "expires_at": "2026-11-10T10:03:00+08:00",
+      "replace_policy": "cancel_remaining_and_reconcile",
+      "state": "watching",
+      "execution_mode": "paper",
+      "compiled_at": "2026-11-10T10:01:26+08:00",
+      "valid_from": "2026-11-10T10:01:26+08:00",
+      "quantity_shares": 100,
+      "sellable_quantity_shares": 0,
+      "estimated_fees": {
+        "currency": "CNY",
+        "amount": "5.00"
+      },
+      "validated_hard_dependencies": [
+        {
+          "kind": "account",
+          "object_id": "account-paper-sample-001",
+          "expected_version": 7
+        },
+        {
+          "kind": "instrument_state",
+          "object_id": "SAMPLE_MAIN_001.state",
+          "expected_version": "1.0.0"
+        },
+        {
+          "kind": "market_rules",
+          "object_id": "rules-sample-001",
+          "expected_version": "1.0.0"
+        },
+        {
+          "kind": "evidence_revision",
+          "object_id": "event-sample-001",
+          "expected_version": "1"
+        },
+        {
+          "kind": "strategy",
+          "object_id": "strategy-sample-001",
+          "expected_version": "1.0.0"
+        },
+        {
+          "kind": "model_policy",
+          "object_id": "policy-sample-001",
+          "expected_version": "1.0.0"
+        }
+      ],
+      "revalidated_soft_dependencies": [
+        {
+          "kind": "quote",
+          "object_id": "quote-sample-001",
+          "expected_version": 102,
+          "observed_at": "2026-11-10T10:01:25+08:00",
+          "reference_price": "10.08"
+        }
+      ],
+      "supersedes": null
+    }
+  ],
+  "decision_snapshots": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "decision-sample-001",
+      "created_at": "2026-11-10T10:01:26+08:00",
+      "as_of": "2026-11-10T10:01:26+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": "proposal-sample-001",
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:decision-sample-001",
+      "snapshot_id": "decision-sample-001",
+      "decision_at": "2026-11-10T10:01:26+08:00",
+      "run_manifest_id": "run-decision-sample-001",
+      "universe_policy_ref": {
+        "object_id": "universe-sample-001",
+        "version": "1.0.0"
+      },
+      "market_state_ref": {
+        "object_id": "state-sample-001",
+        "version": "1.0.0"
+      },
+      "bundle_ref": {
+        "object_id": "bundle-sample-001",
+        "version": "1.0.0"
+      },
+      "ranking_horizon": {
+        "unit": "trading_sessions",
+        "count": 1,
+        "counting_rule": "after_first_fill_session",
+        "holding_anchor": "first_fill_at"
+      },
+      "data_status": "ready",
+      "candidates": [
+        {
+          "instrument_id": "SAMPLE_MAIN_001",
+          "alpha_rank": 1,
+          "action_rank": null,
+          "score_kind": "relative_rank",
+          "relative_rank_score": 88,
+          "calibrated_probability": null,
+          "actionability": "waiting_for_trigger",
+          "plan_ref": {
+            "plan_id": "plan-sample-001",
+            "version": 1
+          },
+          "evidence_ids": [
+            "event-sample-001"
+          ],
+          "rank_change_reason": "new_event"
+        }
+      ],
+      "plan_refs": [
+        {
+          "plan_id": "plan-sample-001",
+          "version": 1
+        }
+      ],
+      "evidence_ids": [
+        "event-sample-001"
+      ],
+      "model_run_ids": [
+        "model-run-sample-001"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "schema_version": "1.0.0-seed.1",
+      "object_id": "domain-event-sample-001",
+      "created_at": "2026-11-10T10:01:26+08:00",
+      "as_of": "2026-11-10T10:01:26+08:00",
+      "producer_version": "hypothetical-fixture.1",
+      "causation_id": "proposal-sample-001",
+      "correlation_id": "analysis-sample-001",
+      "idempotency_key": "fixture:domain-event-sample-001",
+      "event_id": "domain-event-sample-001",
+      "event_type": "decision.published",
+      "aggregate_id": "decision-sample-001",
+      "aggregate_version": 1,
+      "occurred_at": "2026-11-10T10:01:26+08:00",
+      "recorded_at": "2026-11-10T10:01:26+08:00",
+      "payload": {
+        "snapshot_id": "decision-sample-001"
+      }
+    }
+  ],
+  "expected_behavior": [
+    "本fixture仅展示字段与引用，未执行交易。",
+    "事件在10:01收到、10:01:02可用；模型10:01:25完成；计划与决策10:01:26发布。",
+    "普通报价由版本101变为102；在150bps容忍内重校验，不必重新运行模型。",
+    "初始expected_plan_version=0对应TradePlan version=1；真实发布必须用事务和乐观版本检查。",
+    "watching计划等待发布后的有效观察触发；当前满足价格区间不等于已下单或已成交。",
+    "当日买入不能当作可卖新库存；这项行为需要后续执行内核V08验收，本fixture未验证撮合。",
+    "持有期按首次成交会话之后的一个完整交易会话计算；后续修订、撤单竞争与退出需独立执行场景。"
+  ]
+}

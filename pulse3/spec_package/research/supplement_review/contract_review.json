@@ -1,0 +1,416 @@
+{
+  "review_date": "2026-11-11",
+  "scope": "attachment comparison to delivered v3; no old repository exhaustive rereview",
+  "decisions": [
+    {
+      "proposal_id": "C-ADD-01",
+      "attachment_proposal": "ASOF alignment and deterministic filling",
+      "classification": "adopt_with_corrections",
+      "reason": "v3 has PIT and reconciliation policy hooks but no bounded ASOF reference; explicit bitemporal revision selection and flow exclusions make the intent testable.",
+      "v3_anchors": [
+        "ops.reconciliation_result.alignment_policy_version",
+        "core.contract_version",
+        "ingest.observation",
+        "market.feature_result",
+        "FieldQualityEntry"
+      ],
+      "new_files": [
+        "reference_alignment/alignment.py",
+        "reference_alignment/test_alignment.py",
+        "reference_alignment/input_alignment_policy.schema.json",
+        "reference_alignment/README.md"
+      ],
+      "public_api_change": false,
+      "new_sql_tables": 0,
+      "implementation_status": "bounded_synthetic_reference",
+      "dependencies": [
+        "Canonical normalized observations",
+        "CalendarService-assigned trade_date/session_scope",
+        "Immutable dataset snapshots",
+        "Registered source mapping and methodology"
+      ],
+      "acceptance_scenarios": [
+        "PIT and revisions",
+        "No silent last-good fallback",
+        "No flow/OHLC fill",
+        "VWAP window/unit/snapshot parity",
+        "Known circulating-share denominator",
+        "Derived availability and Decimal context"
+      ]
+    },
+    {
+      "proposal_id": "C-ADD-02",
+      "attachment_proposal": "Strong contracts across Protobuf/Pydantic/Zod/Arrow",
+      "classification": "adopt_semantic_roundtrip_not_four_manual_authorities",
+      "reason": "A compiler accepting each schema does not establish equality of decimal, null, time and unit semantics.",
+      "v3_anchors": [
+        "contracts/v3.schema.json",
+        "contracts/openapi.json",
+        "W01",
+        "W10"
+      ],
+      "public_api_change": false,
+      "new_sql_tables": 0,
+      "implementation_status": "production_acceptance_requirement",
+      "dependencies": [
+        "Chosen client/code generator versions",
+        "Supported serialization adapters"
+      ],
+      "acceptance_scenarios": [
+        "Cross-language decimal/null/UTC/enum/units golden fixtures"
+      ]
+    },
+    {
+      "proposal_id": "C-ADD-03",
+      "attachment_proposal": "2026 current versions and very fast large-data scans",
+      "classification": "verify_versions_add_benchmark_profile_reject_unmeasured_numbers",
+      "reason": "DuckDB2.0 and Polars2.1 are released, but their release notes do not prove this workload performance; Pydantic3 has no released stable evidence and PostgreSQL19 remains RC.",
+      "v3_anchors": [
+        "database/database_design.md sections1-2",
+        "spec/FINAL_SYSTEM_SPEC.md runtime stack"
+      ],
+      "public_api_change": false,
+      "new_sql_tables": 0,
+      "implementation_status": "version_evidence_and_production_benchmark_requirement",
+      "dependencies": [
+        "Exact dependency locks",
+        "DuckLake and Arrow compatibility",
+        "Representative data",
+        "Cold/hot mixed-load environment"
+      ],
+      "acceptance_scenarios": [
+        "Fix corpus/bytes/hardware/query/concurrency/cache",
+        "Report latency, RSS, spill, IO and correctness together"
+      ]
+    },
+    {
+      "proposal_id": "C-KEEP-01",
+      "attachment_proposal": "`symbol_id=SH.600519` 为全域主键",
+      "classification": "不采纳替换",
+      "reason": "可读代码适合作别名；作为主键会把交易所代码/来源写法/证券实体混为一体。稳定实体身份与有时点别名能处理更名、映射修订、多市场类型。更名没有理由重写历史所有外键。",
+      "v3_anchor_and_impact": "`core.instrument.instrument_id` 与 `core.instrument_alias`；保留 UUID，对外展示代码通过别名解析。",
+      "acceptance_scenarios": [
+        "Same security alias changes without changing instrument_id; historical join retains old alias valid period."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-02",
+      "attachment_proposal": "每表两个 INT64 时刻即可彻底杜绝未来函数",
+      "classification": "必须修正",
+      "reason": "字段存在不等于查询使用它们；原文到达、规范完成、模型完成、修订可得不同。附件正文写微秒、DDL 注释写毫秒，内部已存在歧义。",
+      "v3_anchor_and_impact": "数据库 §3；`ingest.raw_object`、`ingest.observation`；observed `available_at` 与研究 `policy_usable_at` 分离。",
+      "acceptance_scenarios": [
+        "test_event_and_available_cutoffs_both_apply",
+        "test_revision_availability_and_invalid_latest_do_not_resurrect_old_value",
+        "Reject millisecond/microsecond mismatch at source mapping boundary."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-03",
+      "attachment_proposal": "价格 DECIMAL(12,4)，金额20,2，DDL又用DOUBLE，API又用float",
+      "classification": "不采纳替换",
+      "reason": "同份方案跨层互相冲突；科学计算可用声明误差的 float，但账本与规范金额不能随消费者改成二进制浮点。PG 官方把 numeric 定义为精确，double为非精确。[CR06]",
+      "v3_anchor_and_impact": "v3 `Decimal` regex、`numeric(38,12)`、统一 ledger Decimal50/scale12；不因 MA 向量优化改变经济账本。",
+      "acceptance_scenarios": [
+        "test_local_decimal_context_does_not_change_result",
+        "test_decimal_float_and_precision_boundaries_are_explicit"
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-04",
+      "attachment_proposal": "一张宽表放 OHLC、MACD、CYQ、封单与仲裁分数",
+      "classification": "不采纳替换",
+      "reason": "原始观测、衍生特征与预测版本生命周期不同。宽表把MACD参数/算法版本、公司行动、CYQ假设绑成固定列，容易覆盖历史，也会以默认0把未获得L2当零封单。",
+      "v3_anchor_and_impact": "`ingest.observation`→`dataset_manifest`→`market.feature_result`；可建热点读取投影，但不是第二套规范事实。",
+      "acceptance_scenarios": [
+        "Changing MACD definition_version creates a new FeatureKey and preserves old output.",
+        "Missing order-book quote is null/missing, never zero."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-05",
+      "attachment_proposal": "三源价格相差≤0.01%就采信，停滞3秒剔除",
+      "classification": "不采纳固定规则",
+      "reason": "不同时间的正常成交价不是冲突；同源转发不独立；定时快照和连续L2不可用同一心跳阈值；固定相对阈值与价格最小变动单位无必然对应。",
+      "v3_anchor_and_impact": "`ops.reconciliation_result`、来源独立性与时效分离；先同证券/时间窗/会话/原始价对齐，再按字段职责和精度比较。",
+      "acceptance_scenarios": [
+        "Different event timestamps are unverifiable, not disputed price equality.",
+        "Two repost endpoints sharing one origin do not count as two independent facts."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-06",
+      "attachment_proposal": "`f58` 自动乘100 等字段示例",
+      "classification": "暂不采纳该映射",
+      "reason": "附件未提供精确端点、版本、官方字段表与原始payload，无法证明 `f58` 的单位和含义。不能用字段名字或源品牌猜单位。",
+      "v3_anchor_and_impact": "`source_id+endpoint_id+source_schema_version+mapping_version`；保留v3已核实的Tushare daily/rt_k反例；新增映射须带fixture和证据。",
+      "acceptance_scenarios": [
+        "Mapping without exact endpoint/schema/mapping unit evidence is not eligible for production normalization."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-07",
+      "attachment_proposal": "所有时序缺口用 forward-fill，`is_imputed=true` 足够",
+      "classification": "修正后局部采纳",
+      "reason": "一个布尔值无法表示缺失、派生、第二来源、冲突、陈旧。填成交量、高低价会捏造不存在的交易；向后 ASOF 也不能自动解决晚到修订。",
+      "v3_anchor_and_impact": "沿用 `FieldStatus/QualityStatus/FreshnessState`；新增内部对齐政策 C-ADD-01，保留原始时点和来源。",
+      "acceptance_scenarios": [
+        "test_only_backward_and_registered_state_fields",
+        "test_interval_field_requires_exact_event_without_forward_fill",
+        "test_missing_invalid_disputed_latest_do_not_fall_back"
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-08",
+      "attachment_proposal": "以“最新float_shares”补历史换手率",
+      "classification": "不采纳替换",
+      "reason": "当时未知的股本变更会改写历史排序；流通与自由流通股本口径不同。公式正确不能补救分母的时点错误。",
+      "v3_anchor_and_impact": "公共特征协议 §4 的 `circulating_market_cap` 与 `shares.float` 绑定说明；分母使用有时点状态。",
+      "acceptance_scenarios": [
+        "test_then_known_share_denominator_excludes_later_correction",
+        "test_free_float_basis_and_wrong_security_are_not_substitutes",
+        "test_share_change_inside_bar_requires_finer_interval"
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-09",
+      "attachment_proposal": "后复权价用于回测计算真实收益",
+      "classification": "必须限定",
+      "reason": "复权价格适合特定分析序列，是否包含权益、税费和现金流须定义；真实成交/费用/股息已入账再用复权价估值会重复计益。",
+      "v3_anchor_and_impact": "执行标准 §5：实际经济账本用原始价与独立公司行动；复权数据须有版本及可得时间。",
+      "acceptance_scenarios": [
+        "Same dividend cannot be counted both through adjusted valuation and an independent ledger income."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-10",
+      "attachment_proposal": "stock_workbench_states每股唯一，一表含用户画线、账户成本与市场分",
+      "classification": "不采纳替换",
+      "reason": "`UNIQUE(symbol_id)` 会使多个用户/账户相互覆盖；底仓与成本若在工作台自写就是第二账本；持久布局和实时行情也不能共享同一失效策略。",
+      "v3_anchor_and_impact": "`ui.workspace_layout(principal_id,layout_version)`、`execution.account_head`、`decision.workspace_projection`、`ActionabilitySnapshot` 分责并通过release/account引用贯通。",
+      "acceptance_scenarios": [
+        "Two principals and two accounts save layouts/positions for same instrument without cross-overwriting.",
+        "Workspace never writes account balance/cost independently."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-11",
+      "attachment_proposal": "最新消息三秒内更新全部工作台值",
+      "classification": "不采纳无条件承诺",
+      "reason": "不同输入与模型的可得时间不同，重任务不能阻塞报价。只更新部分字段也会破坏快照一致性。",
+      "v3_anchor_and_impact": "冻结 AnalysisRelease + 轻量当前quote/actionability覆盖层；阶段时延单列，UI分别标明报价时间和分析时间。",
+      "acceptance_scenarios": [
+        "Slow analysis keeps prior frozen release while current quote overlay advances under its own version.",
+        "A partly ready release cannot become current."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-12",
+      "attachment_proposal": "Redis/Dragonfly、Timescale、DuckDB、NATS必须同时首发",
+      "classification": "不采纳替换",
+      "reason": "组件数量不证明容量，增加状态同步、升级和恢复接口。现有PG+Lake+worker已有明确隔离；共享缓存或在线分析库应按瓶颈实测添加。",
+      "v3_anchor_and_impact": "数据库 §1–2；Redis可丢弃缓存，Timescale候选需独立性能与兼容收益，不取代持久事实。",
+      "acceptance_scenarios": [
+        "Compare same corpus and correctness under mixed ingest/read/research load before adding cache or store."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-13",
+      "attachment_proposal": "Arrow Flight/IPC保证零拷贝总线、策略全程<1ms",
+      "classification": "不采纳承诺",
+      "reason": "Arrow官方区分进程内 C Data Interface 的共享缓冲区与跨进程/网络 IPC；序列化、网络、数据库提交、模型和浏览器都有独立成本。[CR07]",
+      "v3_anchor_and_impact": "Arrow用于批量数据通路；NATS小事件与引用；不让每个模块为了格式一致都跨进程RPC。",
+      "acceptance_scenarios": [
+        "Measure batch CPU, bytes, IPC/network and end-to-end time separately; no inferred zero-copy network claim."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-14",
+      "attachment_proposal": "GIPS国际标准FIFO复式账本",
+      "classification": "必须修正",
+      "reason": "GIPS负责业绩计算与展示；FIFO是成本分配选择，复式是借贷一致性，FIX是订单状态。它们不是同一个标准，采用一个原则也不等于取得合规认证。[CR08][CR09]",
+      "v3_anchor_and_impact": "执行标准 §1、§4、§5；保留 `weighted_average_gross` 的明确项目政策，可比较其他成本法但不能悄悄替换。",
+      "acceptance_scenarios": [
+        "FIFO vs weighted-average split differs while cash, quantity and total economic NAV remain equal for same events."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-15",
+      "attachment_proposal": "回测、paper、真实券商使用同一个撮合算子",
+      "classification": "修正后采纳“同一内核”",
+      "reason": "同一规范事件/费用/账本应共用；真实已成交事实不能再由模拟撮合拒绝。不同数据粒度不能装成有同样成交证据。",
+      "v3_anchor_and_impact": "ExecutionKernel中的MatcherPort与LedgerReducer分离；真实回报先持久化再对账。",
+      "acceptance_scenarios": [
+        "Broker fact remains stored and recoverable even if simulator would reject that execution."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-16",
+      "attachment_proposal": "万1.5最低5元、固定税费全市场统一硬编码",
+      "classification": "不采纳固定值",
+      "reason": "客户合同、渠道、交易日期、佣金是否含规费和订单聚合范围不同；每次部分成交都收最低费也会重复扣费。",
+      "v3_anchor_and_impact": "`CostProfile` 版本化；fixture5元仅合成输入，不是全市场费率。",
+      "acceptance_scenarios": [
+        "Two partial fills of same order apply one cumulative minimum commission, not two per-fill minimums."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-17",
+      "attachment_proposal": "`ask_vol_1==0`等同确定无法买/可真实排队",
+      "classification": "必须限定",
+      "reason": "缺失L2不能填0；快照不能重建全部队列前序、撤单和逐笔成交。可建立有假设的排队模型，但不能标成真实队列。",
+      "v3_anchor_and_impact": "`execution_model_id`、data grade、scenario、统一Fill；订单状态与成交证据分离。",
+      "acceptance_scenarios": [
+        "Absent ask quantity cannot become zero; L1 snapshot does not produce an evidence claim of known queue position."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-18",
+      "attachment_proposal": "所有接口强制Protobuf/Pydantic/Zod，保证100%零歧义",
+      "classification": "修正后局部采纳",
+      "reason": "多套手工合同反而漂移。类型校验不验证资金归属、单位、时间、排序目标和账户可行动性。",
+      "v3_anchor_and_impact": "v3 schema/OpenAPI为权威；新增C-ADD-02往返契约测试，而非替换规范。",
+      "acceptance_scenarios": [
+        "Decimal/null/UTC/units/enum/boundary cross-language round-trip fixture retains semantics."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-19",
+      "attachment_proposal": "所有Rust/PyO3/WASM算子都应先写",
+      "classification": "作为可选性能路线",
+      "reason": "若Python/Polars已满足目标，先引入跨语言数字政策和双平台构建并无收益；最贵算子经profile再迁移最合理。",
+      "v3_anchor_and_impact": "公共FeatureKey的implementation_digest与numeric_policy_version确保替换可追溯，golden差分后切换。",
+      "acceptance_scenarios": [
+        "Profile hotspot, port one operator, compare exact/shared numeric policy fixtures before replacing implementation."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    },
+    {
+      "proposal_id": "C-KEEP-20",
+      "attachment_proposal": "15分钟合同锁定、8Agent零冲突",
+      "classification": "不采纳时间/无冲突承诺",
+      "reason": "合同依赖顺序有价值；不同团队同时编辑主schema/SQL会发生真实合并冲突。分工、契约owner、独立验收可以减少冲突，不能保证消失。",
+      "v3_anchor_and_impact": "既有W01–W10与AGENT_START_PROMPT；公共合同先落稳，其余按所有权并行；进度按验收产物，不按夸张倒计时。",
+      "acceptance_scenarios": [
+        "A contract-breaking change blocks dependent module merge until schemas, clients and fixtures agree."
+      ],
+      "implementation_status": "retain_existing_v3_or_spec_correction",
+      "public_api_change": false
+    }
+  ],
+  "sources": [
+    {
+      "evidence_id": "CR01",
+      "url": "https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.join_asof.html",
+      "web_refs": [
+        "turn173view0",
+        "turn177view2"
+      ],
+      "supported_assertion": "backward/forward/nearest; sorted keys, groups and tolerance; no financial PIT interpretation"
+    },
+    {
+      "evidence_id": "CR02",
+      "url": "https://duckdb.org/2026/10/21/announcing-duckdb-200",
+      "web_refs": [
+        "turn169view1",
+        "turn173view4"
+      ],
+      "supported_assertion": "2.0.0 release2026-10-21; LTS; asyncIO; pre2.0 cannot read newly created2.0 native storage; compatibility requires validation"
+    },
+    {
+      "evidence_id": "CR03",
+      "url": "https://pola.rs/posts/polars-2-1-changelog/",
+      "web_refs": [
+        "turn169view2"
+      ],
+      "supported_assertion": "2.1 release2026-10-27; out-of-core group-by spills; budget example is not full-data residency"
+    },
+    {
+      "evidence_id": "CR04",
+      "url": "https://pydantic.dev/articles/pydantic-validation-next-steps",
+      "web_refs": [
+        "turn169view3"
+      ],
+      "supported_assertion": "2026-10-30 article: V3 work starts, no release date; V2.14.2 referenced"
+    },
+    {
+      "evidence_id": "CR05",
+      "url": "https://www.postgresql.org/about/news/postgresql-19-rc-1-released-3409/",
+      "web_refs": [
+        "turn173view2"
+      ],
+      "supported_assertion": "19RC1 released10-15; plannedRC2 11-12 and GA11-19, not yet GA on reviewdate"
+    },
+    {
+      "evidence_id": "CR06",
+      "url": "https://www.postgresql.org/docs/current/datatype-numeric.html",
+      "web_refs": [
+        "turn169view4"
+      ],
+      "supported_assertion": "numeric exact versus float inexact; monetary exactness versus performance tradeoff"
+    },
+    {
+      "evidence_id": "CR07",
+      "url": "https://arrow.apache.org/docs/format/Intro.html",
+      "web_refs": [
+        "turn169view0",
+        "turn173view3"
+      ],
+      "supported_assertion": "in-process C data interface sharing distinguished from interprocess/network IPC"
+    },
+    {
+      "evidence_id": "CR08",
+      "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-of-the-global-investment-performance-standards",
+      "web_refs": [
+        "turn173view1",
+        "turn177view0"
+      ],
+      "supported_assertion": "performance calculation/presentation/cashflow/fees;2026 course covers2020 edition"
+    },
+    {
+      "evidence_id": "CR09",
+      "url": "https://www.gipsstandards.org/standards/",
+      "web_refs": [
+        "turn169view5"
+      ],
+      "supported_assertion": "all applicable requirements and interpretations apply to compliance claim"
+    }
+  ]
+}

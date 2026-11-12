@@ -1,0 +1,9 @@
+{
+  "scope": "Independent synthetic unit boundary tests; no database, real API, source, performance or profitability tested.",
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 1,
+  "passed": false,
+  "alignment_sha256": "dd04f7e3b12cab0c88c5c2073d9cf47e3863c549124a9784cf0df892ee7d433f",
+  "test_sha256": "051559f102332a804502d92cac72675e31085a847d4b459e270cc6b148fcebd8"
+}

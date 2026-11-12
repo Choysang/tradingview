@@ -1,0 +1,950 @@
+{
+  "reviewer": "/root/v32_audit_ledger",
+  "at_utc": "2026-11-11T03:04:02.460679+00:00",
+  "render_directory": "report_render_v32_01",
+  "requested_document": "deliverables/Pulse_Ashare_Rewrite_2026_v32_build.docx",
+  "document_sha256_observed_at_review_end": "2dad390a74390e6ff7a788f69b2c8c737a74b87bef744563d5db1fc03c0ead5d",
+  "scope": {
+    "first_page": 1,
+    "last_page": 43,
+    "assigned_pages": 43,
+    "visually_inspected_pages": 43,
+    "missing_pages": [],
+    "extra_recheck_pages": [
+      2
+    ]
+  },
+  "read_only_document": true,
+  "summary": {
+    "layout_pass_pages": 41,
+    "layout_revision_pages": [
+      14,
+      43
+    ],
+    "incidental_content_revision_pages": [
+      15,
+      22
+    ],
+    "clipping_found": false,
+    "overlap_found": false,
+    "missing_glyphs_found": false,
+    "broken_table_rows_found": false,
+    "isolated_headings_found": false,
+    "observed_continued_tables_have_repeated_headers": true,
+    "verdict": "revise_two_short_tail_pages_and_one_content_residue_then_rerender"
+  },
+  "issues": [
+    {
+      "id": "WQA01",
+      "pages": [
+        14
+      ],
+      "kind": "layout",
+      "severity": "medium",
+      "needs_revision": true,
+      "finding": "独立短尾页：标题“十一卷输入的本轮整合”和约四行正文，余下约八成空白。",
+      "suggested_action": "将整合说明移入本章开头/合适前文，或与相邻内容重排合并，保留实质内容。"
+    },
+    {
+      "id": "WQA02",
+      "pages": [
+        42,
+        43
+      ],
+      "primary_page": 43,
+      "kind": "layout",
+      "severity": "medium",
+      "needs_revision": true,
+      "finding": "核对结论在42页开始，43页仅约三行续文；几乎全页空白。",
+      "suggested_action": "将续文并回42页或重排整个收尾段，避免一段落单独占尾页。"
+    },
+    {
+      "id": "WQC01",
+      "pages": [
+        15,
+        22
+      ],
+      "kind": "incidental_content_consistency",
+      "severity": "medium",
+      "needs_revision": true,
+      "finding": "15页首发存放表中通知行仍写JetStream；22页Outbox段无条件写JetStream确认。与首发PG事务outbox、NATS增长后可选的本页/前文口径不一致。",
+      "suggested_action": "首发本地outbox消费与扩展broker发布确认分开表述；表中标明JetStream仅扩展可选。",
+      "scope_limit": "这是视觉阅读顺带发现的可见内容残留，不构成重新全篇语义审计。"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "status": "pass",
+      "notes": "封面标题、版本与概览清晰；无裁切、重叠或乱码。",
+      "image_path": "report_render_v32_01/page-1.png",
+      "sha256": "33c76ef3de15b30c4c9ce8cdd4effbc009ded67be20188fece4d061ce2f8a15b",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 2,
+      "status": "pass",
+      "notes": "阅读导航及完整末段、页脚均清楚；复查下缘无裁切，未出现导航独立续页。",
+      "image_path": "report_render_v32_01/page-2.png",
+      "sha256": "c4a31a19c8e1596fba9189e9b12313787761414e178ef4a3d38ffdf463609476",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 3,
+      "status": "pass",
+      "notes": "章标题和小节层级完整；页末1.2标题带足正文，无截字。",
+      "image_path": "report_render_v32_01/page-3.png",
+      "sha256": "691500c327fdc3e22fb8e25523d49a8482433efdf2907a4fe261b6cce9ed658a",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 4,
+      "status": "pass",
+      "notes": "三列表格完整留于本页，列宽和换行正常；页脚清晰。",
+      "image_path": "report_render_v32_01/page-4.png",
+      "sha256": "07e7d8a34022a14df9279ec686b379e62b50bb0ac49a9412d799c97b617951f1",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 5,
+      "status": "pass",
+      "notes": "连续正文与3/4节标题清楚；引文标号不溢出页边。",
+      "image_path": "report_render_v32_01/page-5.png",
+      "sha256": "26502add2af78160496de7f16779c32cf0adfe9787003b3fc03db7b9b3d075e5",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 6,
+      "status": "pass",
+      "notes": "4.1/4.2与5节衔接正常；页末正文至少两行，无孤立标题。",
+      "image_path": "report_render_v32_01/page-6.png",
+      "sha256": "766d5b537b2bcceb14360297097e035523f2b397f61624d32d90f72e1fb8ad10",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 7,
+      "status": "pass",
+      "notes": "多源和龙虎榜小节完整；中英文、引文与页脚均正常。",
+      "image_path": "report_render_v32_01/page-7.png",
+      "sha256": "f867f290835725a3f2912475e195994ee26a66c35c7c9c3f19ad0d82d690f583",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 8,
+      "status": "pass",
+      "notes": "选股与个股计划标题均有正文相随；页末自然续段。",
+      "image_path": "report_render_v32_01/page-8.png",
+      "sha256": "06d4ac9b55e84e846b773dbb6895f186a9db6329cba200ba97370e785f383797",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 9,
+      "status": "pass",
+      "notes": "多策略、做T和账本标题层级清楚；引文正常，页尾不溢出。",
+      "image_path": "report_render_v32_01/page-9.png",
+      "sha256": "1268dc0659e1e5881a8e6b32bb3c18ccc494164829e33963cf5b81ae5ad792f9",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 10,
+      "status": "pass",
+      "notes": "账本与联赛正文完整；生命周期箭头显示正常，无乱码。",
+      "image_path": "report_render_v32_01/page-10.png",
+      "sha256": "7865a5a14bf66b2dd6d58aa7d6de92180b0501db98c7aeabee5243d6d8e341c4",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 11,
+      "status": "pass",
+      "notes": "论文发现与API章节排版清晰；长技术字段换行正常。",
+      "image_path": "report_render_v32_01/page-11.png",
+      "sha256": "febdd7299c2a96755d0b1562e9209bc37116783a92789005603473573d951920",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 12,
+      "status": "pass",
+      "notes": "来源、调度和实施标题均带正文；底部自然续段，无孤立标题。",
+      "image_path": "report_render_v32_01/page-12.png",
+      "sha256": "59363cd8befd758428e9e0d4fa52b77f7edf406f201acb13f48b1c6cdf0f464c",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 13,
+      "status": "pass",
+      "notes": "实施和验收内容完整；长路径在页边内换行，页尾正常。",
+      "image_path": "report_render_v32_01/page-13.png",
+      "sha256": "864a5af478ec9b2e5110fc7f380d7425eaa70dcbf4e57ba0014aa36aff95ffb1",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 14,
+      "status": "needs_revision",
+      "issue_ids": [
+        "WQA01"
+      ],
+      "notes": "仅整合说明标题及约四行正文，整页约八成空白；属于第一部分独立短尾，应移至章前或与相邻内容重排合并。",
+      "image_path": "report_render_v32_01/page-14.png",
+      "sha256": "21ab9366360c3e118267204704c40b2e833aebec5f7f19c1ad8db1c95c90626b",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": true
+      }
+    },
+    {
+      "page": 15,
+      "status": "pass_layout_content_note",
+      "issue_ids": [
+        "WQC01"
+      ],
+      "notes": "数据库章三列表格完整、无裁切；可见内容残留：首发通知存放仍写JetStream，与本页outbox首发口径不一致。",
+      "image_path": "report_render_v32_01/page-15.png",
+      "sha256": "216ef7c08cfc8004ae5ea6e534ed27cf38c3e59db2711f75a98c920e9981b5e2",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 16,
+      "status": "pass",
+      "notes": "物理部署列表、容量公式和四列表格布局正常；表格未拆行。",
+      "image_path": "report_render_v32_01/page-16.png",
+      "sha256": "e8e6742280946551b328b56a0614d69e3875a3e291945e58a688770215d57cd1",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 17,
+      "status": "pass",
+      "notes": "数据库读写说明和项目符号清晰；页末新节带小标题及两行正文。",
+      "image_path": "report_render_v32_01/page-17.png",
+      "sha256": "c373cf5ea8a8b6235eb13f68334fad53e280b2f06af61d6fb902a6413463a7a3",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 18,
+      "status": "pass",
+      "notes": "单位转换表完整、长字段有换行；箭头、乘号和Decimal示例正常。",
+      "image_path": "report_render_v32_01/page-18.png",
+      "sha256": "5d4a689248f423475827114578c07a56756971f7b13841154d5c0c91d6d5c21a",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 19,
+      "status": "pass",
+      "notes": "字段校验列表正常；接口映射表在完整行后跨页。",
+      "image_path": "report_render_v32_01/page-19.png",
+      "sha256": "00d30e33969e713243ae67c4132e96ac4a02fb94e19c39652c4e0821a801a758",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 20,
+      "status": "pass",
+      "notes": "续表重复表头，列顺序一致；长API路径换行但未裁切。",
+      "image_path": "report_render_v32_01/page-20.png",
+      "sha256": "abc7afa9936bb7f267ec2adbe2894e85c77cd7e232e19d31e35c92d3172aad26",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 21,
+      "status": "pass",
+      "notes": "恢复协议标题、编号步骤和发布说明完整；无重叠、乱码或裁切。",
+      "image_path": "report_render_v32_01/page-21.png",
+      "sha256": "df25ec943c649f0833db914643f150993f54f3633f3ac1d901841ee84026208e",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 22,
+      "status": "pass_layout_content_note",
+      "issue_ids": [
+        "WQC01"
+      ],
+      "notes": "版式正常；Outbox首段仍无条件依赖JetStream确认，与首发本地outbox口径不一致，属可见内容提示。",
+      "image_path": "report_render_v32_01/page-22.png",
+      "sha256": "db10896053cc375aa268763f4cfc25f3248a2495527f3c9e43a29b1814d3c38b",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 23,
+      "status": "pass",
+      "notes": "分类、验收与迁移段落清楚；正文和页脚无碰撞。",
+      "image_path": "report_render_v32_01/page-23.png",
+      "sha256": "42e917a39f0c92b5dafa696e4400b5a4b2c19ddd4a93c7123916b17d7ce2e9b4",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 24,
+      "status": "pass",
+      "notes": "数据库章收尾约半页，含成果、依据与v3.2核对三个完整内容块，非孤立短尾。",
+      "image_path": "report_render_v32_01/page-24.png",
+      "sha256": "463ccd2cabca7c4b3cd1d1ad072f5828ad9edb766c462a4ee4bdb63d504cc3a2",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 25,
+      "status": "pass",
+      "notes": "第三部分标题和核心决定清晰；来源表完整行后跨页。",
+      "image_path": "report_render_v32_01/page-25.png",
+      "sha256": "9d95a7a1f27c5771412052a6a57758fb79b5cbe0a1fd370d65fd2ad18e463d77",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 26,
+      "status": "pass",
+      "notes": "来源续表重复表头，长说明自动换行；新小节正文完整，无孤立标题。",
+      "image_path": "report_render_v32_01/page-26.png",
+      "sha256": "654e3e91c70dfc4bb4e17c561f6be07faeac714abb55e63844d84062ce188ab4",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 27,
+      "status": "pass",
+      "notes": "时间字段双列表格完整；长标识符在页边内，正文密度正常。",
+      "image_path": "report_render_v32_01/page-27.png",
+      "sha256": "cf0667d576c15cc25ddfd48bd53d25e219e671778609363369b7c2a7c0ff4f39",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 28,
+      "status": "pass",
+      "notes": "逻辑对象表11条记录均未截断或跨行错位；页末说明正常续页。",
+      "image_path": "report_render_v32_01/page-28.png",
+      "sha256": "216fde784b66681a8e1bdd17c7a33c2471cfbe733e84244c4f56099dbbd1f491",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 29,
+      "status": "pass",
+      "notes": "来源状态英文枚举、编号列表和时间示例正常显示，无缺字。",
+      "image_path": "report_render_v32_01/page-29.png",
+      "sha256": "28b82284880e030f24715a57945979a7c31b1fe3bfc38f6c5820ed836c024511",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 30,
+      "status": "pass",
+      "notes": "交易阶段表完整无断行；4.5标题后有正文，页末自然续段。",
+      "image_path": "report_render_v32_01/page-30.png",
+      "sha256": "459065b2df4ac85d294378130e005ac20e61655071165d3f6d15c1155c56bc95",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 31,
+      "status": "pass",
+      "notes": "消息影响和多源验证正文清晰；长字段、英文状态和箭头均正常。",
+      "image_path": "report_render_v32_01/page-31.png",
+      "sha256": "4d3fb9b6039b8c1391d7dd3ac43666abf349e35784a3b934344b2a371aceb49a",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 32,
+      "status": "pass",
+      "notes": "情绪指标表6行完整；长指标名换行可读，资金面标题和列表一起出现。",
+      "image_path": "report_render_v32_01/page-32.png",
+      "sha256": "8149844886835378c8763ddac892e346c6fe26a71a610a641fed88a86656fdf9",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 33,
+      "status": "pass",
+      "notes": "资金口径与席位小节均可读；8.3页末带两行正文，没有单独标题。",
+      "image_path": "report_render_v32_01/page-33.png",
+      "sha256": "c1866d209e6794c835f8f80798d4494e8eec088a49ddbc407ce9cb4d1428a407",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 34,
+      "status": "pass",
+      "notes": "板块排名三行契约表完整，字段列未溢出；正文间距一致。",
+      "image_path": "report_render_v32_01/page-34.png",
+      "sha256": "3798893e11b6a71ca5d7e1f4f9832606589d1140a351ff1cf92f2d329a552659",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 35,
+      "status": "pass",
+      "notes": "候选池状态机箭头和列表正常；分类标题与正文同页。",
+      "image_path": "report_render_v32_01/page-35.png",
+      "sha256": "e479e5cf3f0547312696fcbd9583c3bc7f2d0572cebb828dfc55a161f0f608c1",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 36,
+      "status": "pass",
+      "notes": "数据库迁移和验收段落完整，长文件路径、版本号无裁切或重叠。",
+      "image_path": "report_render_v32_01/page-36.png",
+      "sha256": "7a2fa2eb3de31d09578cbe6accd2606af61263aa6a819124966139ee729324c6",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 37,
+      "status": "pass",
+      "notes": "第四部分标题和标准映射表完整；引用与单元格边界正常。",
+      "image_path": "report_render_v32_01/page-37.png",
+      "sha256": "4cdd9069d50025108ff008026f7872506fdc9e757f000fd3aa79fd6807bd803f",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 38,
+      "status": "pass",
+      "notes": "入口表完整，底部接口表保留表头与首行后跨页，未拆开单行。",
+      "image_path": "report_render_v32_01/page-38.png",
+      "sha256": "244751bc5ea0a67d0173c99a0f2747a1b740d2da99e9dea949f6f8555f881633",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 39,
+      "status": "pass",
+      "notes": "接口续表重复表头且逐行完整；费用数字与百分号清晰。",
+      "image_path": "report_render_v32_01/page-39.png",
+      "sha256": "2cbf2ff8276a16883444fd7ec90d875adbd864835fe0b52542c9448135b45dee",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 40,
+      "status": "pass",
+      "notes": "复式记账四列表格完整，借贷/数量列无重叠；不等式符号显示正常。",
+      "image_path": "report_render_v32_01/page-40.png",
+      "sha256": "3d3a0f0a71d4fafe78e74a3e54a55e9053a26177961bdbb8b25218b1f991310d",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 41,
+      "status": "pass",
+      "notes": "TWR数字例子和公式换行可读；文本与页脚无碰撞，无缺失符号。",
+      "image_path": "report_render_v32_01/page-41.png",
+      "sha256": "5bf11b246185d9df571f9e2c00165e53bc8c40201c439f2b02f2bc304fa5998c",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 42,
+      "status": "pass",
+      "notes": "Benchmark四行表完整；参考实现边界正文和外部规格核对标题正常。",
+      "image_path": "report_render_v32_01/page-42.png",
+      "sha256": "9763cbc3bcc745aa6576a1cf040ad79ee88bc19a620167d2d9159f5afb04078b",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": false
+      }
+    },
+    {
+      "page": 43,
+      "status": "needs_revision",
+      "issue_ids": [
+        "WQA02"
+      ],
+      "notes": "仅前页核对结论的约三行续文，余页几乎全空；明显孤立短尾，应并回42页或重排本节收尾。",
+      "image_path": "report_render_v32_01/page-43.png",
+      "sha256": "4c992561eb5582b11476a5a5486905290c071b72e0b9ade67527b98e9c64e31d",
+      "original_dimensions_px": [
+        1547,
+        2002
+      ],
+      "inspection_method": "opened original PNG via view_image; at most 2 images per call; no thumbnail/contact-sheet/text substitution",
+      "checks": {
+        "clipping": false,
+        "overlap": false,
+        "missing_glyphs": false,
+        "broken_table_rows": false,
+        "isolated_heading": false,
+        "near_blank_tail": true
+      }
+    }
+  ],
+  "limits": "只评价render_v32_01的1至43页；没有修改DOCX；读取每页原PNG，不使用文本/缩略图替代视觉检查。图像哈希绑定所审渲染，不自动证明后续重建DOCX已复审。"
+}

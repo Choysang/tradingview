@@ -1,0 +1,786 @@
+{
+  "checked_at": "2026-11-11",
+  "scope": "Static integration and structural fixtures only; not repository, database execution, data feed, HTTP server or strategy validation.",
+  "checks_total": 131,
+  "checks_passed": 131,
+  "checks_failed": 0,
+  "passed": true,
+  "schema_fixture_count": 15,
+  "decision_anchor_count": 50,
+  "sql_ast_tables": 80,
+  "sql_ast_columns": 883,
+  "base_http_operations": 31,
+  "public_schema_definitions": 142,
+  "dependencies": {
+    "jsonschema": "4.26.0",
+    "pglast": "8.7",
+    "openapi-spec-validator": "0.7.2",
+    "referencing": "0.36.2"
+  },
+  "checks": [
+    {
+      "check": "supplemental_schema_meta_valid",
+      "passed": true
+    },
+    {
+      "check": "exactly_five_named_payload_definitions",
+      "passed": true
+    },
+    {
+      "check": "payload_meta/CommunityForecastPayload",
+      "passed": true
+    },
+    {
+      "check": "payload_closed_shape/CommunityForecastPayload",
+      "passed": true
+    },
+    {
+      "check": "payload_meta/CommunityOutcomePayload",
+      "passed": true
+    },
+    {
+      "check": "payload_closed_shape/CommunityOutcomePayload",
+      "passed": true
+    },
+    {
+      "check": "payload_meta/ConvertibleRelationPayload",
+      "passed": true
+    },
+    {
+      "check": "payload_closed_shape/ConvertibleRelationPayload",
+      "passed": true
+    },
+    {
+      "check": "payload_meta/ChartLayerDescriptor",
+      "passed": true
+    },
+    {
+      "check": "payload_closed_shape/ChartLayerDescriptor",
+      "passed": true
+    },
+    {
+      "check": "payload_meta/MacdProfile",
+      "passed": true
+    },
+    {
+      "check": "payload_closed_shape/MacdProfile",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/AdjustmentMode",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/ArtifactRef",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/Decimal",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/Hash",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/Timeframe",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/Timestamp",
+      "passed": true
+    },
+    {
+      "check": "reference_resolves/urn:pulse:contracts:v3#/$defs/UUID",
+      "passed": true
+    },
+    {
+      "check": "schema_fixture/CommunityForecastPayload/valid",
+      "passed": true,
+      "detail": {
+        "expected_valid": true,
+        "actual_valid": true,
+        "rejection_path": null
+      }
+    },
+    {
+      "check": "schema_fixture/CommunityForecastPayload/extra-field",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": []
+      }
+    },
+    {
+      "check": "schema_fixture/CommunityOutcomePayload/valid",
+      "passed": true,
+      "detail": {
+        "expected_valid": true,
+        "actual_valid": true,
+        "rejection_path": null
+      }
+    },
+    {
+      "check": "schema_fixture/CommunityOutcomePayload/extra-field",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": []
+      }
+    },
+    {
+      "check": "schema_fixture/ConvertibleRelationPayload/valid",
+      "passed": true,
+      "detail": {
+        "expected_valid": true,
+        "actual_valid": true,
+        "rejection_path": null
+      }
+    },
+    {
+      "check": "schema_fixture/ConvertibleRelationPayload/extra-field",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": []
+      }
+    },
+    {
+      "check": "schema_fixture/ChartLayerDescriptor/valid",
+      "passed": true,
+      "detail": {
+        "expected_valid": true,
+        "actual_valid": true,
+        "rejection_path": null
+      }
+    },
+    {
+      "check": "schema_fixture/ChartLayerDescriptor/extra-field",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": []
+      }
+    },
+    {
+      "check": "schema_fixture/MacdProfile/valid",
+      "passed": true,
+      "detail": {
+        "expected_valid": true,
+        "actual_valid": true,
+        "rejection_path": null
+      }
+    },
+    {
+      "check": "schema_fixture/MacdProfile/extra-field",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": []
+      }
+    },
+    {
+      "check": "schema_fixture/CommunityForecastPayload/base-primitive",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": [
+          "instrument_id"
+        ]
+      }
+    },
+    {
+      "check": "schema_fixture/CommunityOutcomePayload/base-primitive",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": [
+          "target_spec_hash"
+        ]
+      }
+    },
+    {
+      "check": "schema_fixture/ConvertibleRelationPayload/base-primitive",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": [
+          "effective_from"
+        ]
+      }
+    },
+    {
+      "check": "schema_fixture/ChartLayerDescriptor/base-primitive",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": [
+          "available_at"
+        ]
+      }
+    },
+    {
+      "check": "schema_fixture/MacdProfile/base-primitive",
+      "passed": true,
+      "detail": {
+        "expected_valid": false,
+        "actual_valid": false,
+        "rejection_path": [
+          "timeframe"
+        ]
+      }
+    },
+    {
+      "check": "unchanged_openapi_meta_valid",
+      "passed": true
+    },
+    {
+      "check": "public_operations_remain_31",
+      "passed": true
+    },
+    {
+      "check": "public_definitions_remain_142",
+      "passed": true
+    },
+    {
+      "check": "sql_ast_parses/database/core_schema.sql",
+      "passed": true,
+      "detail": {
+        "statement_count": 76
+      }
+    },
+    {
+      "check": "sql_ast_parses/execution/ledger_schema.sql",
+      "passed": true,
+      "detail": {
+        "statement_count": 31
+      }
+    },
+    {
+      "check": "sql_ast_parses/sources_sectors/sources_sectors_schema.sql",
+      "passed": true,
+      "detail": {
+        "statement_count": 30
+      }
+    },
+    {
+      "check": "sql_ast_parses/integration/integration_schema.sql",
+      "passed": true,
+      "detail": {
+        "statement_count": 72
+      }
+    },
+    {
+      "check": "sql_table_count_remains_80",
+      "passed": true
+    },
+    {
+      "check": "sql_column_count_remains_883",
+      "passed": true
+    },
+    {
+      "check": "bindings_exactly_cover_five_payloads",
+      "passed": true
+    },
+    {
+      "check": "binding_sql_slot/CommunityForecastPayload",
+      "passed": true,
+      "detail": {
+        "table": "intelligence.claim_revision",
+        "columns": [
+          "object_payload",
+          "claim_schema_version"
+        ]
+      }
+    },
+    {
+      "check": "binding_public_path/CommunityForecastPayload",
+      "passed": true,
+      "detail": {
+        "public_path": "getStockEvidence.data.claims[].object_payload",
+        "base_slot": "EvidenceClaim.object_payload"
+      }
+    },
+    {
+      "check": "binding_sql_slot/CommunityOutcomePayload",
+      "passed": true,
+      "detail": {
+        "table": "market.feature_result",
+        "columns": [
+          "result_uri",
+          "definition_version"
+        ]
+      }
+    },
+    {
+      "check": "binding_public_path/CommunityOutcomePayload",
+      "passed": true,
+      "detail": {
+        "public_path": "getStockWorkspace.data.features[].artifact",
+        "base_slot": "FeatureResult.artifact"
+      }
+    },
+    {
+      "check": "binding_sql_slot/ConvertibleRelationPayload",
+      "passed": true,
+      "detail": {
+        "table": "intelligence.claim_revision",
+        "columns": [
+          "object_payload",
+          "claim_schema_version"
+        ]
+      }
+    },
+    {
+      "check": "binding_public_path/ConvertibleRelationPayload",
+      "passed": true,
+      "detail": {
+        "public_path": "getStockEvidence.data.claims[].object_payload",
+        "base_slot": "EvidenceClaim.object_payload"
+      }
+    },
+    {
+      "check": "binding_sql_slot/ChartLayerDescriptor",
+      "passed": true,
+      "detail": {
+        "table": "decision.workspace_projection",
+        "columns": [
+          "projection_payload",
+          "projection_version"
+        ]
+      }
+    },
+    {
+      "check": "binding_public_path/ChartLayerDescriptor",
+      "passed": true,
+      "detail": {
+        "public_path": "getStockWorkspace.data.chart_window_refs[]",
+        "base_slot": "Workspace.chart_window_refs"
+      }
+    },
+    {
+      "check": "binding_sql_slot/MacdProfile",
+      "passed": true,
+      "detail": {
+        "table": "market.feature_result",
+        "columns": [
+          "full_key",
+          "definition_version"
+        ]
+      }
+    },
+    {
+      "check": "binding_public_path/MacdProfile",
+      "passed": true,
+      "detail": {
+        "public_path": "getStockWorkspace.data.features[].key.parameter_digest",
+        "base_slot": "FeatureKey.parameter_digest"
+      }
+    },
+    {
+      "check": "decisions_unique_complete_50",
+      "passed": true
+    },
+    {
+      "check": "decision_disposition_totals_match",
+      "passed": true
+    },
+    {
+      "check": "decision_anchor/P01",
+      "passed": true,
+      "detail": "spec/FINAL_SYSTEM_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P02",
+      "passed": true,
+      "detail": "spec/CODE_AUDIT_V2.md"
+    },
+    {
+      "check": "decision_anchor/P03",
+      "passed": true,
+      "detail": "database/database_design.md"
+    },
+    {
+      "check": "decision_anchor/P04",
+      "passed": true,
+      "detail": "database/database_design.md"
+    },
+    {
+      "check": "decision_anchor/P05",
+      "passed": true,
+      "detail": "spec/IMPLEMENTATION_GUIDE_V3.md"
+    },
+    {
+      "check": "decision_anchor/P06",
+      "passed": true,
+      "detail": "contracts/v3.schema.json"
+    },
+    {
+      "check": "decision_anchor/P07",
+      "passed": true,
+      "detail": "database/core_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P08",
+      "passed": true,
+      "detail": "spec/FINAL_SYSTEM_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P09",
+      "passed": true,
+      "detail": "execution/execution_standard.md"
+    },
+    {
+      "check": "decision_anchor/P10",
+      "passed": true,
+      "detail": "database/core_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P11",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_design.md"
+    },
+    {
+      "check": "decision_anchor/P12",
+      "passed": true,
+      "detail": "database/source_mapping_examples.json"
+    },
+    {
+      "check": "decision_anchor/P13",
+      "passed": true,
+      "detail": "reference_alignment/alignment.py"
+    },
+    {
+      "check": "decision_anchor/P14",
+      "passed": true,
+      "detail": "reference_system/source_health.py"
+    },
+    {
+      "check": "decision_anchor/P15",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P16",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_design.md"
+    },
+    {
+      "check": "decision_anchor/P17",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P18",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P19",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P20",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_design.md"
+    },
+    {
+      "check": "decision_anchor/P21",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P22",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P23",
+      "passed": true,
+      "detail": "contracts/supplemental.schema.json"
+    },
+    {
+      "check": "decision_anchor/P24",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P25",
+      "passed": true,
+      "detail": "sources_sectors/sources_sectors_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P26",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P27",
+      "passed": true,
+      "detail": "reference_features/FEATURE_STRATEGY_PROTOCOLS.md"
+    },
+    {
+      "check": "decision_anchor/P28",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P29",
+      "passed": true,
+      "detail": "contracts/supplemental.schema.json"
+    },
+    {
+      "check": "decision_anchor/P30",
+      "passed": true,
+      "detail": "catalogs/factor_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P31",
+      "passed": true,
+      "detail": "catalogs/strategy_catalog_v3.json"
+    },
+    {
+      "check": "decision_anchor/P32",
+      "passed": true,
+      "detail": "database/core_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P33",
+      "passed": true,
+      "detail": "integration/integration_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P34",
+      "passed": true,
+      "detail": "execution/execution_standard.md"
+    },
+    {
+      "check": "decision_anchor/P35",
+      "passed": true,
+      "detail": "execution/execution_standard.md"
+    },
+    {
+      "check": "decision_anchor/P36",
+      "passed": true,
+      "detail": "execution/execution_standard.md"
+    },
+    {
+      "check": "decision_anchor/P37",
+      "passed": true,
+      "detail": "spec/STRATEGY_LEAGUE_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P38",
+      "passed": true,
+      "detail": "spec/STRATEGY_LEAGUE_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P39",
+      "passed": true,
+      "detail": "spec/STRATEGY_LEAGUE_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P40",
+      "passed": true,
+      "detail": "database/core_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P41",
+      "passed": true,
+      "detail": "research/supplemental_method_review.json"
+    },
+    {
+      "check": "decision_anchor/P42",
+      "passed": true,
+      "detail": "research/supplemental_method_review.json"
+    },
+    {
+      "check": "decision_anchor/P43",
+      "passed": true,
+      "detail": "spec/FINAL_SYSTEM_SPEC.md"
+    },
+    {
+      "check": "decision_anchor/P44",
+      "passed": true,
+      "detail": "integration/integration_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P45",
+      "passed": true,
+      "detail": "database/core_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P46",
+      "passed": true,
+      "detail": "contracts/supplemental.schema.json"
+    },
+    {
+      "check": "decision_anchor/P47",
+      "passed": true,
+      "detail": "traceability/work_packages.json"
+    },
+    {
+      "check": "decision_anchor/P48",
+      "passed": true,
+      "detail": "integration/integration_schema.sql"
+    },
+    {
+      "check": "decision_anchor/P49",
+      "passed": true,
+      "detail": "catalogs/taxonomy.json"
+    },
+    {
+      "check": "decision_anchor/P50",
+      "passed": true,
+      "detail": "spec/STRATEGY_LEAGUE_SPEC.md"
+    },
+    {
+      "check": "decisions_keep_design_and_efficacy_distinct",
+      "passed": true
+    },
+    {
+      "check": "strategy_candidates_61",
+      "passed": true
+    },
+    {
+      "check": "factor_candidates_105",
+      "passed": true
+    },
+    {
+      "check": "strategy_uuid_and_factor_slugs_unique",
+      "passed": true
+    },
+    {
+      "check": "all_added_factors_are_unimplemented_unvalidated_unconnected",
+      "passed": true
+    },
+    {
+      "check": "new_strategy_is_unimplemented_and_not_production_routed",
+      "passed": true
+    },
+    {
+      "check": "source_ids_unique",
+      "passed": true
+    },
+    {
+      "check": "new_candidate_source_refs_resolve",
+      "passed": true,
+      "detail": {
+        "source_refs": [
+          "SP-S02",
+          "SP-S03",
+          "SP-S05",
+          "VM-S10",
+          "VM-S11"
+        ],
+        "unresolved": []
+      }
+    },
+    {
+      "check": "new_strategy_factor_dependencies_resolve",
+      "passed": true
+    },
+    {
+      "check": "baseline_manifest_matches_reviewed_eight_files",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/contracts/v3.schema.json",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/contracts/openapi.json",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/contracts/api_bindings.json",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/database/core_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/execution/ledger_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/sources_sectors/sources_sectors_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/integration/integration_schema.sql",
+      "passed": true
+    },
+    {
+      "check": "baseline_bytes_unchanged/execution/unified_ledger.py",
+      "passed": true
+    },
+    {
+      "check": "user_input_bytes_and_hash_preserved",
+      "passed": true
+    },
+    {
+      "check": "core_paper_registry_remains_46",
+      "passed": true
+    },
+    {
+      "check": "supplement_names_are_10_not_added_as_10_core_papers",
+      "passed": true
+    },
+    {
+      "check": "supplement_name_identity_9_confirmed_1_unresolved",
+      "passed": true
+    },
+    {
+      "check": "supplement_method_source_refs_resolve",
+      "passed": true
+    },
+    {
+      "check": "supplement_methods_do_not_claim_reproduction_or_profitability",
+      "passed": true
+    },
+    {
+      "check": "authority_research_counts_match_files",
+      "passed": true
+    }
+  ],
+  "not_implemented_repository_requirements": [
+    {
+      "id": "X05",
+      "status": "not_implemented",
+      "requirement": "Bind capabilities to the exact input artifact and instrument/scope, not a caller-global capability set."
+    },
+    {
+      "id": "X08",
+      "status": "not_implemented",
+      "requirement": "Verify actual dataset window completeness and availability against the requested window and replay cutoff."
+    },
+    {
+      "id": "X09",
+      "status": "not_implemented",
+      "requirement": "Resolve and verify the full artifact identity: ref, content hash, contract_id and schema_version."
+    }
+  ],
+  "repository_gap_count_in_passed_checks": 0,
+  "reviewed_sha256": {
+    "contracts/supplemental.schema.json": "81e891f23ed8a28524f180f038823f5646ca2b92ac51f7dd0d2e58353cc8ceff",
+    "contracts/extension_bindings.json": "2a75937ecd000f397609366040485cc06f97b67fdc3f5ebc1b84c6c1d61626fd",
+    "traceability/proposal_decisions_v31.json": "5832371215db08a6aa114aa021a0130f94976e82c8021fc19bb0c53254438119",
+    "catalogs/strategy_catalog_v3.json": "8e2496dcc3c1e73cdbbb5f3622a4e88181ffa993017d0c4bce5b375253f1df5f",
+    "catalogs/factor_catalog_v3.json": "9bd4db0acb98f81c616089aaaf30181165571454a5abcc2b754c30b7753ac115",
+    "research/source_index.json": "723503607e697cb929f2c470538d848e7649bf39f74cdd4469ea115962b6a409",
+    "research/papers_registry.json": "9c81b4887c0426d68283d6e2a9477e907f2ba96daf14bc428dcf5965025e047d",
+    "research/supplemental_method_review.json": "3218725d845b7fc94a17ec448c728de1a9dbc1327c4fefd711bd9906816ac431"
+  }
+}

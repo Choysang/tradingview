@@ -1,0 +1,1648 @@
+{
+  "review_kind": "independent_static_only",
+  "tables": 80,
+  "foreign_keys_checked": 149,
+  "fk_scope": "All target/source columns exist, arity and exact declared SQL types match, target has final nonpartial primary/unique constraint or ordinary unique index.",
+  "schema_definitions": 142,
+  "api_operations": 31,
+  "api_paths": 30,
+  "documented_fields_matched_to_actual_sql": 883,
+  "undocumented_fields": 0,
+  "local_refs_resolve": true,
+  "openapi_dto_rules_identical_to_canonical_schema": true,
+  "api_service_and_physical_table_bindings_resolve": true,
+  "independent_boundary_examples": 18,
+  "postgres_migration_executed": false,
+  "trigger_or_concurrency_execution": false,
+  "runtime_handler_coverage_claimed": false,
+  "sha256": {
+    "database/core_schema.sql": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2",
+    "execution/ledger_schema.sql": "0639b4fa05274633691961e407911418cd5f8e3bad611bd26812e32411cd8e85",
+    "sources_sectors/sources_sectors_schema.sql": "71f36e99075a7ccd26fcc1ec06afc2c256157ec36e336d3178705c1052e2b354",
+    "integration/integration_schema.sql": "ce2c2189f8197416b0bdbb6f179b0e7d095907e5495f59973a8300be9df0c758",
+    "integration/all_fields.json": "68a245f8671989dfc35ead692230f76d6c775428671130b06aa6385afa2655d0",
+    "contracts/v3.schema.json": "7f0e55a4dd430232dd5b97325b804326e1056c8a38e6130e822e0cc5ca63309b",
+    "contracts/openapi.json": "8ed3c090c7b10a36998a0f3773c81c1509d772bb3ca5f7d1ffcd81ffd94713da",
+    "contracts/api_bindings.json": "dfaa2ab0886cd0eabe31422e1580ac1f99097f57fbe21eb9d5809b6535525d87"
+  },
+  "foreign_keys": [
+    {
+      "source": "core.source_endpoint",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "core.source_endpoint",
+      "columns": [
+        "contract_id",
+        "schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "core.instrument_alias",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "core.instrument_alias",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "core.instrument_state",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "core.taxonomy",
+      "columns": [
+        "owner_source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "core.taxonomy_node",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version"
+      ],
+      "target": "core.taxonomy",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version"
+      ]
+    },
+    {
+      "source": "core.taxonomy_node",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "parent_node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "core.instrument_tag",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "core.instrument_tag",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "ingest.batch",
+      "columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ],
+      "target": "core.source_endpoint",
+      "target_columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ]
+    },
+    {
+      "source": "ingest.raw_object",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "ingest.batch_member",
+      "columns": [
+        "batch_id"
+      ],
+      "target": "ingest.batch",
+      "target_columns": [
+        "batch_id"
+      ]
+    },
+    {
+      "source": "ingest.batch_member",
+      "columns": [
+        "raw_object_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id"
+      ]
+    },
+    {
+      "source": "ingest.source_cursor",
+      "columns": [
+        "committed_batch_id"
+      ],
+      "target": "ingest.batch",
+      "target_columns": [
+        "batch_id"
+      ]
+    },
+    {
+      "source": "ingest.source_cursor",
+      "columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ],
+      "target": "core.source_endpoint",
+      "target_columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ]
+    },
+    {
+      "source": "ingest.source_health",
+      "columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ],
+      "target": "core.source_endpoint",
+      "target_columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ]
+    },
+    {
+      "source": "ingest.observation",
+      "columns": [
+        "raw_object_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id"
+      ]
+    },
+    {
+      "source": "ingest.observation",
+      "columns": [
+        "contract_id",
+        "schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "market.dataset_manifest",
+      "columns": [
+        "batch_id"
+      ],
+      "target": "ingest.batch",
+      "target_columns": [
+        "batch_id"
+      ]
+    },
+    {
+      "source": "market.dataset_manifest",
+      "columns": [
+        "contract_id",
+        "schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "market.dataset_dependency",
+      "columns": [
+        "snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "market.dataset_dependency",
+      "columns": [
+        "input_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "market.bar_projection",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "market.bar_projection",
+      "columns": [
+        "snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "market.bar_projection",
+      "columns": [
+        "observation_id"
+      ],
+      "target": "ingest.observation",
+      "target_columns": [
+        "observation_id"
+      ]
+    },
+    {
+      "source": "market.feature_result",
+      "columns": [
+        "snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "strategy.instance",
+      "columns": [
+        "strategy_id",
+        "strategy_version"
+      ],
+      "target": "strategy.definition",
+      "target_columns": [
+        "strategy_id",
+        "strategy_version"
+      ]
+    },
+    {
+      "source": "strategy.tag_assignment",
+      "columns": [
+        "strategy_id",
+        "strategy_version"
+      ],
+      "target": "strategy.definition",
+      "target_columns": [
+        "strategy_id",
+        "strategy_version"
+      ]
+    },
+    {
+      "source": "strategy.tag_assignment",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "decision.release_component",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_component",
+      "columns": [
+        "snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "decision.trade_plan",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "decision.trade_plan",
+      "columns": [
+        "based_on_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_run",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_run",
+      "columns": [
+        "membership_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_run",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version"
+      ],
+      "target": "core.taxonomy",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version"
+      ]
+    },
+    {
+      "source": "decision.ranking_run",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_entry",
+      "columns": [
+        "ranking_id"
+      ],
+      "target": "decision.ranking_run",
+      "target_columns": [
+        "ranking_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_entry",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "decision.ranking_entry",
+      "columns": [
+        "plan_id",
+        "plan_version"
+      ],
+      "target": "decision.trade_plan",
+      "target_columns": [
+        "plan_id",
+        "plan_version"
+      ]
+    },
+    {
+      "source": "decision.workspace_projection",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "decision.workspace_projection",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "ops.reconciliation_result",
+      "columns": [
+        "chosen_observation_id"
+      ],
+      "target": "ingest.observation",
+      "target_columns": [
+        "observation_id"
+      ]
+    },
+    {
+      "source": "ops.reconciliation_member",
+      "columns": [
+        "reconciliation_id"
+      ],
+      "target": "ops.reconciliation_result",
+      "target_columns": [
+        "reconciliation_id"
+      ]
+    },
+    {
+      "source": "ops.reconciliation_member",
+      "columns": [
+        "observation_id"
+      ],
+      "target": "ingest.observation",
+      "target_columns": [
+        "observation_id"
+      ]
+    },
+    {
+      "source": "ops.data_issue",
+      "columns": [
+        "batch_id"
+      ],
+      "target": "ingest.batch",
+      "target_columns": [
+        "batch_id"
+      ]
+    },
+    {
+      "source": "ops.data_issue",
+      "columns": [
+        "raw_object_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id"
+      ]
+    },
+    {
+      "source": "ops.data_issue",
+      "columns": [
+        "observation_id"
+      ],
+      "target": "ingest.observation",
+      "target_columns": [
+        "observation_id"
+      ]
+    },
+    {
+      "source": "core.api_binding",
+      "columns": [
+        "response_contract_id",
+        "response_schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "execution.account_event",
+      "columns": [
+        "account_id"
+      ],
+      "target": "execution.account_head",
+      "target_columns": [
+        "account_id"
+      ]
+    },
+    {
+      "source": "execution.account_event",
+      "columns": [
+        "account_id",
+        "correction_of_event_id"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "event_id"
+      ]
+    },
+    {
+      "source": "execution.journal_entry",
+      "columns": [
+        "account_id",
+        "event_id"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "event_id"
+      ]
+    },
+    {
+      "source": "execution.journal_entry",
+      "columns": [
+        "account_id",
+        "account_sequence"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "execution.journal_entry",
+      "columns": [
+        "account_id",
+        "reversal_of_entry_id"
+      ],
+      "target": "execution.journal_entry",
+      "target_columns": [
+        "account_id",
+        "entry_id"
+      ]
+    },
+    {
+      "source": "execution.journal_line",
+      "columns": [
+        "account_id",
+        "entry_id"
+      ],
+      "target": "execution.journal_entry",
+      "target_columns": [
+        "account_id",
+        "entry_id"
+      ]
+    },
+    {
+      "source": "execution.position_projection",
+      "columns": [
+        "account_id"
+      ],
+      "target": "execution.account_head",
+      "target_columns": [
+        "account_id"
+      ]
+    },
+    {
+      "source": "execution.position_projection",
+      "columns": [
+        "account_id",
+        "applied_sequence"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "execution.quantity_lot",
+      "columns": [
+        "account_id"
+      ],
+      "target": "execution.account_head",
+      "target_columns": [
+        "account_id"
+      ]
+    },
+    {
+      "source": "execution.quantity_lot",
+      "columns": [
+        "account_id",
+        "originating_event_id"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "event_id"
+      ]
+    },
+    {
+      "source": "execution.quantity_lot",
+      "columns": [
+        "account_id",
+        "applied_sequence"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "execution.order_reservation",
+      "columns": [
+        "account_id"
+      ],
+      "target": "execution.account_head",
+      "target_columns": [
+        "account_id"
+      ]
+    },
+    {
+      "source": "execution.order_reservation",
+      "columns": [
+        "account_id",
+        "applied_sequence"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "intelligence.document_revision",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.document_revision",
+      "columns": [
+        "original_publisher_source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.document_revision",
+      "columns": [
+        "raw_object_id",
+        "source_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id",
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.claim_evidence",
+      "columns": [
+        "claim_revision_id"
+      ],
+      "target": "intelligence.claim_revision",
+      "target_columns": [
+        "claim_revision_id"
+      ]
+    },
+    {
+      "source": "intelligence.claim_evidence",
+      "columns": [
+        "document_revision_id"
+      ],
+      "target": "intelligence.document_revision",
+      "target_columns": [
+        "document_revision_id"
+      ]
+    },
+    {
+      "source": "intelligence.event_claim",
+      "columns": [
+        "event_revision_id"
+      ],
+      "target": "intelligence.event_revision",
+      "target_columns": [
+        "event_revision_id"
+      ]
+    },
+    {
+      "source": "intelligence.event_claim",
+      "columns": [
+        "claim_revision_id"
+      ],
+      "target": "intelligence.claim_revision",
+      "target_columns": [
+        "claim_revision_id"
+      ]
+    },
+    {
+      "source": "intelligence.community_observation",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.community_observation",
+      "columns": [
+        "raw_object_id",
+        "source_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id",
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.funding_observation",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.funding_observation",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "intelligence.funding_observation",
+      "columns": [
+        "raw_object_id",
+        "source_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id",
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_entity_version",
+      "columns": [
+        "evidence_raw_object_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_report",
+      "columns": [
+        "source_id"
+      ],
+      "target": "core.source",
+      "target_columns": [
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_report",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_report",
+      "columns": [
+        "raw_object_id",
+        "source_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id",
+        "source_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_report_row",
+      "columns": [
+        "report_revision_id"
+      ],
+      "target": "intelligence.seat_report",
+      "target_columns": [
+        "report_revision_id"
+      ]
+    },
+    {
+      "source": "intelligence.seat_report_row",
+      "columns": [
+        "seat_id",
+        "seat_version"
+      ],
+      "target": "intelligence.seat_entity_version",
+      "target_columns": [
+        "seat_id",
+        "seat_version"
+      ]
+    },
+    {
+      "source": "decision.candidate_pool_event",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "decision.candidate_pool_event",
+      "columns": [
+        "membership_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "decision.candidate_pool_event",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.candidate_pool_event",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "decision.candidate_pool_event",
+      "columns": [
+        "plan_id",
+        "plan_version"
+      ],
+      "target": "decision.trade_plan",
+      "target_columns": [
+        "plan_id",
+        "plan_version"
+      ]
+    },
+    {
+      "source": "decision.sector_rank_entry",
+      "columns": [
+        "ranking_id"
+      ],
+      "target": "decision.ranking_run",
+      "target_columns": [
+        "ranking_id"
+      ]
+    },
+    {
+      "source": "decision.sector_rank_entry",
+      "columns": [
+        "membership_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "decision.sector_rank_entry",
+      "columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ],
+      "target": "core.taxonomy_node",
+      "target_columns": [
+        "taxonomy_id",
+        "taxonomy_version",
+        "node_id"
+      ]
+    },
+    {
+      "source": "market.quote_projection",
+      "columns": [
+        "quote_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "market.quote_projection",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "market.quote_projection",
+      "columns": [
+        "observation_id"
+      ],
+      "target": "ingest.observation",
+      "target_columns": [
+        "observation_id"
+      ]
+    },
+    {
+      "source": "market.quote_projection",
+      "columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ],
+      "target": "core.source_endpoint",
+      "target_columns": [
+        "source_id",
+        "endpoint_id",
+        "source_schema_version",
+        "mapping_version"
+      ]
+    },
+    {
+      "source": "decision.trade_plan",
+      "columns": [
+        "account_id"
+      ],
+      "target": "execution.account_head",
+      "target_columns": [
+        "account_id"
+      ]
+    },
+    {
+      "source": "decision.trade_plan",
+      "columns": [
+        "account_id",
+        "expected_account_version"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "execution.journal_line",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "execution.position_projection",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "execution.quantity_lot",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "execution.order_reservation",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "decision.release_slot",
+      "columns": [
+        "current_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_stage",
+      "columns": [
+        "slot_key"
+      ],
+      "target": "decision.release_slot",
+      "target_columns": [
+        "slot_key"
+      ]
+    },
+    {
+      "source": "decision.release_stage",
+      "columns": [
+        "base_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_stage",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_publication",
+      "columns": [
+        "stage_id"
+      ],
+      "target": "decision.release_stage",
+      "target_columns": [
+        "stage_id"
+      ]
+    },
+    {
+      "source": "decision.release_publication",
+      "columns": [
+        "slot_key"
+      ],
+      "target": "decision.release_slot",
+      "target_columns": [
+        "slot_key"
+      ]
+    },
+    {
+      "source": "decision.release_publication",
+      "columns": [
+        "previous_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_publication",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.release_publication",
+      "columns": [
+        "event_id"
+      ],
+      "target": "ops.outbox",
+      "target_columns": [
+        "event_id"
+      ]
+    },
+    {
+      "source": "decision.actionability_snapshot",
+      "columns": [
+        "release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "decision.actionability_snapshot",
+      "columns": [
+        "ranking_id"
+      ],
+      "target": "decision.ranking_run",
+      "target_columns": [
+        "ranking_id"
+      ]
+    },
+    {
+      "source": "decision.actionability_snapshot",
+      "columns": [
+        "quote_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "decision.actionability_snapshot",
+      "columns": [
+        "account_id",
+        "account_version"
+      ],
+      "target": "execution.account_event",
+      "target_columns": [
+        "account_id",
+        "account_sequence"
+      ]
+    },
+    {
+      "source": "decision.actionability_snapshot",
+      "columns": [
+        "ranking_id",
+        "release_id"
+      ],
+      "target": "decision.ranking_run",
+      "target_columns": [
+        "ranking_id",
+        "release_id"
+      ]
+    },
+    {
+      "source": "research.paper_revision",
+      "columns": [
+        "raw_object_id"
+      ],
+      "target": "ingest.raw_object",
+      "target_columns": [
+        "raw_object_id"
+      ]
+    },
+    {
+      "source": "research.hypothesis",
+      "columns": [
+        "paper_id",
+        "paper_revision"
+      ],
+      "target": "research.paper_revision",
+      "target_columns": [
+        "paper_id",
+        "paper_revision"
+      ]
+    },
+    {
+      "source": "research.hypothesis",
+      "columns": [
+        "strategy_id",
+        "strategy_version"
+      ],
+      "target": "strategy.definition",
+      "target_columns": [
+        "strategy_id",
+        "strategy_version"
+      ]
+    },
+    {
+      "source": "research.evaluation_input",
+      "columns": [
+        "evaluation_context_id"
+      ],
+      "target": "research.evaluation_context",
+      "target_columns": [
+        "evaluation_context_id"
+      ]
+    },
+    {
+      "source": "research.evaluation_input",
+      "columns": [
+        "snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "research.experiment_run",
+      "columns": [
+        "instance_id"
+      ],
+      "target": "strategy.instance",
+      "target_columns": [
+        "instance_id"
+      ]
+    },
+    {
+      "source": "research.experiment_run",
+      "columns": [
+        "evaluation_context_id"
+      ],
+      "target": "research.evaluation_context",
+      "target_columns": [
+        "evaluation_context_id"
+      ]
+    },
+    {
+      "source": "research.experiment_run",
+      "columns": [
+        "hypothesis_id",
+        "hypothesis_version"
+      ],
+      "target": "research.hypothesis",
+      "target_columns": [
+        "hypothesis_id",
+        "hypothesis_version"
+      ]
+    },
+    {
+      "source": "research.metric_value",
+      "columns": [
+        "experiment_id"
+      ],
+      "target": "research.experiment_run",
+      "target_columns": [
+        "experiment_id"
+      ]
+    },
+    {
+      "source": "research.league_definition",
+      "columns": [
+        "evaluation_context_id"
+      ],
+      "target": "research.evaluation_context",
+      "target_columns": [
+        "evaluation_context_id"
+      ]
+    },
+    {
+      "source": "research.league_round",
+      "columns": [
+        "league_id",
+        "league_version"
+      ],
+      "target": "research.league_definition",
+      "target_columns": [
+        "league_id",
+        "league_version"
+      ]
+    },
+    {
+      "source": "research.league_pairing",
+      "columns": [
+        "left_instance_id"
+      ],
+      "target": "strategy.instance",
+      "target_columns": [
+        "instance_id"
+      ]
+    },
+    {
+      "source": "research.league_pairing",
+      "columns": [
+        "right_instance_id"
+      ],
+      "target": "strategy.instance",
+      "target_columns": [
+        "instance_id"
+      ]
+    },
+    {
+      "source": "research.league_pairing",
+      "columns": [
+        "left_experiment_id"
+      ],
+      "target": "research.experiment_run",
+      "target_columns": [
+        "experiment_id"
+      ]
+    },
+    {
+      "source": "research.league_pairing",
+      "columns": [
+        "right_experiment_id"
+      ],
+      "target": "research.experiment_run",
+      "target_columns": [
+        "experiment_id"
+      ]
+    },
+    {
+      "source": "research.league_pairing",
+      "columns": [
+        "league_id",
+        "league_version",
+        "round_no"
+      ],
+      "target": "research.league_round",
+      "target_columns": [
+        "league_id",
+        "league_version",
+        "round_no"
+      ]
+    },
+    {
+      "source": "research.promotion_decision",
+      "columns": [
+        "instance_id"
+      ],
+      "target": "strategy.instance",
+      "target_columns": [
+        "instance_id"
+      ]
+    },
+    {
+      "source": "research.promotion_decision",
+      "columns": [
+        "evaluation_experiment_id"
+      ],
+      "target": "research.experiment_run",
+      "target_columns": [
+        "experiment_id"
+      ]
+    },
+    {
+      "source": "research.strategy_parent",
+      "columns": [
+        "strategy_id",
+        "strategy_version"
+      ],
+      "target": "strategy.definition",
+      "target_columns": [
+        "strategy_id",
+        "strategy_version"
+      ]
+    },
+    {
+      "source": "research.strategy_parent",
+      "columns": [
+        "parent_strategy_id",
+        "parent_strategy_version"
+      ],
+      "target": "strategy.definition",
+      "target_columns": [
+        "strategy_id",
+        "strategy_version"
+      ]
+    },
+    {
+      "source": "ui.watchlist_member",
+      "columns": [
+        "watchlist_id"
+      ],
+      "target": "ui.watchlist",
+      "target_columns": [
+        "watchlist_id"
+      ]
+    },
+    {
+      "source": "ui.watchlist_member",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "ui.watchlist_member",
+      "columns": [
+        "added_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "ui.annotation",
+      "columns": [
+        "instrument_id"
+      ],
+      "target": "core.instrument",
+      "target_columns": [
+        "instrument_id"
+      ]
+    },
+    {
+      "source": "ui.annotation",
+      "columns": [
+        "watchlist_id"
+      ],
+      "target": "ui.watchlist",
+      "target_columns": [
+        "watchlist_id"
+      ]
+    },
+    {
+      "source": "ui.annotation",
+      "columns": [
+        "anchor_release_id"
+      ],
+      "target": "decision.release",
+      "target_columns": [
+        "release_id"
+      ]
+    },
+    {
+      "source": "ui.annotation",
+      "columns": [
+        "anchor_snapshot_id"
+      ],
+      "target": "market.dataset_manifest",
+      "target_columns": [
+        "snapshot_id"
+      ]
+    },
+    {
+      "source": "analysis.model_policy",
+      "columns": [
+        "evaluation_experiment_id"
+      ],
+      "target": "research.experiment_run",
+      "target_columns": [
+        "experiment_id"
+      ]
+    },
+    {
+      "source": "analysis.model_policy",
+      "columns": [
+        "response_contract_id",
+        "response_schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "analysis.model_run",
+      "columns": [
+        "stage_id"
+      ],
+      "target": "decision.release_stage",
+      "target_columns": [
+        "stage_id"
+      ]
+    },
+    {
+      "source": "analysis.model_run",
+      "columns": [
+        "model_policy_id",
+        "model_policy_version"
+      ],
+      "target": "analysis.model_policy",
+      "target_columns": [
+        "model_policy_id",
+        "model_policy_version"
+      ]
+    },
+    {
+      "source": "ops.job_definition",
+      "columns": [
+        "parameter_contract_id",
+        "parameter_schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    },
+    {
+      "source": "ops.job_run",
+      "columns": [
+        "stage_id"
+      ],
+      "target": "decision.release_stage",
+      "target_columns": [
+        "stage_id"
+      ]
+    },
+    {
+      "source": "ops.job_run",
+      "columns": [
+        "job_id",
+        "job_version"
+      ],
+      "target": "ops.job_definition",
+      "target_columns": [
+        "job_id",
+        "job_version"
+      ]
+    },
+    {
+      "source": "ops.command_receipt",
+      "columns": [
+        "operation_id"
+      ],
+      "target": "core.api_binding",
+      "target_columns": [
+        "operation_id"
+      ]
+    },
+    {
+      "source": "ops.command_receipt",
+      "columns": [
+        "response_contract_id",
+        "response_schema_version"
+      ],
+      "target": "core.contract_version",
+      "target_columns": [
+        "contract_id",
+        "schema_version"
+      ]
+    }
+  ]
+}

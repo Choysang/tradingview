@@ -1,0 +1,204 @@
+{
+  "version": "3.2",
+  "scope": "supplements the existing W01-W10 owners without inventing new agent runtime services",
+  "tasks": [
+    {
+      "work_package_id": "W01",
+      "role": "契约与集成",
+      "v32_task": "将16类扩展卡编入唯一公共合同与生成客户端；定义兼容升级及错误语义。",
+      "resource_cards": [
+        "PEX16"
+      ],
+      "dataset_job_mappings": [],
+      "dependencies": [],
+      "exit_condition": "同一字段只定义一次；操作、输入输出、迁移和客户端能逐项对应。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W02",
+      "role": "数据库",
+      "v32_task": "实现小规模PG与本地不可变对象、字段血缘、pin/lease及发布GC互斥；核准14个拟议新增表的实际迁移。",
+      "resource_cards": [
+        "PEX15"
+      ],
+      "dataset_job_mappings": [
+        "DJ01"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "真实PG并发/恢复验证；历史快照压缩后不丢成员；暂存文件不被抢删。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W03",
+      "role": "来源与消息",
+      "v32_task": "按端点核权限、字段、修订与历史覆盖；实现消息多源同源去重、心跳、轮询补洞和来源状态。",
+      "resource_cards": [
+        "PEX07",
+        "PEX08",
+        "PEX09",
+        "PEX15"
+      ],
+      "dataset_job_mappings": [
+        "DJ01",
+        "DJ02",
+        "DJ03",
+        "DJ04",
+        "DJ05",
+        "DJ07",
+        "DJ08",
+        "DJ09",
+        "DJ10",
+        "DJ11",
+        "DJ12",
+        "DJ13",
+        "DJ14"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "HTTP成功、新内容、规范发布、可用于决策分别可观测；旧产物不重复推送。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W04",
+      "role": "行情与特征",
+      "v32_task": "实现点时母集、真实与政策可得性分离、共享技术特征、多周期及采样能力约束。",
+      "resource_cards": [
+        "PEX04",
+        "PEX09"
+      ],
+      "dataset_job_mappings": [
+        "DJ01",
+        "DJ04",
+        "DJ05",
+        "DJ06",
+        "DJ07",
+        "DJ15",
+        "DJ16"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "相同snapshot/公式只计算一次；采样近似数据不能路由到要求真实分钟OHLC的策略。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W05",
+      "role": "选股与板块",
+      "v32_task": "冻结完整排序配方，接通全市场/板块/升温池，并实现试用预算连续性。",
+      "resource_cards": [
+        "PEX01",
+        "PEX02",
+        "PEX03",
+        "PEX10",
+        "PEX11"
+      ],
+      "dataset_job_mappings": [
+        "DJ16",
+        "DJ17"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "试用总10%保留90%baseline；失效不扩权；主干故障不得发布新完整榜。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W06",
+      "role": "计划与组合",
+      "v32_task": "实现条件计划、持仓/T/网格、图形告警和计划修订，使用唯一账户可卖量。",
+      "resource_cards": [
+        "PEX05",
+        "PEX12",
+        "PEX13"
+      ],
+      "dataset_job_mappings": [
+        "DJ18",
+        "DJ20"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "没有复制资金；未获准的预测性否决不影响正式计划；实时overlay不污染历史解释。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W07",
+      "role": "执行与账本",
+      "v32_task": "扩展唯一账本的真实规则适配、费用和成交对账；统一现金流切段TWR及账户政策。",
+      "resource_cards": [
+        "PEX06",
+        "PEX12"
+      ],
+      "dataset_job_mappings": [
+        "DJ01",
+        "DJ09",
+        "DJ18"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "模拟和真实成交共用经济事件；退市未成交不凭空清仓；库存和NAV可逐键对账。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W08",
+      "role": "前端与工作台",
+      "v32_task": "接通统一release的榜单、板块、工作台及21项子功能；持久化用户状态。",
+      "resource_cards": [
+        "PEX01",
+        "PEX04",
+        "PEX13",
+        "PEX14",
+        "PEX16"
+      ],
+      "dataset_job_mappings": [
+        "DJ20"
+      ],
+      "dependencies": [
+        "W01 contract freeze; synthetic read models may precede live sources"
+      ],
+      "exit_condition": "API类型生成；当前31操作与拟议扩展可区别；断线重连、stale和版本切换可验收。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W09",
+      "role": "研究与联赛",
+      "v32_task": "建立职责分赛道、试验指纹、相关簇、失败记忆和55条文献候选的复现队列。",
+      "resource_cards": [
+        "PEX02",
+        "PEX04",
+        "PEX06",
+        "PEX08",
+        "PEX09",
+        "PEX11"
+      ],
+      "dataset_job_mappings": [
+        "DJ08",
+        "DJ14",
+        "DJ18",
+        "DJ19"
+      ],
+      "dependencies": [
+        "W01 contract freeze"
+      ],
+      "exit_condition": "证据、运行许可、实现状态分离；旧负结论限定样本；回测/前向共用评价政策。",
+      "status": "implementation_required_not_claimed_completed"
+    },
+    {
+      "work_package_id": "W10",
+      "role": "独立验收",
+      "v32_task": "独立执行目标环境的合同、数据传播、账户对账、产品纵向及容量恢复验收。",
+      "resource_cards": [],
+      "dataset_job_mappings": [],
+      "dependencies": [
+        "W01 contract freeze",
+        "own feature slice ready for W10 acceptance"
+      ],
+      "exit_condition": "按milestones_v32.json的M0至M6与未解释差异关闭标准验收；操作连续天数与收益统计证据分开，不用合成测试代替生产。",
+      "status": "implementation_required_not_claimed_completed"
+    }
+  ]
+}

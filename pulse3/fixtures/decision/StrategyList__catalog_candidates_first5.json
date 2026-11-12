@@ -1,0 +1,1689 @@
+{
+ "items": [
+  {
+   "definition_hash": "535eb9f11a2b45228e653014ea66bbfddd237c32d84cbea06ae69405b6f09182",
+   "display_name": "双均线趋势",
+   "forecast_target": "candidate_target_unregistered:entry",
+   "horizon_id": "one_to_three_months",
+   "instances": [
+    {
+     "health": "unavailable",
+     "implementation_status": "not_implemented",
+     "instance_id": "cf28e778-ca67-5a53-9e39-dbc34a018015",
+     "lifecycle": "discovered",
+     "parameter_hash": "58a65adc0d3d6c48430bb1d610935507817292f087ddaf0a2225021ba5b3b199",
+     "reproduction_status": "not_started",
+     "strategy_id": "2e7feaa4-349a-5f05-9b66-25b01b073fad",
+     "strategy_version": 1,
+     "universe_policy_version": "CN_MAINBOARD_DEFAULT/v1"
+    }
+   ],
+   "method_family": "rule_based",
+   "role": "entry",
+   "specification": {
+    "catalog_id": "S001",
+    "classification_rationale": "该候选首先负责入场触发和失效条件；实际股数与委托由统一编译器确定；原文中其他动作拆为支持组件或显式依赖。",
+    "composition_contract": {
+     "candidate_kind": "composite_strategy_candidate",
+     "combination_rule": "Typed directed composition, or a separately trained/calibrated combiner for same target/horizon forecasts. Never average heterogeneous raw scores.",
+     "components": [
+      {
+       "component_catalog_id": "S001.entry",
+       "implementation_status": "not_implemented",
+       "input_contract": "SelectedInstrument + PointInTimeFeatures + EntryConditionAST",
+       "output_contract": "EntryConditionPlan.v1",
+       "owns": "入场触发和失效条件；实际股数与委托由统一编译器确定",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S001/entry)",
+       "role": "entry",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S001.selection",
+       "implementation_status": "not_implemented",
+       "input_contract": "EligibleUniverse + PointInTimeFeatures + TargetDefinition",
+       "output_contract": "SelectionResult.v1",
+       "owns": "候选集合或同期限同目标排序；不直接设置账户订单",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S001/selection)",
+       "role": "selection",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S001.exit",
+       "implementation_status": "not_implemented",
+       "input_contract": "ExistingPosition + PlanVersion + ExitConditionAST + MarketState",
+       "output_contract": "ExitIntent.v1",
+       "owns": "减仓或退出条件；触发不等于成交",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S001/exit)",
+       "role": "exit",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      }
+     ],
+     "delegated_role_policy": "Bind separately validated defaults or explicit components by exact version; an omitted role is not silently implemented.",
+     "delegated_roles": [
+      "allocation",
+      "holding",
+      "execution"
+     ],
+     "double_counting_policy": "Register common factors, original-news groups and parameter families in the dependency/trial graph.",
+     "order_emission": "Only unified Plan/Intent compiler and shared execution engine may produce simulated or actionable orders.",
+     "separation_required_before_implementation": true,
+     "shared_upstream_features": "Reuse by full FeatureKey; tag count does not create independent evidence."
+    },
+    "data_requirements": {
+     "company_actions_required": true,
+     "cost_profile_required": true,
+     "factor_ids": [
+      "F073"
+     ],
+     "historical_receive_time_required_for_live_claims": true,
+     "minimum_granularity": "D1",
+     "pit_universe_required": true
+    },
+    "data_requires": {
+     "account_snapshot_required_for_roles": [
+      "allocation",
+      "holding",
+      "execution",
+      "exit"
+     ],
+     "availability_contract": "Observed mode: every actual input/model available_at <= decision_as_of. Declared historical reconstruction mode: policy_usable_at <= decision_as_of under a versioned availability policy and explicit latency assumptions; actual available_at is never overwritten.",
+     "domain_datasets": [
+      "price_volume_features"
+     ],
+     "entry_quantity_compilation_requires_account_snapshot": true,
+     "factor_catalog_ids": [
+      "F073"
+     ],
+     "granularity_datasets": [
+      "completed_daily_bars"
+     ],
+     "minimum_granularity": "D1",
+     "minimum_granularity_to_feature_timeframe": "1d",
+     "missing_input_action": "UNKNOWN; disable this route or use a separately registered and validated fallback component",
+     "model_artifact_required": false,
+     "model_artifact_status": "not_applicable",
+     "required_key_contract": "FeatureKey.v3.19dimensions",
+     "required_shared_context": [
+      "instrument_master",
+      "pit_universe",
+      "market_calendar",
+      "market_rules",
+      "corporate_actions",
+      "raw_execution_prices",
+      "cost_profile"
+     ]
+    },
+    "duplicate_family": "trend_price_transform",
+    "evaluation_status": {
+     "backtest_run_ids": [],
+     "forward_run_ids": [],
+     "profitability_claim": false,
+     "training_run_ids": []
+    },
+    "execution_model": {
+     "fill_semantics": "在信号完成后的下一合格交易会话、按当时原始价和真实可成交条件撮合",
+     "limitations": [
+      "不能推断日内触价先后",
+      "不能证明涨停队列成交"
+     ],
+     "profile_id": "D1_NEXT_ELIGIBLE_SESSION",
+     "signal_clock": "bar_close"
+    },
+    "family_id": "SF01",
+    "family_name": "趋势与突破",
+    "holding_period": {
+     "anchor": "first_fill_at",
+     "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+     "intraday_scope": null,
+     "max_candidate": 60,
+     "min_candidate": 1,
+     "unit": "trading_sessions"
+    },
+    "horizon_contract": {
+     "base_position_horizon_inherited": false,
+     "catalog_range_is_not_a_mixed_horizon_rank_target": true,
+     "exact_horizon_must_be_registered_per_instance": true,
+     "kind": "investment_holding_horizon",
+     "original_candidate_range": {
+      "anchor": "first_fill_at",
+      "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+      "intraday_scope": null,
+      "max_candidate": 60,
+      "min_candidate": 1,
+      "unit": "trading_sessions"
+     },
+     "primary_tag": "one_to_three_months",
+     "runtime_horizon_id": null
+    },
+    "horizon_tags": [
+     "one_to_three_months"
+    ],
+    "hypothesis": "本条候选机制是否在相同股票池、时点信息和成交费用条件下改善对应基线，必须通过实验判定。",
+    "implementation_status": "not_implemented",
+    "lifecycle_state": "discovered",
+    "method_family": "rule_based",
+    "method_family_tags": [
+     "rule_based"
+    ],
+    "name": "双均线趋势",
+    "overlap_policy": "share family trial budget and report factor-group ablations; do not count parameter variants as independent evidence",
+    "parameter_candidates": {
+     "fast": [
+      10,
+      20
+     ],
+     "slow": [
+      40,
+      60
+     ]
+    },
+    "parameter_status": "research_candidates_not_optimized_or_recommended",
+    "position_policy": {
+     "account_cash_reservation": "atomic_shared_account",
+     "lot_size": "MarketRules effective version",
+     "mode": "portfolio_allocator_target_weight",
+     "same_day_new_buy_resell": false,
+     "sizing_parameters": "must be registered before test; no user capital assumed"
+    },
+    "primary_role": "entry",
+    "provenance": {
+     "external_author_attribution": null,
+     "external_strategy_snapshot_required_before_claiming_reproduction": true,
+     "origin_type": "architecture_design_candidate"
+    },
+    "required_validation": [
+     "时点数据和股票池无未来信息",
+     "T+1整手涨跌停停牌及费用执行一致",
+     "与基线同样本同成本比较",
+     "按市场状态和龙头生命周期切片",
+     "记录所有参数trial及最终留出访问"
+    ],
+    "routing": {
+     "exact_target_and_horizon_match_required": true,
+     "output_contract": "EntryConditionPlan.v1",
+     "production_gates": [
+      "specified_typed_contract",
+      "implementation_and_fixtures",
+      "data_readiness",
+      "shared_execution_and_accounting_validation",
+      "out_of_sample_validation",
+      "shadow_evaluation",
+      "explicit_active_lifecycle"
+     ],
+     "production_route_enabled": false,
+     "research_lane": "stock_workbench.entry",
+     "score_only_routing_allowed": false,
+     "taxonomy_contract_ref": "taxonomy.json:strategy.role/method/horizon/signal_axis/execution_grade/lifecycle"
+    },
+    "side_policy": "long_only_equities",
+    "signal_spec": {
+     "clock": "bar_close",
+     "condition_format_target": "versioned_condition_ast",
+     "decision_availability_rule": "decision_at is after all required inputs and any model output available_at",
+     "entry_rule": "已完成日线SMA20从下向上穿越SMA60，次交易日首个合格时点入场",
+     "exit_rule": "SMA20下穿SMA60或达到最长持有期限",
+     "is_executable_implementation": false
+    },
+    "slug": "ma_cross",
+    "source_refs": [],
+    "source_refs_role": "method_or_data_mechanics_background_not_validation_of_this_candidate",
+    "specification_status": "candidate_requires_ast_compilation_and_fixtures",
+    "state_tags": {
+     "data_readiness": "required_inputs_not_connected_or_certified",
+     "implementation": "not_implemented",
+     "lifecycle": "discovered",
+     "regime_applicability_validated": false,
+     "regime_hypotheses": [
+      "trending_up"
+     ],
+     "validation": "unvalidated"
+    },
+    "strategy_id": "2e7feaa4-349a-5f05-9b66-25b01b073fad",
+    "strategy_version": 1,
+    "supporting_roles": [
+     "selection",
+     "exit"
+    ],
+    "taxonomy_tags": {
+     "strategy.execution_grade": [
+      "daily_bar"
+     ],
+     "strategy.horizon": [
+      "one_to_three_months"
+     ],
+     "strategy.lifecycle": [
+      "discovered"
+     ],
+     "strategy.market_regime": [
+      "trending_up"
+     ],
+     "strategy.method": [
+      "rule_based"
+     ],
+     "strategy.overlay_type": [
+      "none"
+     ],
+     "strategy.role": [
+      "entry",
+      "selection",
+      "exit"
+     ],
+     "strategy.signal_axis": [
+      "technical"
+     ]
+    },
+    "universe_policy_ref": "CN_MAINBOARD_DEFAULT",
+    "validation_status": "unvalidated"
+   },
+   "strategy_id": "2e7feaa4-349a-5f05-9b66-25b01b073fad",
+   "strategy_version": 1,
+   "tags": [
+    {
+     "node_id": "daily_bar",
+     "taxonomy_id": "strategy.execution_grade",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "SF01",
+     "taxonomy_id": "strategy.family",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "one_to_three_months",
+     "taxonomy_id": "strategy.horizon",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "discovered",
+     "taxonomy_id": "strategy.lifecycle",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "trending_up",
+     "taxonomy_id": "strategy.market_regime",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "rule_based",
+     "taxonomy_id": "strategy.method",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "none",
+     "taxonomy_id": "strategy.overlay_type",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "entry",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "exit",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "selection",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "technical",
+     "taxonomy_id": "strategy.signal_axis",
+     "taxonomy_version": 1
+    }
+   ]
+  },
+  {
+   "definition_hash": "d28f79848e1682f550e271c77629b38e7c81fbfe1451f36b57031fc2b0800314",
+   "display_name": "MACD趋势确认",
+   "forecast_target": "candidate_target_unregistered:entry",
+   "horizon_id": "one_to_three_months",
+   "instances": [
+    {
+     "health": "unavailable",
+     "implementation_status": "not_implemented",
+     "instance_id": "d3d1b89a-0dca-5a4b-ac0d-e2efa66a3505",
+     "lifecycle": "discovered",
+     "parameter_hash": "7bc3b4e25a5e85aaed3e2e75363d04dc0d92f57a8be3f0d0de2a98410fe59ca2",
+     "reproduction_status": "not_started",
+     "strategy_id": "4ce77e93-c9f1-59da-be8b-1de70aa537c9",
+     "strategy_version": 1,
+     "universe_policy_version": "CN_MAINBOARD_DEFAULT/v1"
+    }
+   ],
+   "method_family": "rule_based",
+   "role": "entry",
+   "specification": {
+    "catalog_id": "S002",
+    "classification_rationale": "该候选首先负责入场触发和失效条件；实际股数与委托由统一编译器确定；原文中其他动作拆为支持组件或显式依赖。",
+    "composition_contract": {
+     "candidate_kind": "composite_strategy_candidate",
+     "combination_rule": "Typed directed composition, or a separately trained/calibrated combiner for same target/horizon forecasts. Never average heterogeneous raw scores.",
+     "components": [
+      {
+       "component_catalog_id": "S002.entry",
+       "implementation_status": "not_implemented",
+       "input_contract": "SelectedInstrument + PointInTimeFeatures + EntryConditionAST",
+       "output_contract": "EntryConditionPlan.v1",
+       "owns": "入场触发和失效条件；实际股数与委托由统一编译器确定",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S002/entry)",
+       "role": "entry",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S002.selection",
+       "implementation_status": "not_implemented",
+       "input_contract": "EligibleUniverse + PointInTimeFeatures + TargetDefinition",
+       "output_contract": "SelectionResult.v1",
+       "owns": "候选集合或同期限同目标排序；不直接设置账户订单",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S002/selection)",
+       "role": "selection",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S002.exit",
+       "implementation_status": "not_implemented",
+       "input_contract": "ExistingPosition + PlanVersion + ExitConditionAST + MarketState",
+       "output_contract": "ExitIntent.v1",
+       "owns": "减仓或退出条件；触发不等于成交",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S002/exit)",
+       "role": "exit",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      }
+     ],
+     "delegated_role_policy": "Bind separately validated defaults or explicit components by exact version; an omitted role is not silently implemented.",
+     "delegated_roles": [
+      "allocation",
+      "holding",
+      "execution"
+     ],
+     "double_counting_policy": "Register common factors, original-news groups and parameter families in the dependency/trial graph.",
+     "order_emission": "Only unified Plan/Intent compiler and shared execution engine may produce simulated or actionable orders.",
+     "separation_required_before_implementation": true,
+     "shared_upstream_features": "Reuse by full FeatureKey; tag count does not create independent evidence."
+    },
+    "data_requirements": {
+     "company_actions_required": true,
+     "cost_profile_required": true,
+     "factor_ids": [
+      "F074",
+      "F075"
+     ],
+     "historical_receive_time_required_for_live_claims": true,
+     "minimum_granularity": "D1",
+     "pit_universe_required": true
+    },
+    "data_requires": {
+     "account_snapshot_required_for_roles": [
+      "allocation",
+      "holding",
+      "execution",
+      "exit"
+     ],
+     "availability_contract": "Observed mode: every actual input/model available_at <= decision_as_of. Declared historical reconstruction mode: policy_usable_at <= decision_as_of under a versioned availability policy and explicit latency assumptions; actual available_at is never overwritten.",
+     "domain_datasets": [
+      "price_volume_features"
+     ],
+     "entry_quantity_compilation_requires_account_snapshot": true,
+     "factor_catalog_ids": [
+      "F074",
+      "F075"
+     ],
+     "granularity_datasets": [
+      "completed_daily_bars"
+     ],
+     "minimum_granularity": "D1",
+     "minimum_granularity_to_feature_timeframe": "1d",
+     "missing_input_action": "UNKNOWN; disable this route or use a separately registered and validated fallback component",
+     "model_artifact_required": false,
+     "model_artifact_status": "not_applicable",
+     "required_key_contract": "FeatureKey.v3.19dimensions",
+     "required_shared_context": [
+      "instrument_master",
+      "pit_universe",
+      "market_calendar",
+      "market_rules",
+      "corporate_actions",
+      "raw_execution_prices",
+      "cost_profile"
+     ]
+    },
+    "duplicate_family": "trend_price_transform",
+    "evaluation_status": {
+     "backtest_run_ids": [],
+     "forward_run_ids": [],
+     "profitability_claim": false,
+     "training_run_ids": []
+    },
+    "execution_model": {
+     "fill_semantics": "在信号完成后的下一合格交易会话、按当时原始价和真实可成交条件撮合",
+     "limitations": [
+      "不能推断日内触价先后",
+      "不能证明涨停队列成交"
+     ],
+     "profile_id": "D1_NEXT_ELIGIBLE_SESSION",
+     "signal_clock": "bar_close"
+    },
+    "family_id": "SF01",
+    "family_name": "趋势与突破",
+    "holding_period": {
+     "anchor": "first_fill_at",
+     "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+     "intraday_scope": null,
+     "max_candidate": 30,
+     "min_candidate": 1,
+     "unit": "trading_sessions"
+    },
+    "horizon_contract": {
+     "base_position_horizon_inherited": false,
+     "catalog_range_is_not_a_mixed_horizon_rank_target": true,
+     "exact_horizon_must_be_registered_per_instance": true,
+     "kind": "investment_holding_horizon",
+     "original_candidate_range": {
+      "anchor": "first_fill_at",
+      "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+      "intraday_scope": null,
+      "max_candidate": 30,
+      "min_candidate": 1,
+      "unit": "trading_sessions"
+     },
+     "primary_tag": "one_to_three_months",
+     "runtime_horizon_id": null
+    },
+    "horizon_tags": [
+     "one_to_three_months"
+    ],
+    "hypothesis": "本条候选机制是否在相同股票池、时点信息和成交费用条件下改善对应基线，必须通过实验判定。",
+    "implementation_status": "not_implemented",
+    "lifecycle_state": "discovered",
+    "method_family": "rule_based",
+    "method_family_tags": [
+     "rule_based"
+    ],
+    "name": "MACD趋势确认",
+    "overlap_policy": "share family trial budget and report factor-group ablations; do not count parameter variants as independent evidence",
+    "parameter_candidates": {
+     "fast": [
+      12
+     ],
+     "signal": [
+      9
+     ],
+     "slow": [
+      26
+     ]
+    },
+    "parameter_status": "research_candidates_not_optimized_or_recommended",
+    "position_policy": {
+     "account_cash_reservation": "atomic_shared_account",
+     "lot_size": "MarketRules effective version",
+     "mode": "portfolio_allocator_target_weight",
+     "same_day_new_buy_resell": false,
+     "sizing_parameters": "must be registered before test; no user capital assumed"
+    },
+    "primary_role": "entry",
+    "provenance": {
+     "external_author_attribution": null,
+     "external_strategy_snapshot_required_before_claiming_reproduction": true,
+     "origin_type": "architecture_design_candidate"
+    },
+    "required_validation": [
+     "时点数据和股票池无未来信息",
+     "T+1整手涨跌停停牌及费用执行一致",
+     "与基线同样本同成本比较",
+     "按市场状态和龙头生命周期切片",
+     "记录所有参数trial及最终留出访问"
+    ],
+    "routing": {
+     "exact_target_and_horizon_match_required": true,
+     "output_contract": "EntryConditionPlan.v1",
+     "production_gates": [
+      "specified_typed_contract",
+      "implementation_and_fixtures",
+      "data_readiness",
+      "shared_execution_and_accounting_validation",
+      "out_of_sample_validation",
+      "shadow_evaluation",
+      "explicit_active_lifecycle"
+     ],
+     "production_route_enabled": false,
+     "research_lane": "stock_workbench.entry",
+     "score_only_routing_allowed": false,
+     "taxonomy_contract_ref": "taxonomy.json:strategy.role/method/horizon/signal_axis/execution_grade/lifecycle"
+    },
+    "side_policy": "long_only_equities",
+    "signal_spec": {
+     "clock": "bar_close",
+     "condition_format_target": "versioned_condition_ast",
+     "decision_availability_rule": "decision_at is after all required inputs and any model output available_at",
+     "entry_rule": "DIF上穿DEA且DIF大于0，按固定12/26/9定义在日线完成后产生候选",
+     "exit_rule": "DIF下穿DEA或预登记ATR退出触发",
+     "is_executable_implementation": false
+    },
+    "slug": "macd_cross",
+    "source_refs": [],
+    "source_refs_role": "method_or_data_mechanics_background_not_validation_of_this_candidate",
+    "specification_status": "candidate_requires_ast_compilation_and_fixtures",
+    "state_tags": {
+     "data_readiness": "required_inputs_not_connected_or_certified",
+     "implementation": "not_implemented",
+     "lifecycle": "discovered",
+     "regime_applicability_validated": false,
+     "regime_hypotheses": [
+      "trending_up"
+     ],
+     "validation": "unvalidated"
+    },
+    "strategy_id": "4ce77e93-c9f1-59da-be8b-1de70aa537c9",
+    "strategy_version": 1,
+    "supporting_roles": [
+     "selection",
+     "exit"
+    ],
+    "taxonomy_tags": {
+     "strategy.execution_grade": [
+      "daily_bar"
+     ],
+     "strategy.horizon": [
+      "one_to_three_months"
+     ],
+     "strategy.lifecycle": [
+      "discovered"
+     ],
+     "strategy.market_regime": [
+      "trending_up"
+     ],
+     "strategy.method": [
+      "rule_based"
+     ],
+     "strategy.overlay_type": [
+      "none"
+     ],
+     "strategy.role": [
+      "entry",
+      "selection",
+      "exit"
+     ],
+     "strategy.signal_axis": [
+      "technical"
+     ]
+    },
+    "universe_policy_ref": "CN_MAINBOARD_DEFAULT",
+    "validation_status": "unvalidated"
+   },
+   "strategy_id": "4ce77e93-c9f1-59da-be8b-1de70aa537c9",
+   "strategy_version": 1,
+   "tags": [
+    {
+     "node_id": "daily_bar",
+     "taxonomy_id": "strategy.execution_grade",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "SF01",
+     "taxonomy_id": "strategy.family",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "one_to_three_months",
+     "taxonomy_id": "strategy.horizon",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "discovered",
+     "taxonomy_id": "strategy.lifecycle",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "trending_up",
+     "taxonomy_id": "strategy.market_regime",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "rule_based",
+     "taxonomy_id": "strategy.method",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "none",
+     "taxonomy_id": "strategy.overlay_type",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "entry",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "exit",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "selection",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "technical",
+     "taxonomy_id": "strategy.signal_axis",
+     "taxonomy_version": 1
+    }
+   ]
+  },
+  {
+   "definition_hash": "c787f27ff2a3a4941c6d81b7506e013f7757b616ac58e33e696527db67ffde49",
+   "display_name": "前高通道突破",
+   "forecast_target": "candidate_target_unregistered:entry",
+   "horizon_id": "one_to_three_months",
+   "instances": [
+    {
+     "health": "unavailable",
+     "implementation_status": "not_implemented",
+     "instance_id": "5b353b3a-e472-523c-8cf7-626985c8a31a",
+     "lifecycle": "discovered",
+     "parameter_hash": "ac7760b42ca5786544f3521a8d9960519cdb0d5b7086abe2b3aeda9fb56c56f0",
+     "reproduction_status": "not_started",
+     "strategy_id": "2d424ec8-ecb0-51c5-a341-c653a9c23ad3",
+     "strategy_version": 1,
+     "universe_policy_version": "CN_MAINBOARD_DEFAULT/v1"
+    }
+   ],
+   "method_family": "rule_based",
+   "role": "entry",
+   "specification": {
+    "catalog_id": "S003",
+    "classification_rationale": "该候选首先负责入场触发和失效条件；实际股数与委托由统一编译器确定；原文中其他动作拆为支持组件或显式依赖。",
+    "composition_contract": {
+     "candidate_kind": "composite_strategy_candidate",
+     "combination_rule": "Typed directed composition, or a separately trained/calibrated combiner for same target/horizon forecasts. Never average heterogeneous raw scores.",
+     "components": [
+      {
+       "component_catalog_id": "S003.entry",
+       "implementation_status": "not_implemented",
+       "input_contract": "SelectedInstrument + PointInTimeFeatures + EntryConditionAST",
+       "output_contract": "EntryConditionPlan.v1",
+       "owns": "入场触发和失效条件；实际股数与委托由统一编译器确定",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S003/entry)",
+       "role": "entry",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S003.selection",
+       "implementation_status": "not_implemented",
+       "input_contract": "EligibleUniverse + PointInTimeFeatures + TargetDefinition",
+       "output_contract": "SelectionResult.v1",
+       "owns": "候选集合或同期限同目标排序；不直接设置账户订单",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S003/selection)",
+       "role": "selection",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S003.exit",
+       "implementation_status": "not_implemented",
+       "input_contract": "ExistingPosition + PlanVersion + ExitConditionAST + MarketState",
+       "output_contract": "ExitIntent.v1",
+       "owns": "减仓或退出条件；触发不等于成交",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S003/exit)",
+       "role": "exit",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      }
+     ],
+     "delegated_role_policy": "Bind separately validated defaults or explicit components by exact version; an omitted role is not silently implemented.",
+     "delegated_roles": [
+      "allocation",
+      "holding",
+      "execution"
+     ],
+     "double_counting_policy": "Register common factors, original-news groups and parameter families in the dependency/trial graph.",
+     "order_emission": "Only unified Plan/Intent compiler and shared execution engine may produce simulated or actionable orders.",
+     "separation_required_before_implementation": true,
+     "shared_upstream_features": "Reuse by full FeatureKey; tag count does not create independent evidence."
+    },
+    "data_requirements": {
+     "company_actions_required": true,
+     "cost_profile_required": true,
+     "factor_ids": [
+      "F076",
+      "F077"
+     ],
+     "historical_receive_time_required_for_live_claims": true,
+     "minimum_granularity": "D1",
+     "pit_universe_required": true
+    },
+    "data_requires": {
+     "account_snapshot_required_for_roles": [
+      "allocation",
+      "holding",
+      "execution",
+      "exit"
+     ],
+     "availability_contract": "Observed mode: every actual input/model available_at <= decision_as_of. Declared historical reconstruction mode: policy_usable_at <= decision_as_of under a versioned availability policy and explicit latency assumptions; actual available_at is never overwritten.",
+     "domain_datasets": [
+      "price_volume_features"
+     ],
+     "entry_quantity_compilation_requires_account_snapshot": true,
+     "factor_catalog_ids": [
+      "F076",
+      "F077"
+     ],
+     "granularity_datasets": [
+      "completed_daily_bars"
+     ],
+     "minimum_granularity": "D1",
+     "minimum_granularity_to_feature_timeframe": "1d",
+     "missing_input_action": "UNKNOWN; disable this route or use a separately registered and validated fallback component",
+     "model_artifact_required": false,
+     "model_artifact_status": "not_applicable",
+     "required_key_contract": "FeatureKey.v3.19dimensions",
+     "required_shared_context": [
+      "instrument_master",
+      "pit_universe",
+      "market_calendar",
+      "market_rules",
+      "corporate_actions",
+      "raw_execution_prices",
+      "cost_profile"
+     ]
+    },
+    "duplicate_family": "breakout_high",
+    "evaluation_status": {
+     "backtest_run_ids": [],
+     "forward_run_ids": [],
+     "profitability_claim": false,
+     "training_run_ids": []
+    },
+    "execution_model": {
+     "fill_semantics": "在信号完成后的下一合格交易会话、按当时原始价和真实可成交条件撮合",
+     "limitations": [
+      "不能推断日内触价先后",
+      "不能证明涨停队列成交"
+     ],
+     "profile_id": "D1_NEXT_ELIGIBLE_SESSION",
+     "signal_clock": "bar_close"
+    },
+    "family_id": "SF01",
+    "family_name": "趋势与突破",
+    "holding_period": {
+     "anchor": "first_fill_at",
+     "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+     "intraday_scope": null,
+     "max_candidate": 40,
+     "min_candidate": 1,
+     "unit": "trading_sessions"
+    },
+    "horizon_contract": {
+     "base_position_horizon_inherited": false,
+     "catalog_range_is_not_a_mixed_horizon_rank_target": true,
+     "exact_horizon_must_be_registered_per_instance": true,
+     "kind": "investment_holding_horizon",
+     "original_candidate_range": {
+      "anchor": "first_fill_at",
+      "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+      "intraday_scope": null,
+      "max_candidate": 40,
+      "min_candidate": 1,
+      "unit": "trading_sessions"
+     },
+     "primary_tag": "one_to_three_months",
+     "runtime_horizon_id": null
+    },
+    "horizon_tags": [
+     "one_to_three_months"
+    ],
+    "hypothesis": "本条候选机制是否在相同股票池、时点信息和成交费用条件下改善对应基线，必须通过实验判定。",
+    "implementation_status": "not_implemented",
+    "lifecycle_state": "discovered",
+    "method_family": "rule_based",
+    "method_family_tags": [
+     "rule_based"
+    ],
+    "name": "前高通道突破",
+    "overlap_policy": "share family trial budget and report factor-group ablations; do not count parameter variants as independent evidence",
+    "parameter_candidates": {
+     "exit_lookback": [
+      10
+     ],
+     "lookback": [
+      20,
+      55
+     ]
+    },
+    "parameter_status": "research_candidates_not_optimized_or_recommended",
+    "position_policy": {
+     "account_cash_reservation": "atomic_shared_account",
+     "lot_size": "MarketRules effective version",
+     "mode": "portfolio_allocator_target_weight",
+     "same_day_new_buy_resell": false,
+     "sizing_parameters": "must be registered before test; no user capital assumed"
+    },
+    "primary_role": "entry",
+    "provenance": {
+     "external_author_attribution": null,
+     "external_strategy_snapshot_required_before_claiming_reproduction": true,
+     "origin_type": "architecture_design_candidate"
+    },
+    "required_validation": [
+     "时点数据和股票池无未来信息",
+     "T+1整手涨跌停停牌及费用执行一致",
+     "与基线同样本同成本比较",
+     "按市场状态和龙头生命周期切片",
+     "记录所有参数trial及最终留出访问"
+    ],
+    "routing": {
+     "exact_target_and_horizon_match_required": true,
+     "output_contract": "EntryConditionPlan.v1",
+     "production_gates": [
+      "specified_typed_contract",
+      "implementation_and_fixtures",
+      "data_readiness",
+      "shared_execution_and_accounting_validation",
+      "out_of_sample_validation",
+      "shadow_evaluation",
+      "explicit_active_lifecycle"
+     ],
+     "production_route_enabled": false,
+     "research_lane": "stock_workbench.entry",
+     "score_only_routing_allowed": false,
+     "taxonomy_contract_ref": "taxonomy.json:strategy.role/method/horizon/signal_axis/execution_grade/lifecycle"
+    },
+    "side_policy": "long_only_equities",
+    "signal_spec": {
+     "clock": "bar_close",
+     "condition_format_target": "versioned_condition_ast",
+     "decision_availability_rule": "decision_at is after all required inputs and any model output available_at",
+     "entry_rule": "收盘高于此前20或55个已完成交易日最高价，当前K线不进入阈值窗口",
+     "exit_rule": "跌破此前10日低点或最长持有期限",
+     "is_executable_implementation": false
+    },
+    "slug": "donchian_breakout",
+    "source_refs": [],
+    "source_refs_role": "method_or_data_mechanics_background_not_validation_of_this_candidate",
+    "specification_status": "candidate_requires_ast_compilation_and_fixtures",
+    "state_tags": {
+     "data_readiness": "required_inputs_not_connected_or_certified",
+     "implementation": "not_implemented",
+     "lifecycle": "discovered",
+     "regime_applicability_validated": false,
+     "regime_hypotheses": [
+      "trending_up"
+     ],
+     "validation": "unvalidated"
+    },
+    "strategy_id": "2d424ec8-ecb0-51c5-a341-c653a9c23ad3",
+    "strategy_version": 1,
+    "supporting_roles": [
+     "selection",
+     "exit"
+    ],
+    "taxonomy_tags": {
+     "strategy.execution_grade": [
+      "daily_bar"
+     ],
+     "strategy.horizon": [
+      "one_to_three_months"
+     ],
+     "strategy.lifecycle": [
+      "discovered"
+     ],
+     "strategy.market_regime": [
+      "trending_up"
+     ],
+     "strategy.method": [
+      "rule_based"
+     ],
+     "strategy.overlay_type": [
+      "none"
+     ],
+     "strategy.role": [
+      "entry",
+      "selection",
+      "exit"
+     ],
+     "strategy.signal_axis": [
+      "technical"
+     ]
+    },
+    "universe_policy_ref": "CN_MAINBOARD_DEFAULT",
+    "validation_status": "unvalidated"
+   },
+   "strategy_id": "2d424ec8-ecb0-51c5-a341-c653a9c23ad3",
+   "strategy_version": 1,
+   "tags": [
+    {
+     "node_id": "daily_bar",
+     "taxonomy_id": "strategy.execution_grade",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "SF01",
+     "taxonomy_id": "strategy.family",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "one_to_three_months",
+     "taxonomy_id": "strategy.horizon",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "discovered",
+     "taxonomy_id": "strategy.lifecycle",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "trending_up",
+     "taxonomy_id": "strategy.market_regime",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "rule_based",
+     "taxonomy_id": "strategy.method",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "none",
+     "taxonomy_id": "strategy.overlay_type",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "entry",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "exit",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "selection",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "technical",
+     "taxonomy_id": "strategy.signal_axis",
+     "taxonomy_version": 1
+    }
+   ]
+  },
+  {
+   "definition_hash": "7d30a005034b96a9932b7d135b748f5e0f69ffa70feb84576ecc39cf8d2a58c7",
+   "display_name": "趋势中的缩量回踩",
+   "forecast_target": "candidate_target_unregistered:entry",
+   "horizon_id": "one_to_four_weeks",
+   "instances": [
+    {
+     "health": "unavailable",
+     "implementation_status": "not_implemented",
+     "instance_id": "bdb48613-ad63-5fbb-9f9a-4a96787e8394",
+     "lifecycle": "discovered",
+     "parameter_hash": "c8fa65627a16431635701ec7d2cf1913dce69fe847c5ca8020083a5842383ec9",
+     "reproduction_status": "not_started",
+     "strategy_id": "53e5e9cc-8d98-5dba-b000-8d68d25d6fd1",
+     "strategy_version": 1,
+     "universe_policy_version": "CN_MAINBOARD_DEFAULT/v1"
+    }
+   ],
+   "method_family": "rule_based",
+   "role": "entry",
+   "specification": {
+    "catalog_id": "S004",
+    "classification_rationale": "该候选首先负责入场触发和失效条件；实际股数与委托由统一编译器确定；原文中其他动作拆为支持组件或显式依赖。",
+    "composition_contract": {
+     "candidate_kind": "composite_strategy_candidate",
+     "combination_rule": "Typed directed composition, or a separately trained/calibrated combiner for same target/horizon forecasts. Never average heterogeneous raw scores.",
+     "components": [
+      {
+       "component_catalog_id": "S004.entry",
+       "implementation_status": "not_implemented",
+       "input_contract": "SelectedInstrument + PointInTimeFeatures + EntryConditionAST",
+       "output_contract": "EntryConditionPlan.v1",
+       "owns": "入场触发和失效条件；实际股数与委托由统一编译器确定",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S004/entry)",
+       "role": "entry",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S004.selection",
+       "implementation_status": "not_implemented",
+       "input_contract": "EligibleUniverse + PointInTimeFeatures + TargetDefinition",
+       "output_contract": "SelectionResult.v1",
+       "owns": "候选集合或同期限同目标排序；不直接设置账户订单",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S004/selection)",
+       "role": "selection",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S004.exit",
+       "implementation_status": "not_implemented",
+       "input_contract": "ExistingPosition + PlanVersion + ExitConditionAST + MarketState",
+       "output_contract": "ExitIntent.v1",
+       "owns": "减仓或退出条件；触发不等于成交",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S004/exit)",
+       "role": "exit",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      }
+     ],
+     "delegated_role_policy": "Bind separately validated defaults or explicit components by exact version; an omitted role is not silently implemented.",
+     "delegated_roles": [
+      "allocation",
+      "holding",
+      "execution"
+     ],
+     "double_counting_policy": "Register common factors, original-news groups and parameter families in the dependency/trial graph.",
+     "order_emission": "Only unified Plan/Intent compiler and shared execution engine may produce simulated or actionable orders.",
+     "separation_required_before_implementation": true,
+     "shared_upstream_features": "Reuse by full FeatureKey; tag count does not create independent evidence."
+    },
+    "data_requirements": {
+     "company_actions_required": true,
+     "cost_profile_required": true,
+     "factor_ids": [
+      "F073",
+      "F077",
+      "F075"
+     ],
+     "historical_receive_time_required_for_live_claims": true,
+     "minimum_granularity": "D1",
+     "pit_universe_required": true
+    },
+    "data_requires": {
+     "account_snapshot_required_for_roles": [
+      "allocation",
+      "holding",
+      "execution",
+      "exit"
+     ],
+     "availability_contract": "Observed mode: every actual input/model available_at <= decision_as_of. Declared historical reconstruction mode: policy_usable_at <= decision_as_of under a versioned availability policy and explicit latency assumptions; actual available_at is never overwritten.",
+     "domain_datasets": [
+      "price_volume_features"
+     ],
+     "entry_quantity_compilation_requires_account_snapshot": true,
+     "factor_catalog_ids": [
+      "F073",
+      "F077",
+      "F075"
+     ],
+     "granularity_datasets": [
+      "completed_daily_bars"
+     ],
+     "minimum_granularity": "D1",
+     "minimum_granularity_to_feature_timeframe": "1d",
+     "missing_input_action": "UNKNOWN; disable this route or use a separately registered and validated fallback component",
+     "model_artifact_required": false,
+     "model_artifact_status": "not_applicable",
+     "required_key_contract": "FeatureKey.v3.19dimensions",
+     "required_shared_context": [
+      "instrument_master",
+      "pit_universe",
+      "market_calendar",
+      "market_rules",
+      "corporate_actions",
+      "raw_execution_prices",
+      "cost_profile"
+     ]
+    },
+    "duplicate_family": "trend_pullback",
+    "evaluation_status": {
+     "backtest_run_ids": [],
+     "forward_run_ids": [],
+     "profitability_claim": false,
+     "training_run_ids": []
+    },
+    "execution_model": {
+     "fill_semantics": "在信号完成后的下一合格交易会话、按当时原始价和真实可成交条件撮合",
+     "limitations": [
+      "不能推断日内触价先后",
+      "不能证明涨停队列成交"
+     ],
+     "profile_id": "D1_NEXT_ELIGIBLE_SESSION",
+     "signal_clock": "bar_close"
+    },
+    "family_id": "SF01",
+    "family_name": "趋势与突破",
+    "holding_period": {
+     "anchor": "first_fill_at",
+     "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+     "intraday_scope": null,
+     "max_candidate": 20,
+     "min_candidate": 1,
+     "unit": "trading_sessions"
+    },
+    "horizon_contract": {
+     "base_position_horizon_inherited": false,
+     "catalog_range_is_not_a_mixed_horizon_rank_target": true,
+     "exact_horizon_must_be_registered_per_instance": true,
+     "kind": "investment_holding_horizon",
+     "original_candidate_range": {
+      "anchor": "first_fill_at",
+      "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+      "intraday_scope": null,
+      "max_candidate": 20,
+      "min_candidate": 1,
+      "unit": "trading_sessions"
+     },
+     "primary_tag": "one_to_four_weeks",
+     "runtime_horizon_id": null
+    },
+    "horizon_tags": [
+     "one_to_four_weeks"
+    ],
+    "hypothesis": "本条候选机制是否在相同股票池、时点信息和成交费用条件下改善对应基线，必须通过实验判定。",
+    "implementation_status": "not_implemented",
+    "lifecycle_state": "discovered",
+    "method_family": "rule_based",
+    "method_family_tags": [
+     "rule_based"
+    ],
+    "name": "趋势中的缩量回踩",
+    "overlap_policy": "share family trial budget and report factor-group ablations; do not count parameter variants as independent evidence",
+    "parameter_candidates": {
+     "band_atr": [
+      0.25,
+      0.5
+     ],
+     "volume_ratio_max": [
+      0.7,
+      0.9
+     ]
+    },
+    "parameter_status": "research_candidates_not_optimized_or_recommended",
+    "position_policy": {
+     "account_cash_reservation": "atomic_shared_account",
+     "lot_size": "MarketRules effective version",
+     "mode": "portfolio_allocator_target_weight",
+     "same_day_new_buy_resell": false,
+     "sizing_parameters": "must be registered before test; no user capital assumed"
+    },
+    "primary_role": "entry",
+    "provenance": {
+     "external_author_attribution": null,
+     "external_strategy_snapshot_required_before_claiming_reproduction": true,
+     "origin_type": "architecture_design_candidate"
+    },
+    "required_validation": [
+     "时点数据和股票池无未来信息",
+     "T+1整手涨跌停停牌及费用执行一致",
+     "与基线同样本同成本比较",
+     "按市场状态和龙头生命周期切片",
+     "记录所有参数trial及最终留出访问"
+    ],
+    "routing": {
+     "exact_target_and_horizon_match_required": true,
+     "output_contract": "EntryConditionPlan.v1",
+     "production_gates": [
+      "specified_typed_contract",
+      "implementation_and_fixtures",
+      "data_readiness",
+      "shared_execution_and_accounting_validation",
+      "out_of_sample_validation",
+      "shadow_evaluation",
+      "explicit_active_lifecycle"
+     ],
+     "production_route_enabled": false,
+     "research_lane": "stock_workbench.entry",
+     "score_only_routing_allowed": false,
+     "taxonomy_contract_ref": "taxonomy.json:strategy.role/method/horizon/signal_axis/execution_grade/lifecycle"
+    },
+    "side_policy": "long_only_equities",
+    "signal_spec": {
+     "clock": "bar_close",
+     "condition_format_target": "versioned_condition_ast",
+     "decision_availability_rule": "decision_at is after all required inputs and any model output available_at",
+     "entry_rule": "SMA20大于SMA60，价格回踩预登记均线带且缩量，随后完成K线重新收上均线",
+     "exit_rule": "跌破回踩低点减ATR缓冲或趋势条件失效",
+     "is_executable_implementation": false
+    },
+    "slug": "trend_pullback",
+    "source_refs": [],
+    "source_refs_role": "method_or_data_mechanics_background_not_validation_of_this_candidate",
+    "specification_status": "candidate_requires_ast_compilation_and_fixtures",
+    "state_tags": {
+     "data_readiness": "required_inputs_not_connected_or_certified",
+     "implementation": "not_implemented",
+     "lifecycle": "discovered",
+     "regime_applicability_validated": false,
+     "regime_hypotheses": [
+      "trending_up"
+     ],
+     "validation": "unvalidated"
+    },
+    "strategy_id": "53e5e9cc-8d98-5dba-b000-8d68d25d6fd1",
+    "strategy_version": 1,
+    "supporting_roles": [
+     "selection",
+     "exit"
+    ],
+    "taxonomy_tags": {
+     "strategy.execution_grade": [
+      "daily_bar"
+     ],
+     "strategy.horizon": [
+      "one_to_four_weeks"
+     ],
+     "strategy.lifecycle": [
+      "discovered"
+     ],
+     "strategy.market_regime": [
+      "trending_up"
+     ],
+     "strategy.method": [
+      "rule_based"
+     ],
+     "strategy.overlay_type": [
+      "none"
+     ],
+     "strategy.role": [
+      "entry",
+      "selection",
+      "exit"
+     ],
+     "strategy.signal_axis": [
+      "technical"
+     ]
+    },
+    "universe_policy_ref": "CN_MAINBOARD_DEFAULT",
+    "validation_status": "unvalidated"
+   },
+   "strategy_id": "53e5e9cc-8d98-5dba-b000-8d68d25d6fd1",
+   "strategy_version": 1,
+   "tags": [
+    {
+     "node_id": "daily_bar",
+     "taxonomy_id": "strategy.execution_grade",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "SF01",
+     "taxonomy_id": "strategy.family",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "one_to_four_weeks",
+     "taxonomy_id": "strategy.horizon",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "discovered",
+     "taxonomy_id": "strategy.lifecycle",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "trending_up",
+     "taxonomy_id": "strategy.market_regime",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "rule_based",
+     "taxonomy_id": "strategy.method",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "none",
+     "taxonomy_id": "strategy.overlay_type",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "entry",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "exit",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "selection",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "technical",
+     "taxonomy_id": "strategy.signal_axis",
+     "taxonomy_version": 1
+    }
+   ]
+  },
+  {
+   "definition_hash": "858ef5b49aa039da96840de5217a728e5ab68f62d9596d13607edec5e3f7507e",
+   "display_name": "周日多周期共振",
+   "forecast_target": "candidate_target_unregistered:entry",
+   "horizon_id": "one_to_three_months",
+   "instances": [
+    {
+     "health": "unavailable",
+     "implementation_status": "not_implemented",
+     "instance_id": "2c909f98-9691-5a8a-a5e0-b83e823ce010",
+     "lifecycle": "discovered",
+     "parameter_hash": "216be789728660bcf600e502a1d399ab76bc67f920c32550330240d19d28593c",
+     "reproduction_status": "not_started",
+     "strategy_id": "c2679a2e-a415-5f9f-bdb5-0b0848b5f2c8",
+     "strategy_version": 1,
+     "universe_policy_version": "CN_MAINBOARD_DEFAULT/v1"
+    }
+   ],
+   "method_family": "rule_based",
+   "role": "entry",
+   "specification": {
+    "catalog_id": "S005",
+    "classification_rationale": "该候选首先负责入场触发和失效条件；实际股数与委托由统一编译器确定；原文中其他动作拆为支持组件或显式依赖。",
+    "composition_contract": {
+     "candidate_kind": "composite_strategy_candidate",
+     "combination_rule": "Typed directed composition, or a separately trained/calibrated combiner for same target/horizon forecasts. Never average heterogeneous raw scores.",
+     "components": [
+      {
+       "component_catalog_id": "S005.entry",
+       "implementation_status": "not_implemented",
+       "input_contract": "SelectedInstrument + PointInTimeFeatures + EntryConditionAST",
+       "output_contract": "EntryConditionPlan.v1",
+       "owns": "入场触发和失效条件；实际股数与委托由统一编译器确定",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S005/entry)",
+       "role": "entry",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S005.selection",
+       "implementation_status": "not_implemented",
+       "input_contract": "EligibleUniverse + PointInTimeFeatures + TargetDefinition",
+       "output_contract": "SelectionResult.v1",
+       "owns": "候选集合或同期限同目标排序；不直接设置账户订单",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S005/selection)",
+       "role": "selection",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      },
+      {
+       "component_catalog_id": "S005.exit",
+       "implementation_status": "not_implemented",
+       "input_contract": "ExistingPosition + PlanVersion + ExitConditionAST + MarketState",
+       "output_contract": "ExitIntent.v1",
+       "owns": "减仓或退出条件；触发不等于成交",
+       "production_component_uuid_rule": "uuid5(strategy_catalog_namespace, component/S005/exit)",
+       "role": "exit",
+       "specification_action": "Compile the role-owned portion into its own typed contract; references to other roles are dependencies, not a second score."
+      }
+     ],
+     "delegated_role_policy": "Bind separately validated defaults or explicit components by exact version; an omitted role is not silently implemented.",
+     "delegated_roles": [
+      "allocation",
+      "holding",
+      "execution"
+     ],
+     "double_counting_policy": "Register common factors, original-news groups and parameter families in the dependency/trial graph.",
+     "order_emission": "Only unified Plan/Intent compiler and shared execution engine may produce simulated or actionable orders.",
+     "separation_required_before_implementation": true,
+     "shared_upstream_features": "Reuse by full FeatureKey; tag count does not create independent evidence."
+    },
+    "data_requirements": {
+     "company_actions_required": true,
+     "cost_profile_required": true,
+     "factor_ids": [
+      "F073",
+      "F076"
+     ],
+     "historical_receive_time_required_for_live_claims": true,
+     "minimum_granularity": "D1",
+     "pit_universe_required": true
+    },
+    "data_requires": {
+     "account_snapshot_required_for_roles": [
+      "allocation",
+      "holding",
+      "execution",
+      "exit"
+     ],
+     "availability_contract": "Observed mode: every actual input/model available_at <= decision_as_of. Declared historical reconstruction mode: policy_usable_at <= decision_as_of under a versioned availability policy and explicit latency assumptions; actual available_at is never overwritten.",
+     "domain_datasets": [
+      "price_volume_features"
+     ],
+     "entry_quantity_compilation_requires_account_snapshot": true,
+     "factor_catalog_ids": [
+      "F073",
+      "F076"
+     ],
+     "granularity_datasets": [
+      "completed_daily_bars"
+     ],
+     "minimum_granularity": "D1",
+     "minimum_granularity_to_feature_timeframe": "1d",
+     "missing_input_action": "UNKNOWN; disable this route or use a separately registered and validated fallback component",
+     "model_artifact_required": false,
+     "model_artifact_status": "not_applicable",
+     "required_key_contract": "FeatureKey.v3.19dimensions",
+     "required_shared_context": [
+      "instrument_master",
+      "pit_universe",
+      "market_calendar",
+      "market_rules",
+      "corporate_actions",
+      "raw_execution_prices",
+      "cost_profile"
+     ]
+    },
+    "duplicate_family": "trend_price_transform",
+    "evaluation_status": {
+     "backtest_run_ids": [],
+     "forward_run_ids": [],
+     "profitability_claim": false,
+     "training_run_ids": []
+    },
+    "execution_model": {
+     "fill_semantics": "在信号完成后的下一合格交易会话、按当时原始价和真实可成交条件撮合",
+     "limitations": [
+      "不能推断日内触价先后",
+      "不能证明涨停队列成交"
+     ],
+     "profile_id": "D1_NEXT_ELIGIBLE_SESSION",
+     "signal_clock": "bar_close"
+    },
+    "family_id": "SF01",
+    "family_name": "趋势与突破",
+    "holding_period": {
+     "anchor": "first_fill_at",
+     "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+     "intraday_scope": null,
+     "max_candidate": 40,
+     "min_candidate": 1,
+     "unit": "trading_sessions"
+    },
+    "horizon_contract": {
+     "base_position_horizon_inherited": false,
+     "catalog_range_is_not_a_mixed_horizon_rank_target": true,
+     "exact_horizon_must_be_registered_per_instance": true,
+     "kind": "investment_holding_horizon",
+     "original_candidate_range": {
+      "anchor": "first_fill_at",
+      "counting": "complete N sessions after first fill unless trial explicitly selects entry_session_inclusive",
+      "intraday_scope": null,
+      "max_candidate": 40,
+      "min_candidate": 1,
+      "unit": "trading_sessions"
+     },
+     "primary_tag": "one_to_three_months",
+     "runtime_horizon_id": null
+    },
+    "horizon_tags": [
+     "one_to_three_months"
+    ],
+    "hypothesis": "本条候选机制是否在相同股票池、时点信息和成交费用条件下改善对应基线，必须通过实验判定。",
+    "implementation_status": "not_implemented",
+    "lifecycle_state": "discovered",
+    "method_family": "rule_based",
+    "method_family_tags": [
+     "rule_based"
+    ],
+    "name": "周日多周期共振",
+    "overlap_policy": "share family trial budget and report factor-group ablations; do not count parameter variants as independent evidence",
+    "parameter_candidates": {
+     "daily_window": [
+      10,
+      20
+     ],
+     "weekly_window": [
+      10,
+      20
+     ]
+    },
+    "parameter_status": "research_candidates_not_optimized_or_recommended",
+    "position_policy": {
+     "account_cash_reservation": "atomic_shared_account",
+     "lot_size": "MarketRules effective version",
+     "mode": "portfolio_allocator_target_weight",
+     "same_day_new_buy_resell": false,
+     "sizing_parameters": "must be registered before test; no user capital assumed"
+    },
+    "primary_role": "entry",
+    "provenance": {
+     "external_author_attribution": null,
+     "external_strategy_snapshot_required_before_claiming_reproduction": true,
+     "origin_type": "architecture_design_candidate"
+    },
+    "required_validation": [
+     "时点数据和股票池无未来信息",
+     "T+1整手涨跌停停牌及费用执行一致",
+     "与基线同样本同成本比较",
+     "按市场状态和龙头生命周期切片",
+     "记录所有参数trial及最终留出访问"
+    ],
+    "routing": {
+     "exact_target_and_horizon_match_required": true,
+     "output_contract": "EntryConditionPlan.v1",
+     "production_gates": [
+      "specified_typed_contract",
+      "implementation_and_fixtures",
+      "data_readiness",
+      "shared_execution_and_accounting_validation",
+      "out_of_sample_validation",
+      "shadow_evaluation",
+      "explicit_active_lifecycle"
+     ],
+     "production_route_enabled": false,
+     "research_lane": "stock_workbench.entry",
+     "score_only_routing_allowed": false,
+     "taxonomy_contract_ref": "taxonomy.json:strategy.role/method/horizon/signal_axis/execution_grade/lifecycle"
+    },
+    "side_policy": "long_only_equities",
+    "signal_spec": {
+     "clock": "bar_close",
+     "condition_format_target": "versioned_condition_ast",
+     "decision_availability_rule": "decision_at is after all required inputs and any model output available_at",
+     "entry_rule": "上一根已完成周K趋势为正，日线突破此前窗口；进行中的周K不能充当周收盘确认",
+     "exit_rule": "日线趋势失效或已完成周K转弱",
+     "is_executable_implementation": false
+    },
+    "slug": "multi_timeframe",
+    "source_refs": [],
+    "source_refs_role": "method_or_data_mechanics_background_not_validation_of_this_candidate",
+    "specification_status": "candidate_requires_ast_compilation_and_fixtures",
+    "state_tags": {
+     "data_readiness": "required_inputs_not_connected_or_certified",
+     "implementation": "not_implemented",
+     "lifecycle": "discovered",
+     "regime_applicability_validated": false,
+     "regime_hypotheses": [
+      "trending_up"
+     ],
+     "validation": "unvalidated"
+    },
+    "strategy_id": "c2679a2e-a415-5f9f-bdb5-0b0848b5f2c8",
+    "strategy_version": 1,
+    "supporting_roles": [
+     "selection",
+     "exit"
+    ],
+    "taxonomy_tags": {
+     "strategy.execution_grade": [
+      "daily_bar"
+     ],
+     "strategy.horizon": [
+      "one_to_three_months"
+     ],
+     "strategy.lifecycle": [
+      "discovered"
+     ],
+     "strategy.market_regime": [
+      "trending_up"
+     ],
+     "strategy.method": [
+      "rule_based"
+     ],
+     "strategy.overlay_type": [
+      "none"
+     ],
+     "strategy.role": [
+      "entry",
+      "selection",
+      "exit"
+     ],
+     "strategy.signal_axis": [
+      "technical"
+     ]
+    },
+    "universe_policy_ref": "CN_MAINBOARD_DEFAULT",
+    "validation_status": "unvalidated"
+   },
+   "strategy_id": "c2679a2e-a415-5f9f-bdb5-0b0848b5f2c8",
+   "strategy_version": 1,
+   "tags": [
+    {
+     "node_id": "daily_bar",
+     "taxonomy_id": "strategy.execution_grade",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "SF01",
+     "taxonomy_id": "strategy.family",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "one_to_three_months",
+     "taxonomy_id": "strategy.horizon",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "discovered",
+     "taxonomy_id": "strategy.lifecycle",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "trending_up",
+     "taxonomy_id": "strategy.market_regime",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "rule_based",
+     "taxonomy_id": "strategy.method",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "none",
+     "taxonomy_id": "strategy.overlay_type",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "entry",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "exit",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "selection",
+     "taxonomy_id": "strategy.role",
+     "taxonomy_version": 1
+    },
+    {
+     "node_id": "technical",
+     "taxonomy_id": "strategy.signal_axis",
+     "taxonomy_version": 1
+    }
+   ]
+  }
+ ]
+}

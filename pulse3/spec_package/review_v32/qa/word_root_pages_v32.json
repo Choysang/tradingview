@@ -1,0 +1,522 @@
+{
+  "reviewer": "/root",
+  "source_render": "report_render_v32_01",
+  "review_date": "2026-11-11",
+  "scope": {
+    "first_page": 129,
+    "last_page": 170,
+    "expected_pages": 42
+  },
+  "method": "All original PNGs opened visually, maximum two per call; 165-166 reopened after prior truncated tool output.",
+  "pages": [
+    {
+      "page": 129,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-129.png",
+      "image_sha256": "f53089e2f5997e922c0298b2620d16c8431571b6f57832dfbef0295a6d4cda74",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 130,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-130.png",
+      "image_sha256": "89c7475e933babd7e6dc03bc8db53fb484b1471be390a02c4792527da905317e",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 131,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-131.png",
+      "image_sha256": "771a58fcd36df84786ec0d4a8ea3c92e4eee4c13ec2fcca2e7c8bab281e3b8f9",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 132,
+      "status": "revision_recommended",
+      "note": "P03旧必需NATS措辞已列入一致性修订。",
+      "image_path": "report_render_v32_01/page-132.png",
+      "image_sha256": "c4e87120a2bdc3e498cf459b358969dc00531680a259ef24ea417beb95b13141",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 133,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-133.png",
+      "image_sha256": "57bfc462a83beb7430030129f92242b1b8eed3f27407a6d906c297d02fce7aa0",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 134,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-134.png",
+      "image_sha256": "687bacd3195b2271881adfdb269343aab32cba936fbfd15d904c5872bf8d2e7d",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 135,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-135.png",
+      "image_sha256": "cefacb4416cd9096430b4b17287d157f02d05ce663ae5346023376afa069631f",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 136,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-136.png",
+      "image_sha256": "7b88a4b793965894a591ff1399b47517f48267e1545e1f9fc6bcbf8c39b17596",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 137,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-137.png",
+      "image_sha256": "16d42938d4bd0e729bbb2d7cfc6e22a86e394965c5d3b68553a3d62510468a77",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 138,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-138.png",
+      "image_sha256": "e5f15977f0bb1a76136149ef3754b2e9898972e95a8d79b4349f2557957cced9",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 139,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-139.png",
+      "image_sha256": "52eadd9b3fc793697daaff2863cfbe2a3506648584c01b1555c8246d3f161642",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 140,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-140.png",
+      "image_sha256": "a2787bf9682f667b6041a623cf3a3e962f28b7924b1c55b51b477570bd33c354",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 141,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-141.png",
+      "image_sha256": "f80f9daf573b6492bf272b89f10598dd7d39fd184804d5f31bc36b9895dd7990",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 142,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-142.png",
+      "image_sha256": "d45bea7750d086bf0375e508d02b41fa7064943682676b42b7ec339cdd940e81",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 143,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-143.png",
+      "image_sha256": "7e527f61324ed5fa3f02972f569872200217eede72f545ee89decd81e70dbd55",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 144,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-144.png",
+      "image_sha256": "25bd416a3daa8db2405a34c2c2f88bf6bb8fd8018aeeb616f4e1f727b9b3b747",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 145,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-145.png",
+      "image_sha256": "fd46427963c765d08776116d167d98b579b92c3d9297a30ed29f1073440f1996",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 146,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-146.png",
+      "image_sha256": "def294129d65bc2e8adf793103587846f42d091e19606a6908df6950990801e4",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 147,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-147.png",
+      "image_sha256": "97b6c760b1cdd46233a4405e852a67996834b3100fe9edbabd0559038357523a",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 148,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-148.png",
+      "image_sha256": "6de2787cf3f379f22a40441e5b87d1c30221e0be425d6c0ed851e10cb1203d25",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 149,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-149.png",
+      "image_sha256": "38931cdd14dedcc4a7895acc518ea143d4ad68fecb6cb14783c3722c4a51cac8",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 150,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-150.png",
+      "image_sha256": "8582a68315b31c6f576ebf0d06ea1059b80f1b67d2dea7ca28f17d85e1cf00e3",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 151,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-151.png",
+      "image_sha256": "5fed9135d75e30a49bfa339a07e4cbd69a184e017303f37370b9c39898a85cd5",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 152,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-152.png",
+      "image_sha256": "049c3b9e6e2113a50e0f7be4fa732907112fdb310d14710057f7cec2731b9456",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 153,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-153.png",
+      "image_sha256": "b8fb63bdbe026d933baf5b44b681297123967715231f78214795b651538ff365",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 154,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-154.png",
+      "image_sha256": "3610a4bdcace3bd55b682690a76e798ff5e29e1dcfedacad31c3eaf0ff766c54",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 155,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-155.png",
+      "image_sha256": "9df2b4c085dce49526670730acd1976a56a58fd4ea03f765146ccb29df2f8a00",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 156,
+      "status": "revision_recommended",
+      "note": "P05卡片来源跨页，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-156.png",
+      "image_sha256": "9c6fea4164e133e06b850cdca708586485faaaf42d3c03ea5083092579bc5cb7",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 157,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-157.png",
+      "image_sha256": "2b72ba62c796fd6a3d11ca5146346c025b0fe01f2b258fd35cc56cc578120906",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 158,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-158.png",
+      "image_sha256": "1387f78064bcd6f74406fe585c1e6d72262771cdc4aeda907740d1553ea75bd8",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 159,
+      "status": "revision_recommended",
+      "note": "P20卡片标题和元数据留在页尾，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-159.png",
+      "image_sha256": "f0145eca3c7cee5ac77bf8724f1612fd7b9c6910bb58e7a531ba860a36b4c4e0",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 160,
+      "status": "revision_recommended",
+      "note": "P25卡片标题和元数据留在页尾，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-160.png",
+      "image_sha256": "90fa370f3372c92c9d2c8e6f4a739bb5815637326ff5f67dcdcfbda247b5d939",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 161,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-161.png",
+      "image_sha256": "d0647a90468058a8a98a29f9760e9cf17777fdf7c147550ce47c6127861cc2f4",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 162,
+      "status": "revision_recommended",
+      "note": "P36卡片在页尾拆分，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-162.png",
+      "image_sha256": "2c0a9da694668bffe2e4870c8c937e3cc74e3c496830c78e262a458e45f149de",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 163,
+      "status": "revision_recommended",
+      "note": "P40卡片在页尾拆分，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-163.png",
+      "image_sha256": "10756da9948bc93e75f43502a84f49eefea12d080e28fa08f2168d0b06a4a108",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 164,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-164.png",
+      "image_sha256": "17cb61163abf70ba100c845fa2f2df051835c319f67462eec5a580101bf49133",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 165,
+      "status": "revision_recommended",
+      "note": "P47卡片跨页拆分，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-165.png",
+      "image_sha256": "c4a9445c030cee8387d7ac7d792c5d905b59d479635178f97ec86093d09a72e5",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 166,
+      "status": "revision_recommended",
+      "note": "P51卡片标题和元数据在页尾，修订为整卡keep-with-next。",
+      "image_path": "report_render_v32_01/page-166.png",
+      "image_sha256": "494ee55e3bac2c30340c3464db9331277a608f006b4b6b625c80e2a06d493813",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 167,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-167.png",
+      "image_sha256": "c5c2029aef349ac20b9479a90c808c75ea2feaa5a1e2c5e8ea39a586f1f65697",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 168,
+      "status": "pass_with_note",
+      "note": "文献章末完整一张卡，留白可接受。",
+      "image_path": "report_render_v32_01/page-168.png",
+      "image_sha256": "cd56233e30d852a46ccb6d68d159cdabe6ace02a82565bd22c86d91c701db278",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 169,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-169.png",
+      "image_sha256": "79d091bca6f71262d1cb2724dd1063f53082a25b9a3d887370de189a028b322b",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 170,
+      "status": "pass",
+      "note": "逐页原尺寸检查通过；未见裁切、重叠或缺字。",
+      "image_path": "report_render_v32_01/page-170.png",
+      "image_sha256": "d4fda9aba484a1392f2474d604d649e64687bc9a09ec303771aee6bf7b79e4ab",
+      "native_resolution_opened": true,
+      "native_size_pixels": [
+        1547,
+        2002
+      ]
+    }
+  ],
+  "summary": {
+    "visually_inspected": 42,
+    "no_clipping_overlap_or_garbled_glyphs_observed": true,
+    "required_changes": "P03 deployment wording and paper-card pagination"
+  }
+}

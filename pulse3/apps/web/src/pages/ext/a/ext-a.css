@@ -1,0 +1,36 @@
+/* Extension group A pages. Only tokens of the app theme (styles.css) are used, so light and dark follow the app. */
+.ea-page { gap: 12px; }
+.ea-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ea-head h3 { margin: 0; }
+.ea-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
+.ea-mood-main { display: flex; align-items: center; gap: 18px; margin: 6px 0 10px; }
+.ea-score { font-size: 3.2rem; line-height: 1; font-weight: 600; min-width: 4.5ch; }
+.ea-word { font-size: 1.4rem; }
+.ea-gauge { margin: 4px 0 26px; }
+.ea-gauge-track { position: relative; height: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--down), var(--warn), var(--up)); opacity: 0.8; }
+.ea-gauge-track i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--surface); }
+.ea-gauge-marker { position: absolute; top: -5px; width: 4px; height: 20px; margin-left: -2px; background: var(--text); border-radius: 2px; }
+.ea-gauge-labels { position: relative; height: 16px; margin-top: 4px; font-size: 0.75rem; color: var(--muted); }
+.ea-gauge-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.ea-spark { width: 100%; height: 56px; color: var(--accent); }
+.ea-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.ea-tile-v { font-size: 1.6rem; font-weight: 600; }
+.up { color: var(--up); } .down { color: var(--down); }
+.ea-ladder td, .ea-track td { vertical-align: top; }
+.ea-bars { display: flex; align-items: flex-end; gap: 4px; height: 160px; padding-top: 18px; }
+.ea-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
+.ea-bar { width: 100%; min-height: 2px; border-radius: 3px 3px 0 0; background: var(--muted); }
+.ea-bar.up { background: var(--up); } .ea-bar.down { background: var(--down); }
+.ea-bar-n { font-size: 0.72rem; } .ea-bar-l { color: var(--muted); font-size: 0.68rem; white-space: nowrap; }
+.ea-themes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.ea-themes li { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.ea-growth { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.ea-growth-cell { background: var(--surface-2); border-radius: 8px; padding: 8px 2px; }
+.ea-growth-n { font-size: 1.3rem; font-weight: 600; }
+.ea-regime-label { font-size: 1.3rem; margin: 4px 0; }
+.ea-regime svg { width: 100%; height: auto; display: block; }
+.ea-regime-readout { min-height: 2.4em; padding-top: 6px; }
+.ea-tape-list { list-style: none; margin: 0; padding: 0; max-height: 340px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
+.ea-tape-list li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding: 3px 0; }
+.ea-members { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 12px; }
+@media (max-width: 640px) { .ea-score { font-size: 2.4rem; } .ea-growth { grid-template-columns: repeat(4, 1fr); } .ea-bar-l { font-size: 0.6rem; } }

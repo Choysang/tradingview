@@ -1,0 +1,1181 @@
+{
+  "previous_render": "report_render_v32_02",
+  "final_render": "report_render_v32_03",
+  "comparison_method": "Exact RGB pixel SHA256 on entire page width and y=100..1879; excludes only fixed header and page-number footer. No scaling, OCR or perceptual matching.",
+  "pages": [
+    {
+      "final_page": 1,
+      "body_sha256": "31ea69d9f03d6f0bcd79155c0ddcd23c5db00a09d2c2ed0cf5fa5594bfc5774f",
+      "identical_to_reviewed_v32_02_pages": [
+        1
+      ]
+    },
+    {
+      "final_page": 2,
+      "body_sha256": "74b047261c675c3d79d1ef814d59e29b7d61663e59305abd66283a43aedb511f",
+      "identical_to_reviewed_v32_02_pages": [
+        2
+      ]
+    },
+    {
+      "final_page": 3,
+      "body_sha256": "002014ac73abba32287e68990234a92562e22241db7af716c0c349007b4aa8fe",
+      "identical_to_reviewed_v32_02_pages": [
+        3
+      ]
+    },
+    {
+      "final_page": 4,
+      "body_sha256": "bea69321387f64834bb0e47615802a783e99c863daecb213e4b73bcc088ad90b",
+      "identical_to_reviewed_v32_02_pages": [
+        4
+      ]
+    },
+    {
+      "final_page": 5,
+      "body_sha256": "7e48da5a986883c7ac6468f7b526835f784f39d4fb0221816976dc5d1fe7766b",
+      "identical_to_reviewed_v32_02_pages": [
+        5
+      ]
+    },
+    {
+      "final_page": 6,
+      "body_sha256": "11de8d0b53cd96fe0ade96a87a559e82ca6c35089ce3d40b357a164da4500173",
+      "identical_to_reviewed_v32_02_pages": [
+        6
+      ]
+    },
+    {
+      "final_page": 7,
+      "body_sha256": "23a20486cf7d7a0e8a010d921df0ccfde22e59bcae25356e36669c097514a360",
+      "identical_to_reviewed_v32_02_pages": [
+        7
+      ]
+    },
+    {
+      "final_page": 8,
+      "body_sha256": "a2e82d39f06f3ff198069cea81fe24505237d979fff2e95ec23cbe3aac3f1644",
+      "identical_to_reviewed_v32_02_pages": [
+        8
+      ]
+    },
+    {
+      "final_page": 9,
+      "body_sha256": "24e499556c6e8576aa599e65f38ffba5f5f66e27c5e162ff566b872b7525d26d",
+      "identical_to_reviewed_v32_02_pages": [
+        9
+      ]
+    },
+    {
+      "final_page": 10,
+      "body_sha256": "e0aaf27082fa73ce90cbffb6251ca4c6b9f6ff8000dd30ff623412b8ef00e9ed",
+      "identical_to_reviewed_v32_02_pages": [
+        10
+      ]
+    },
+    {
+      "final_page": 11,
+      "body_sha256": "023c970e89ea7937b8f7c8a37fea85c40c3490875e688e9a86050a0acc756ad9",
+      "identical_to_reviewed_v32_02_pages": [
+        11
+      ]
+    },
+    {
+      "final_page": 12,
+      "body_sha256": "22d41633a7c1d74853b12e13c6f66118d9be7c4c148a1224b4868d9a5003b3f8",
+      "identical_to_reviewed_v32_02_pages": [
+        12
+      ]
+    },
+    {
+      "final_page": 13,
+      "body_sha256": "d1ae14d01ba7f09950b3c2f4ebecd5e94cd7c2e450a5acad37bea564484febf0",
+      "identical_to_reviewed_v32_02_pages": [
+        13
+      ]
+    },
+    {
+      "final_page": 14,
+      "body_sha256": "13bcbe92e153fe5ad9ca2767fabdd79e9b2debcc2e9e85bf79c9b77c0bf49681",
+      "identical_to_reviewed_v32_02_pages": [
+        15
+      ]
+    },
+    {
+      "final_page": 15,
+      "body_sha256": "054ca7c5dcacc505371349610b592a4d00fcd8114f6356854d08c6eb4379bbee",
+      "identical_to_reviewed_v32_02_pages": [
+        16
+      ]
+    },
+    {
+      "final_page": 16,
+      "body_sha256": "2750a95173d11a0782072966255a5de1fb4cd1d8e5987e263fb4079d6d634220",
+      "identical_to_reviewed_v32_02_pages": [
+        17
+      ]
+    },
+    {
+      "final_page": 17,
+      "body_sha256": "52efc23ec4cd38783d19ae552fcae1dba4a662b094ee2c98e5222ebec4f06ac3",
+      "identical_to_reviewed_v32_02_pages": [
+        18
+      ]
+    },
+    {
+      "final_page": 18,
+      "body_sha256": "c773fe766c912c2eb7e103fe765549551a79fbd0a69864378fee02f04db4a58d",
+      "identical_to_reviewed_v32_02_pages": [
+        19
+      ]
+    },
+    {
+      "final_page": 19,
+      "body_sha256": "2ce0af17beb905115a6f5233aedbf2aa6c41c6149d9bb0064598a063f29f57d5",
+      "identical_to_reviewed_v32_02_pages": [
+        20
+      ]
+    },
+    {
+      "final_page": 20,
+      "body_sha256": "61e27221fce1d78da930cac4ff7dacbfa408c356eb7fa3bb770e68f81ef2d078",
+      "identical_to_reviewed_v32_02_pages": [
+        21
+      ]
+    },
+    {
+      "final_page": 21,
+      "body_sha256": "646be5aede150107ca922d2df834e1571130b351ae7717f7f4dd7bdcfd18b189",
+      "identical_to_reviewed_v32_02_pages": [
+        22
+      ]
+    },
+    {
+      "final_page": 22,
+      "body_sha256": "33d232ae0bc0b258d1a82dac437b77c3fb2f0e3b29c579dc973f0ea284e05154",
+      "identical_to_reviewed_v32_02_pages": [
+        23
+      ]
+    },
+    {
+      "final_page": 23,
+      "body_sha256": "12f1d504a121fc1dd0af03731a7747a67f217513b596020a81be89a4697168a8",
+      "identical_to_reviewed_v32_02_pages": [
+        24
+      ]
+    },
+    {
+      "final_page": 24,
+      "body_sha256": "4340524f86ea94408a1af9eeabb3b1d040561d0f3181ad57cc54dd0fed5ad2f3",
+      "identical_to_reviewed_v32_02_pages": [
+        25
+      ]
+    },
+    {
+      "final_page": 25,
+      "body_sha256": "e33443740c8dd9519cbe08116577e764aa9b883fd29b947bbd19d6c64f7f6af6",
+      "identical_to_reviewed_v32_02_pages": [
+        26
+      ]
+    },
+    {
+      "final_page": 26,
+      "body_sha256": "ad0d9bfd50af9424aa75fdd752cbb1416107c59d9f595ab94d11714148522ab4",
+      "identical_to_reviewed_v32_02_pages": [
+        27
+      ]
+    },
+    {
+      "final_page": 27,
+      "body_sha256": "86367cf6359c7a8f6d65b4b1fcc8de47960c56c5f3f678a4b368a983cca9a262",
+      "identical_to_reviewed_v32_02_pages": [
+        28
+      ]
+    },
+    {
+      "final_page": 28,
+      "body_sha256": "d8a87a8678be591a31474c8cade136f16733a0a073ce046485a387255386bbbb",
+      "identical_to_reviewed_v32_02_pages": [
+        29
+      ]
+    },
+    {
+      "final_page": 29,
+      "body_sha256": "fc35837d8a488872ace0333329dfb513f80d60121bf2b3e88e3ab873cf0f0c5a",
+      "identical_to_reviewed_v32_02_pages": [
+        30
+      ]
+    },
+    {
+      "final_page": 30,
+      "body_sha256": "a55273f81a1d398c43a05c62ce033c41f519faf27719c85eb46a12e3659224c4",
+      "identical_to_reviewed_v32_02_pages": [
+        31
+      ]
+    },
+    {
+      "final_page": 31,
+      "body_sha256": "e733fdef9d4652b5c3327aba36442161b679b1f613f096281cdaca4a648f5501",
+      "identical_to_reviewed_v32_02_pages": [
+        32
+      ]
+    },
+    {
+      "final_page": 32,
+      "body_sha256": "9f2d73b2797530257441dde6de38038a51078b6951ffdfae3efecb83f04455a4",
+      "identical_to_reviewed_v32_02_pages": [
+        33
+      ]
+    },
+    {
+      "final_page": 33,
+      "body_sha256": "6b5bbb69e49aac827eba6b547f209b78fa3e4e4392bb108f6671fe37f6d12cc2",
+      "identical_to_reviewed_v32_02_pages": [
+        34
+      ]
+    },
+    {
+      "final_page": 34,
+      "body_sha256": "635e5c9f20bea1a00ff58cee8a334efa673426f51c7ea1dea01479a692b5f1d6",
+      "identical_to_reviewed_v32_02_pages": [
+        35
+      ]
+    },
+    {
+      "final_page": 35,
+      "body_sha256": "53f86b8df1b625af41ad0c32f5ecea178eec6a4e13724ac9bf7ea2f5c176e4ef",
+      "identical_to_reviewed_v32_02_pages": [
+        36
+      ]
+    },
+    {
+      "final_page": 36,
+      "body_sha256": "6949ca852c607dbd24a8fd7004cf8c92c927779b2900c4be2bac621acc44484f",
+      "identical_to_reviewed_v32_02_pages": [
+        37
+      ]
+    },
+    {
+      "final_page": 37,
+      "body_sha256": "b5ddeca7ed7f1db0b2c00631104a94e3641c0e0e8659a999e91638c85b4d0cde",
+      "identical_to_reviewed_v32_02_pages": [
+        38
+      ]
+    },
+    {
+      "final_page": 38,
+      "body_sha256": "f685c8de3eba98d1651a4471c4c40bf36c6f230961b87166fa45109c7f7ca9e0",
+      "identical_to_reviewed_v32_02_pages": [
+        39
+      ]
+    },
+    {
+      "final_page": 39,
+      "body_sha256": "cf8411773fe3010b678ffcb96a3edc03dffeeea0dfe2109a00af4d151b042748",
+      "identical_to_reviewed_v32_02_pages": [
+        40
+      ]
+    },
+    {
+      "final_page": 40,
+      "body_sha256": "053dd552a7b69b5977b05a893f2238a3f6631fb9e12cb54cd6ab2356f2d70833",
+      "identical_to_reviewed_v32_02_pages": [
+        41
+      ]
+    },
+    {
+      "final_page": 41,
+      "body_sha256": "8870cc85a8e4efaf92ac18900cd2bf8b8d24da3a0c6e1024ad63384871a3a41e",
+      "identical_to_reviewed_v32_02_pages": []
+    },
+    {
+      "final_page": 42,
+      "body_sha256": "83a0ecfbdb74e7aeff0aa9cb6a371a29e2a093ca0386f565d907febc7ce41498",
+      "identical_to_reviewed_v32_02_pages": [
+        44
+      ]
+    },
+    {
+      "final_page": 43,
+      "body_sha256": "6a0fc963e26e556ef0254bd8d133aff1621f27787bf77695d2efd7b51a4dcc66",
+      "identical_to_reviewed_v32_02_pages": [
+        45
+      ]
+    },
+    {
+      "final_page": 44,
+      "body_sha256": "9196d51cf079453ef8058111670a65263ccda4e22e7dcd03d404742b2e01d444",
+      "identical_to_reviewed_v32_02_pages": [
+        46
+      ]
+    },
+    {
+      "final_page": 45,
+      "body_sha256": "c016d65b7503c257af4264a611d4a99e7d74a0694f6fa8c85aafea374f2ceef6",
+      "identical_to_reviewed_v32_02_pages": [
+        47
+      ]
+    },
+    {
+      "final_page": 46,
+      "body_sha256": "22a2aabb4a6a348bead77649c9d1a2617c70a1c819cc84e33bd4933c661f2e0f",
+      "identical_to_reviewed_v32_02_pages": [
+        48
+      ]
+    },
+    {
+      "final_page": 47,
+      "body_sha256": "2468adee2c7933fd3a3b979b23f26ed73976859f73be00217f0f201938c08b08",
+      "identical_to_reviewed_v32_02_pages": [
+        49
+      ]
+    },
+    {
+      "final_page": 48,
+      "body_sha256": "b898293328e186820285cd5fe52c9380de1d77fb70ec9eccb7b4d00670d45f68",
+      "identical_to_reviewed_v32_02_pages": [
+        50
+      ]
+    },
+    {
+      "final_page": 49,
+      "body_sha256": "299523df4db502fb6d672d9bb3abec6aa68f60ef9a845344c407c7f2c297a0e7",
+      "identical_to_reviewed_v32_02_pages": [
+        51
+      ]
+    },
+    {
+      "final_page": 50,
+      "body_sha256": "26752b32062964dd823b88c82317f1c2b54d11a9b81f7c849a5cba408aa133c1",
+      "identical_to_reviewed_v32_02_pages": [
+        52
+      ]
+    },
+    {
+      "final_page": 51,
+      "body_sha256": "4c27147e9d9b13db2bc504e3b1b0f91310ef17dfdc8be4bccdadd9b8108ec4c5",
+      "identical_to_reviewed_v32_02_pages": [
+        53
+      ]
+    },
+    {
+      "final_page": 52,
+      "body_sha256": "79d54221b64b1be70c42c1cd1379ab1e0ff29318f4f91a2f54c60a811f5f2a06",
+      "identical_to_reviewed_v32_02_pages": [
+        54
+      ]
+    },
+    {
+      "final_page": 53,
+      "body_sha256": "d11a4ad1012950070fa85412d6ea380474c8eaa4baae2cb7990123a2e3b1e5fd",
+      "identical_to_reviewed_v32_02_pages": [
+        55
+      ]
+    },
+    {
+      "final_page": 54,
+      "body_sha256": "7ebbb8de64ef4a9b0472c793f05225075386eca2711bb348f4db76e305a99745",
+      "identical_to_reviewed_v32_02_pages": [
+        56
+      ]
+    },
+    {
+      "final_page": 55,
+      "body_sha256": "7cc6276c394e1d5cdc8d5b15cd27f6336b468783ea79935320737c91845f76ca",
+      "identical_to_reviewed_v32_02_pages": [
+        57
+      ]
+    },
+    {
+      "final_page": 56,
+      "body_sha256": "e7c3cad4cedfc9ea108d5b3951f4db22833ba25daddf4d474bc78d393d8dbb17",
+      "identical_to_reviewed_v32_02_pages": [
+        58
+      ]
+    },
+    {
+      "final_page": 57,
+      "body_sha256": "7e87da362dc3f50cb9e74d84839d31c9bbeb17e0ef1f4e8a81c0408555fff6db",
+      "identical_to_reviewed_v32_02_pages": [
+        59
+      ]
+    },
+    {
+      "final_page": 58,
+      "body_sha256": "b057a5e100cd8c063c26662c0034135636575c7ec2e03bcd0cc96206c0524105",
+      "identical_to_reviewed_v32_02_pages": [
+        60
+      ]
+    },
+    {
+      "final_page": 59,
+      "body_sha256": "fbd7c044c17535b79e6f68a314bc3ec93c4690379a7c5bc5cb05d592d09742e4",
+      "identical_to_reviewed_v32_02_pages": [
+        61
+      ]
+    },
+    {
+      "final_page": 60,
+      "body_sha256": "72756665207b16ae71f4a8f5082a86515909575a8552d3dcd308e7a89481f6ec",
+      "identical_to_reviewed_v32_02_pages": [
+        62
+      ]
+    },
+    {
+      "final_page": 61,
+      "body_sha256": "d2e1bcbc6163c0ac3a9b0cad4ac2a66994a1a7dc7127a063e64acf8872071fa8",
+      "identical_to_reviewed_v32_02_pages": [
+        63
+      ]
+    },
+    {
+      "final_page": 62,
+      "body_sha256": "c31dc2f854c5b0f0b01966ad676240cbaa765f131759f665ce2ea088efd8b006",
+      "identical_to_reviewed_v32_02_pages": [
+        64
+      ]
+    },
+    {
+      "final_page": 63,
+      "body_sha256": "54af7c6a57af0fb50f650652b81b0f65cc9d08699a50b5f5bff794bc6c7b6ce8",
+      "identical_to_reviewed_v32_02_pages": [
+        65
+      ]
+    },
+    {
+      "final_page": 64,
+      "body_sha256": "b4666f283af708f95ed8ce5b60792509e7d3481bc114a603f4390f14b9526316",
+      "identical_to_reviewed_v32_02_pages": [
+        66
+      ]
+    },
+    {
+      "final_page": 65,
+      "body_sha256": "16edca62485beefa72647c512d8cbe27482b3897ba06472fa3ff2bf3d2baf00f",
+      "identical_to_reviewed_v32_02_pages": [
+        67
+      ]
+    },
+    {
+      "final_page": 66,
+      "body_sha256": "a1df2d7adaed90e7167c4d72c70361040d4d4e0eee43af0d39ab0b42e84965ed",
+      "identical_to_reviewed_v32_02_pages": [
+        68
+      ]
+    },
+    {
+      "final_page": 67,
+      "body_sha256": "d8364fbead9bb2fb53313e86722587253ea44984d66b79e3745cb264a8b3c431",
+      "identical_to_reviewed_v32_02_pages": [
+        69
+      ]
+    },
+    {
+      "final_page": 68,
+      "body_sha256": "97ef519712aefafbe6e30144770680c84af398061ad685eef2d43f1e1df0041c",
+      "identical_to_reviewed_v32_02_pages": [
+        70
+      ]
+    },
+    {
+      "final_page": 69,
+      "body_sha256": "b8d940b889451e669b33b7e589372a5e6bbeb88ba2e216b02b9f5a5b7961ceb5",
+      "identical_to_reviewed_v32_02_pages": [
+        71
+      ]
+    },
+    {
+      "final_page": 70,
+      "body_sha256": "a59f75c6e769f9a16888e6b1d8a3206bea905ca9bd3deb4fc24c4022a504b29e",
+      "identical_to_reviewed_v32_02_pages": [
+        72
+      ]
+    },
+    {
+      "final_page": 71,
+      "body_sha256": "da879630f73d5dff629b1d25efea73923ac20dffe77587c989f15f82bd318376",
+      "identical_to_reviewed_v32_02_pages": [
+        73
+      ]
+    },
+    {
+      "final_page": 72,
+      "body_sha256": "268ad0dfb6994dd6a0ae7461e7bf19d4129d2785270aac6a9fe53e82cac7fce0",
+      "identical_to_reviewed_v32_02_pages": [
+        74
+      ]
+    },
+    {
+      "final_page": 73,
+      "body_sha256": "c3690e24bd4855130258cafb45c5222b3f1ff6ef259da97c75e89cbaf37c1a58",
+      "identical_to_reviewed_v32_02_pages": [
+        75
+      ]
+    },
+    {
+      "final_page": 74,
+      "body_sha256": "719b762e38341706251b03f8a17fc2b4fa5cb51c8171923f93f57b6525344e26",
+      "identical_to_reviewed_v32_02_pages": [
+        76
+      ]
+    },
+    {
+      "final_page": 75,
+      "body_sha256": "3b70804961d3a2720c48cdbac587999430b64ec02508186879acbfef0ac2e59d",
+      "identical_to_reviewed_v32_02_pages": [
+        77
+      ]
+    },
+    {
+      "final_page": 76,
+      "body_sha256": "96f695b8c160b93c45e5ee82f15ab99f55f58ce36726244e88122e3ffef3e53e",
+      "identical_to_reviewed_v32_02_pages": [
+        78
+      ]
+    },
+    {
+      "final_page": 77,
+      "body_sha256": "c9b4cae30eaba4393685701d072486bd5e493b7acf74c07da16ab2dcd77e4a3b",
+      "identical_to_reviewed_v32_02_pages": [
+        79
+      ]
+    },
+    {
+      "final_page": 78,
+      "body_sha256": "9a99d9994638e01900c034a992bf4e97e7166d397edfb28c51bc52a9e31121a5",
+      "identical_to_reviewed_v32_02_pages": [
+        80
+      ]
+    },
+    {
+      "final_page": 79,
+      "body_sha256": "ca1807fc3ee3270964960b3d609210cd8862a5b2e59c8906cd6f39991a758ee5",
+      "identical_to_reviewed_v32_02_pages": [
+        81
+      ]
+    },
+    {
+      "final_page": 80,
+      "body_sha256": "1039010c547f71cd6723a998c627ef119c438c2bb6e59c555ba371e382b6cef5",
+      "identical_to_reviewed_v32_02_pages": [
+        82
+      ]
+    },
+    {
+      "final_page": 81,
+      "body_sha256": "ffd885489dd968c47519839100f26a1b51d20544b793925f677b19ef27401f56",
+      "identical_to_reviewed_v32_02_pages": [
+        83
+      ]
+    },
+    {
+      "final_page": 82,
+      "body_sha256": "0cb3fcd0a0f5d125dda8f1296beeade100e543b33677b752f0a9f7c25a886915",
+      "identical_to_reviewed_v32_02_pages": [
+        84
+      ]
+    },
+    {
+      "final_page": 83,
+      "body_sha256": "1463ca51904c831445e8b303e0e861235fef0bcb41b1309278e1ab8fffc59061",
+      "identical_to_reviewed_v32_02_pages": [
+        85
+      ]
+    },
+    {
+      "final_page": 84,
+      "body_sha256": "4fd7e2015a445f92a85136a973c6dd05cef3343a8106bb6aaa091d11985ee4f3",
+      "identical_to_reviewed_v32_02_pages": [
+        86
+      ]
+    },
+    {
+      "final_page": 85,
+      "body_sha256": "7d5e41e1be63677a1f831675d798a27dd2d1a2250670beda1c14f8d05b9bea99",
+      "identical_to_reviewed_v32_02_pages": [
+        87
+      ]
+    },
+    {
+      "final_page": 86,
+      "body_sha256": "9baa1cf5aeeed76513b3a24b547fd5ea854f375626faaa60d4b3b7c482589b7b",
+      "identical_to_reviewed_v32_02_pages": [
+        88
+      ]
+    },
+    {
+      "final_page": 87,
+      "body_sha256": "7d92ab843064a85fba59e20d96e5869a6eb210f81629cbc0fa97788a41debf62",
+      "identical_to_reviewed_v32_02_pages": [
+        89
+      ]
+    },
+    {
+      "final_page": 88,
+      "body_sha256": "54434fc945b6bb90e33db3df3ac800d2ed306c1c80a426ddb3d577b72836afc9",
+      "identical_to_reviewed_v32_02_pages": [
+        90
+      ]
+    },
+    {
+      "final_page": 89,
+      "body_sha256": "bfc4f23408b5058e85eeda0c6abd221dcec4a76b01bf0f100c8a0a92a7e71208",
+      "identical_to_reviewed_v32_02_pages": [
+        91
+      ]
+    },
+    {
+      "final_page": 90,
+      "body_sha256": "376339048bb98690b553f659cee2a5d8cb8ca004fff5313ecacb1d3b62885554",
+      "identical_to_reviewed_v32_02_pages": [
+        92
+      ]
+    },
+    {
+      "final_page": 91,
+      "body_sha256": "90d71968d7727a62c880d6a783f8a7459d540cff4de0415baebdfbf083598fb8",
+      "identical_to_reviewed_v32_02_pages": [
+        93
+      ]
+    },
+    {
+      "final_page": 92,
+      "body_sha256": "a7740fe44565d1052693e2e0ddcdbb56786dea91444730018b9a19931fb0ab20",
+      "identical_to_reviewed_v32_02_pages": [
+        94
+      ]
+    },
+    {
+      "final_page": 93,
+      "body_sha256": "ac620b91ff3b4124bafac23d7a98e9a9a24a3c107f46262128a160a312d6d63b",
+      "identical_to_reviewed_v32_02_pages": [
+        95
+      ]
+    },
+    {
+      "final_page": 94,
+      "body_sha256": "e846512aa151e09e478e00b3c0038c1e65b07b57c7fdb23c6f409a4d8d989896",
+      "identical_to_reviewed_v32_02_pages": [
+        96
+      ]
+    },
+    {
+      "final_page": 95,
+      "body_sha256": "050e14eb63f71ef3ce2524fb10cdd41b4fca42ca85b9d202fcb7ca37672d17e9",
+      "identical_to_reviewed_v32_02_pages": [
+        97
+      ]
+    },
+    {
+      "final_page": 96,
+      "body_sha256": "f23dec96938a83266e76863f8145463f2dba356962c3e8598024139b3ec53c4e",
+      "identical_to_reviewed_v32_02_pages": [
+        99
+      ]
+    },
+    {
+      "final_page": 97,
+      "body_sha256": "800c2ead162485c6eaa968d39e8e36afded2abbc262834c6422726700c27a162",
+      "identical_to_reviewed_v32_02_pages": [
+        100
+      ]
+    },
+    {
+      "final_page": 98,
+      "body_sha256": "02c0bec9b76bbf49600b5d10006ddc06395b9e074be90f11e7836a35d9e074c7",
+      "identical_to_reviewed_v32_02_pages": [
+        101
+      ]
+    },
+    {
+      "final_page": 99,
+      "body_sha256": "b6abe8e132401306c6992d5aafeeb1c94996dd675820d708e5cc7e6c3b13c77e",
+      "identical_to_reviewed_v32_02_pages": [
+        102
+      ]
+    },
+    {
+      "final_page": 100,
+      "body_sha256": "0041fae8c3d87228a0a36b6b2bfed827e29df39c2d55488f7d743820685f2d1a",
+      "identical_to_reviewed_v32_02_pages": [
+        103
+      ]
+    },
+    {
+      "final_page": 101,
+      "body_sha256": "67fd06cb0ca83b3cdd9efd983e1f1f17e74bdf9df75388c87fa5a85c9e6b0c1f",
+      "identical_to_reviewed_v32_02_pages": [
+        104
+      ]
+    },
+    {
+      "final_page": 102,
+      "body_sha256": "5a132a8263d1e36c7450f630542f088b7d3321b3a1b59611cd95eb7a1d631249",
+      "identical_to_reviewed_v32_02_pages": [
+        105
+      ]
+    },
+    {
+      "final_page": 103,
+      "body_sha256": "4deb4313d744d431731093d18b9cc44f6cb5088eb348361e8b3e216629e9fffb",
+      "identical_to_reviewed_v32_02_pages": [
+        106
+      ]
+    },
+    {
+      "final_page": 104,
+      "body_sha256": "1307dd474c2478352bdd293de22396ea7eb6da0a338f695ed8c3a0904717a3b6",
+      "identical_to_reviewed_v32_02_pages": [
+        107
+      ]
+    },
+    {
+      "final_page": 105,
+      "body_sha256": "46b9cbd1ea07ea1079f6631fe62200ada5075a22017fb906aa92d3bbcc3cdb18",
+      "identical_to_reviewed_v32_02_pages": [
+        108
+      ]
+    },
+    {
+      "final_page": 106,
+      "body_sha256": "de7c133a4b2830e4cd1b70a1a0f9e8c4fc20b8e7b6a078a5d29284a241d0dca9",
+      "identical_to_reviewed_v32_02_pages": [
+        109
+      ]
+    },
+    {
+      "final_page": 107,
+      "body_sha256": "51291e85b4f109eb24b53f108fbed3a729a05a58075e3566c7ab7132cd984e85",
+      "identical_to_reviewed_v32_02_pages": [
+        110
+      ]
+    },
+    {
+      "final_page": 108,
+      "body_sha256": "c5f3aea8d79cf5a6a5aa5a6b7a6fb52692e054fade26b68952f4844c5a213c76",
+      "identical_to_reviewed_v32_02_pages": [
+        111
+      ]
+    },
+    {
+      "final_page": 109,
+      "body_sha256": "8fef7ddc5e31100e7526d04defa42e03322764e9e055363c8e22400cc9676b4d",
+      "identical_to_reviewed_v32_02_pages": [
+        112
+      ]
+    },
+    {
+      "final_page": 110,
+      "body_sha256": "655c896b72ceccb67dfbe4d135942366a53173a7027056ec7582b7241b772872",
+      "identical_to_reviewed_v32_02_pages": [
+        113
+      ]
+    },
+    {
+      "final_page": 111,
+      "body_sha256": "6d029df2b2575beafbca40ad9641e3e9694e647fc1618fc08e2655a8a319d923",
+      "identical_to_reviewed_v32_02_pages": [
+        114
+      ]
+    },
+    {
+      "final_page": 112,
+      "body_sha256": "4246fbb5ebcbfb078040b16b63b579f446e1e5facc417eda0e90410259d7ce92",
+      "identical_to_reviewed_v32_02_pages": [
+        115
+      ]
+    },
+    {
+      "final_page": 113,
+      "body_sha256": "e97a49b8c3095547c350f9d57829bdbae7af20aa4846a280db6c021411d450c6",
+      "identical_to_reviewed_v32_02_pages": [
+        116
+      ]
+    },
+    {
+      "final_page": 114,
+      "body_sha256": "d530485e0eb30fb419d59704c50b7003468255f11e0b56a531882633f9bbe184",
+      "identical_to_reviewed_v32_02_pages": [
+        117
+      ]
+    },
+    {
+      "final_page": 115,
+      "body_sha256": "e9067d3d30b62bdf33e8adfb4e9331fd386c22e6d5b55b729ea606802fee34cd",
+      "identical_to_reviewed_v32_02_pages": [
+        118
+      ]
+    },
+    {
+      "final_page": 116,
+      "body_sha256": "c1b5c5ee5f2678f90948c0da563ab20076c3afb3db17b238d5f3e71103aac748",
+      "identical_to_reviewed_v32_02_pages": [
+        119
+      ]
+    },
+    {
+      "final_page": 117,
+      "body_sha256": "a5639071082dff3aaa5bae82031172aa16bd72bb6027b91b8c1079dfc2b9e977",
+      "identical_to_reviewed_v32_02_pages": [
+        120
+      ]
+    },
+    {
+      "final_page": 118,
+      "body_sha256": "de66287d473e8768cd043a89d6e38d585fda3e46190a914d3be03f3dc9b26295",
+      "identical_to_reviewed_v32_02_pages": [
+        121
+      ]
+    },
+    {
+      "final_page": 119,
+      "body_sha256": "ab94b1f46360e1e2571e63bb589a318ba97ca9320e38c3d255a07e0fada1593d",
+      "identical_to_reviewed_v32_02_pages": [
+        122
+      ]
+    },
+    {
+      "final_page": 120,
+      "body_sha256": "82b9cc9878e8b1b5a0cb5bc20a8002ecf7aa131d722f28a1859a7dff5075cae5",
+      "identical_to_reviewed_v32_02_pages": [
+        123
+      ]
+    },
+    {
+      "final_page": 121,
+      "body_sha256": "5f10fc592b83a3936357a098c3ed0793b09c44b05cc2df850ccd899bdf6cc68d",
+      "identical_to_reviewed_v32_02_pages": [
+        124
+      ]
+    },
+    {
+      "final_page": 122,
+      "body_sha256": "a4044f7eb5f616913734af6c1eddf0ff0f3d160fd8cae54f6f49b32933df6a47",
+      "identical_to_reviewed_v32_02_pages": [
+        125
+      ]
+    },
+    {
+      "final_page": 123,
+      "body_sha256": "3b30954d6d2bf7246569a4504ca7dd764fe53a3cb9759250ff20e8a86dafc976",
+      "identical_to_reviewed_v32_02_pages": [
+        126
+      ]
+    },
+    {
+      "final_page": 124,
+      "body_sha256": "e5699c58bf4363957359f1651bec1e24569659ab133abfde48f554e977fe4ba9",
+      "identical_to_reviewed_v32_02_pages": [
+        127
+      ]
+    },
+    {
+      "final_page": 125,
+      "body_sha256": "69b9b85485e1d448b01c5d003260d6abe20a12cc4a80e62efc9826beb307dc5f",
+      "identical_to_reviewed_v32_02_pages": [
+        128
+      ]
+    },
+    {
+      "final_page": 126,
+      "body_sha256": "823a49d6d2240f116d159ca65a9f108fe7b1fa4e06958feee8fd425c9eacd265",
+      "identical_to_reviewed_v32_02_pages": [
+        129
+      ]
+    },
+    {
+      "final_page": 127,
+      "body_sha256": "bc7a04f300d269714591bb7d82d24c07ea3257990a439423adeeb07979370785",
+      "identical_to_reviewed_v32_02_pages": [
+        130
+      ]
+    },
+    {
+      "final_page": 128,
+      "body_sha256": "1176fb750c685663c499db26d8aac1453f2c45615824c03556f607012496d552",
+      "identical_to_reviewed_v32_02_pages": [
+        131
+      ]
+    },
+    {
+      "final_page": 129,
+      "body_sha256": "73576a4f7662507ae83535ef2292368a7c9d799d898666679a413bddb09f3bc6",
+      "identical_to_reviewed_v32_02_pages": [
+        132
+      ]
+    },
+    {
+      "final_page": 130,
+      "body_sha256": "a1e214e68bf2bead08e1cc0bbb60d8e9d79a90b0ca00d859443c2c7cb04bd335",
+      "identical_to_reviewed_v32_02_pages": [
+        133
+      ]
+    },
+    {
+      "final_page": 131,
+      "body_sha256": "b5d5e7637a7378cba64a72ae72e36945b00e39b23cb66088d4a39d77c0303794",
+      "identical_to_reviewed_v32_02_pages": [
+        134
+      ]
+    },
+    {
+      "final_page": 132,
+      "body_sha256": "7f911637685d6f3dc92b04f1f6d2dccf366654933f1bc2c29bcf934702463155",
+      "identical_to_reviewed_v32_02_pages": [
+        135
+      ]
+    },
+    {
+      "final_page": 133,
+      "body_sha256": "ebf379af073286ba4413308ef8f2ec9fb24d7e82cd95e3d24cb1df6b0dfa5fbf",
+      "identical_to_reviewed_v32_02_pages": [
+        136
+      ]
+    },
+    {
+      "final_page": 134,
+      "body_sha256": "1bdd8375ff879b375bee5bd1a00af7e769c8f7b7c185d73776bf18706c03b735",
+      "identical_to_reviewed_v32_02_pages": [
+        137
+      ]
+    },
+    {
+      "final_page": 135,
+      "body_sha256": "350222c833ca0fc39672894e4765c3b354ef41cd0a4ca93f70ec17bcf230704a",
+      "identical_to_reviewed_v32_02_pages": [
+        138
+      ]
+    },
+    {
+      "final_page": 136,
+      "body_sha256": "ad8887d129d986f9578c15ad27ebf117d3917f5ca8d00146a7e807c8858cd657",
+      "identical_to_reviewed_v32_02_pages": [
+        139
+      ]
+    },
+    {
+      "final_page": 137,
+      "body_sha256": "8e71f0fd42d8d2727bdef40debd22fcf9427cf1204def47f320d1f88ff6d3143",
+      "identical_to_reviewed_v32_02_pages": [
+        140
+      ]
+    },
+    {
+      "final_page": 138,
+      "body_sha256": "3921640e405803700de886721dfae6cf39da4fbd22191d64b52c2976b9f4922e",
+      "identical_to_reviewed_v32_02_pages": [
+        141
+      ]
+    },
+    {
+      "final_page": 139,
+      "body_sha256": "1da45b255178bc4ba97515c0a5a5af4e1964874accd320458951d076f23b8181",
+      "identical_to_reviewed_v32_02_pages": [
+        142
+      ]
+    },
+    {
+      "final_page": 140,
+      "body_sha256": "f00e5cf296e5bea288234611403ead2b325bfef9e625eb8a4a783f197ce02987",
+      "identical_to_reviewed_v32_02_pages": [
+        143
+      ]
+    },
+    {
+      "final_page": 141,
+      "body_sha256": "4ae1a4bb7e4c438eed3de64196888c0c3885e63f77069d506abef1f1be538ed4",
+      "identical_to_reviewed_v32_02_pages": [
+        144
+      ]
+    },
+    {
+      "final_page": 142,
+      "body_sha256": "2307286644106e94d1efa8f37fdd67a4d003434e12cbc38245cc0e34d02c2ea4",
+      "identical_to_reviewed_v32_02_pages": [
+        145
+      ]
+    },
+    {
+      "final_page": 143,
+      "body_sha256": "dc5fbb3b193254ce3e2fff901450bc60ecc422a4377b730c8634358887852842",
+      "identical_to_reviewed_v32_02_pages": [
+        146
+      ]
+    },
+    {
+      "final_page": 144,
+      "body_sha256": "2dd09e43328509ad002b6753eb25bf961284065ca4410742c1b0539505b4e369",
+      "identical_to_reviewed_v32_02_pages": [
+        147
+      ]
+    },
+    {
+      "final_page": 145,
+      "body_sha256": "a5ce81b2a3657b829b4003e7e67c496837674fb871dda5dc341cb6c724f9cdb4",
+      "identical_to_reviewed_v32_02_pages": [
+        148
+      ]
+    },
+    {
+      "final_page": 146,
+      "body_sha256": "d342f1e79b8aa25c40ffee6e1246002306fecc3072b858ff7b0a3fe6f855c06e",
+      "identical_to_reviewed_v32_02_pages": [
+        149
+      ]
+    },
+    {
+      "final_page": 147,
+      "body_sha256": "76c84c1c049d54fb8c5ba5a0da3a956620b86947aec727f9c2fd33819d893891",
+      "identical_to_reviewed_v32_02_pages": [
+        150
+      ]
+    },
+    {
+      "final_page": 148,
+      "body_sha256": "18635ee6837b8666b6ea778ae170995ba04933882076e7ebe07eb4c0d4bc8bc2",
+      "identical_to_reviewed_v32_02_pages": [
+        151
+      ]
+    },
+    {
+      "final_page": 149,
+      "body_sha256": "ac8299cbc630571aa83d3cbc32b3f5689560743b838d7b4d0ed119b70d794085",
+      "identical_to_reviewed_v32_02_pages": [
+        152
+      ]
+    },
+    {
+      "final_page": 150,
+      "body_sha256": "81167e9143a1b8a61138d077e43b148449958b183642ffb2f67b350ffdbdb1b0",
+      "identical_to_reviewed_v32_02_pages": [
+        153
+      ]
+    },
+    {
+      "final_page": 151,
+      "body_sha256": "bb46f591a4efff76e2f1f2aa30b8b580e4dd0e57870e993874753a87a3440a4e",
+      "identical_to_reviewed_v32_02_pages": [
+        154
+      ]
+    },
+    {
+      "final_page": 152,
+      "body_sha256": "059297f82e82fc4e43afc75c8efceb8de3dcf327bc1b4c36ef95aea9c1f3fff1",
+      "identical_to_reviewed_v32_02_pages": [
+        155
+      ]
+    },
+    {
+      "final_page": 153,
+      "body_sha256": "880f19fb0829df03af8a3c3c23a34abc4df966fb1482dbf02f8fcb398a989135",
+      "identical_to_reviewed_v32_02_pages": [
+        156
+      ]
+    },
+    {
+      "final_page": 154,
+      "body_sha256": "e8851689909e63826a15fee41060fa25cc1c169c664e03877da54368990c3827",
+      "identical_to_reviewed_v32_02_pages": [
+        157
+      ]
+    },
+    {
+      "final_page": 155,
+      "body_sha256": "61e52fb6b508d873cf5cd29e67369297b22f802622d8a5cbd15d797d31929436",
+      "identical_to_reviewed_v32_02_pages": [
+        158
+      ]
+    },
+    {
+      "final_page": 156,
+      "body_sha256": "302deccf9ebfe33ca537e117081df9ec0083d7512dc45589b6db3003179d76ae",
+      "identical_to_reviewed_v32_02_pages": [
+        159
+      ]
+    },
+    {
+      "final_page": 157,
+      "body_sha256": "0f6eafefeeff31caf517008a41c86c41312de0cacee386157b78459bf6e73813",
+      "identical_to_reviewed_v32_02_pages": [
+        160
+      ]
+    },
+    {
+      "final_page": 158,
+      "body_sha256": "b057afdae9a646707460dba91591388dfaa5ca2036186bf5e9ed38237ec083a2",
+      "identical_to_reviewed_v32_02_pages": [
+        161
+      ]
+    },
+    {
+      "final_page": 159,
+      "body_sha256": "ff7644092bb2b64a2ce257c10f67dab67ce3abcfe5d7b08922baad4006f86d70",
+      "identical_to_reviewed_v32_02_pages": [
+        162
+      ]
+    },
+    {
+      "final_page": 160,
+      "body_sha256": "1322f147536578977782f3974fd47afb7535eb3ba82e4b22bdccef1c7dd18266",
+      "identical_to_reviewed_v32_02_pages": [
+        163
+      ]
+    },
+    {
+      "final_page": 161,
+      "body_sha256": "d59b7f868b30280248c6c7713cae651c67d7d77f0673bc2bcbfff42a516fd773",
+      "identical_to_reviewed_v32_02_pages": [
+        164
+      ]
+    },
+    {
+      "final_page": 162,
+      "body_sha256": "68e1d530fda84fdc5857d146675bc4b80c6dca6949dd541a5b9978195fbd66d9",
+      "identical_to_reviewed_v32_02_pages": [
+        165
+      ]
+    },
+    {
+      "final_page": 163,
+      "body_sha256": "818590f3fefa661026202aca44ff475e89a50dc627ceb6846273e85fa6ac88e0",
+      "identical_to_reviewed_v32_02_pages": [
+        166
+      ]
+    },
+    {
+      "final_page": 164,
+      "body_sha256": "32254f0b064550e6b3cfb6f57c23d8bc8425fafaf76b4d3850d776a3888baa05",
+      "identical_to_reviewed_v32_02_pages": [
+        167
+      ]
+    },
+    {
+      "final_page": 165,
+      "body_sha256": "2be1330348ab319b8a01f476938dfc09595af8f0cf4e4b35465ac934e21bc616",
+      "identical_to_reviewed_v32_02_pages": [
+        168
+      ]
+    },
+    {
+      "final_page": 166,
+      "body_sha256": "5628e94efad37d1c092bba7a1464e84fc471adc7c346a9714ef271a3057474b0",
+      "identical_to_reviewed_v32_02_pages": [
+        169
+      ]
+    },
+    {
+      "final_page": 167,
+      "body_sha256": "5e4950370af558720c3c7440a8be4951b8998d1cd3bd5d5fcab47d2912a3782e",
+      "identical_to_reviewed_v32_02_pages": [
+        170
+      ]
+    }
+  ],
+  "identical_body_pages": 166,
+  "changed_pages": [
+    41
+  ],
+  "geometry_flags": [],
+  "footer_flags": [],
+  "footer_method": "Full text lines whose baseline region begins at y>=750pt; a clip-text intersection had included a descender from body page3, visually checked and excluded."
+}

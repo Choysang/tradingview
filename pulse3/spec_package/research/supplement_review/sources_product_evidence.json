@@ -1,0 +1,95 @@
+{
+  "reviewed_at": "2026-11-11",
+  "sources": [
+    {
+      "source_id": "SP-S01",
+      "title": "上交所交易规则2026及生效通知",
+      "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/fund/trading/c/c_20260424_10817739.shtml",
+      "retrieval_ref": "turn180view0",
+      "scope": "现行通知2026-07-06施行；部分条文暂缓。对应正式DOCX已下载并抽取3.3.1、5.2.1、5.4.8。"
+    },
+    {
+      "source_id": "SP-S02",
+      "title": "上交所ETF常见问题",
+      "url": "https://www.sse.com.cn/assortment/fund/etf/question/",
+      "retrieval_ref": "turn180view3",
+      "scope": "第2问二级市场买卖；第5-7问一级市场申赎与份额创造，不能互换。"
+    },
+    {
+      "source_id": "SP-S03",
+      "title": "上交所ETF申赎清单栏目",
+      "url": "https://www.sse.com.cn/disclosure/fund/etflist/",
+      "retrieval_ref": "turn180view1",
+      "scope": "栏目开市前8:30披露、由基金公司提供；不是分钟级实际净申赎事实流。"
+    },
+    {
+      "source_id": "SP-S04",
+      "title": "上交所ETF清单实例588690",
+      "url": "https://www.sse.com.cn/disclosure/fund/etflist/detail.shtml?fundid=588690",
+      "retrieval_ref": "turn168search1",
+      "scope": "搜索索引读取到申赎允许情况、最小单位和额度上限；再次打开为JS空壳，读取边界保留search excerpt。"
+    },
+    {
+      "source_id": "SP-S05",
+      "title": "上交所2025可转债交易细则",
+      "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/bond/convertible/trading/c/c_20250606_10782995.shtml",
+      "retrieval_ref": "turn180view4",
+      "scope": "正式DOCX已下载并读第五、六条：当日回转；每百元面值价格；100元一张；最小变动0.001元。不证明领先正股。"
+    },
+    {
+      "source_id": "SP-S06",
+      "title": "TradingView产品比较",
+      "url": "https://www.tradingview.com/charting-library-docs/latest/product-comparison/",
+      "retrieval_ref": "turn180view5",
+      "scope": "Lightweight Charts是客户端库，不含行情，不带内置指标，能力不能等同完整终端。"
+    },
+    {
+      "source_id": "SP-S07",
+      "title": "TradingView插件目录",
+      "url": "https://tradingview.github.io/lightweight-charts/plugins",
+      "retrieval_ref": "turn172search7",
+      "scope": "插件扩展画线、序列、图层、UX能力；不等于现成包含全部目标图表。"
+    },
+    {
+      "source_id": "SP-S08",
+      "title": "新华社供稿方式",
+      "url": "https://www.xinhuanet.com/xinhuashe/ggjs.htm",
+      "retrieval_ref": "turn180view6",
+      "scope": "API、RSS、FTP等接入方式确有产品依据，具体接入账户、端点和SLA仍待配置。"
+    },
+    {
+      "source_id": "SP-S09",
+      "title": "东方财富官方FAQ33-37",
+      "url": "https://emdesk.eastmoney.com/pc_activity/Pages/VIPTrade/pages/answer.html",
+      "retrieval_ref": "turn182view0",
+      "scope": "资金流由软件自行计算，方法不同；不采信其营销词为真实最终账户识别证明。"
+    },
+    {
+      "source_id": "SP-S10",
+      "title": "上交所龙虎榜查询范围说明",
+      "url": "https://www.sse.com.cn/disclosure/diclosure/public/inquirydata/index.shtml?secCode=900901",
+      "retrieval_ref": "turn168search5",
+      "scope": "只含竞价交易，不含大宗交易和盘后固定价格交易。"
+    }
+  ],
+  "downloaded_primary_documents": [
+    {
+      "path": "research_v4/source_primary/sse_cb_2025.docx",
+      "sha256": "d82d396cda489247898e66af340cff1ab647a6230ab943bbd70234ae54b63630",
+      "bytes": 40772,
+      "redistribution": "scratch_only_primary_rules"
+    },
+    {
+      "path": "research_v4/source_primary/sse_deferred_2026.docx",
+      "sha256": "f4a0d0976a01e3e95f82460170900993824b70d91183e42d09e13ba10a9958c5",
+      "bytes": 16476,
+      "redistribution": "scratch_only_primary_rules"
+    },
+    {
+      "path": "research_v4/source_primary/sse_rules_2026.docx",
+      "sha256": "fc922c433438b2636cb631eab25cca405209712acbb6aaded768c45456ff8888",
+      "bytes": 65302,
+      "redistribution": "scratch_only_primary_rules"
+    }
+  ]
+}

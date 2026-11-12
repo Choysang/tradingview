@@ -1,0 +1,173 @@
+{
+  "scope": "定位示例，不宣称穷尽",
+  "count": 17,
+  "by_kind": {
+    "single_stock_simulation": 1,
+    "portfolio_simulation": 2,
+    "forward_return_label": 2,
+    "seat_event_label": 1,
+    "factor_label": 2,
+    "meta_policy_aggregate": 1,
+    "approximate_nav_book": 2,
+    "shared_engine_wrapper": 1,
+    "exit_path_evaluator": 2,
+    "daily_limit_scenario_simulation": 1,
+    "snapshot_fill_adapter": 1,
+    "queue_scenario_model": 1
+  },
+  "entries": [
+    {
+      "path": "backend/app/research/backtest.py",
+      "symbol": "run",
+      "line_start": 62,
+      "line_end": 243,
+      "kind": "single_stock_simulation",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/playbooks/backtest.py",
+      "symbol": "simulate",
+      "line_start": 141,
+      "line_end": 488,
+      "kind": "portfolio_simulation",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/playbooks/picks.py",
+      "symbol": "Prices.forward",
+      "line_start": 618,
+      "line_end": 636,
+      "kind": "forward_return_label",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/playbooks/crowd.py",
+      "symbol": "seat_history",
+      "line_start": 137,
+      "line_end": 184,
+      "kind": "seat_event_label",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/research/factor_lab.py",
+      "symbol": "_prepare",
+      "line_start": 55,
+      "line_end": 73,
+      "kind": "factor_label",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/playbooks/rotation.py",
+      "symbol": "walk",
+      "line_start": 158,
+      "line_end": 174,
+      "kind": "meta_policy_aggregate",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/book.py",
+      "symbol": "fixed_hold",
+      "line_start": 27,
+      "line_end": 57,
+      "kind": "approximate_nav_book",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/book.py",
+      "symbol": "holdings",
+      "line_start": 60,
+      "line_end": 78,
+      "kind": "approximate_nav_book",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/harness.py",
+      "symbol": "features",
+      "line_start": 164,
+      "line_end": 191,
+      "kind": "factor_label",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/harness.py",
+      "symbol": "evaluate",
+      "line_start": 280,
+      "line_end": 320,
+      "kind": "shared_engine_wrapper",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/trad_battery.py",
+      "symbol": "add_labels",
+      "line_start": 830,
+      "line_end": 844,
+      "kind": "forward_return_label",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/trad_exits.py",
+      "symbol": "Paths",
+      "line_start": 65,
+      "line_end": 110,
+      "kind": "exit_path_evaluator",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/replay.py",
+      "symbol": "replay",
+      "line_start": 137,
+      "line_end": 247,
+      "kind": "daily_limit_scenario_simulation",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/rank_buffer.py",
+      "symbol": "simulate",
+      "line_start": 78,
+      "line_end": 134,
+      "kind": "portfolio_simulation",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/exit_tails.py",
+      "symbol": "run_exit",
+      "line_start": 67,
+      "line_end": 117,
+      "kind": "exit_path_evaluator",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "scripts/lab/paper_replay.py",
+      "symbol": "buy_fill",
+      "line_start": 113,
+      "line_end": 121,
+      "kind": "snapshot_fill_adapter",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    },
+    {
+      "path": "backend/app/domain/queue_fill.py",
+      "symbol": "simulate",
+      "line_start": 46,
+      "line_end": 57,
+      "kind": "queue_scenario_model",
+      "commit": "6f5c57f8df73c58f0340dab6977b95c05d21740c",
+      "interpretation": "语义入口候选，不等同独立完整撮合引擎；wrapper不得重复计入内核总数。"
+    }
+  ]
+}

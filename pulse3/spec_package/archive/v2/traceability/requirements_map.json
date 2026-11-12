@@ -1,0 +1,2298 @@
+{
+  "schema_version": "2.0-requirements-map.1",
+  "created_at": "2026-11-10",
+  "purpose": "从真实需求锚点查到理由、来源、规划责任与已执行参考测试；不把存在映射当作已满足需求。",
+  "coverage": {
+    "reason_records": 24,
+    "requirements": 24,
+    "by_status": {
+      "observed_issue": 3,
+      "planned": 15,
+      "implemented_reference": 6
+    },
+    "audit_findings": {
+      "catalog_count": 30,
+      "mapped_count": 30,
+      "unmapped_ids": []
+    },
+    "platform_features": {
+      "catalog_count": 56,
+      "mapped_count": 52,
+      "unmapped_ids": [
+        "QC-F04",
+        "TS-F02",
+        "TS-F04",
+        "TV-F07"
+      ]
+    },
+    "papers": {
+      "catalog_count": 38,
+      "mapped_count": 24,
+      "unmapped_ids": [
+        "AP04",
+        "AP05",
+        "AP06",
+        "AP10",
+        "AP13",
+        "AP14",
+        "AP16",
+        "AP17",
+        "AP18",
+        "EP05",
+        "EP07",
+        "EP09",
+        "EP10",
+        "EP12"
+      ]
+    },
+    "reference_tests": {
+      "catalog_count": 45,
+      "mapped_count": 45,
+      "unmapped_test_names": []
+    },
+    "spec_acceptance": {
+      "catalog_count": 27,
+      "mapped_count": 25,
+      "unmapped_ids": [
+        "V2-26",
+        "V2-27"
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "C19",
+      "title": "把UI广播的适用范围与业务事件持久性分开",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C19",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C19 UI广播不能直接升级成跨项目业务总线"
+      },
+      "reason_ids": [
+        "RR-001"
+      ],
+      "record_statuses": [
+        "observed_issue"
+      ],
+      "audit_refs": [
+        "C19"
+      ],
+      "platform_feature_refs": [],
+      "paper_refs": [],
+      "source_refs": [
+        "X01"
+      ],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-05",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一业务事件重复投递",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-07",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "交易事件不能被UI合并丢弃",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "仅确认审计中列出的UI广播边界；未部署跨项目消息总线。",
+      "remaining_work": [
+        "为持久事件实现outbox/inbox及独立consumer",
+        "验证重启、重复投递和UI断线恢复"
+      ]
+    },
+    {
+      "requirement_id": "V2-05",
+      "title": "独立消息消费与事务幂等使模块共享事实",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-05",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "同一业务事件重复投递",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-002"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C09",
+        "C20"
+      ],
+      "platform_feature_refs": [
+        "FU-F03",
+        "TD-F06",
+        "TV-F09"
+      ],
+      "paper_refs": [],
+      "source_refs": [
+        "X01"
+      ],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-05",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一业务事件重复投递",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-07",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "交易事件不能被UI合并丢弃",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "协议已写入v2；没有消息代理、数据库事务或恢复器的端到端实测。",
+      "remaining_work": [
+        "按event_type注册载荷",
+        "实现消费者inbox与重放checkpoint",
+        "测量保留容量与慢消费者行为"
+      ]
+    },
+    {
+      "requirement_id": "C29",
+      "title": "收盘选股不能读取下一开盘可交易状态",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C29",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C29 FQI决策阶段使用了下一开盘状态"
+      },
+      "reason_ids": [
+        "RR-003"
+      ],
+      "record_statuses": [
+        "observed_issue"
+      ],
+      "audit_refs": [
+        "C29"
+      ],
+      "platform_feature_refs": [
+        "QC-F03"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "依据C29已定位的研究路径；未在本轮对全部旧策略运行前视检测。",
+      "remaining_work": [
+        "构造截至t相同、t+1不同的两份输入",
+        "t时SignalProposal保持一致，下一时点由执行器处理差异"
+      ]
+    },
+    {
+      "requirement_id": "V2-25",
+      "title": "PIT查询同时约束快照、决策时点与可用性政策",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-25",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "同一数据快照含未来修订",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-004"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C05",
+        "C17",
+        "C24"
+      ],
+      "platform_feature_refs": [
+        "QC-F03",
+        "TV-F06"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "FeatureKey已能区分历史决策时点，但真实DataQuery过滤尚未实现；两者不得等同。",
+      "remaining_work": [
+        "实现原文/解析/模型结果的不同available_at过滤",
+        "处理行业成分、公司状态及宏观修订历史",
+        "执行两个未来版本不影响历史结果的跨模块测试"
+      ]
+    },
+    {
+      "requirement_id": "V2-06",
+      "title": "共享数据只有READY快照可以对业务发布",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-06",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "Lake提交成功但登记失败",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-005"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C09",
+        "C25"
+      ],
+      "platform_feature_refs": [
+        "CH-F01",
+        "IF-F01",
+        "WI-F01"
+      ],
+      "paper_refs": [],
+      "source_refs": [
+        "X02",
+        "X03"
+      ],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-06",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "Lake提交成功但登记失败",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-17",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据不同单位/时间",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "只有设计与协议；未完成DuckLake/PostgreSQL双系统故障注入。",
+      "remaining_work": [
+        "实现发布恢复与批次幂等",
+        "把覆盖率/字段质量与READY条件绑定",
+        "验证提交成功发布失败后的重复恢复"
+      ]
+    },
+    {
+      "requirement_id": "C22",
+      "title": "特征计算只执行被请求的依赖闭包",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C22",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C22 因子注册器会执行全集，缺按需共享与故障边界"
+      },
+      "reason_ids": [
+        "RR-006"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C21",
+        "C22"
+      ],
+      "platform_feature_refs": [
+        "FU-F04",
+        "TD-F06"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-01",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "100个策略健康并发请求同一特征",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-02",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个特征等待者取消",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "SingleFlight参考组件存在，真正DAG调度、依赖裁剪和分布式worker未实现。",
+      "remaining_work": [
+        "实现requested子图与拓扑验证",
+        "登记每个特征的单位/预热/缺值语义",
+        "将分布式发布与lease/fencing绑定"
+      ]
+    },
+    {
+      "requirement_id": "V2-01",
+      "title": "完整身份与singleflight隔离同键共享计算",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-01",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "100个策略健康并发请求同一特征",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-007"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C17",
+        "C22"
+      ],
+      "platform_feature_refs": [],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_canonical_parameters_and_parameter_change",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_parameter_digest_rejects_ambiguous_or_nonfinite_parameters",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_every_version_dimension_changes_the_key",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_no_implicit_or_mutable_key_dimensions",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_parameter_mutation_cannot_mutate_existing_key_identity",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "FeatureKeyTests.test_decision_time_requires_timezone_and_normalizes_same_instant",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_100_concurrent_same_key_compute_once",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_cancelling_creator_waiter_does_not_cancel_other_waiter",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_all_waiters_cancel_but_later_waiter_joins_original_work",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_shared_failure_is_not_cached_and_retry_succeeds",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_failure_after_all_waiters_cancel_has_no_unobserved_exception",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_different_snapshots_compute_independently",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_same_snapshot_different_decision_time_does_not_reuse_future_result",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_none_is_a_cached_success",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_mutable_results_are_isolated_from_producer_waiters_and_cache",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_bounded_lru_evicts_least_recently_used_result",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_shutdown_cancels_producer_and_rejects_new_work",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_concurrent_shutdowns_do_not_interrupt_producer_cleanup",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_feature_store.py",
+          "test_name": "SingleFlightTests.test_cancelling_shutdown_waiter_does_not_abort_shutdown",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-01",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "100个策略健康并发请求同一特征",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-02",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个特征等待者取消",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "单进程、单事件循环参考实现；19项相关测试已出现在45项通过日志中。键正确不证明DataQuery已过滤未来行。",
+      "remaining_work": [
+        "生产不可变结果载荷",
+        "跨进程租约、结果登记与故障恢复",
+        "真实特征及数据服务集成"
+      ]
+    },
+    {
+      "requirement_id": "V2-23",
+      "title": "筛选、预警、回测与计划共用有类型条件AST",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-23",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "选股/预警/回测相同AST",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-008"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C01",
+        "C02",
+        "C12"
+      ],
+      "platform_feature_refs": [
+        "CH-F04",
+        "TD-F01",
+        "TD-F02",
+        "TS-F03"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "AST种子契约已验证；跨入口统一执行行为仍是开发任务。",
+      "remaining_work": [
+        "实现类型检查与解释器",
+        "验证三种运行模式的相同快照结果一致",
+        "为未来算子新增显式版本"
+      ]
+    },
+    {
+      "requirement_id": "C26",
+      "title": "市场规则、交易日历和原始价格共享版本来源",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C26",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C26 市场状态研究绕开统一涨跌停规则"
+      },
+      "reason_ids": [
+        "RR-009"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C03",
+        "C07",
+        "C12",
+        "C26"
+      ],
+      "platform_feature_refs": [
+        "CH-F03",
+        "FU-F05"
+      ],
+      "paper_refs": [],
+      "source_refs": [
+        "X04",
+        "X05"
+      ],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-11",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先买后卖做T",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "参考账户展示部分库存语义；没有真实交易所完整RuleBook与日历适配器。",
+      "remaining_work": [
+        "建立生效区间与获知时间",
+        "核对2026会话和量额归属",
+        "按实际证券/渠道生成规则适配测试"
+      ]
+    },
+    {
+      "requirement_id": "C23",
+      "title": "未知数据与真实零值必须分开影响排名",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C23",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C23 缺失维度重新归一化的说明与部分实现不一致"
+      },
+      "reason_ids": [
+        "RR-010"
+      ],
+      "record_statuses": [
+        "observed_issue"
+      ],
+      "audit_refs": [
+        "C06",
+        "C23",
+        "C25"
+      ],
+      "platform_feature_refs": [
+        "IF-F04",
+        "WI-F04"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [],
+      "satisfaction_scope": "已记录旧路径的语义问题；本台账没有宣称完成新质量系统或重算旧排名。",
+      "remaining_work": [
+        "定义字段覆盖与估计政策",
+        "真实零/缺失的成对排序用例",
+        "将供应商失败与成功空结果分开"
+      ]
+    },
+    {
+      "requirement_id": "V2-20",
+      "title": "六类策略角色允许组合而不混同目标",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-20",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "新方法和简单基线比较",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-011"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C01",
+        "C30"
+      ],
+      "platform_feature_refs": [
+        "QC-F01",
+        "TV-F03",
+        "TV-F05"
+      ],
+      "paper_refs": [
+        "AP01",
+        "AP02",
+        "AP15",
+        "EP03",
+        "EP08"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "角色和协议已有文字规格，尚未实现注册/编译/校准服务；引用论文不等于本站收益复现。",
+      "remaining_work": [
+        "固定不同角色输入输出",
+        "按同期限校准预测",
+        "与简单等权和最强单体做消融"
+      ]
+    },
+    {
+      "requirement_id": "V2-09",
+      "title": "账户先净额目标再生成外部委托",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-09",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "同账户相反方向目标",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-012"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C30"
+      ],
+      "platform_feature_refs": [
+        "QC-F02"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_opposing_sleeve_changes_net_to_no_account_order",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_pending_unfilled_orders_reduce_new_delta",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "NettingTests.test_absent_target_is_zero_and_negative_projected_position_is_rejected",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "net_target_deltas纯函数已验证；不代表完整PortfolioCoordinator或券商下单服务。",
+      "remaining_work": [
+        "接入账户版本与袖套权利",
+        "处理目标变化与旧订单撤换",
+        "把负差额交给库存预留"
+      ]
+    },
+    {
+      "requirement_id": "V2-08",
+      "title": "唯一组合协调与触发时资源预留",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-08",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "两策略同时使用同一现金/库存",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-013"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C27",
+        "C30"
+      ],
+      "platform_feature_refs": [
+        "IB-F03",
+        "QC-F02"
+      ],
+      "paper_refs": [
+        "EP02",
+        "EP04",
+        "EP06"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-08",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "两策略同时使用同一现金/库存",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-09",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同账户相反方向目标",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-10",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "核心仓与网格冲突",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "已有净额与库存参考函数；分布式事务、完整协调器、真实账户集成未实现。",
+      "remaining_work": [
+        "单账户版本化事务",
+        "条件触发时现金及库存原子预留",
+        "处理旧提案与新成交的冲突"
+      ]
+    },
+    {
+      "requirement_id": "V2-11",
+      "title": "正数量、订单归属与T+1库存的不变量",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-11",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "先买后卖做T",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-014"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C27"
+      ],
+      "platform_feature_refs": [
+        "FU-F02"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_positive_integral_quantities_required_for_actions",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_floats_are_rejected_at_money_boundary",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_position_invariants_are_enforced",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_today_buy_does_not_increase_sellable_until_next_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_reservations_prevent_two_strategies_from_overselling",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_duplicate_sell_fill_does_not_double_book_cash_or_inventory",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_duplicate_buy_fill_does_not_double_book",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_same_day_or_backwards_inventory_settlement_is_rejected",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-11",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先买后卖做T",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-08",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "两策略同时使用同一现金/库存",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "相关正数量、预留、重复成交、T+1行为通过本地测试；真实交易规则与持久化仍未实现。",
+      "remaining_work": [
+        "生产持久幂等和多进程竞争",
+        "实际日历与公司行动",
+        "未成交买单资金预留"
+      ]
+    },
+    {
+      "requirement_id": "V2-12",
+      "title": "现金可用政策与互斥资产桶分开",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-12",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "先卖后买且资金复用政策不同",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-015"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C27"
+      ],
+      "platform_feature_refs": [],
+      "paper_refs": [],
+      "source_refs": [
+        "X06",
+        "X07"
+      ],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_domestic_sale_proceeds_can_fund_another_trade_same_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_service_unsettled_policy_blocks_reuse_until_explicit_release",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_cash_bucket_policy_does_not_change_total_equity",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_inventory_day_roll_does_not_assume_cash_release",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_failed_buy_leaves_all_state_unchanged",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_invalid_fee_and_cash_release_are_not_silent",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "CashPolicyTests.test_fee_above_tiny_sale_proceeds_is_a_cash_debit_not_an_asset",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-12",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "先卖后买且资金复用政策不同",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "两种示例现金政策及财富不变测试已通过；费率、交收日期和真实渠道能力未集成。",
+      "remaining_work": [
+        "渠道适配与明确结算事件ID",
+        "生产互斥现金账本派生视图",
+        "最低佣金与费用归组"
+      ]
+    },
+    {
+      "requirement_id": "C27",
+      "title": "撤单确认先对齐累计成交再释放预留",
+      "origin_ref": {
+        "kind": "audit_finding",
+        "id": "C27",
+        "path": "spec/CODE_AUDIT_V2.md",
+        "heading": "## C27 库存纯函数缺少输入边界和订单级预留归属"
+      },
+      "reason_ids": [
+        "RR-016"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C27"
+      ],
+      "platform_feature_refs": [
+        "FU-F02",
+        "IB-F02",
+        "QC-F05"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_partial_fill_then_cancel_releases_only_remainder",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_overfill_and_fill_after_cancel_do_not_mutate_account",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "InventoryTests.test_cancel_confirmation_with_missing_fills_preserves_reservation",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [],
+      "satisfaction_scope": "累计不一致不释放、补齐30股后释放70股的回归已通过；没有真实券商事件序列适配器。",
+      "remaining_work": [
+        "持久保存待对齐撤单确认",
+        "券商序号/累计成交校验",
+        "撤改单与重连对账协议"
+      ]
+    },
+    {
+      "requirement_id": "V2-13",
+      "title": "做T和网格用相同起点的总净值增量评价",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-13",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "网格只成交一腿",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-017"
+      ],
+      "record_statuses": [
+        "implemented_reference"
+      ],
+      "audit_refs": [
+        "C13",
+        "C14",
+        "C15"
+      ],
+      "platform_feature_refs": [
+        "IF-F03",
+        "TV-F10",
+        "XQ-F01"
+      ],
+      "paper_refs": [
+        "EP13",
+        "EP14"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_completed_t_roundtrip_deducts_both_fees",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_unbought_inventory_opportunity_cost_can_make_t_negative",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_partial_repurchase_uses_total_equity_not_closed_profit",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_comparison_rejects_different_origins_or_valuation_day",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        },
+        {
+          "kind": "reference_test",
+          "path": "reference_models/test_account_model.py",
+          "test_name": "TotalEquityTests.test_marks_must_cover_inventory_and_be_finite",
+          "execution_status": "passed_reference_scope",
+          "validation_log": "reference_models/validation.log"
+        }
+      ],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-13",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "网格只成交一腿",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-15",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "费用吃掉价差",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "总净值比较函数已验证；完整网格状态机与绩效归因服务仍待实现。",
+      "remaining_work": [
+        "外部现金流和公司行动统一处理",
+        "操作周期与策略归属持久化",
+        "与真实成交、费用政策联通"
+      ]
+    },
+    {
+      "requirement_id": "V2-14",
+      "title": "网格与做T操作状态不得被重锚或快照简化抹掉",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-14",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "一个K线跨多格",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-018"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C28"
+      ],
+      "platform_feature_refs": [
+        "FU-F01",
+        "QC-F06",
+        "TV-F04"
+      ],
+      "paper_refs": [
+        "EP15"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-10",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "核心仓与网格冲突",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-13",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "网格只成交一腿",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-14",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "一个K线跨多格",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-15",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "费用吃掉价差",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "有账户与净值参考，尚无完整网格/撮合引擎；EP15等论文方法未在本站复现。",
+      "remaining_work": [
+        "持久operation_id与未完成腿",
+        "路径情景及部分成交",
+        "重锚、撤单、单边行情用例"
+      ]
+    },
+    {
+      "requirement_id": "V2-16",
+      "title": "消息证据按原始来源和传播通道关联股票",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-16",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "新闻转载三次",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-019"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C11"
+      ],
+      "platform_feature_refs": [
+        "CH-F02",
+        "TD-F03",
+        "TD-F04",
+        "TV-F11",
+        "WI-F02",
+        "WI-F03",
+        "XQ-F03"
+      ],
+      "paper_refs": [
+        "AP08",
+        "AP21"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-16",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新闻转载三次",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-17",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据不同单位/时间",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-21",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "多Agent共享错误来源",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "是数据与情报契约；没有声称已经接全网消息或完成全部影响因素验证。",
+      "remaining_work": [
+        "源注册与内容指纹",
+        "修订/澄清与证据冲突",
+        "企业暴露边的来源和有效期"
+      ]
+    },
+    {
+      "requirement_id": "V2-19",
+      "title": "新消息异步改变计划版本并保留延迟成本",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-19",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "模型方向识别高但延迟后无收益",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-020"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C04",
+        "C08",
+        "C10",
+        "C11"
+      ],
+      "platform_feature_refs": [
+        "TS-F05",
+        "TV-F08"
+      ],
+      "paper_refs": [
+        "AP23",
+        "EP01"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-19",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "模型方向识别高但延迟后无收益",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-25",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "同一数据快照含未来修订",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "任务/版本协议已设计，未部署全天候采集与计划重算脚本。",
+      "remaining_work": [
+        "独立采集、解析、模型队列",
+        "依赖失效与计划差异",
+        "按真实延迟衡量净收益"
+      ]
+    },
+    {
+      "requirement_id": "V2-18",
+      "title": "论文状态、阅读深度与本项目复现分别登记",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-18",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "论文网页摘要与正式PDF冲突",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-021"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [],
+      "platform_feature_refs": [
+        "XQ-F02"
+      ],
+      "paper_refs": [
+        "AP01",
+        "AP07",
+        "AP11",
+        "AP12",
+        "EP11"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-18",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "论文网页摘要与正式PDF冲突",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "papers_registry/hypotheses资料文件存在；自动发现、下载、编译和复现执行服务尚未部署。",
+      "remaining_work": [
+        "论文版本/DOI去重",
+        "固定正式来源及代码依赖",
+        "按阅读深度和可复现性排队"
+      ]
+    },
+    {
+      "requirement_id": "V2-24",
+      "title": "研究晋级根据净贡献与独立验证更新策略池",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-24",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "前向策略退化或恢复",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-022"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C30"
+      ],
+      "platform_feature_refs": [
+        "TD-F05"
+      ],
+      "paper_refs": [
+        "AP09",
+        "AP20",
+        "EP11",
+        "EP13"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-24",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "前向策略退化或恢复",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-19",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "模型方向识别高但延迟后无收益",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "生命周期与目标验收已明确；未实际运行论文训练或真实前向晋级。",
+      "remaining_work": [
+        "保存全部trial及留出集访问",
+        "执行单体/组合消融",
+        "发布、暂停与恢复事件不可覆盖历史"
+      ]
+    },
+    {
+      "requirement_id": "V2-21",
+      "title": "多Agent共享工具与证据，合成提案不靠多数票",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-21",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "多Agent共享错误来源",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-023"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C10",
+        "C11"
+      ],
+      "platform_feature_refs": [
+        "IF-F02",
+        "TS-F06"
+      ],
+      "paper_refs": [
+        "AP03",
+        "AP19",
+        "AP20",
+        "AP22"
+      ],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-21",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "多Agent共享错误来源",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-04",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "慢模型挂起而行情/新闻继续",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-20",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "新方法和简单基线比较",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "多Agent运行是未来实施合同；本次并行研究本身不等于网站运行时Agent系统已完成。",
+      "remaining_work": [
+        "能力路由与工具回归集",
+        "截止时间/缺项/迟到修订",
+        "独立证据与模型校准评测"
+      ]
+    },
+    {
+      "requirement_id": "V2-22",
+      "title": "多周期工作台是统一数据对象的联动投影",
+      "origin_ref": {
+        "kind": "spec_acceptance",
+        "id": "V2-22",
+        "path": "spec/V2_SYSTEM_DESIGN.md",
+        "scenario": "月线尚未完成",
+        "execution_status": "planned_integration_acceptance"
+      },
+      "reason_ids": [
+        "RR-024"
+      ],
+      "record_statuses": [
+        "planned"
+      ],
+      "audit_refs": [
+        "C16",
+        "C18"
+      ],
+      "platform_feature_refs": [
+        "CH-F05",
+        "IB-F01",
+        "IB-F04",
+        "TS-F01",
+        "TV-F01",
+        "TV-F02",
+        "TV-F12",
+        "TV-F13"
+      ],
+      "paper_refs": [],
+      "source_refs": [],
+      "reference_test_refs": [],
+      "spec_acceptance_refs": [
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-22",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "月线尚未完成",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-23",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "选股/预警/回测相同AST",
+          "execution_status": "planned_integration_acceptance"
+        },
+        {
+          "kind": "spec_acceptance",
+          "id": "V2-03",
+          "path": "spec/V2_SYSTEM_DESIGN.md",
+          "scenario": "数据修订导致缓存失效",
+          "execution_status": "planned_integration_acceptance"
+        }
+      ],
+      "satisfaction_scope": "56项平台能力为规划与证据目录；没有把这些条目计为已上线的UI功能。",
+      "remaining_work": [
+        "图表与自选/消息/订单分组联动",
+        "保存布局与指标参数",
+        "验证迟到请求不会覆盖新证券上下文"
+      ]
+    }
+  ],
+  "reverse_indexes": {
+    "audit": {
+      "C01": [
+        "RR-008",
+        "RR-011"
+      ],
+      "C02": [
+        "RR-008"
+      ],
+      "C03": [
+        "RR-009"
+      ],
+      "C04": [
+        "RR-020"
+      ],
+      "C05": [
+        "RR-004"
+      ],
+      "C06": [
+        "RR-010"
+      ],
+      "C07": [
+        "RR-009"
+      ],
+      "C08": [
+        "RR-020"
+      ],
+      "C09": [
+        "RR-002",
+        "RR-005"
+      ],
+      "C10": [
+        "RR-020",
+        "RR-023"
+      ],
+      "C11": [
+        "RR-019",
+        "RR-020",
+        "RR-023"
+      ],
+      "C12": [
+        "RR-008",
+        "RR-009"
+      ],
+      "C13": [
+        "RR-017"
+      ],
+      "C14": [
+        "RR-017"
+      ],
+      "C15": [
+        "RR-017"
+      ],
+      "C16": [
+        "RR-024"
+      ],
+      "C17": [
+        "RR-004",
+        "RR-007"
+      ],
+      "C18": [
+        "RR-024"
+      ],
+      "C19": [
+        "RR-001"
+      ],
+      "C20": [
+        "RR-002"
+      ],
+      "C21": [
+        "RR-006"
+      ],
+      "C22": [
+        "RR-006",
+        "RR-007"
+      ],
+      "C23": [
+        "RR-010"
+      ],
+      "C24": [
+        "RR-004"
+      ],
+      "C25": [
+        "RR-005",
+        "RR-010"
+      ],
+      "C26": [
+        "RR-009"
+      ],
+      "C27": [
+        "RR-013",
+        "RR-014",
+        "RR-015",
+        "RR-016"
+      ],
+      "C28": [
+        "RR-018"
+      ],
+      "C29": [
+        "RR-003"
+      ],
+      "C30": [
+        "RR-011",
+        "RR-012",
+        "RR-013",
+        "RR-022"
+      ]
+    },
+    "source": {
+      "X01": [
+        "RR-001",
+        "RR-002"
+      ],
+      "X02": [
+        "RR-005"
+      ],
+      "X03": [
+        "RR-005"
+      ],
+      "X04": [
+        "RR-009"
+      ],
+      "X05": [
+        "RR-009"
+      ],
+      "X06": [
+        "RR-015"
+      ],
+      "X07": [
+        "RR-015"
+      ]
+    },
+    "spec_acceptance": {
+      "V2-01": [
+        "RR-006",
+        "RR-007"
+      ],
+      "V2-02": [
+        "RR-006",
+        "RR-007"
+      ],
+      "V2-03": [
+        "RR-004",
+        "RR-005",
+        "RR-006",
+        "RR-007",
+        "RR-024"
+      ],
+      "V2-04": [
+        "RR-002",
+        "RR-020",
+        "RR-023"
+      ],
+      "V2-05": [
+        "RR-001",
+        "RR-002"
+      ],
+      "V2-06": [
+        "RR-005"
+      ],
+      "V2-07": [
+        "RR-001",
+        "RR-002"
+      ],
+      "V2-08": [
+        "RR-013",
+        "RR-014"
+      ],
+      "V2-09": [
+        "RR-011",
+        "RR-012",
+        "RR-013"
+      ],
+      "V2-10": [
+        "RR-013",
+        "RR-018"
+      ],
+      "V2-11": [
+        "RR-009",
+        "RR-014"
+      ],
+      "V2-12": [
+        "RR-015"
+      ],
+      "V2-13": [
+        "RR-017",
+        "RR-018"
+      ],
+      "V2-14": [
+        "RR-018"
+      ],
+      "V2-15": [
+        "RR-017",
+        "RR-018"
+      ],
+      "V2-16": [
+        "RR-019"
+      ],
+      "V2-17": [
+        "RR-005",
+        "RR-019"
+      ],
+      "V2-18": [
+        "RR-021"
+      ],
+      "V2-19": [
+        "RR-020",
+        "RR-022"
+      ],
+      "V2-20": [
+        "RR-011",
+        "RR-021",
+        "RR-022",
+        "RR-023"
+      ],
+      "V2-21": [
+        "RR-019",
+        "RR-023"
+      ],
+      "V2-22": [
+        "RR-008",
+        "RR-009",
+        "RR-024"
+      ],
+      "V2-23": [
+        "RR-008",
+        "RR-011",
+        "RR-024"
+      ],
+      "V2-24": [
+        "RR-022"
+      ],
+      "V2-25": [
+        "RR-003",
+        "RR-004",
+        "RR-009",
+        "RR-020"
+      ]
+    },
+    "platform_feature": {
+      "CH-F01": [
+        "RR-005"
+      ],
+      "CH-F02": [
+        "RR-019"
+      ],
+      "CH-F03": [
+        "RR-009"
+      ],
+      "CH-F04": [
+        "RR-008"
+      ],
+      "CH-F05": [
+        "RR-024"
+      ],
+      "FU-F01": [
+        "RR-018"
+      ],
+      "FU-F02": [
+        "RR-014",
+        "RR-016"
+      ],
+      "FU-F03": [
+        "RR-002"
+      ],
+      "FU-F04": [
+        "RR-006"
+      ],
+      "FU-F05": [
+        "RR-009"
+      ],
+      "IB-F01": [
+        "RR-024"
+      ],
+      "IB-F02": [
+        "RR-016"
+      ],
+      "IB-F03": [
+        "RR-013"
+      ],
+      "IB-F04": [
+        "RR-024"
+      ],
+      "IF-F01": [
+        "RR-005"
+      ],
+      "IF-F02": [
+        "RR-023"
+      ],
+      "IF-F03": [
+        "RR-017"
+      ],
+      "IF-F04": [
+        "RR-010"
+      ],
+      "QC-F01": [
+        "RR-011"
+      ],
+      "QC-F02": [
+        "RR-012",
+        "RR-013"
+      ],
+      "QC-F03": [
+        "RR-003",
+        "RR-004"
+      ],
+      "QC-F05": [
+        "RR-016"
+      ],
+      "QC-F06": [
+        "RR-018"
+      ],
+      "TD-F01": [
+        "RR-008"
+      ],
+      "TD-F02": [
+        "RR-008"
+      ],
+      "TD-F03": [
+        "RR-019"
+      ],
+      "TD-F04": [
+        "RR-019"
+      ],
+      "TD-F05": [
+        "RR-022"
+      ],
+      "TD-F06": [
+        "RR-002",
+        "RR-006"
+      ],
+      "TS-F01": [
+        "RR-024"
+      ],
+      "TS-F03": [
+        "RR-008"
+      ],
+      "TS-F05": [
+        "RR-020"
+      ],
+      "TS-F06": [
+        "RR-023"
+      ],
+      "TV-F01": [
+        "RR-024"
+      ],
+      "TV-F02": [
+        "RR-024"
+      ],
+      "TV-F03": [
+        "RR-011"
+      ],
+      "TV-F04": [
+        "RR-018"
+      ],
+      "TV-F05": [
+        "RR-011"
+      ],
+      "TV-F06": [
+        "RR-004"
+      ],
+      "TV-F08": [
+        "RR-020"
+      ],
+      "TV-F09": [
+        "RR-002"
+      ],
+      "TV-F10": [
+        "RR-017"
+      ],
+      "TV-F11": [
+        "RR-019"
+      ],
+      "TV-F12": [
+        "RR-024"
+      ],
+      "TV-F13": [
+        "RR-024"
+      ],
+      "WI-F01": [
+        "RR-005"
+      ],
+      "WI-F02": [
+        "RR-019"
+      ],
+      "WI-F03": [
+        "RR-019"
+      ],
+      "WI-F04": [
+        "RR-010"
+      ],
+      "XQ-F01": [
+        "RR-017"
+      ],
+      "XQ-F02": [
+        "RR-021"
+      ],
+      "XQ-F03": [
+        "RR-019"
+      ]
+    },
+    "reference_test": {
+      "CashPolicyTests.test_cash_bucket_policy_does_not_change_total_equity": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_domestic_sale_proceeds_can_fund_another_trade_same_day": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_failed_buy_leaves_all_state_unchanged": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_fee_above_tiny_sale_proceeds_is_a_cash_debit_not_an_asset": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_invalid_fee_and_cash_release_are_not_silent": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_inventory_day_roll_does_not_assume_cash_release": [
+        "RR-015"
+      ],
+      "CashPolicyTests.test_service_unsettled_policy_blocks_reuse_until_explicit_release": [
+        "RR-015"
+      ],
+      "FeatureKeyTests.test_canonical_parameters_and_parameter_change": [
+        "RR-007"
+      ],
+      "FeatureKeyTests.test_decision_time_requires_timezone_and_normalizes_same_instant": [
+        "RR-007"
+      ],
+      "FeatureKeyTests.test_every_version_dimension_changes_the_key": [
+        "RR-007"
+      ],
+      "FeatureKeyTests.test_no_implicit_or_mutable_key_dimensions": [
+        "RR-007"
+      ],
+      "FeatureKeyTests.test_parameter_digest_rejects_ambiguous_or_nonfinite_parameters": [
+        "RR-007"
+      ],
+      "FeatureKeyTests.test_parameter_mutation_cannot_mutate_existing_key_identity": [
+        "RR-007"
+      ],
+      "InventoryTests.test_cancel_confirmation_with_missing_fills_preserves_reservation": [
+        "RR-016"
+      ],
+      "InventoryTests.test_duplicate_buy_fill_does_not_double_book": [
+        "RR-014"
+      ],
+      "InventoryTests.test_duplicate_sell_fill_does_not_double_book_cash_or_inventory": [
+        "RR-014"
+      ],
+      "InventoryTests.test_floats_are_rejected_at_money_boundary": [
+        "RR-014"
+      ],
+      "InventoryTests.test_overfill_and_fill_after_cancel_do_not_mutate_account": [
+        "RR-016"
+      ],
+      "InventoryTests.test_partial_fill_then_cancel_releases_only_remainder": [
+        "RR-016"
+      ],
+      "InventoryTests.test_position_invariants_are_enforced": [
+        "RR-014"
+      ],
+      "InventoryTests.test_positive_integral_quantities_required_for_actions": [
+        "RR-014"
+      ],
+      "InventoryTests.test_reservations_prevent_two_strategies_from_overselling": [
+        "RR-014"
+      ],
+      "InventoryTests.test_same_day_or_backwards_inventory_settlement_is_rejected": [
+        "RR-014"
+      ],
+      "InventoryTests.test_today_buy_does_not_increase_sellable_until_next_day": [
+        "RR-014"
+      ],
+      "NettingTests.test_absent_target_is_zero_and_negative_projected_position_is_rejected": [
+        "RR-012"
+      ],
+      "NettingTests.test_opposing_sleeve_changes_net_to_no_account_order": [
+        "RR-012"
+      ],
+      "NettingTests.test_pending_unfilled_orders_reduce_new_delta": [
+        "RR-012"
+      ],
+      "SingleFlightTests.test_100_concurrent_same_key_compute_once": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_all_waiters_cancel_but_later_waiter_joins_original_work": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_bounded_lru_evicts_least_recently_used_result": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_cancelling_creator_waiter_does_not_cancel_other_waiter": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_cancelling_shutdown_waiter_does_not_abort_shutdown": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_concurrent_shutdowns_do_not_interrupt_producer_cleanup": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_different_snapshots_compute_independently": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_failure_after_all_waiters_cancel_has_no_unobserved_exception": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_mutable_results_are_isolated_from_producer_waiters_and_cache": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_none_is_a_cached_success": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_same_snapshot_different_decision_time_does_not_reuse_future_result": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_shared_failure_is_not_cached_and_retry_succeeds": [
+        "RR-007"
+      ],
+      "SingleFlightTests.test_shutdown_cancels_producer_and_rejects_new_work": [
+        "RR-007"
+      ],
+      "TotalEquityTests.test_comparison_rejects_different_origins_or_valuation_day": [
+        "RR-017"
+      ],
+      "TotalEquityTests.test_completed_t_roundtrip_deducts_both_fees": [
+        "RR-017"
+      ],
+      "TotalEquityTests.test_marks_must_cover_inventory_and_be_finite": [
+        "RR-017"
+      ],
+      "TotalEquityTests.test_partial_repurchase_uses_total_equity_not_closed_profit": [
+        "RR-017"
+      ],
+      "TotalEquityTests.test_unbought_inventory_opportunity_cost_can_make_t_negative": [
+        "RR-017"
+      ]
+    },
+    "paper": {
+      "AP01": [
+        "RR-011",
+        "RR-021"
+      ],
+      "AP02": [
+        "RR-011"
+      ],
+      "AP03": [
+        "RR-023"
+      ],
+      "AP07": [
+        "RR-021"
+      ],
+      "AP08": [
+        "RR-019"
+      ],
+      "AP09": [
+        "RR-022"
+      ],
+      "AP11": [
+        "RR-021"
+      ],
+      "AP12": [
+        "RR-021"
+      ],
+      "AP15": [
+        "RR-011"
+      ],
+      "AP19": [
+        "RR-023"
+      ],
+      "AP20": [
+        "RR-022",
+        "RR-023"
+      ],
+      "AP21": [
+        "RR-019"
+      ],
+      "AP22": [
+        "RR-023"
+      ],
+      "AP23": [
+        "RR-020"
+      ],
+      "EP01": [
+        "RR-020"
+      ],
+      "EP02": [
+        "RR-013"
+      ],
+      "EP03": [
+        "RR-011"
+      ],
+      "EP04": [
+        "RR-013"
+      ],
+      "EP06": [
+        "RR-013"
+      ],
+      "EP08": [
+        "RR-011"
+      ],
+      "EP11": [
+        "RR-021",
+        "RR-022"
+      ],
+      "EP13": [
+        "RR-017",
+        "RR-022"
+      ],
+      "EP14": [
+        "RR-017"
+      ],
+      "EP15": [
+        "RR-018"
+      ]
+    }
+  },
+  "coverage_notes": [
+    "30个C发现都有替代责任/理由关联，不表示30项已在旧系统修复。",
+    "45个参考测试全部映射到理由；同一测试被多个理由引用仍只算一次。",
+    "未映射的平台或论文条目仍保留在完整registry，不自动升级或删除；此核心台账不是全部56项功能和38论文的逐项实现证明。",
+    "planned验收与passed_reference_scope分开记录；任何跨进程、真实数据、券商或UI集成均需后续实测。"
+  ]
+}

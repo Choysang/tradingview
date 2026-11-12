@@ -1,0 +1,528 @@
+{
+  "scope": "Requirement-to-implementation-contract traceability, not a claim that all production features are implemented.",
+  "requirements": [
+    {
+      "requirement_id": "R01",
+      "requirement": "产品是选股与个股计划平台，Agent用于开发",
+      "reason": "产品边界防止研究工具占据主用户流程。",
+      "specification_or_reference_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R02",
+      "requirement": "大数据按负载分存和扩容",
+      "reason": "业务事务、历史扫描与消息的瓶颈不同，按实测容量扩展。",
+      "specification_or_reference_paths": [
+        "database/database_design.md"
+      ],
+      "source_refs": [
+        "DB01",
+        "DB07",
+        "DB08"
+      ],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R03",
+      "requirement": "证券统一身份、代码映射、上市退市历史",
+      "reason": "显示代码会变更，历史股票池不能被当前证券清单重写。",
+      "specification_or_reference_paths": [
+        "database/core_schema.sql",
+        "database/field_dictionary.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R04",
+      "requirement": "字段命名、单位、精度、空值一套规范",
+      "reason": "同名vol在daily与rt_k不同单位，错误传播会改变指标和回测。",
+      "specification_or_reference_paths": [
+        "database/source_mapping_examples.json",
+        "reference_system/normalization.py"
+      ],
+      "source_refs": [
+        "DB09",
+        "DB10"
+      ],
+      "verification_paths": [
+        "reference_system/test_data_plane.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R05",
+      "requirement": "跨源补齐与冲突保留来源",
+      "reason": "补齐是引用另一观察，不是猜值；转载不能伪装独立证实。",
+      "specification_or_reference_paths": [
+        "sources_sectors/sources_sectors_design.md",
+        "database/database_design.md"
+      ],
+      "source_refs": [
+        "NS01"
+      ],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R06",
+      "requirement": "发生、发布、首次见到、可用、入库时间分离",
+      "reason": "避免历史回测使用未来发布或尚未算完的特征。",
+      "specification_or_reference_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md",
+        "database/field_dictionary.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "reference_system/test_data_plane.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R07",
+      "requirement": "行情原价、复权、会话、多周期明确",
+      "reason": "图表比较与真实成交价格不能共享未声明的复权变换。",
+      "specification_or_reference_paths": [
+        "reference_features/FEATURE_STRATEGY_PROTOCOLS.md",
+        "contracts/v3.schema.json"
+      ],
+      "source_refs": [
+        "DB09"
+      ],
+      "verification_paths": [
+        "reference_features/test_feature_store.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R08",
+      "requirement": "各模块共享特征依赖与计算",
+      "reason": "19维完整键和不可变输入避免重复计算及错误缓存命中。",
+      "specification_or_reference_paths": [
+        "reference_features/feature_store.py"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "reference_features/test_feature_store.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R09",
+      "requirement": "榜单、板块、工作台、计划同一发布包",
+      "reason": "独立latest会把不同时间的结果拼成一个判断。",
+      "specification_or_reference_paths": [
+        "integration/integration_schema.sql",
+        "reference_system/release_store.py"
+      ],
+      "source_refs": [
+        "DB02"
+      ],
+      "verification_paths": [
+        "reference_system/test_data_plane.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R10",
+      "requirement": "推送遗漏、重复、乱序和恢复可检查",
+      "reason": "业务outbox/inbox与连续完成水位使通知能够重放。",
+      "specification_or_reference_paths": [
+        "database/database_design.md",
+        "reference_system/release_store.py"
+      ],
+      "source_refs": [
+        "DB08"
+      ],
+      "verification_paths": [
+        "reference_system/test_data_plane.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R11",
+      "requirement": "推送、轮询、对账、补采共同运行",
+      "reason": "源安静、断流、休市、权限失败必须可区分。",
+      "specification_or_reference_paths": [
+        "reference_system/source_health.py",
+        "catalogs/source_catalog_v3.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "reference_system/test_data_plane.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R12",
+      "requirement": "新闻四层处理并保留原文主张",
+      "reason": "事实、影响推断与操作假说的证据强度不同。",
+      "specification_or_reference_paths": [
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R13",
+      "requirement": "社区热度、观点分歧、情绪与资金分开",
+      "reason": "关注增加不是净买入；观点须对齐其发布时点与可检验主张。",
+      "specification_or_reference_paths": [
+        "sources_sectors/sources_sectors_design.md",
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R14",
+      "requirement": "龙虎榜席位研究采用条件统计",
+      "reason": "席位标签是待检验假说；未知营业部不可擅自纠正成另一个主体。",
+      "specification_or_reference_paths": [
+        "sources_sectors/taxonomy.json",
+        "sources_sectors/sources_sectors_design.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R15",
+      "requirement": "市场状态综合消息情绪技术资金",
+      "reason": "先定义每类输入和缺失条件，再根据目标期限校准组合。",
+      "specification_or_reference_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md",
+        "catalogs/factor_catalog_v3.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "catalogs/validate_catalogs.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R16",
+      "requirement": "全市场推荐榜排序目标和期限显式",
+      "reason": "短线入场胜率与长期超额收益不能直接混排。",
+      "specification_or_reference_paths": [
+        "contracts/v3.schema.json",
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R17",
+      "requirement": "每个板块有自己的推荐榜",
+      "reason": "共享历史成分和同一排序服务，避免各板块另建选股引擎。",
+      "specification_or_reference_paths": [
+        "sources_sectors/sources_sectors_schema.sql",
+        "contracts/api_bindings.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R18",
+      "requirement": "快速升温板块与领先候选池",
+      "reason": "设置入池退池不同阈值及持续条件，避免边界抖动。",
+      "specification_or_reference_paths": [
+        "sources_sectors/sources_sectors_design.md",
+        "sources_sectors/fixtures.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "sources_sectors/validate_fixtures.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R19",
+      "requirement": "发布排名与账户实时可行动榜分离",
+      "reason": "冻结排名便于追溯；账户、报价变化产生新的actionability快照。",
+      "specification_or_reference_paths": [
+        "integration/integration_schema.sql",
+        "contracts/v3.schema.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R20",
+      "requirement": "当前报价独立于K线",
+      "reason": "bar close不能充当实时价，quote overlay有自己的时点和版本。",
+      "specification_or_reference_paths": [
+        "contracts/openapi.json",
+        "integration/integration_schema.sql"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R21",
+      "requirement": "持久工作台与可重建缓存分离",
+      "reason": "布局画线自选属于用户数据；指标与行情是可重算投影。",
+      "specification_or_reference_paths": [
+        "database/core_schema.sql",
+        "database/database_design.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R22",
+      "requirement": "条件买点卖点持有计划",
+      "reason": "输出触发条件、有效期和失效原因，UNKNOWN不可变成false或buy。",
+      "specification_or_reference_paths": [
+        "contracts/v3.schema.json",
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R23",
+      "requirement": "做T与网格共享一个物理账户",
+      "reason": "底仓、当日买入锁定、现金预留和其他计划争用不能重复利用。",
+      "specification_or_reference_paths": [
+        "execution/unified_ledger.py",
+        "execution/execution_standard.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "execution/test_unified_ledger.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R24",
+      "requirement": "统一成交事实、记账和业绩口径",
+      "reason": "不同输入渠道可有不同成交证据，但相同规范事件必须得出同一账。",
+      "specification_or_reference_paths": [
+        "execution/execution_standard.md",
+        "execution/unified_ledger.py"
+      ],
+      "source_refs": [
+        "EXS01",
+        "EXS02",
+        "EXS03"
+      ],
+      "verification_paths": [
+        "execution/test_unified_ledger.py",
+        "execution/run_benchmark.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R25",
+      "requirement": "手算benchmark与独立恒等式",
+      "reason": "三个入口共用内核只能检查入口一致性，需手算与独立净值数量校验。",
+      "specification_or_reference_paths": [
+        "execution/golden_fixtures.json",
+        "execution/benchmark_spec.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "execution/test_unified_ledger.py",
+        "execution/run_benchmark.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R26",
+      "requirement": "真实成交先保留再对账",
+      "reason": "外部事实不能因当前模拟规则不接受而被丢弃。",
+      "specification_or_reference_paths": [
+        "execution/execution_standard.md",
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R27",
+      "requirement": "策略六职责与多维标签路由",
+      "reason": "selection/allocation/entry/holding/execution/exit可组合，职责不可含糊。",
+      "specification_or_reference_paths": [
+        "catalogs/strategy_catalog_v3.json",
+        "catalogs/taxonomy.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "catalogs/validate_catalogs.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R28",
+      "requirement": "传统、监督学习、LLM、RL同池比较",
+      "reason": "方法不同不改变数据截止、费用、预算和验收基准。",
+      "specification_or_reference_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "research/hypotheses.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R29",
+      "requirement": "瑞士轮组织研究但晋级靠独立证据",
+      "reason": "配对节约比较预算；比赛名次不代替样本外和前向验证。",
+      "specification_or_reference_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "integration/integration_schema.sql"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R30",
+      "requirement": "策略组合评估边际价值",
+      "reason": "相关候选堆叠会重复同一信号；按共同账户比较组合与基线。",
+      "specification_or_reference_paths": [
+        "spec/STRATEGY_LEAGUE_SPEC.md",
+        "reference_features/FEATURE_STRATEGY_PROTOCOLS.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R31",
+      "requirement": "最新论文发现登记与复现路线",
+      "reason": "会议名或发布日期不能证明适配A股；每篇有读深、条件和对照。",
+      "specification_or_reference_paths": [
+        "research/papers_registry.json",
+        "research/papers_cs_synthesis.md"
+      ],
+      "source_refs": [
+        "CS01",
+        "CS05",
+        "CS08"
+      ],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R32",
+      "requirement": "论文漂移检测与预算分配作研究候选",
+      "reason": "CS理论假设须在交易标签中检验，不能直接宣布收益成立。",
+      "specification_or_reference_paths": [
+        "research/papers_cs_2026.json",
+        "research/review_cs_methods.md"
+      ],
+      "source_refs": [
+        "CS03",
+        "CS06"
+      ],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R33",
+      "requirement": "未来模型通过能力合同升级",
+      "reason": "保留输出和hash以精确回放，model+seed不能保证重新调用同输出。",
+      "specification_or_reference_paths": [
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R34",
+      "requirement": "接口到服务、表、合同逐项绑定",
+      "reason": "结构schema之外还要核对来源、数据时点和业务不变量。",
+      "specification_or_reference_paths": [
+        "contracts/api_bindings.json",
+        "integration/validate_integration.py"
+      ],
+      "source_refs": [
+        "DB12"
+      ],
+      "verification_paths": [
+        "integration/validate_integration.py",
+        "execution/review_contracts_static.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    },
+    {
+      "requirement_id": "R35",
+      "requirement": "无旧代码依赖的并行开发",
+      "reason": "独占路径和单一合同负责人避免并行开发制造新的割裂。",
+      "specification_or_reference_paths": [
+        "AGENT_START_PROMPT.md",
+        "traceability/work_packages.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R36",
+      "requirement": "保留旧代码审计证据和修复理由",
+      "reason": "435文件清点不等于逐行证明；语义审查深度和30发现明确记录。",
+      "specification_or_reference_paths": [
+        "spec/CODE_AUDIT.md",
+        "spec/CODE_AUDIT_V2.md",
+        "traceability/code_inventory.json"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R37",
+      "requirement": "性能目标实测后决定新增存储",
+      "reason": "吞吐与延迟SLO是验收目标，参考程序耗时不冒充生产benchmark。",
+      "specification_or_reference_paths": [
+        "database/acceptance_scenarios.json",
+        "spec/IMPLEMENTATION_GUIDE_V3.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [],
+      "status": "specified_production_implementation_pending"
+    },
+    {
+      "requirement_id": "R38",
+      "requirement": "全链复算与发布回溯",
+      "reason": "决策、数据、策略、账户和报价身份必须闭合；修订形成新版本。",
+      "specification_or_reference_paths": [
+        "integration/INTEGRATION_GUIDE.md",
+        "spec/FINAL_SYSTEM_SPEC.md"
+      ],
+      "source_refs": [],
+      "verification_paths": [
+        "execution/synthetic_vertical_slice.py"
+      ],
+      "status": "specified_with_bounded_reference"
+    }
+  ]
+}

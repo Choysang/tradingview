@@ -1,0 +1,86 @@
+{
+  "reviewer": "v32_signals_strategy",
+  "review_date": "2026-11-11",
+  "scope": {
+    "render_directory": "report_render_v32_03",
+    "document_page_count": 167,
+    "pages_reviewed": [
+      94,
+      95,
+      96,
+      97
+    ],
+    "reviewed_count": 4,
+    "method": "Opened original native-size PNGs directly, 2 images per call, no resizing or text-only substitute.",
+    "read_only": true,
+    "package_tests_run": false
+  },
+  "overall_status": "pass",
+  "counts": {
+    "pass": 4,
+    "revision_required": 0
+  },
+  "closure": {
+    "prior_report": "research_v5/qa/word_signals_final_v32.json",
+    "prior_render": "report_render_v32_02",
+    "prior_page": 98,
+    "prior_issue": "near_empty_chapter_tail",
+    "status": "closed",
+    "observation": "最终第 95 页为开发指南完整结尾，第 96 页直接进入下一章；旧版两行入口段落独占整页的问题不再出现。",
+    "remaining_required_fixes": []
+  },
+  "pages": [
+    {
+      "page": 94,
+      "status": "pass",
+      "notes": "任务输入输出合同、迁移顺序与真实来源清单布局完整，长路径及标识符均正常，正文不碰页眉页脚。",
+      "issues": [],
+      "image_path": "report_render_v32_03/page-94.png",
+      "image_sha256": "e7988c8a6deb0ef090c1c5ef1c54629f96f02db45c160ad85c4d49a2c518ba58",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 95,
+      "status": "pass",
+      "notes": "开发指南第 6–9 节完整收尾于本页；最后两行用户界面约束可读，无额外短尾页或悬空标题。",
+      "issues": [],
+      "image_path": "report_render_v32_03/page-95.png",
+      "image_sha256": "08330f4d136023c22333d382c4a8815353d710009b9e1631e865eae3530c6dc9",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 96,
+      "status": "pass",
+      "notes": "下一章“第十四部分 已完成验证与实施门槛”直接开始；三列交付结构表完整，未见近空白过渡页。",
+      "issues": [],
+      "image_path": "report_render_v32_03/page-96.png",
+      "image_sha256": "d94bb25c5eace7deed3eeb3072a0e8998f04b4e41ec8784b5a8cd4abf3367c6c",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    },
+    {
+      "page": 97,
+      "status": "pass",
+      "notes": "验证表首段正常，行高和换行完整，最后一行与页脚分离，无裁切、重叠或缺字。",
+      "issues": [],
+      "image_path": "report_render_v32_03/page-97.png",
+      "image_sha256": "35edf04e22a34b15b262c29cd48dcb99a46e0b67b89adcb2b1cfb797d81a1b12",
+      "pixel_dimensions": [
+        1547,
+        2002
+      ]
+    }
+  ],
+  "limits": [
+    "本轮独立视觉复核仅覆盖最终第 94–97 页及对应短尾闭合；全书其他页的像素一致性与其他分段复核由主审整合。",
+    "未重跑整包测试，未修改正文、Word、代码或其他审查记录。"
+  ]
+}

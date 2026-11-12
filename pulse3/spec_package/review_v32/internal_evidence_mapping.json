@@ -1,0 +1,367 @@
+[
+  {
+    "internal_claim_id": "IE01",
+    "unit_id": "R09-016",
+    "input_line": 25,
+    "input_claim": "| 冻结融合分的排序能力稳定；只做多头部的风格匹配超额不显著 | E067、E066 |",
+    "legacy_experiment_ids": [
+      "E067",
+      "E066"
+    ],
+    "related_decision_ids": [
+      "AL105",
+      "AL119",
+      "AL120"
+    ],
+    "decision_reason": "排序稳定与头部多头超额不显著属于E066/E067样本和基准，不能合成已验证盈利。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE02",
+    "unit_id": "R09-017",
+    "input_line": 26,
+    "input_claim": "| 成本是主书的瓶颈；持 10 日待前向 | E063、E065 |",
+    "legacy_experiment_ids": [
+      "E063",
+      "E065"
+    ],
+    "related_decision_ids": [
+      "AL119"
+    ],
+    "decision_reason": "成本瓶颈依账户profile与成交规则；h10待前向不是已验证更优。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE03",
+    "unit_id": "R09-018",
+    "input_line": 27,
+    "input_claim": "| 分数的价值在避开最差的股票 | E071 |",
+    "legacy_experiment_ids": [
+      "E071"
+    ],
+    "related_decision_ids": [
+      "SS096",
+      "SS131"
+    ],
+    "decision_reason": "尾部可避开不等于任意否决器能改善同一组合；要做配对增量比较。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE04",
+    "unit_id": "R09-019",
+    "input_line": 28,
+    "input_claim": "| 净值均线降仓有效，按市场状态缩放无效 | E036、E040、E044 |",
+    "legacy_experiment_ids": [
+      "E036",
+      "E040",
+      "E044"
+    ],
+    "related_decision_ids": [
+      "AL039",
+      "AL106",
+      "SS011",
+      "SS048",
+      "SS136"
+    ],
+    "decision_reason": "均线减仓及状态缩放是具体实现/参数结果，分别保留无门主书和介入书。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE05",
+    "unit_id": "R09-020",
+    "input_line": 29,
+    "input_claim": "| 传统技术战法、追涨打板、追近期冠军、按状态或类比选策略均不成立 | E003、E033、E058、E027、E005、E006、E042 |",
+    "legacy_experiment_ids": [
+      "E003",
+      "E033",
+      "E058",
+      "E027",
+      "E005",
+      "E006",
+      "E042"
+    ],
+    "related_decision_ids": [
+      "AL007",
+      "AL111",
+      "AL112",
+      "AL113",
+      "AL160",
+      "AL190",
+      "SS011",
+      "SS043",
+      "SS075",
+      "SS084"
+    ],
+    "decision_reason": "多个实验失败不永久否定技术、打板、冠军或状态/类比家族；75/78还存在重测重叠。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE06",
+    "unit_id": "R09-021",
+    "input_line": 30,
+    "input_claim": "| 风格匹配基准下无日线信号跨两段存活 | E062 |",
+    "legacy_experiment_ids": [
+      "E062"
+    ],
+    "related_decision_ids": [
+      "AL093",
+      "AL120",
+      "AL182"
+    ],
+    "decision_reason": "跨两段不存活限该信号集、段落和风格控制；不能推广所有日线未来无效。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE07",
+    "unit_id": "R09-022",
+    "input_line": 31,
+    "input_claim": "| 持有多日的检验必须用块自助 | E082 |",
+    "legacy_experiment_ids": [
+      "E082"
+    ],
+    "related_decision_ids": [
+      "AL092",
+      "AL108",
+      "AL184"
+    ],
+    "decision_reason": "重叠持有需处理依赖，块自助是一种方法；块长、平稳性和其他有效估计法需说明。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE08",
+    "unit_id": "R09-023",
+    "input_line": 32,
+    "input_claim": "| 缠论三买的超额来自前视 | E061 |",
+    "legacy_experiment_ids": [
+      "E061"
+    ],
+    "related_decision_ids": [
+      "AL114",
+      "AL195",
+      "SS043"
+    ],
+    "decision_reason": "只否定该缠论实现的前视超额；修正确认时点后可重新登记研究。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE09",
+    "unit_id": "R09-024",
+    "input_line": 33,
+    "input_claim": "| 移动止损不优于固定持有；倒 T 有害 | E060、E023 |",
+    "legacy_experiment_ids": [
+      "E060",
+      "E023"
+    ],
+    "related_decision_ids": [
+      "AL115",
+      "SS100"
+    ],
+    "decision_reason": "固定持有、移动止损、倒T比较绑定初始仓位与路径；总NAV及T+1共同评价。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE10",
+    "unit_id": "R09-025",
+    "input_line": 34,
+    "input_claim": "| 有利空公告的超跌继续跑输；超涨之后为负但对主书冗余 | E070、E079 |",
+    "legacy_experiment_ids": [
+      "E070",
+      "E079"
+    ],
+    "related_decision_ids": [
+      "AL108",
+      "AL120",
+      "AL196",
+      "SS009"
+    ],
+    "decision_reason": "公告研究的选择/负样本/情绪方向有边界，不能把五日负收益直接变成组合否决收益。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE11",
+    "unit_id": "R09-026",
+    "input_line": 35,
+    "input_claim": "| 散户集中席位共买之后显著为负 | E048 |",
+    "legacy_experiment_ids": [
+      "E048"
+    ],
+    "related_decision_ids": [
+      "AL109",
+      "AL183",
+      "SS038"
+    ],
+    "decision_reason": "席位共买后负收益是条件样本，公开席位不是个人身份且有披露选择偏差。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE12",
+    "unit_id": "R09-027",
+    "input_line": 36,
+    "input_claim": "| 外盘隔夜信息在竞价中已定价；议息反应日开盘偏弱 | E072、E084、E083 |",
+    "legacy_experiment_ids": [
+      "E072",
+      "E084",
+      "E083"
+    ],
+    "related_decision_ids": [
+      "AL110",
+      "AL116",
+      "AL183",
+      "AL191",
+      "SS007",
+      "SS010"
+    ],
+    "decision_reason": "部分外盘指数及特定事件不代表所有国际信息；A50/汇率/商品等另有输入覆盖。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE13",
+    "unit_id": "R09-028",
+    "input_line": 37,
+    "input_claim": "| 宏观日历事件无稳定方向；宽基放量本身不指向方向 | E073、E074 |",
+    "legacy_experiment_ids": [
+      "E073",
+      "E074"
+    ],
+    "related_decision_ids": [
+      "SS005",
+      "SS040"
+    ],
+    "decision_reason": "宏观与ETF结果限定定义和事件独立数；宽基放量不能识别国家队。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE14",
+    "unit_id": "R09-029",
+    "input_line": 38,
+    "input_claim": "| 大模型判断只有弱且未过多重检验的正向；反向使用错误；只能前向 | E001、E025、E046、E064、E091、E092 |",
+    "legacy_experiment_ids": [
+      "E001",
+      "E025",
+      "E046",
+      "E064",
+      "E091",
+      "E092"
+    ],
+    "related_decision_ids": [
+      "AL003",
+      "AL117",
+      "AL118",
+      "AL186",
+      "AL197",
+      "SS096"
+    ],
+    "decision_reason": "不同LLM实验的弱结果、反向错误和前向要求分别保留，不永久禁止未来模型。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE15",
+    "unit_id": "R09-030",
+    "input_line": 39,
+    "input_claim": "| 新闻规则只读标题；旧规则 22% 命中来自正文且几乎全错 | E088 |",
+    "legacy_experiment_ids": [
+      "E088"
+    ],
+    "related_decision_ids": [
+      "AL074",
+      "AL097",
+      "AL186"
+    ],
+    "decision_reason": "E088标题规则仍有无标题120字/严重300字例外；22%旧记录不是本轮重新标注准确率。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE16",
+    "unit_id": "R09-031",
+    "input_line": 40,
+    "input_claim": "| 题材成分的前视；巨潮可得时点正确的行业历史 | E026、经验卡 |",
+    "legacy_experiment_ids": [
+      "E026"
+    ],
+    "related_decision_ids": [
+      "AD033",
+      "AD050",
+      "AL048",
+      "AL114",
+      "AL156"
+    ],
+    "decision_reason": "点时成分与公司披露需要原始版本；经验卡不自动证明完整历史可用。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE17",
+    "unit_id": "R09-032",
+    "input_line": 41,
+    "input_claim": "| 腾讯前复权是减法复权；分钟主机每天取到约 150–300 只后被拦截（分段请求的对策尚无结论） | 经验卡、E090 |",
+    "legacy_experiment_ids": [
+      "E090"
+    ],
+    "related_decision_ids": [
+      "AL021",
+      "AL025",
+      "AL053",
+      "AL054",
+      "AL112"
+    ],
+    "decision_reason": "前复权供应商定义及取数上限是旧经验，适配器必须校验当期接口，不当稳定服务承诺。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE18",
+    "unit_id": "R09-033",
+    "input_line": 42,
+    "input_claim": "| 服务器对各行情主机的可达性；现有单进程内存约 2.7 GB；首个录制日的原始与 Parquet 体积 | 项目记忆（2026-11-02 至 11-10 的服务器实测） |",
+    "legacy_experiment_ids": [],
+    "related_decision_ids": [
+      "AL017",
+      "AL070",
+      "AL077",
+      "AL107",
+      "AL128"
+    ],
+    "decision_reason": "服务器连通、2.7GB及首日字节数未在本轮实测；容量按假设模型及待测profile。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE19",
+    "unit_id": "R09-034",
+    "input_line": 43,
+    "input_claim": "| 2026-11-06 主板等权开盘跳空 −2.38%；在 490 套策略里“发现”噪声的实例；无效策略最大 t 值的期望 | 旧仓库的闭环评审文档（2026-11-08），随 `docs/archive/` 保留 |",
+    "legacy_experiment_ids": [],
+    "related_decision_ids": [
+      "SS093"
+    ],
+    "decision_reason": "单日-2.38%与490噪声实验只能作为旧记录，期望最大t需假设、相关性及搜索家族。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE20",
+    "unit_id": "R09-035",
+    "input_line": 44,
+    "input_claim": "| 750 日 × 5000 只的组合回测约 1.5 秒 | 旧架构文档的自述，未重测 |",
+    "legacy_experiment_ids": [],
+    "related_decision_ids": [
+      "AD034",
+      "SS066",
+      "SS074"
+    ],
+    "decision_reason": "1.5秒性能是旧自述，缺硬件、缓存、线程、算法与样本边界，不能作为新系统SLO。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  },
+  {
+    "internal_claim_id": "IE21",
+    "unit_id": "R09-036",
+    "input_line": 45,
+    "input_claim": "| 冻结融合分与主书的算法、参数 | 旧研究脚本（本规格 06 卷附录 A 已完整转述） |",
+    "legacy_experiment_ids": [],
+    "related_decision_ids": [
+      "AD004",
+      "AD015",
+      "AD019",
+      "AL087",
+      "AL170"
+    ],
+    "decision_reason": "附录A未完全转述实际冻结配方；因子清单、参数、环境和缺失语义仍需manifest导出。",
+    "actual_status": "legacy_record_reviewed_not_independently_reproduced"
+  }
+]

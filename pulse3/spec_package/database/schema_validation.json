@@ -1,0 +1,14 @@
+{
+  "plpgsql_function_count": 9,
+  "plpgsql_syntax_parsed": true,
+  "checked_at": "2026-11-10",
+  "parser": "pglast v8.7",
+  "sql_statement_count": 76,
+  "table_count": 37,
+  "field_count": 352,
+  "all_field_descriptions_present": true,
+  "sql_sha256": "7066cc83650ae07602a8585a91757eb448daae1bb5e123f983a02d77474274f2",
+  "postgres_migration_executed": false,
+  "trigger_bodies_executed": false,
+  "performance_benchmark_executed": false
+}

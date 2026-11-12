@@ -1,0 +1,554 @@
+{
+  "version": "3.1.0-candidate",
+  "as_of": "2026-11-11",
+  "status": "specification_not_runtime_implementation",
+  "new_tables": 0,
+  "new_http_operations": 0,
+  "extensions": [
+    {
+      "proposal_id": "SP04",
+      "name": "session_forecast_card",
+      "status": "design_candidate",
+      "why": "把四时段复盘从每日重新叙述变成不可覆盖的可评分预测；区分原文事实、概率准确性与交易增益。",
+      "existing_bindings": [
+        {
+          "table": "intelligence.claim_revision",
+          "columns": [
+            "claim_revision_id",
+            "subject_kind",
+            "subject_key",
+            "predicate",
+            "object_payload",
+            "claim_schema_version",
+            "assertion_type",
+            "claim_status",
+            "available_at"
+          ]
+        },
+        {
+          "table": "intelligence.claim_evidence",
+          "columns": [
+            "claim_revision_id",
+            "document_revision_id",
+            "evidence_ordinal",
+            "evidence_span",
+            "relation"
+          ]
+        },
+        {
+          "table": "market.feature_result",
+          "columns": [
+            "feature_id",
+            "definition_version",
+            "full_key",
+            "snapshot_id",
+            "decision_as_of",
+            "result_uri",
+            "result_hash",
+            "computed_at"
+          ]
+        }
+      ],
+      "api_bindings": [
+        {
+          "operation_id": "getStockEvidence",
+          "schema_def": "EvidenceClaim",
+          "existing_properties": [
+            "object_payload",
+            "claim_schema_version",
+            "claim_revision_id",
+            "available_at"
+          ]
+        },
+        {
+          "operation_id": "getStockWorkspace",
+          "schema_def": "Workspace",
+          "existing_properties": [
+            "features"
+          ]
+        },
+        {
+          "operation_id": "getStockCommunity",
+          "schema_def": "CommunityObservation",
+          "existing_properties": [
+            "analysis_payload",
+            "analysis_schema_version",
+            "sampled_at",
+            "coverage_status"
+          ]
+        }
+      ],
+      "proposed_payload_contracts": [
+        {
+          "name": "CommunityForecastPayload",
+          "envelope": "EvidenceClaim.object_payload",
+          "requires_registration": true,
+          "fields": [
+            {
+              "name": "forecast_target_ref",
+              "type": "ArtifactRef",
+              "meaning": "不可变的目标定义，明确证券、事件/收益目标、比较基准和到期判定"
+            },
+            {
+              "name": "resolution_window_start",
+              "type": "Timestamp",
+              "meaning": "结果观测窗口起点"
+            },
+            {
+              "name": "resolution_window_end",
+              "type": "Timestamp",
+              "meaning": "结果窗口终点，必须晚于起点"
+            },
+            {
+              "name": "prediction_probability",
+              "type": "Decimal|null",
+              "meaning": "仅原文明确概率时可填，范围0至1，不能从情绪词臆测"
+            },
+            {
+              "name": "probability_origin",
+              "type": "source_explicit|not_provided",
+              "meaning": "非显式概率不可评分"
+            },
+            {
+              "name": "probability_evidence_ordinal",
+              "type": "PositiveInteger|null",
+              "meaning": "存在概率时引用外层evidence中的原文跨度"
+            },
+            {
+              "name": "session_kind",
+              "type": "versioned calendar label",
+              "meaning": "从交易日历解析盘前/盘中/午间/盘后，不另写一套固定会话规则"
+            },
+            {
+              "name": "resolution_policy_version",
+              "type": "string",
+              "meaning": "先冻结如何判定结果，不能看结果再改目标"
+            }
+          ],
+          "note": "这些都是拟新增载荷字段，不是当前主schema的顶层字段。由root最终统一注册和命名。"
+        },
+        {
+          "name": "CommunityForecastResolutionArtifact",
+          "envelope": "FeatureResult.artifact",
+          "requires_registration": true,
+          "fields": [
+            {
+              "name": "claim_revision_id",
+              "type": "UUID",
+              "meaning": "被评分的原预测精确版本"
+            },
+            {
+              "name": "resolution_state",
+              "type": "pending|resolved|not_scorable|disputed",
+              "meaning": "结果未知不等于错误"
+            },
+            {
+              "name": "outcome_snapshot_ref",
+              "type": "ArtifactRef|null",
+              "meaning": "到期结果版本及hash"
+            },
+            {
+              "name": "resolved_at",
+              "type": "Timestamp|null",
+              "meaning": "真正完成评分时点"
+            },
+            {
+              "name": "brier_error",
+              "type": "Decimal|null",
+              "meaning": "仅明确二元目标和原始概率时计算(p-y)^2"
+            },
+            {
+              "name": "reason",
+              "type": "string|null",
+              "meaning": "未到期、无概率、缺证据等具体原因"
+            }
+          ]
+        }
+      ],
+      "migration_boundary": "无需新增SQL表或HTTP字段；需注册载荷schema、实现Repository跨引用校验与artifact读取。现有research.experiment_run要求非空instance_id，普通观点评分不能伪造策略实例。"
+    },
+    {
+      "proposal_id": "SP13",
+      "name": "layer_capability_policy",
+      "status": "design_candidate",
+      "why": "避免回放和图表看起来完整、实际依赖缺失或低粒度数据；Lightweight Charts不提供行情和内置指标。",
+      "existing_bindings": [
+        {
+          "table": "core.source_endpoint",
+          "columns": [
+            "source_id",
+            "endpoint_id",
+            "source_schema_version",
+            "mapping_version",
+            "policy_document"
+          ]
+        },
+        {
+          "table": "market.dataset_manifest",
+          "columns": [
+            "contract_id",
+            "schema_version",
+            "coverage_document",
+            "content_hash"
+          ]
+        },
+        {
+          "table": "market.feature_result",
+          "columns": [
+            "feature_id",
+            "full_key",
+            "result_uri",
+            "result_hash"
+          ]
+        }
+      ],
+      "api_bindings": [
+        {
+          "operation_id": "getStockWorkspace",
+          "schema_def": "Workspace",
+          "existing_properties": [
+            "features",
+            "chart_window_refs"
+          ]
+        },
+        {
+          "operation_id": "getDataStatus",
+          "schema_def": "SourceHealth",
+          "existing_properties": [
+            "runtime_state",
+            "freshness_state",
+            "last_canonical_ready_at"
+          ]
+        }
+      ],
+      "proposed_payload_contracts": [
+        {
+          "name": "LayerCapabilityArtifact",
+          "envelope": "FeatureResult.artifact",
+          "requires_registration": true,
+          "fields": [
+            {
+              "name": "layer_id",
+              "type": "string",
+              "meaning": "如auction_imbalance、replay_comments、volume_profile"
+            },
+            {
+              "name": "input_snapshot_refs",
+              "type": "ArtifactRef[]",
+              "meaning": "实际使用的数据版本"
+            },
+            {
+              "name": "capability_mode",
+              "type": "observed|estimated|unavailable",
+              "meaning": "观测、明确估算与不可用分别展示"
+            },
+            {
+              "name": "methodology_version",
+              "type": "string|null",
+              "meaning": "估算和渲染语义版本"
+            },
+            {
+              "name": "coverage_reason",
+              "type": "string",
+              "meaning": "所缺粒度/时间窗口，或覆盖范围说明"
+            }
+          ]
+        }
+      ],
+      "migration_boundary": "SourceHealth没有capabilities字段。不得向getDataStatus偷加字段；首期通过内部政策和带严格schema的图层artifact使用。如需直接能力API则另做DTO版本。"
+    },
+    {
+      "proposal_id": "SP15",
+      "name": "etf_observation_lanes",
+      "status": "design_candidate",
+      "why": "ETF成交额、份额变化、申赎执行、申赎额度、投资者身份属于不同事实，分栏防止错误字段串用。",
+      "existing_bindings": [
+        {
+          "table": "intelligence.funding_observation",
+          "columns": [
+            "funding_observation_id",
+            "metric_namespace",
+            "metric_name",
+            "methodology_id",
+            "methodology_version",
+            "measurement_class",
+            "trade_or_order_basis",
+            "observation_window_start",
+            "observation_window_end",
+            "canonical_value",
+            "canonical_unit",
+            "available_at",
+            "field_quality"
+          ]
+        }
+      ],
+      "api_bindings": [
+        {
+          "operation_id": "getStockFundFlow",
+          "schema_def": "FundFlowObservation",
+          "existing_properties": [
+            "metric_name",
+            "metric_namespace",
+            "measurement_class",
+            "trade_or_order_basis",
+            "canonical_value",
+            "canonical_unit",
+            "missing_reason"
+          ]
+        }
+      ],
+      "proposed_metric_names": [
+        "etf_secondary_turnover_amount_cny",
+        "etf_disclosed_share_change",
+        "etf_primary_creation_executed",
+        "etf_primary_redemption_executed",
+        "etf_primary_creation_quota"
+      ],
+      "metric_names_are": "proposed explicit registry identifiers; not existing SQL columns and not active feeds",
+      "migration_boundary": "字段结构可复用，不新增表。每种metric需独立登记口径和来源；缺实际申赎就是null，额度字段不得映射为执行字段。"
+    },
+    {
+      "proposal_id": "SP17",
+      "name": "convertible_underlying_relation",
+      "status": "design_candidate",
+      "why": "补充已知债股关系的跨品种观察，先检验对主板正股选股的边际价值，不把未经验证先行性写成套利。",
+      "existing_bindings": [
+        {
+          "table": "core.instrument",
+          "columns": [
+            "instrument_id",
+            "instrument_type",
+            "currency"
+          ]
+        },
+        {
+          "table": "intelligence.claim_revision",
+          "columns": [
+            "subject_kind",
+            "subject_key",
+            "predicate",
+            "object_payload",
+            "claim_schema_version",
+            "available_at"
+          ]
+        },
+        {
+          "table": "intelligence.claim_evidence",
+          "columns": [
+            "claim_revision_id",
+            "document_revision_id",
+            "evidence_span"
+          ]
+        },
+        {
+          "table": "market.feature_result",
+          "columns": [
+            "full_key",
+            "snapshot_id",
+            "result_uri",
+            "result_hash"
+          ]
+        }
+      ],
+      "api_bindings": [
+        {
+          "operation_id": "getStockEvidence",
+          "schema_def": "EvidenceClaim",
+          "existing_properties": [
+            "subject_kind",
+            "subject_key",
+            "predicate",
+            "object_payload",
+            "claim_schema_version"
+          ]
+        },
+        {
+          "operation_id": "getStockWorkspace",
+          "schema_def": "FeatureResult",
+          "existing_properties": [
+            "key",
+            "artifact"
+          ]
+        }
+      ],
+      "proposed_payload_contracts": [
+        {
+          "name": "ConvertibleUnderlyingPayload",
+          "envelope": "EvidenceClaim.object_payload",
+          "requires_registration": true,
+          "fields": [
+            {
+              "name": "underlying_instrument_id",
+              "type": "UUID",
+              "meaning": "已登记正股稳定身份；债券身份在外层subject_key"
+            },
+            {
+              "name": "effective_from",
+              "type": "Timestamp",
+              "meaning": "债股关系业务生效起点"
+            },
+            {
+              "name": "effective_to",
+              "type": "Timestamp|null",
+              "meaning": "半开有效区间终点，未结束为null"
+            }
+          ],
+          "outer_binding": {
+            "subject_kind": "instrument",
+            "subject_key": "convertible instrument UUID",
+            "predicate": "convertible_underlying_of"
+          },
+          "cross_reference_checks": [
+            "subject_key和underlying_instrument_id确实在core.instrument存在且不同",
+            "外层证券类型为已登记的convertible instrument类别，内层为equity",
+            "evidence精确指向披露证据，available_at不提前",
+            "effective_to为空或晚于effective_from"
+          ]
+        }
+      ],
+      "migration_boundary": "无需新SQL表或顶层HTTP字段，但JSON内ID没有自动FK，必须Repository核对。需要债券行情量纲/条款的独立源合同；当前CanonicalQuote.volume_shares和A股交易账户不能被冒称已支持债券执行。"
+    }
+  ],
+  "acceptance_scenarios": [
+    {
+      "scenario_id": "SPT01",
+      "proposal_id": "SP02",
+      "input": "只有官方原始公告且超过180秒",
+      "expected": "仍为官方披露；不因来源数自动降为rumor",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT02",
+      "proposal_id": "SP02",
+      "input": "三家转载同一官方原稿",
+      "expected": "一个origin_group，多个传播载体",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT03",
+      "proposal_id": "SP03",
+      "input": "已配置资讯源成功返回空集",
+      "expected": "传输healthy、last_new_record_at不伪刷新",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT04",
+      "proposal_id": "SP03",
+      "input": "来源返回429或鉴权失败",
+      "expected": "分别执行限额退避或auth_required，不无界代理重试",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT05",
+      "proposal_id": "SP04",
+      "input": "盘前预测在盘后被作者修改",
+      "expected": "原claim_revision不变，新内容新revision",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT06",
+      "proposal_id": "SP04",
+      "input": "评论仅表达看好无概率",
+      "expected": "不生成Brier概率评分；保留opinion或无概率forecast",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT07",
+      "proposal_id": "SP04",
+      "input": "预测尚未到期",
+      "expected": "pending且score=null，不当作预测错误或0分",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT08",
+      "proposal_id": "SP04",
+      "input": "事实被证实但策略交易亏损",
+      "expected": "分别显示事实支持与经济结果，不合并为单一正确率",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT09",
+      "proposal_id": "SP14",
+      "input": "只有虚拟竞价量快照",
+      "expected": "可以展示观测量，逐笔撤单率缺失",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT10",
+      "proposal_id": "SP13",
+      "input": "历史回放没有社区互动快照",
+      "expected": "该图层明确不可用，不能借用当前点赞数",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT11",
+      "proposal_id": "SP07",
+      "input": "报告只给机构专用标签",
+      "expected": "report_local_label，不跨报告绑定自然人",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT12",
+      "proposal_id": "SP09",
+      "input": "某席位未出现在前五",
+      "expected": "只能说不在披露榜，不能说没有买入",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT13",
+      "proposal_id": "SP15",
+      "input": "ETF分钟成交额变为历史可比值5倍",
+      "expected": "输出成交脉冲，不输出申赎净额或国家队身份",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT14",
+      "proposal_id": "SP15",
+      "input": "PCF载有当日净申购上限800万份",
+      "expected": "存额度，不存实际申购800万份",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT15",
+      "proposal_id": "SP17",
+      "input": "后来公布转股价下修",
+      "expected": "新可得版本适用于之后，旧特征快照不变",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT16",
+      "proposal_id": "SP17",
+      "input": "转债报价比正股晚60秒或已停牌",
+      "expected": "拒绝以异步时刻计算领先性，显式缺失或独立受控分析",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT17",
+      "proposal_id": "SP10",
+      "input": "板块最强股为创业板，用户主板母集",
+      "expected": "可作为板块上下文；不进入默认可推荐主板榜",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT18",
+      "proposal_id": "SP10",
+      "input": "板块仅有4个符合要求候选",
+      "expected": "返回4个，不凑足10个",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT19",
+      "proposal_id": "SP12",
+      "input": "同一消息重复转载100次",
+      "expected": "更新传播统计，实质相同事件合并重算",
+      "execution_status": "not_executed"
+    },
+    {
+      "scenario_id": "SPT20",
+      "proposal_id": "SP12",
+      "input": "旧输入模型慢结果晚于新发布",
+      "expected": "保留历史输出但拒绝覆盖新release",
+      "execution_status": "not_executed"
+    }
+  ]
+}

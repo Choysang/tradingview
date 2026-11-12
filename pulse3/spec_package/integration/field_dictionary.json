@@ -1,0 +1,3016 @@
+{
+  "schema_version": "3.0.0",
+  "scope": "Integration seed fields only; core/source/execution dictionaries remain the authorities for their own columns.",
+  "canonical_contract": "../contracts/v3.schema.json",
+  "field_count": 279,
+  "tables": [
+    {
+      "table": "market.quote_projection",
+      "fields": [
+        {
+          "name": "quote_snapshot_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "报价事实所属不可变数据快照",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "证券稳定身份",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "quote_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "源选择、去重、乱序与修订政策；版本序号仅在此政策空间可比",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "live_quote_version",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "同证券同报价政策的单调发布序号，不使用价格或时间字符串代替",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "选定观测来源，不从多源平均制造一笔报价",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "endpoint_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "精确报价接口",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "source_schema_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "来源结构版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mapping_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "字段、单位与时区映射版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "observation_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "原始规范观测血缘",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES ingest.observation"
+          ]
+        },
+        {
+          "name": "trade_date",
+          "postgres_type": "date",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "源/交易所明确的交易日，未知不以抓取日假填",
+          "constraints": []
+        },
+        {
+          "name": "source_event_time",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "源给出的报价时刻，未知必须null",
+          "constraints": []
+        },
+        {
+          "name": "first_seen_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本平台首次收到该报价版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "规范化完成可用时刻，不能改成历史推测时刻",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "currency",
+          "postgres_type": "char(3)",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "当前A股报价为CNY",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "last_price_raw",
+          "postgres_type": "core.price_raw",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "未复权最新成交价；无新成交/未知时允许null",
+          "constraints": []
+        },
+        {
+          "name": "bid_price_raw",
+          "postgres_type": "core.price_raw",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "当前买一价；无L1能力或无报价为null，不填日线收盘",
+          "constraints": []
+        },
+        {
+          "name": "ask_price_raw",
+          "postgres_type": "core.price_raw",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "当前卖一价；无L1能力或无报价为null",
+          "constraints": []
+        },
+        {
+          "name": "bid_volume_shares",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "买一挂单股数，不是成交量或手",
+          "constraints": []
+        },
+        {
+          "name": "ask_volume_shares",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "卖一挂单股数",
+          "constraints": []
+        },
+        {
+          "name": "quality_status",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "valid/partial/invalid/disputed，与按请求时刻派生的新鲜度独立",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "field_quality",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "缺L1、来源修订、缺时间与单位处理依据",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (quote_snapshot_id, instrument_id)",
+        "UNIQUE (instrument_id, quote_policy_version, live_quote_version)",
+        "FOREIGN KEY (source_id, endpoint_id, source_schema_version, mapping_version) REFERENCES core.source_endpoint",
+        "CHECK (live_quote_version > 0 AND currency = 'CNY')",
+        "CHECK (available_at >= first_seen_at)",
+        "CHECK (bid_volume_shares IS NULL OR bid_volume_shares >= 0)",
+        "CHECK (ask_volume_shares IS NULL OR ask_volume_shares >= 0)",
+        "CHECK (quality_status IN ('valid', 'partial', 'invalid', 'disputed'))",
+        "CHECK (jsonb_typeof(field_quality) = 'object')"
+      ]
+    },
+    {
+      "table": "decision.release_slot",
+      "fields": [
+        {
+          "name": "slot_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "稳定发布作用域，包含市场/目标/期限/用户作用域；不是latest字符串随意复用",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "current_release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "当前对外完整发布包，初次发布前为null",
+          "constraints": [
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "pointer_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "当前指针代次；成功发布递增，重试不递增",
+          "constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "issued_stage_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "已签发的最新任务代次，创建新stage时单调递增",
+          "constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "published_stage_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "当前指针来自的stage代次",
+          "constraints": [
+            "NOT NULL",
+            "DEFAULT 0"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "该指针或任务代次最后变更时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "CHECK (pointer_generation >= 0 AND issued_stage_generation >= 0 AND published_stage_generation >= 0)",
+        "CHECK (published_stage_generation <= issued_stage_generation)",
+        "CHECK ((current_release_id IS NULL) = (pointer_generation = 0))",
+        "CHECK ((current_release_id IS NULL) = (published_stage_generation = 0))"
+      ]
+    },
+    {
+      "table": "decision.release_stage",
+      "fields": [
+        {
+          "name": "stage_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次分析任务不可复用的身份，失败重试保留此身份",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "slot_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "任务被签发到哪个发布作用域",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release_slot"
+          ]
+        },
+        {
+          "name": "stage_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "任务签发代次，不能由旧worker重新获取来冒充新任务",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "base_pointer_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "创建stage时捕获的发布指针代次，永不重写",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "base_release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "创建stage时捕获的旧发布包，初始为null",
+          "constraints": [
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "此任务唯一可生成的BUILDING包",
+          "constraints": [
+            "NOT NULL",
+            "UNIQUE",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "decision_as_of",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "此任务固定的信息可得性截止点",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "input_context_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "固定输入闭包摘要；新输入必须创建新stage",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "由协调服务签发stage的时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "UNIQUE (slot_key, stage_generation)",
+        "CHECK (stage_generation > 0 AND base_pointer_generation >= 0)",
+        "CHECK ((base_release_id IS NULL) = (base_pointer_generation = 0))"
+      ]
+    },
+    {
+      "table": "decision.release_publication",
+      "fields": [
+        {
+          "name": "stage_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一个stage最多成功发布一次，作为永久幂等记录",
+          "constraints": [
+            "PRIMARY KEY",
+            "REFERENCES decision.release_stage"
+          ]
+        },
+        {
+          "name": "slot_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "发布作用域",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release_slot"
+          ]
+        },
+        {
+          "name": "pointer_generation",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "这次成功发布之后的代次",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "previous_release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "发布前包，初次发布为null",
+          "constraints": [
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本次成功发布的完整包",
+          "constraints": [
+            "NOT NULL",
+            "UNIQUE",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "event_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "对应同事务outbox事件，永久发布事实不依赖消息保留时长",
+          "constraints": [
+            "NOT NULL",
+            "UNIQUE"
+          ]
+        },
+        {
+          "name": "published_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "指针、release与outbox在同一事务的业务发布时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "UNIQUE (slot_key, pointer_generation)",
+        "FOREIGN KEY (event_id) REFERENCES ops.outbox (event_id) DEFERRABLE INITIALLY DEFERRED",
+        "CHECK (pointer_generation > 0)"
+      ]
+    },
+    {
+      "table": "decision.actionability_snapshot",
+      "fields": [
+        {
+          "name": "actionability_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "当前可行动性叠层身份，分页必须固定此ID",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "冻结分析包，不原地修改其action_rank",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "ranking_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选对应的冻结榜单",
+          "constraints": [
+            "REFERENCES decision.ranking_run"
+          ]
+        },
+        {
+          "name": "account_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "个性化叠层账户，公共研究叠层为null",
+          "constraints": []
+        },
+        {
+          "name": "account_version",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "参与计算的确定账户序号，与account_id成对",
+          "constraints": []
+        },
+        {
+          "name": "quote_snapshot_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本次实时复核使用的具体报价快照",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "actionability_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "触发、库存、价格与排序政策版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "checked_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "复核时刻，不是旧分析decision_as_of",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "valid_until",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "叠层有效期；事件硬失效可更早终止当前展示",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "result_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "不可变ActionabilitySnapshot规范结果，含account_action_rank",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "result_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "规范叠层结果摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (account_id, account_version) REFERENCES execution.account_event (account_id, account_sequence)",
+        "FOREIGN KEY (ranking_id, release_id) REFERENCES decision.ranking_run (ranking_id, release_id)",
+        "CHECK ((account_id IS NULL) = (account_version IS NULL))",
+        "CHECK (account_version IS NULL OR account_version >= 0)",
+        "CHECK (valid_until > checked_at)"
+      ]
+    },
+    {
+      "table": "research.paper_revision",
+      "fields": [
+        {
+          "name": "paper_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "论文稳定身份，DOI/arXiv等外部ID另存",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "paper_revision",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "本站方法卡与来源修订版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "canonical_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "有依据的DOI、arXiv或正式目录ID",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "title",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "论文原标题",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "primary_url",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "原论文/正式会议/作者资源，不把二手总结当论文",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "venue",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "已核验会议或期刊，未知为null",
+          "constraints": []
+        },
+        {
+          "name": "publication_year",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "已核验年份",
+          "constraints": []
+        },
+        {
+          "name": "publication_status",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "preprint/submitted/accepted/published/withdrawn/unknown",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "publication_status_note",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "保留原始状态与核查依据，不能把预印本改称顶会录用",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "read_depth",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "metadata/abstract/full_text_sections/full_text/code_review/reproduced，互不冒充",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "raw_object_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "已存原文证据，可用公开目录研究时暂null",
+          "constraints": [
+            "REFERENCES ingest.raw_object"
+          ]
+        },
+        {
+          "name": "method_card",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "假设、方法、数据、作者结果、局限及可复现步骤的类型化内容",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "content_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "该方法卡与证据版本摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "published_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可证明的源公布时间",
+          "constraints": []
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本站方法卡版本实际可用时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "recorded_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "登记时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (paper_id, paper_revision)",
+        "UNIQUE (canonical_id, paper_revision)",
+        "CHECK (paper_revision > 0)",
+        "CHECK (publication_year IS NULL OR publication_year BETWEEN 1900 AND 2200)",
+        "CHECK (publication_status IN ('preprint', 'submitted', 'accepted', 'published', 'withdrawn', 'unknown'))",
+        "CHECK (read_depth IN ('metadata', 'abstract', 'full_text_sections', 'full_text', 'code_review', 'reproduced'))"
+      ]
+    },
+    {
+      "table": "research.hypothesis",
+      "fields": [
+        {
+          "name": "hypothesis_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "可检验研究假设身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "hypothesis_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "假设内容变化追加版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "paper_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选方法来源论文",
+          "constraints": []
+        },
+        {
+          "name": "paper_revision",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "精确论文方法卡版本",
+          "constraints": []
+        },
+        {
+          "name": "strategy_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选对应策略定义",
+          "constraints": []
+        },
+        {
+          "name": "strategy_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": true,
+          "description_zh": "精确策略版本",
+          "constraints": []
+        },
+        {
+          "name": "claim",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "具体可证伪命题，不能只写某论文很强",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "mechanism",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "预期经济或统计机制",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "forecast_target",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "检验目标定义",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "horizon_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "目标期限",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "input_requirements",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "可得数据、单位、采样与覆盖要求",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "falsification_conditions",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "何种结果否定/限制假设",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "specification_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "假设及协议摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "available_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "假设预登记时点",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (hypothesis_id, hypothesis_version)",
+        "FOREIGN KEY (paper_id, paper_revision) REFERENCES research.paper_revision",
+        "FOREIGN KEY (strategy_id, strategy_version) REFERENCES strategy.definition",
+        "CHECK (hypothesis_version > 0)",
+        "CHECK ((paper_id IS NULL) = (paper_revision IS NULL))",
+        "CHECK ((strategy_id IS NULL) = (strategy_version IS NULL))"
+      ]
+    },
+    {
+      "table": "research.evaluation_context",
+      "fields": [
+        {
+          "name": "evaluation_context_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一组可比较实验的固定语义环境",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "context_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "完整比较口径摘要",
+          "constraints": [
+            "NOT NULL",
+            "UNIQUE"
+          ]
+        },
+        {
+          "name": "forecast_target",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "共同预测/执行收益目标",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "horizon_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "共同预测/持有期限",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "decision_as_of",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "信息可得性边界",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "availability_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "observed/reconstructed等政策明确版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "availability_policy_document",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "派生policy_usable_at的规则引用与延迟假设；绝不改原始available_at",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "universe_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "股票池及成员历史政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "market_rules_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "统一规则版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "execution_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "统一成交模型版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "cost_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "成本与渠道费用版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "ledger_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "统一账本版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "performance_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "TWR/归因/基准定义版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "numeric_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "金额与科学计算精度政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "train_start",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "训练区间起点",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "train_end",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "训练区间终点，半开区间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "validation_start",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "验证区间起点",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "validation_end",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "验证区间终点",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "blind_start",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "最终盲测区间起点，未设置为null",
+          "constraints": []
+        },
+        {
+          "name": "blind_end",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "最终盲测终点",
+          "constraints": []
+        },
+        {
+          "name": "embargo_seconds",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "按标签跨度等预登记的隔离时长，不等于自动消除泄漏",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "benchmark_specification",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "简单基线/持有基线、指标与切片定义",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "access_policy",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "训练/验证/盲测访问预算，禁止联赛轮次反复调盲测",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "比较协议登记时刻",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "sealed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "输入关系写齐后封存，实验只能使用sealed环境",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "CHECK (train_end > train_start AND validation_end > validation_start AND validation_start >= train_end)",
+        "CHECK ((blind_start IS NULL) = (blind_end IS NULL))",
+        "CHECK (blind_start IS NULL OR (blind_start >= validation_end AND blind_end > blind_start))",
+        "CHECK (embargo_seconds >= 0)"
+      ]
+    },
+    {
+      "table": "research.evaluation_input",
+      "fields": [
+        {
+          "name": "evaluation_context_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "固定比较环境",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES research.evaluation_context"
+          ]
+        },
+        {
+          "name": "snapshot_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "确切已发布数据快照",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "input_role",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "bars/evidence/sector_membership/calendar等",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (evaluation_context_id, snapshot_id, input_role)"
+      ]
+    },
+    {
+      "table": "research.experiment_run",
+      "fields": [
+        {
+          "name": "experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次真实运行身份；失败重试和新参数不能混成同一结果",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "instance_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "固定策略参数实例",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES strategy.instance"
+          ]
+        },
+        {
+          "name": "hypothesis_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "被检验假设",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "hypothesis_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "精确假设版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evaluation_context_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "固定比较环境",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES research.evaluation_context"
+          ]
+        },
+        {
+          "name": "run_purpose",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "screening/validation/shadow/blind_final",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "run_state",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "queued/running/completed/failed/cancelled，与策略生命周期不同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "implementation_digest",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "代码/容器/依赖锁摘要引用，不能只有策略名称",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "random_seed",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "可重放随机种子",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "run_manifest",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "模型、特征、数据、状态与环境的完整运行清单",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lease_epoch",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "提交权令牌，失效worker不能覆盖新结果",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "started_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "开始计算时间",
+          "constraints": []
+        },
+        {
+          "name": "completed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "终态完成时间",
+          "constraints": []
+        },
+        {
+          "name": "result_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "结果、交易轨迹与指标清单不可变引用",
+          "constraints": []
+        },
+        {
+          "name": "result_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "结果内容摘要",
+          "constraints": []
+        },
+        {
+          "name": "error_code",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "失败原因；失败不能伪装成功空集",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (hypothesis_id, hypothesis_version) REFERENCES research.hypothesis",
+        "CHECK (run_purpose IN ('screening', 'validation', 'shadow', 'blind_final'))",
+        "CHECK (run_state IN ('queued', 'running', 'completed', 'failed', 'cancelled'))",
+        "CHECK (random_seed >= 0 AND lease_epoch > 0)",
+        "CHECK (run_state <> 'completed' OR (result_ref IS NOT NULL AND result_hash IS NOT NULL AND completed_at IS NOT NULL))",
+        "CHECK (completed_at IS NULL OR started_at IS NULL OR completed_at >= started_at)"
+      ]
+    },
+    {
+      "table": "research.metric_value",
+      "fields": [
+        {
+          "name": "experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "指标所属运行",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES research.experiment_run"
+          ]
+        },
+        {
+          "name": "metric_name",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "明确经济含义的指标名，如executed_strategy_twr",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "metric_definition_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "指标公式与方向政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "slice_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "overall或预登记市场/行业/期限切片",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "value",
+          "postgres_type": "core.finite_decimal",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "结果值；无法计算为null并给原因",
+          "constraints": []
+        },
+        {
+          "name": "unit",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "ratio/CNY/count等；净值变化与概率不可混用",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lower_bound",
+          "postgres_type": "core.finite_decimal",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "若有区间估计则给下界",
+          "constraints": []
+        },
+        {
+          "name": "upper_bound",
+          "postgres_type": "core.finite_decimal",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "与下界成对",
+          "constraints": []
+        },
+        {
+          "name": "confidence_level",
+          "postgres_type": "core.finite_decimal",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "区间含义；无区间时null",
+          "constraints": []
+        },
+        {
+          "name": "sample_count",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "有效观测数，不把股票日数误称独立实验数",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "quality_status",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "valid/partial/invalid/disputed",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "missing_reason",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "value=null的明确原因",
+          "constraints": []
+        },
+        {
+          "name": "computed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "指标完成时刻",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (experiment_id, metric_name, metric_definition_version, slice_key)",
+        "CHECK (sample_count >= 0)",
+        "CHECK (quality_status IN ('valid', 'partial', 'invalid', 'disputed'))",
+        "CHECK (value IS NOT NULL OR missing_reason IS NOT NULL)",
+        "CHECK ((lower_bound IS NULL) = (upper_bound IS NULL))",
+        "CHECK (lower_bound IS NULL OR upper_bound >= lower_bound)",
+        "CHECK (confidence_level IS NULL OR (confidence_level > 0 AND confidence_level < 1))"
+      ]
+    },
+    {
+      "table": "research.league_definition",
+      "fields": [
+        {
+          "name": "league_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "同目标同环境的研究联赛身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "league_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "配对/预算/晋级规则变化产生新版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evaluation_context_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "所有可比对手共用环境",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES research.evaluation_context"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "展示名称",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "pairing_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "瑞士轮/近邻比较及轮空政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "multiple_testing_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "尝试计数与多重比较处理",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "promotion_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "晋级门槛，联赛名次不自动授予active",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "round_budget",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "最大轮数/计算预算的一部分",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "policy_document",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "重复对手、失效场景、同源家族及盲测边界",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "definition_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "联赛定义摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "规则冻结时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (league_id, league_version)",
+        "CHECK (league_version > 0 AND round_budget > 0)"
+      ]
+    },
+    {
+      "table": "research.league_round",
+      "fields": [
+        {
+          "name": "league_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "联赛身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "league_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "固定联赛定义",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "round_no",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "从1开始的轮次",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "round_state",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "scheduled/running/completed/failed",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "scheduled_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本轮安排时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "completed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "本轮结束时间",
+          "constraints": []
+        },
+        {
+          "name": "result_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "本轮比较与不可比较原因的完整记录",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (league_id, league_version, round_no)",
+        "FOREIGN KEY (league_id, league_version) REFERENCES research.league_definition",
+        "CHECK (round_no > 0)",
+        "CHECK (round_state IN ('scheduled', 'running', 'completed', 'failed'))",
+        "CHECK (round_state <> 'completed' OR (completed_at IS NOT NULL AND result_ref IS NOT NULL))"
+      ]
+    },
+    {
+      "table": "research.league_pairing",
+      "fields": [
+        {
+          "name": "pairing_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次可追溯配对",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "league_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "联赛身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "league_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "固定定义版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "round_no",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "所属轮次",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "left_instance_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "左侧策略实例",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES strategy.instance"
+          ]
+        },
+        {
+          "name": "right_instance_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "轮空时为null",
+          "constraints": [
+            "REFERENCES strategy.instance"
+          ]
+        },
+        {
+          "name": "left_experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "明确左侧已运行结果",
+          "constraints": [
+            "REFERENCES research.experiment_run"
+          ]
+        },
+        {
+          "name": "right_experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "明确右侧已运行结果",
+          "constraints": [
+            "REFERENCES research.experiment_run"
+          ]
+        },
+        {
+          "name": "outcome",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "pending/left/right/tie/bye/incomparable",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "comparison_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "配对指标、成本与区间判定政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "score_delta",
+          "postgres_type": "core.finite_decimal",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "只在已对齐可比较目标下记录",
+          "constraints": []
+        },
+        {
+          "name": "reason_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "对齐检查、结果或无法比较原因",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "completed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "比较完成时间",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (league_id, league_version, round_no) REFERENCES research.league_round",
+        "CHECK (right_instance_id IS NULL OR right_instance_id <> left_instance_id)",
+        "CHECK (outcome IN ('pending', 'left', 'right', 'tie', 'bye', 'incomparable'))",
+        "CHECK (outcome <> 'bye' OR right_instance_id IS NULL)",
+        "CHECK (outcome NOT IN ('left', 'right', 'tie') OR (right_instance_id IS NOT NULL AND left_experiment_id IS NOT NULL AND right_experiment_id IS NOT NULL AND completed_at IS NOT NULL))"
+      ]
+    },
+    {
+      "table": "research.promotion_decision",
+      "fields": [
+        {
+          "name": "promotion_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次晋级/暂停/退役政策判定",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "instance_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "被评估策略实例",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES strategy.instance"
+          ]
+        },
+        {
+          "name": "evaluation_experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "核心验收运行，必须对应本实例",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES research.experiment_run"
+          ]
+        },
+        {
+          "name": "policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "生命周期准入与退役政策版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "from_lifecycle",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "判定时的原状态",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "to_lifecycle",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "政策建议的新状态，拒绝时可与旧状态相同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "outcome",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "approved/rejected；保存被拒证据不只保存胜者",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "gate_results",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "数据、执行、样本外、成本、盲测、影子等逐门槛依据",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "reason",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "具体通过/拒绝理由",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "decided_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "实际决定时刻，不能倒填入训练",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "applied_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "StrategyRegistry CAS成功应用时刻；纯记录不自动改策略",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "CHECK (from_lifecycle IN ('discovered', 'specified', 'data_ready', 'screened', 'validated', 'shadow', 'active', 'paused', 'retired'))",
+        "CHECK (to_lifecycle IN ('discovered', 'specified', 'data_ready', 'screened', 'validated', 'shadow', 'active', 'paused', 'retired'))",
+        "CHECK (outcome IN ('approved', 'rejected'))",
+        "CHECK (outcome = 'approved' OR applied_at IS NULL)"
+      ]
+    },
+    {
+      "table": "research.strategy_parent",
+      "fields": [
+        {
+          "name": "strategy_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "新组合/派生策略身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "strategy_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "新定义版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parent_strategy_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "来源父策略身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parent_strategy_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "精确父版本，不使用latest",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "contribution_role",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "selection/allocation/entry/holding/execution/exit/blend",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "composition_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "合成、去冗余与权重语义版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evidence_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "合并或借鉴理由及消融验证",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (strategy_id, strategy_version, parent_strategy_id, parent_strategy_version, contribution_role)",
+        "FOREIGN KEY (strategy_id, strategy_version) REFERENCES strategy.definition",
+        "FOREIGN KEY (parent_strategy_id, parent_strategy_version) REFERENCES strategy.definition",
+        "CHECK (strategy_id <> parent_strategy_id OR strategy_version <> parent_strategy_version)",
+        "CHECK (contribution_role IN ('selection', 'allocation', 'entry', 'holding', 'execution', 'exit', 'blend'))"
+      ]
+    },
+    {
+      "table": "ui.watchlist",
+      "fields": [
+        {
+          "name": "watchlist_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "自选分组身份",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "principal_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "所有者，认证域由实施接入，不能拿模型身份代替",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "watchlist_version",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "整组及成员修改的乐观版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "display_name",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "分组名称",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "description",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "用户说明",
+          "constraints": []
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "初次保存",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "最近一次显式更改",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "CHECK (watchlist_version > 0)"
+      ]
+    },
+    {
+      "table": "ui.watchlist_member",
+      "fields": [
+        {
+          "name": "watchlist_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "自选分组",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES ui.watchlist ON DELETE CASCADE"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "复用证券身份，不新建代码表",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "sort_position",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "用户排序，与研究推荐rank不同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "added_release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选记录加入时看到的分析版本",
+          "constraints": [
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "note",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "简短用户注释",
+          "constraints": []
+        },
+        {
+          "name": "added_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "用户加入时刻",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (watchlist_id, instrument_id)",
+        "UNIQUE (watchlist_id, sort_position) DEFERRABLE INITIALLY DEFERRED",
+        "CHECK (sort_position > 0)"
+      ]
+    },
+    {
+      "table": "ui.annotation",
+      "fields": [
+        {
+          "name": "annotation_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "笔记或画线稳定身份",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "principal_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "所有者",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "annotation_version",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "编辑并发版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "instrument_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "个股注释对象，可选",
+          "constraints": [
+            "REFERENCES core.instrument"
+          ]
+        },
+        {
+          "name": "watchlist_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选关联分组，删除分组不删除笔记",
+          "constraints": [
+            "REFERENCES ui.watchlist ON DELETE SET NULL"
+          ]
+        },
+        {
+          "name": "annotation_kind",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "note/drawing/review",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "anchor_release_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "复盘锚定的分析版本",
+          "constraints": [
+            "REFERENCES decision.release"
+          ]
+        },
+        {
+          "name": "anchor_snapshot_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "图表画线锚定的数据/复权版本",
+          "constraints": [
+            "REFERENCES market.dataset_manifest"
+          ]
+        },
+        {
+          "name": "body",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "按Annotation合同存笔记/绘图坐标，不与市场事实混写",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "创建时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "最近显式编辑",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "CHECK (annotation_version > 0)",
+        "CHECK (annotation_kind IN ('note', 'drawing', 'review'))",
+        "CHECK (jsonb_typeof(body) = 'object')"
+      ]
+    },
+    {
+      "table": "analysis.model_policy",
+      "fields": [
+        {
+          "name": "model_policy_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "分析能力政策身份，不绑定宣传中的未来商品名",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "model_policy_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "提示、检索、模型、预算变化必须新版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "task_kind",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "claim_extraction/impact/community/research/plan_proposal等职责",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "provider_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "已配置模型供应商或本地运行器",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "model_locator",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "实际可调用模型及精确版本/快照，不预设未来型号存在",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_contract_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "结构化输出规范",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_schema_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "输出规范版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "prompt_digest",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "系统模板与任务模板摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "retrieval_policy_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "检索、引用与上下文构建政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "capability_requirements",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "上下文、结构输出、工具等能力要求",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "timeout_seconds",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "有界超时",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "token_budget",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "有界调用预算",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "rollout_state",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "candidate/shadow/active/retired",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "evaluation_experiment_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "升级评测依据，可未完成时null",
+          "constraints": [
+            "REFERENCES research.experiment_run"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "政策登记时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (model_policy_id, model_policy_version)",
+        "FOREIGN KEY (response_contract_id, response_schema_version) REFERENCES core.contract_version",
+        "CHECK (model_policy_version > 0 AND timeout_seconds > 0 AND token_budget > 0)",
+        "CHECK (rollout_state IN ('candidate', 'shadow', 'active', 'retired'))"
+      ]
+    },
+    {
+      "table": "analysis.model_run",
+      "fields": [
+        {
+          "name": "model_run_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次分析调用或明确复用结果身份",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "model_policy_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "固定能力政策",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "model_policy_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "精确政策版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "stage_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "可选正式重分析任务；慢结果不能跳到另一个stage",
+          "constraints": [
+            "REFERENCES decision.release_stage"
+          ]
+        },
+        {
+          "name": "input_context_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "分析输入闭包摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "input_manifest",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "原文/特征/快照精确引用，不能只有自由文本提示",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "analysis_as_of",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "输入信息可得性截止",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "run_state",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "queued/running/succeeded/failed/cancelled",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "publication_eligibility",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "unchecked/eligible/superseded/expired，与调用成功不同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "started_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "开始调用",
+          "constraints": []
+        },
+        {
+          "name": "completed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "收到结果或终止",
+          "constraints": []
+        },
+        {
+          "name": "output_ref",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "不可变结构化输出引用",
+          "constraints": []
+        },
+        {
+          "name": "output_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "输出摘要",
+          "constraints": []
+        },
+        {
+          "name": "usage_document",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "实际token、延迟与可用的费用证据；未知不伪造",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "error_code",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "失败分类",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (model_policy_id, model_policy_version) REFERENCES analysis.model_policy",
+        "CHECK (run_state IN ('queued', 'running', 'succeeded', 'failed', 'cancelled'))",
+        "CHECK (publication_eligibility IN ('unchecked', 'eligible', 'superseded', 'expired'))",
+        "CHECK (run_state <> 'succeeded' OR (output_ref IS NOT NULL AND output_hash IS NOT NULL AND completed_at IS NOT NULL))",
+        "CHECK (completed_at IS NULL OR started_at IS NULL OR completed_at >= started_at)"
+      ]
+    },
+    {
+      "table": "ops.job_definition",
+      "fields": [
+        {
+          "name": "job_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "调度任务身份",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "job_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "调度/参数/重试政策版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "application_operation",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "复用同一应用服务操作，不独立复制业务代码",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "schedule_document",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "cron/周期/交易日历/事件触发与时区的类型化配置",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parameter_contract_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "参数合同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "parameter_schema_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "参数合同版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "enabled",
+          "postgres_type": "boolean",
+          "json_type": "boolean",
+          "nullable": false,
+          "description_zh": "期望启用，与run健康不同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "concurrency_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "源/账户/任务组并发作用域",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "max_concurrency",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "每个作用域的并行上限",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "timeout_seconds",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "超时界限",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "retry_policy",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "退避、抖动、可重试错误与预算",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "created_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "登记时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (job_id, job_version)",
+        "FOREIGN KEY (parameter_contract_id, parameter_schema_version) REFERENCES core.contract_version",
+        "CHECK (job_version > 0 AND max_concurrency > 0 AND timeout_seconds > 0)"
+      ]
+    },
+    {
+      "table": "ops.job_run",
+      "fields": [
+        {
+          "name": "job_run_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "一次可恢复调度运行",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        },
+        {
+          "name": "job_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "任务定义",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "job_version",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "精确定义版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "idempotency_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "同一计划时间/事件触发的去重键",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "stage_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "分析任务绑定不可变stage，重试不能换base",
+          "constraints": [
+            "REFERENCES decision.release_stage"
+          ]
+        },
+        {
+          "name": "parameter_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "本次参数摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "scheduled_for",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "计划执行时间",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "run_state",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "queued/running/succeeded/failed/cancelled",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "lease_epoch",
+          "postgres_type": "bigint",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "fencing token，旧worker不再有提交权",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "attempt_count",
+          "postgres_type": "integer",
+          "json_type": "integer",
+          "nullable": false,
+          "description_zh": "本次逻辑run累计尝试数",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "started_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "实际开始",
+          "constraints": []
+        },
+        {
+          "name": "heartbeat_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "最近心跳，不能当作数据刷新成功",
+          "constraints": []
+        },
+        {
+          "name": "completed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "终态时间",
+          "constraints": []
+        },
+        {
+          "name": "error_code",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": true,
+          "description_zh": "具体失败分类",
+          "constraints": []
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (job_id, job_version) REFERENCES ops.job_definition",
+        "UNIQUE (job_id, job_version, idempotency_key)",
+        "CHECK (run_state IN ('queued', 'running', 'succeeded', 'failed', 'cancelled'))",
+        "CHECK (lease_epoch > 0 AND attempt_count >= 0)",
+        "CHECK (run_state NOT IN ('succeeded', 'failed', 'cancelled') OR completed_at IS NOT NULL)"
+      ]
+    },
+    {
+      "table": "ops.command_receipt",
+      "fields": [
+        {
+          "name": "principal_id",
+          "postgres_type": "uuid",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "用户/服务主体作用域，不能跨用户重用幂等键",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "operation_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "精确注册API操作",
+          "constraints": [
+            "NOT NULL",
+            "REFERENCES core.api_binding"
+          ]
+        },
+        {
+          "name": "idempotency_key",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "调用方重试键；相同键异载荷拒绝",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "request_hash",
+          "postgres_type": "core.sha256_hex",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "规范请求摘要",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_contract_id",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "已提交响应合同",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_schema_version",
+          "postgres_type": "text",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "响应合同版本",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "response_document",
+          "postgres_type": "jsonb",
+          "json_type": "object",
+          "nullable": false,
+          "description_zh": "已提交的原始规范响应或可重建版本引用",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "committed_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "与业务写入和outbox同事务完成",
+          "constraints": [
+            "NOT NULL"
+          ]
+        },
+        {
+          "name": "expires_at",
+          "postgres_type": "timestamptz",
+          "json_type": "string",
+          "nullable": false,
+          "description_zh": "明确幂等保留窗口，过期后按公布政策处理",
+          "constraints": [
+            "NOT NULL"
+          ]
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (principal_id, operation_id, idempotency_key)",
+        "FOREIGN KEY (response_contract_id, response_schema_version) REFERENCES core.contract_version",
+        "CHECK (expires_at > committed_at)",
+        "CHECK (jsonb_typeof(response_document) = 'object')"
+      ]
+    }
+  ],
+  "cross_domain_fk_additions": [
+    "decision.trade_plan.account_id → execution.account_head.account_id",
+    "decision.trade_plan.(account_id,expected_account_version) → execution.account_event.(account_id,account_sequence)",
+    "execution journal_line/position_projection/quantity_lot/order_reservation.instrument_id → core.instrument.instrument_id",
+    "decision.actionability_snapshot.(ranking_id,release_id) → decision.ranking_run.(ranking_id,release_id)"
+  ],
+  "numeric_policy": "Amounts, prices and finite ratios use numeric(38,12) and decimal strings; validate range/scale before DB casts.",
+  "time_policy": "available_at is actual completion; policy_usable_at is derived under a versioned query/manifest policy and never overwrites source timestamps."
+}

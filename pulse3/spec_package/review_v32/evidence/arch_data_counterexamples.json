@@ -1,0 +1,73 @@
+{
+  "method": "Synthetic counterexamples and arithmetic, not production benchmarks",
+  "sqlite_decimal": {
+    "input": "12345678901234567890123456.123456789012",
+    "storage_type": "real",
+    "returned": "1.2345678901234568e+25",
+    "equal_decimal": false,
+    "sqlite_runtime": "3.53.1"
+  },
+  "compaction_snapshot": {
+    "snapshot_requested": 1,
+    "current_active_filter": [],
+    "visibility_interval_filter": [
+      "F1"
+    ]
+  },
+  "capacity_gb_decimal": {
+    "canonical_60_2MB_x250": 15.05,
+    "raw_299_9MB_x250": 74.975,
+    "table_items": {
+      "daily_history": 1,
+      "snapshot_6months": 7.5,
+      "raw_20sessions": 6,
+      "derived_2years": 6,
+      "active_state_upper_bound": 2,
+      "seven_full_backups_at_state_upper_bound": 14
+    },
+    "subtotal_table_items_at_upper_bounds": 36.5,
+    "not_included": [
+      "full_market_minute_bars",
+      "hot_pool_and_auction_incremental_data",
+      "raw_news_weekend_volume",
+      "WAL",
+      "compaction_input_output_overlap",
+      "build_and_query_spill",
+      "quarantine",
+      "logs",
+      "inbox",
+      "other_apps"
+    ],
+    "daily_snapshot_input_assumption_stocks": 6000,
+    "daily_minute_rows_at_240_per_session": 1440000,
+    "year_minute_rows_at_250_sessions": 360000000,
+    "raw_canonical_retained_ingress_gb_per_trading_day_example": 0.3601,
+    "at_13_5GB_free_and_8GB_floor_example_days": 15.273535129130797,
+    "limits": "Sizes and 6000 stocks/250 sessions/240 bars are arithmetic assumptions, not measured source compression or a verified exchange calendar. 2GB state is an upper-bound planning scenario, not its actual size."
+  },
+  "minute_nonidentifiability": {
+    "sample_times": [
+      "09:30:00",
+      "09:31:00"
+    ],
+    "sample_prices": [
+      10,
+      10
+    ],
+    "possible_path_A": [
+      10,
+      10
+    ],
+    "possible_path_B": [
+      10,
+      12,
+      10
+    ],
+    "same_sampled_prices": true,
+    "true_highs": [
+      10,
+      12
+    ],
+    "implication": "60-second point samples cannot reconstruct exact within-minute high/low or first limit-touch events."
+  }
+}
