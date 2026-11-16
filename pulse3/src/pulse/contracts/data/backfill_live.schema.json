@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:live:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'live' (docs/LEGACY_TRIAGE.md rows #5/#124 seal clock and seal span). Every figure is ESTIMATED from the 60-second sampled quote snapshots recorded by the old system and imported as a legacy source; first-seal times may be up to one sampling gap late and breaks inside one gap are not counted.",
+  "$defs": {
+    "SealSource": {
+      "type": "object", "additionalProperties": false,
+      "required": ["snapshot_id", "content_hash", "input_snapshot_id", "available_at"],
+      "properties": {
+        "snapshot_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "content_hash": {"$ref": "urn:pulse:contracts:v3#/$defs/Hash"},
+        "input_snapshot_id": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/UUID"}, {"type": "null"}]},
+        "available_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]}
+      }
+    },
+    "SealClockBucket": {
+      "type": "object", "additionalProperties": false,
+      "required": ["clock", "first_seal_count", "cumulative_count", "cumulative_ratio"],
+      "properties": {
+        "clock": {"type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$", "description": "bucket start, Asia/Shanghai wall clock"},
+        "first_seal_count": {"type": "integer", "minimum": 0},
+        "cumulative_count": {"type": "integer", "minimum": 0},
+        "cumulative_ratio": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}], "description": "share of the stocks that sealed during the session; null when none sealed"}
+      }
+    },
+    "SealClock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["session_date", "estimation", "policy_version", "clock_basis", "bucket_minutes", "buckets", "sealed_ever_count", "touched_limit_count",
+                   "sealed_at_close_count", "broken_count_total", "instruments_observed", "source", "notes"],
+      "properties": {
+        "session_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "estimation": {"const": "estimated_from_60s_snapshots"},
+        "policy_version": {"type": "string"},
+        "clock_basis": {"const": "Asia/Shanghai"},
+        "bucket_minutes": {"type": "integer", "minimum": 1},
+        "buckets": {"type": "array", "items": {"$ref": "#/$defs/SealClockBucket"}},
+        "sealed_ever_count": {"type": "integer", "minimum": 0},
+        "touched_limit_count": {"type": "integer", "minimum": 0},
+        "sealed_at_close_count": {"type": "integer", "minimum": 0},
+        "broken_count_total": {"type": "integer", "minimum": 0, "description": "lower bound"},
+        "instruments_observed": {"type": "integer", "minimum": 0},
+        "source": {"$ref": "#/$defs/SealSource"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "SealFact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instrument_id", "code", "name", "session_date", "limit_up", "snapshots_in_window", "touched_limit", "first_seal_at", "last_seal_at",
+                   "broken_count", "sealed_at_close", "close_seal_order_amount_cny", "first_seal_uncertainty_seconds", "max_gap_seconds", "estimation", "policy_version"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "code": {"type": "string"},
+        "name": {"type": ["string", "null"]},
+        "session_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "limit_up": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "snapshots_in_window": {"type": "integer", "minimum": 0},
+        "touched_limit": {"type": "boolean"},
+        "first_seal_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+        "last_seal_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}], "description": "start of the last sealed run"},
+        "broken_count": {"type": "integer", "minimum": 0, "description": "lower bound of sealed -> not sealed transitions"},
+        "sealed_at_close": {"type": ["boolean", "null"], "description": "null when no snapshot at or after 14:50 was observed, or when the stock never touched the limit"},
+        "close_seal_order_amount_cny": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}], "description": "bid1 lots x 100 x limit-up price at the last snapshot"},
+        "first_seal_uncertainty_seconds": {"type": ["integer", "null"], "minimum": 0, "description": "gap to the snapshot before the first sealed one"},
+        "max_gap_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "estimation": {"const": "estimated_from_60s_snapshots"},
+        "policy_version": {"type": "string"}
+      }
+    },
+    "SealFacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instrument_id", "session_date", "status", "fact", "source", "notes"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "session_date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "status": {"enum": ["ok", "not_observed", "no_dataset"]},
+        "fact": {"oneOf": [{"$ref": "#/$defs/SealFact"}, {"type": "null"}]},
+        "source": {"oneOf": [{"$ref": "#/$defs/SealSource"}, {"type": "null"}]},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

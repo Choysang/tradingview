@@ -115,14 +115,17 @@ def test_clusters_reposts_are_one_cluster_membership_changes_append_revisions_an
     base = datetime(2026, 12, 1, 3, 0, tzinfo=UTC)
     rel = S.publish(conn, as_of=base + timedelta(hours=6))
     c1 = S.add_claim(conn, headline="聚类股签订大额订单", category="company.contract_order", polarity="+", instruments=[inst], available_at=base)
-    S.add_claim(conn, headline="央行下调存款准备金率", category="policy.monetary", polarity="+", instruments=[], available_at=base + timedelta(minutes=1))
-    S.add_claim(conn, headline="迟到的新闻", category="company.contract_order", polarity="+", instruments=[inst], available_at=base + timedelta(hours=8))   # after the release
+    c2 = S.add_claim(conn, headline="央行下调存款准备金率", category="policy.monetary", polarity="+", instruments=[], available_at=base + timedelta(minutes=1))
+    c3 = S.add_claim(conn, headline="迟到的新闻", category="company.contract_order", polarity="+", instruments=[inst], available_at=base + timedelta(hours=8))   # after the release
     win = {"start": utc_z(base - timedelta(hours=1)), "end": utc_z(base + timedelta(days=1))}
-    q = lambda scope, **kw: api.get("query-event-clusters", release_id=rel, scope=scope, window=win, page={"limit": 20}, **kw)   # noqa: E731
+    q = lambda scope, **kw: api.get("query-event-clusters", release_id=rel, scope=scope, window=win, page={"limit": 200}, **kw)   # noqa: E731
     r = q({"scope_kind": "market", "scope_key": "all", "membership_snapshot_id": None})
     assert r.status_code == 200, r.text
-    clusters = r.json()["data"]["clusters"]
-    assert len(clusters) == 2 and all(c["revision"] == 1 and c["clustering_policy_version"] == "claim-cluster-v1" for c in clusters)     # macro event not dropped, post-release claim invisible
+    # the session database is shared with other suites: judge only this test's own claims
+    mine = {str(c["claim_id"]) for c in (c1, c2, c3)}
+    clusters = [c for c in r.json()["data"]["clusters"] if c["cluster_id"] in mine]
+    assert {c["cluster_id"] for c in clusters} == {str(c1["claim_id"]), str(c2["claim_id"])}                  # macro event not dropped, post-release claim invisible
+    assert all(c["revision"] == 1 and c["clustering_policy_version"] == "claim-cluster-v1" for c in clusters)
     only = q({"scope_kind": "instrument", "scope_key": str(inst), "membership_snapshot_id": None}).json()["data"]["clusters"]
     assert len(only) == 1 and only[0]["claim_revision_ids"] == [str(c1["claim_revision_id"])]
     # a second document joins the same claim: a new cluster revision; revision 1 stays readable

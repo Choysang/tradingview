@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "request_id": "175642b8-4281-48fd-90f2-d34cc051d795",
+    "generated_at": "2026-11-16T01:57:32.954224Z",
+    "trace_id": "8681db3cad7345baa167c4b730722664",
+    "contract_version": "3.0.0",
+    "release_id": null,
+    "decision_as_of": "2026-11-12T08:00:00Z",
+    "availability_policy_version": null,
+    "input_snapshot_refs": [],
+    "quality_status": "partial",
+    "freshness_state": "not_expected",
+    "coverage": {
+      "policy_version": "bf-live-v1",
+      "expected_count": null,
+      "observed_count": 4,
+      "missing_count": null,
+      "unverifiable_reasons": [
+        "estimated_from_60s_snapshots"
+      ]
+    },
+    "warnings": [
+      {
+        "code": "ESTIMATED_FROM_60S_SNAPSHOTS",
+        "message": "封板时间等数字由约 60 秒一次的快照估算，不是逐笔数据",
+        "affected_component": "intraday_seal_facts",
+        "evidence_ref": null
+      }
+    ],
+    "next_cursor": null,
+    "actionability_id": null
+  },
+  "data": {
+    "session_date": "2026-11-12",
+    "estimation": "estimated_from_60s_snapshots",
+    "policy_version": "seal-facts-v2",
+    "clock_basis": "Asia/Shanghai",
+    "bucket_minutes": 5,
+    "buckets": [
+      {
+        "clock": "09:25",
+        "first_seal_count": 0,
+        "cumulative_count": 0,
+        "cumulative_ratio": "0"
+      },
+      {
+        "clock": "09:30",
+        "first_seal_count": 0,
+        "cumulative_count": 0,
+        "cumulative_ratio": "0"
+      },
+      {
+        "clock": "09:35",
+        "first_seal_count": 1,
+        "cumulative_count": 1,
+        "cumulative_ratio": "0.5"
+      },
+      {
+        "clock": "09:40",
+        "first_seal_count": 1,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "09:45",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "09:50",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "09:55",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:00",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:05",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:10",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:15",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:20",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:25",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:30",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:35",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:40",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:45",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:50",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "10:55",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:00",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:05",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:10",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:15",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:20",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "11:25",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:00",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:05",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:10",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:15",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:20",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:25",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:30",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:35",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:40",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:45",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:50",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "13:55",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:00",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:05",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:10",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:15",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:20",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:25",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:30",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:35",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:40",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:45",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:50",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      },
+      {
+        "clock": "14:55",
+        "first_seal_count": 0,
+        "cumulative_count": 2,
+        "cumulative_ratio": "1"
+      }
+    ],
+    "sealed_ever_count": 2,
+    "touched_limit_count": 3,
+    "sealed_at_close_count": 1,
+    "broken_count_total": 2,
+    "instruments_observed": 4,
+    "source": {
+      "snapshot_id": "11167466-da5f-4731-9870-133bc1f376ab",
+      "content_hash": "9fe79213afddfbc7c55e106eda1127e270a4c2f6cd0242078976443f17dbf582",
+      "input_snapshot_id": "e621401e-df11-43a2-8b4f-aac6c63ad253",
+      "available_at": "2026-11-12T08:00:00Z"
+    },
+    "notes": [
+      "Each figure is estimated from about one snapshot per minute: a first-seal time may be up to one sampling gap late and a break followed by a re-seal inside one gap is not counted.",
+      "Only the continuous sessions 09:25-11:30 and 13:00-14:57 are used; the closing call auction 14:57-15:00 is not observed."
+    ]
+  }
+}

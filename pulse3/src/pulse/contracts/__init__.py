@@ -21,6 +21,22 @@ CONTRACT_VERSION = "3.0.0"
 V3_ID = "urn:pulse:contracts:v3"
 SUPPLEMENTAL_ID = "urn:pulse:contracts:supplemental:v31"
 EXT_ID = "urn:pulse:contracts:ext:v1"  # product extension cards PEX01-PEX16 (tools/build_extension_contract.py)
+#: Legacy-feature backfill (docs/LEGACY_TRIAGE.md): one additive schema file per lane, ``data/backfill_<lane>.schema.json``,
+#: each with ``$id`` = ``urn:pulse:contracts:backfill:<lane>:v1``. Payloads reference v3/ext defs by absolute $ref.
+BACKFILL_PREFIX = "urn:pulse:contracts:backfill:"
+
+
+def backfill_id(lane: str) -> str:
+    return f"{BACKFILL_PREFIX}{lane}:v1"
+
+
+def backfill_files() -> dict[str, str]:
+    """{schema_id: file name} of every shipped backfill contract."""
+    out = {}
+    for f in resources.files(__package__).joinpath("data").iterdir():
+        if f.name.startswith("backfill_") and f.name.endswith(".schema.json"):
+            out[json.loads(f.read_text(encoding="utf-8"))["$id"]] = f.name
+    return out
 
 
 def _load(name: str) -> dict[str, Any]:
@@ -49,6 +65,7 @@ def _registry() -> Registry:
         (V3_ID, Resource.from_contents(v3_schema())),
         (SUPPLEMENTAL_ID, Resource.from_contents(_load("supplemental.schema.json"))),
         (EXT_ID, Resource.from_contents(_load("extension.schema.json"))),
+        *[(sid, Resource.from_contents(_load(name))) for sid, name in sorted(backfill_files().items())],
     ]
     return Registry().with_resources(resources_)
 
@@ -56,8 +73,10 @@ def _registry() -> Registry:
 @lru_cache(maxsize=512)
 def validator(definition: str, schema_id: str = V3_ID) -> Draft202012Validator:
     """Validator for one ``$defs`` entry of a registered contract."""
-    root = {V3_ID: v3_schema, SUPPLEMENTAL_ID: lambda: _load("supplemental.schema.json"),
-            EXT_ID: lambda: _load("extension.schema.json")}[schema_id]()
+    roots = {V3_ID: v3_schema, SUPPLEMENTAL_ID: lambda: _load("supplemental.schema.json"),
+             EXT_ID: lambda: _load("extension.schema.json")}
+    roots.update({sid: (lambda n=name: _load(n)) for sid, name in backfill_files().items()})
+    root = roots[schema_id]()
     if definition not in root["$defs"]:
         raise KeyError(f"unknown contract definition {definition!r} in {schema_id}")
     ref_schema = {"$ref": f"{schema_id}#/$defs/{definition}"}

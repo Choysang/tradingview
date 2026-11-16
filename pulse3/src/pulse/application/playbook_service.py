@@ -11,10 +11,12 @@ parameter sweeps store every variant (slice ``variant:<key>`` / ``param:<a>-<b>`
 user's account plan (``user_account_2026``) and its x2 / x3 copies; prices are the forward-adjusted research series (metrics are
 ``partial`` quality and say so). Authorisation: the platform is single-tenant, scopes (screen:*, strategy:register, research:run)
 map to "authenticated principal"; owner checks exist where a row has an owner.
-Not covered: promotion (separate decision), blind-final runs, minute-level T, per-regime attribution.
+Not covered: promotion (separate decision), blind-final runs, minute-level T. A completed playbook experiment also stores its x1 replay
+(daily NAV, trades, entry regime) through ``bf_research_service.record_playbook_replay``; no metric definition depends on it.
 """
 from __future__ import annotations
 
+import logging
 import math
 import uuid
 from datetime import date, datetime, timezone
@@ -30,6 +32,7 @@ from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import market_repo, research_repo, strategy_repo
 from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.postgres.jobs import PgJobStore
+from pulse.application import bf_research_service as BF
 from pulse.application import bindings as B
 from pulse.application import screen_service as S
 from pulse.application.bootstrap import SCHEMA_ID
@@ -350,7 +353,8 @@ def _bench(panel: S.Panel, sessions: list[str], a: int, b: int) -> Decimal | Non
 # --------------------------------------------------------------------------------------------------------
 # evaluators (called by the research worker)
 # --------------------------------------------------------------------------------------------------------
-def evaluate_playbook(conn: psycopg.Connection, lake: LakeStore, spec, pb: L.Playbook, params: dict[str, float]) -> list[dict]:
+def evaluate_playbook(conn: psycopg.Connection, lake: LakeStore, spec, pb: L.Playbook, params: dict[str, float],
+                      capture: dict | None = None) -> list[dict]:
     for req in pb.requires:
         if req in PERMANENT_MISSING:
             raise DataUnavailable(f"data_not_available:{req}")
@@ -371,6 +375,8 @@ def evaluate_playbook(conn: psycopg.Connection, lake: LakeStore, spec, pb: L.Pla
     for tag, profile in (("x1", base), ("x2", scaled(base, 2)), ("x3", scaled(base, 3))):
         cfg = ReplayConfig(DEFAULT_CASH, profile, a, c, pb.max_positions, pb.max_new_per_day, EX.ExitRules.from_spec(pb.exits))
         runs[tag] = replay(signals={k: v for k, v in sigs.items() if k in views}, views=views, specs=specs, sessions=sessions, cfg=cfg, run_id=f"{pb.id}:{tag}")
+    if capture is not None:                                       # read-only hand-off for the replay store; metrics are unchanged
+        capture.update(run=runs["x1"], sessions=sessions, a=a, c=c, views=views)
     return _replay_metrics(runs, panel, sessions, a, b, c, nsig)
 
 
@@ -532,7 +538,14 @@ def evaluate_instance(conn: psycopg.Connection, lake: LakeStore, ctx_spec, rec: 
     spec = row["specification"]
     if "playbook" in spec:
         pb = L.REGISTRY[spec["playbook"]["id"]]
-        return evaluate_playbook(conn, lake, ctx_spec, pb, {k: float(v) for k, v in row["parameters"].items()})
+        capture: dict = {}
+        metrics = evaluate_playbook(conn, lake, ctx_spec, pb, {k: float(v) for k, v in row["parameters"].items()}, capture)
+        try:                                    # display-only replay artifact: its failure is logged, never changes the trial's result
+            with conn.transaction():            # savepoint: a failed insert does not abort the trial's transaction
+                BF.record_playbook_replay(conn, lake, ctx_spec, rec, pb, capture)
+        except Exception:  # noqa: BLE001
+            logging.getLogger(__name__).exception("replay artifact for experiment %s not stored", rec.experiment_id)
+        return metrics
     if "factor" in spec:
         return evaluate_factor(conn, lake, ctx_spec, FL.BY_ID[spec["factor"]["id"]])
     raise DataUnavailable("no_evaluator_registered")

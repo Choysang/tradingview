@@ -13,6 +13,7 @@ import type { Evaluation, Strategy } from '../../../api/types';
 import { Badge, GradeBadge, MissingText } from '../../../components/Badges';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
 import { useToast } from '../../../components/Toast';
+import { ReplayPanel } from '../../bf/research/ReplayPanel';
 import { extB, explain, type ReplaySpec } from './api';
 import { CATALOG, dayInstant, metricPct, type PlaybookDef } from './helpers';
 import './ext-b.css';
@@ -97,6 +98,7 @@ function FragmentRow({ p, s, lifecycle, open, onToggle }: { p: PlaybookDef; s: S
           <p className="muted small">来源：{p.source}。{p.requires.length ? `缺少：${p.requires.map((r) => REQ_TEXT[r] ?? r).join('；')}。实验会被记录为失败试验（data_not_available），不会编造结果。` : ''}</p>
           <div className="chips">{p.params.map((x) => <span key={x.key} className="chip">{x.label} {x.value}</span>)}<span className="chip">最多 {p.max_positions} 只</span></div>
           {s ? <Experiments strategy={s} /> : <MissingText>未登记</MissingText>}
+          {s && p.requires.length === 0 && <><h4>净值曲线与成交</h4><ReplayPanel catalogId={`PB:${p.id}`} /></>}
         </td></tr>
       )}
     </>

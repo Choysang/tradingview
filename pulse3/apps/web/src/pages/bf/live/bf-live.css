@@ -1,0 +1,10 @@
+/* Live lane (seal clock). Only theme tokens of styles.css are used, so light and dark follow the app. */
+.bl-chart { width: 100%; height: 190px; display: block; }
+.bl-bar { fill: var(--up); opacity: 0.85; }
+.bl-curve { fill: none; stroke: var(--accent); stroke-width: 1.8; }
+.bl-axis { stroke: var(--border); stroke-width: 1; }
+.bl-tick { fill: var(--muted); font-size: 9px; }
+.bl-summary { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0 8px; }
+.bl-facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 6px 0; }
+.bl-facts dt { color: var(--muted); }
+.bl-facts dd { margin: 0; }

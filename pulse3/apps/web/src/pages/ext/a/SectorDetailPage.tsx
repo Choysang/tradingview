@@ -12,6 +12,7 @@ import { TAXONOMIES, horizonByKey } from '../../../config';
 import { useInstrumentLabel } from '../../../hooks/useInstrumentLabel';
 import { useReleaseSelection } from '../../../hooks/useRelease';
 import { shortId } from '../../../lib/format';
+import { screenHref } from '../../bf/board/screenLink';
 import './ext-a.css';
 import { extOps } from './api';
 import { useMarketToday, usePanel } from './hooks';
@@ -58,7 +59,8 @@ export function SectorDetailPage() {
         <>
           <p className="muted small">成分、榜单、升温候选使用同一份成分快照 <span className="mono">{d.ranking.membership_snapshot_id?.slice(0, 8) ?? '无'}</span>；同一股票可同时属于其他板块。成员龙头/中军角色没有算法输出，保持未知。</p>
           <section className="card">
-            <div className="ea-head"><h3>成分股（{d.members.length}）</h3></div>
+            <div className="ea-head"><h3>成分股（{d.members.length}）</h3><span className="grow" />
+              <Link className="btn btn-small" to={screenHref({ q: '沪深主板', sector: node, tax: tax.id, release: rid })} title="在问句选股中只看这个板块的成分（先按沪深主板运行，再过滤到成分）">在筛选中查看</Link></div>
             <ul className="ea-members">
               {d.members.slice(0, SHOW_MEMBERS).map((m) => <li key={m.instrument_id}><Name id={m.instrument_id} releaseId={rid} /></li>)}
             </ul>

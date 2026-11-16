@@ -63,6 +63,7 @@ DEFINITIONS: dict[str, JobDefinition] = {d.application_operation: d for d in (
     _job("calendar_sync", "CalendarService.sync", manual=True, key="ext-c-calendar"),
     _job("forward_book_daily", "PortfolioService.forward_daily", manual=True, key="ext-c-forward"),
     _job("account_readmodel_build", "PortfolioService.build_readmodels", manual=True, key="ext-c-readmodel"),
+    _job("release_build", "ReleaseService.build_release", manual=True, key="release-build", timeout=3600),   # 重新生成分析发布 (backfill #15/#92)
 )}
 DEFINITIONS_BY_ID = {d.job_id: d for d in DEFINITIONS.values()}
 JOB_IDS = {name: d.job_id for name, d in ((d.application_operation.split(".")[1], d) for d in DEFINITIONS.values())}
@@ -238,7 +239,7 @@ def run_next(conn: psycopg.Connection, *, job_id: UUID | None = None, now: datet
 
 
 def _load_handlers() -> None:
-    from pulse.application import alert_service, calendar_service, portfolio_service, workspace_service  # noqa: F401  (register)
+    from pulse.application import alert_service, bf_ops_service, calendar_service, portfolio_service, workspace_service  # noqa: F401  (register)
 
 
 # ---- queries: job runs (PEX15) ------------------------------------------------------------------------------------------------

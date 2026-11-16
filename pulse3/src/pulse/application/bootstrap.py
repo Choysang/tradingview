@@ -43,6 +43,29 @@ def seed_registry(conn: psycopg.Connection) -> int:
                  op["application_service"], ",".join(op.get("tables") or []) or "none", op.get("consistency") or "n/a"))
             n += 1
         n += _seed_extension(conn)
+        n += _seed_backfill(conn)
+    return n
+
+
+def _seed_backfill(conn: psycopg.Connection) -> int:
+    """Register each legacy-backfill contract file (docs/LEGACY_TRIAGE.md) as its own contract version."""
+    from pulse.contracts import _load, backfill_files
+
+    n = 0
+    for sid, name in sorted(backfill_files().items()):
+        doc = _load(name)
+        version = doc.get("x-contract-version", "1.0.0")
+        digest = hashlib.sha256(json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+        row = conn.execute("select schema_hash from core.contract_version where contract_id=%s and schema_version=%s",
+                           (sid, version)).fetchone()
+        if row is None:
+            conn.execute(
+                "insert into core.contract_version(contract_id, schema_version, schema_document, schema_hash,"
+                " compatibility_policy, created_at) values (%s,%s,%s,%s,%s,%s)",
+                (sid, version, Jsonb(doc), digest, "additive-legacy-backfill", datetime.now(timezone.utc)))
+        elif (row["schema_hash"] if isinstance(row, dict) else row[0]) != digest:
+            raise RuntimeError(f"backfill contract {sid} {version} changed without a new version")
+        n += 1
     return n
 
 

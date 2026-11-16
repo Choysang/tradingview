@@ -11,6 +11,11 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.ingest minute --codes 000001 --source tencent --period 1
     uv run python -m pulse.workers.ingest announcements --days 3
     uv run python -m pulse.workers.ingest reconcile --codes 000001 600000
+    uv run python -m pulse.workers.ingest legacy-intraday --date 2026-11-12   # old recorder's 60 s snapshots -> dataset (BF live lane)
+    uv run python -m pulse.workers.ingest seal-facts --date 2026-11-12        # estimated seal facts from that dataset
+    uv run python -m pulse.workers.ingest legacy-news --date 2026-11-12       # 7x24 messages -> documents -> claims (then alerts scan)
+    uv run python -m pulse.workers.ingest legacy-ext|legacy-guba|legacy-alerts --date 2026-11-12
+    uv run python -m pulse.workers.ingest intraday-record --until 15:05 --universe   # native recorder, NOT scheduled before the M6 cutover
 
 Exit codes: 0 ok, 1 failure, 2 source blocked us (circuit OPEN, nothing half-published).
 Not covered: scheduling; there is deliberately no full-market live crawl command (pass explicit codes).
@@ -20,8 +25,9 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-from datetime import date
+from datetime import date, datetime, time, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from pulse import config
 from pulse.adapters.lake import LakeStore
@@ -32,6 +38,7 @@ from pulse.adapters.sources.legacy import LegacyWarehouse
 from pulse.adapters.sources.sina import SinaAdapter
 from pulse.adapters.sources.tencent import TencentAdapter
 from pulse.application.data_service import DataService
+from pulse.adapters.sources.legacy_recordings import LegacyRecordings
 
 DEFAULT_WAREHOUSE = Path(__file__).resolve().parents[4] / ".work" / "snapshots" / "server" / "data" / "warehouse" / "live"
 
@@ -70,7 +77,60 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--last", type=int, default=5)
     p = sub.add_parser("gc")
     p.add_argument("--min-age-seconds", type=float, default=3600.0)
+    for name in ("legacy-intraday", "legacy-ext", "legacy-guba", "legacy-alerts", "seal-facts", "legacy-news"):
+        p = sub.add_parser(name, help="BF live lane: import the old recorder's files (read-only) for one session")
+        p.add_argument("--date", type=date.fromisoformat, default=None, help="session date (default: today, Asia/Shanghai)")
+        p.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA or C:/pulse/data)")
+        if name == "legacy-news":
+            p.add_argument("--no-claims", action="store_true", help="documents only; skip claim extraction")
+    p = sub.add_parser("intraday-record", help="native 60 s quote recorder; NOT scheduled before the M6 cutover (the old system records meanwhile)")
+    p.add_argument("--until", type=time.fromisoformat, default=time(15, 5), help="stop at this Asia/Shanghai time (default 15:05)")
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--codes", nargs="+")
+    g.add_argument("--universe", action="store_true")
+    p.add_argument("--source", choices=("sina", "tencent"), default="sina")
+    p.add_argument("--cycle-seconds", type=float, default=60.0)
+    p.add_argument("--flush-every", type=int, default=10, help="cycles per published snapshot part")
     return ap
+
+
+LIVE_CMDS = ("legacy-intraday", "legacy-ext", "legacy-guba", "legacy-alerts", "seal-facts", "legacy-news", "intraday-record")
+
+
+def _today_cst() -> date:
+    return datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Shanghai")).date()
+
+
+def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
+    """BF live lane commands (kept apart from the data-plane commands above)."""
+    from pulse.application.bf_live_service import IntradayRecorder, LegacyNewsImporter, LiveService
+
+    day = getattr(a, "date", None) or _today_cst()
+    rec = LegacyRecordings(getattr(a, "legacy_data", None))
+    svc = LiveService(conn, lake, rec)
+    svc.bootstrap()
+    if a.cmd == "legacy-intraday":
+        return [svc.import_intraday(day)]
+    if a.cmd == "legacy-ext":
+        return [svc.import_ext(day)]
+    if a.cmd == "legacy-guba":
+        return [svc.import_guba(day)]
+    if a.cmd == "legacy-alerts":
+        return [svc.import_alerts(day)]
+    if a.cmd == "seal-facts":
+        return [svc.publish_seal_facts(day)]
+    if a.cmd == "legacy-news":
+        imp = LegacyNewsImporter(conn, lake)
+        imp.bootstrap()
+        out = [imp.import_news(rec, day)]
+        if not a.no_claims:
+            out.append(imp.process_new_claims())
+        return out
+    codes = list(a.codes) if a.codes else universe_codes(conn, lake)
+    if not codes:
+        raise SystemExit("no codes: pass --codes or import the research snapshot first")
+    today = _today_cst()
+    return [IntradayRecorder(svc, client, source=a.source).run(codes, today, a.until, cycle_seconds=a.cycle_seconds, flush_every=a.flush_every)]
 
 
 def universe_codes(conn, lake: LakeStore, recent_sessions: int = 5) -> list[str]:
@@ -99,7 +159,9 @@ def run(argv: list[str] | None = None) -> int:
     client = RateLimitedClient(min_interval_seconds=a.min_interval)
     try:
         svc.bootstrap()
-        if a.cmd == "legacy-import":
+        if a.cmd in LIVE_CMDS:
+            out = run_live(a, conn, svc.lake, client)
+        elif a.cmd == "legacy-import":
             out = [svc.import_legacy(LegacyWarehouse(Path(a.warehouse)), a.since, codes=a.codes, boards=a.boards)]
         elif a.cmd == "live-daily":
             codes = universe_codes(conn, svc.lake) if a.universe else list(a.codes)

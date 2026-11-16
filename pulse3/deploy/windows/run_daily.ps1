@@ -25,4 +25,8 @@ if ($ok) { $null = Step 'intel-seats' @('-m', 'pulse.workers.intel', 'seats', '-
 if ($ok) { $ok = Step 'analysis-daily' @('-m', 'pulse.workers.analysis', 'daily') }
 # M5-E04 forward record: settle the previous session and decide the next one from the release just published.
 if ($ok) { $null = Step 'forward-daily' @('-m', 'pulse.workers.forward', 'daily') }
+# Backfill #169: rank IC / top-decile excess of every published ranking whose horizon is now observed (gross, append-only; pending horizons stay pending).
+if ($ok) { $null = Step 'forward-monitor' @('-m', 'pulse.workers.forward', 'monitor') }
+# Legacy #135: after-close summary of the release just published (once per release; nothing new if rerun).
+if ($ok) { $null = Step 'daily-report' @('-m', 'pulse.workers.alerts', 'daily-report') }
 Add-Content $log "== $(Get-Date -Format s) done ok=$ok"

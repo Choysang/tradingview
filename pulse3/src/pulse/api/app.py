@@ -60,15 +60,37 @@ def create_app() -> FastAPI:
             continue
         app.include_router(mod.router)
 
+    import pkgutil
+
+    import pulse.api as _api_pkg
+
+    for info in sorted(pkgutil.iter_modules(_api_pkg.__path__), key=lambda i: i.name):
+        if info.name.startswith("routes_bf_"):                # legacy-feature backfill lanes (docs/LEGACY_TRIAGE.md)
+            app.include_router(__import__(f"pulse.api.{info.name}", fromlist=["router"]).router)
+
     from pulse.api import routes_market
 
     app.include_router(routes_market.config_router)  # /app-config.json, before the SPA catch-all
+
+    @app.get("/healthz", include_in_schema=False)
+    def healthz():
+        """Process + database probe for operators (not a product operation of the contract)."""
+        from fastapi.responses import JSONResponse
+
+        try:
+            with deps.pool().connection(timeout=5) as conn:
+                conn.execute("SELECT 1").fetchone()
+        except Exception as exc:  # noqa: BLE001 - the probe reports, it never raises
+            return JSONResponse({"status": "degraded", "database": False, "error": type(exc).__name__}, status_code=503)
+        return {"status": "ok", "database": True}
 
     if WEB_DIST.exists():
         app.mount("/assets", StaticFiles(directory=WEB_DIST / "assets"), name="assets")
 
         @app.get("/{path:path}", include_in_schema=False)
         async def spa(path: str):
+            if path == "v1" or path.startswith("v1/"):        # an unknown API path is a JSON 404, never the web page
+                return error_response(ApiError(404, "NOT_FOUND", "接口不存在"))
             target = WEB_DIST / path
             if path and target.is_file() and WEB_DIST in target.resolve().parents:
                 return FileResponse(target)

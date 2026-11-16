@@ -7,15 +7,17 @@
  */
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../../api/client';
 import { Badge, MissingText } from '../../../components/Badges';
 import { MetaStrip } from '../../../components/MetaStrip';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
 import { useToast } from '../../../components/Toast';
 import { extB, explain, isNotReady, type InstrumentLabel, type ParseResult, type SavedScreen, type ScreenAst, type ScreenResultRow } from './api';
+import { sortByColumn } from '../../bf/research/format';
 import { CATALOG, FIELD_BY_ID, RAIL_FIELDS, TRUTH_TEXT, cellOf, chipsOf, condFromChips, emptyRail, makeAst, mergeConds, newUuid, railToCond, showValue, type RailState } from './helpers';
 import type { Cond } from './api';
+import { linkText, parseScreenLink, useSectorMembers } from '../../bf/board/screenLink';
 import './ext-b.css';
 
 const EXAMPLES = ['首板，量比大于1.5，剔除ST', '3连板以上 或 5连阳以上', '创60日新高 放量 流通市值小于200亿元', '均线多头 5日涨幅小于0', 'RSI小于30 缩量 距新高小于-20%'];
@@ -26,6 +28,8 @@ export function ScreenPage() {
   const toast = useToast();
   const qc = useQueryClient();
   const nav = useNavigate();
+  const [sp, setSp] = useSearchParams();
+  const link = parseScreenLink(sp);
   const ctx = useQuery({ queryKey: ['extb', 'context'], queryFn: ({ signal }) => extB.context(signal), staleTime: 60_000 });
   const [text, setText] = useState('');
   const [chips, setChips] = useState<Array<{ key: string; text: string; cond: Cond }>>([]);
@@ -71,6 +75,22 @@ export function ScreenPage() {
     onSuccess: (r) => setRunId(r.data.receipt.resource_id),
     onError: (e) => toast.push('bad', `运行失败：${explain(e)}`),
   });
+
+  // arrival from another page (?q= / ?preset=): parse once per distinct question, then run it when the conditions are complete
+  const arrived = useRef<string | null>(null);
+  const autoRun = useRef(false);
+  useEffect(() => {
+    const t = linkText(link, CATALOG.presets);
+    if (!t || arrived.current === t) return;
+    arrived.current = t;
+    autoRun.current = true;
+    setText(t);
+    parse.mutate(t);
+  }, [link.q, link.preset]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (autoRun.current && ast && ctx.data && !blocked && !run.isPending) { autoRun.current = false; run.mutate(); }
+  }, [ast, ctx.data, blocked]); // eslint-disable-line react-hooks/exhaustive-deps
+  const members = useSectorMembers(link);
 
   const setBound = (f: string, side: 'lo' | 'hi', v: string): void =>
     setRail((r) => ({ ...r, bounds: { ...r.bounds, [f]: { lo: r.bounds[f]?.lo ?? '', hi: r.bounds[f]?.hi ?? '', [side]: v } } }));
@@ -138,7 +158,14 @@ export function ScreenPage() {
         {ctx.isError && <span className="muted small">无法读取输入快照：{explain(ctx.error)}</span>}
       </div>
 
-      {runId ? <RunResults runId={runId} onOpen={(id) => nav(`/stock/${id}`)} onRetry={() => qc.invalidateQueries({ queryKey: ['extb', 'run', runId] })} /> : <EmptyState>设定条件后点击「运行筛选」。结果是一次冻结的扫描：同一次运行的分页顺序固定。</EmptyState>}
+      {link.sector && (
+        <div className="chips" aria-label="板块成分过滤">
+          <span className="chip">仅看板块 {link.sector} 的成分{members.ids ? `（${members.ids.size} 只）` : members.isLoading ? '（读取中…）' : ''}
+            <button className="chip-x" aria-label="取消板块过滤" onClick={() => setSp((p) => { const n = new URLSearchParams(p); ['sector', 'tax'].forEach((k) => n.delete(k)); return n; }, { replace: true })}>×</button></span>
+          {members.error ? <span className="muted small">板块成分读取失败，结果未过滤。</span> : null}
+        </div>
+      )}
+      {runId ? <RunResults memberIds={link.sector ? members.ids : null} runId={runId} onOpen={(id) => nav(`/stock/${id}`)} onRetry={() => qc.invalidateQueries({ queryKey: ['extb', 'run', runId] })} /> : <EmptyState>设定条件后点击「运行筛选」。结果是一次冻结的扫描：同一次运行的分页顺序固定。</EmptyState>}
     </div>
   );
 }
@@ -176,9 +203,23 @@ function SaveBox({ ast, universe, onLoad }: { ast: ScreenAst | null; universe: s
   );
 }
 
-function RunResults({ runId, onOpen, onRetry }: { runId: string; onOpen: (id: string) => void; onRetry: () => void }) {
+const TRUTH_ORDER: Record<string, number> = { true: 2, unknown: 1, false: 0 };
+const sortLabel = (key: string): string => (key.startsWith('f:') ? FIELD_BY_ID[key.slice(2)]?.label ?? key : ({ '#': '序号', code: '代码', name: '名称', cond: '条件' } as Record<string, string>)[key] ?? key);
+/** Sort key of one loaded row for a header key; null = missing (always last). */
+function columnValue(r: ScreenResultRow, key: string, labelOf: Map<string, InstrumentLabel>): number | string | null {
+  if (key === '#') return r.sort_position;
+  if (key === 'code') return labelOf.get(r.instrument_id)?.code ?? null;
+  if (key === 'name') return labelOf.get(r.instrument_id)?.name ?? null;
+  if (key === 'cond') return TRUTH_ORDER[r.condition_value] ?? null;
+  const f = r.features.find((x) => x.feature_id === key.slice(2));
+  const v = f ? cellOf(f.result.artifact?.ref).value : null;
+  return v === null || v === '' || !Number.isFinite(Number(v)) ? null : Number(v);
+}
+
+function RunResults({ runId, onOpen, onRetry, memberIds }: { runId: string; onOpen: (id: string) => void; onRetry: () => void; memberIds?: Set<string> | null }) {
   const [dense, setDense] = useState(false);
   const [sel, setSel] = useState(0);
+  const [sortCol, setSortCol] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(null);
   const q = useInfiniteQuery({
     queryKey: ['extb', 'run', runId],
     queryFn: ({ pageParam, signal }) => extB.queryScreenRun(runId, 50, pageParam, signal),
@@ -187,14 +228,28 @@ function RunResults({ runId, onOpen, onRetry }: { runId: string; onOpen: (id: st
     retry: (n, e) => isNotReady(e) && n < 120,
     retryDelay: 1500,
   });
-  const rows: ScreenResultRow[] = q.data?.pages.flatMap((p) => p.data.rows) ?? [];
-  const ids = rows.map((r) => r.instrument_id);
+  const allRows: ScreenResultRow[] = q.data?.pages.flatMap((p) => p.data.rows) ?? [];
+  const loaded: ScreenResultRow[] = memberIds ? allRows.filter((r) => memberIds.has(r.instrument_id)) : allRows;
+  // a sector filter needs the whole frozen run: keep loading pages until every member was seen or the run ends
+  const pageCount = q.data?.pages.length ?? 0;
+  useEffect(() => {
+    if (memberIds && q.hasNextPage && !q.isFetchingNextPage && loaded.length < memberIds.size && pageCount < 200) void q.fetchNextPage();
+  }, [memberIds, q.hasNextPage, q.isFetchingNextPage, loaded.length, pageCount]); // eslint-disable-line react-hooks/exhaustive-deps
+  const ids = loaded.map((r) => r.instrument_id);
   const labels = useQuery({
     queryKey: ['extb', 'labels', ids.join(',').slice(0, 4000)],
     queryFn: () => extB.instrumentLabels({ ids }), enabled: ids.length > 0,
   });
   const labelOf = useMemo(() => new Map<string, InstrumentLabel>((labels.data?.data ?? []).map((l) => [l.instrument_id, l])), [labels.data]);
   const tbl = useRef<HTMLTableElement>(null);
+  // header click sorts only the rows loaded so far (server paging and its order are unchanged)
+  const rows = useMemo(() => (sortCol ? sortByColumn(loaded, (r) => columnValue(r, sortCol.key, labelOf), sortCol.dir) : loaded), [loaded, sortCol, labelOf]);
+  const toggleSort = (key: string): void => { setSel(0); setSortCol((c) => (c?.key !== key ? { key, dir: 'desc' } : c.dir === 'desc' ? { key, dir: 'asc' } : null)); };
+  const sortHead = (key: string, label: string): React.ReactNode => (
+    <th key={key} aria-sort={sortCol?.key === key ? (sortCol.dir === 'asc' ? 'ascending' : 'descending') : 'none'}>
+      <button className="linklike" onClick={() => toggleSort(key)} title="点击排序：降序 → 升序 → 恢复服务端顺序">{label}{sortCol?.key === key ? (sortCol.dir === 'asc' ? ' ▲' : ' ▼') : ''}</button>
+    </th>
+  );
   if (q.isPending || (q.isError && isNotReady(q.error))) return <Loading label="筛选运行中…（首次加载行情面板可能需要一两分钟）" />;
   if (q.isError) return <ErrorState error={q.error} what="筛选结果" onRetry={onRetry} />;
   const first = q.data.pages[0]!;
@@ -218,10 +273,12 @@ function RunResults({ runId, onOpen, onRetry }: { runId: string; onOpen: (id: st
         <div className="state state-error" role="status">无法评估的部分：{first.data.capability_gaps.map((g) => `${FIELD_BY_ID[g.requirement]?.label ?? g.requirement}（${g.reason_code}）`).join('、')}</div>
       )}
       <MetaStrip meta={first.meta} title="筛选运行" hideCoverage />
+      {memberIds && <p className="muted small" role="status">已按板块成分过滤：显示 {rows.length} / {memberIds.size} 只{q.hasNextPage ? '（仍在读取后续页…）' : '；其余成分不满足条件、不在所选股票池内或缺少数据。'}</p>}
+      {sortCol && <p className="muted small" role="status">已按「{sortLabel(sortCol.key)}」{sortCol.dir === 'asc' ? '升序' : '降序'}排列已加载的 {rows.length} 行（只排当前已加载的行，不是全部结果；服务端分页和顺序不变，三次点击回到服务端顺序）。缺失值始终排在最后。</p>}
       {rows.length === 0 ? <EmptyState>没有满足条件、也没有未知的股票。</EmptyState> : (
         <div className="scroll" tabIndex={0} onKeyDown={onKey} aria-label="结果表（↑↓ 选择，Enter 打开个股）">
           <table ref={tbl} className={`table results${dense ? ' dense' : ''}`}>
-            <thead><tr><th>#</th><th>代码</th><th>名称</th><th>条件</th>{fields.map((f) => <th key={f}>{FIELD_BY_ID[f]?.label ?? f}</th>)}</tr></thead>
+            <thead><tr>{sortHead('#', '#')}{sortHead('code', '代码')}{sortHead('name', '名称')}{sortHead('cond', '条件')}{fields.map((f) => sortHead(`f:${f}`, FIELD_BY_ID[f]?.label ?? f))}</tr></thead>
             <tbody>
               {rows.map((r, i) => {
                 const l = labelOf.get(r.instrument_id);

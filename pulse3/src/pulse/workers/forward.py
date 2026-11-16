@@ -7,6 +7,7 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.forward grant --principal <uuid> --account <uuid> --permission read|plan|import [--revoke]
     uv run python -m pulse.workers.forward import-fills --principal <uuid> --account <uuid> --source-id <name> --file fills.json
     uv run python -m pulse.workers.forward readmodels --account <uuid> --version N --start ISO --end ISO --knowledge-as-of ISO [--policy twr-cost-x1-v1]
+    uv run python -m pulse.workers.forward monitor [--as-of ISO] [--slot main]                 # rank IC / top-decile excess of matured rankings (gross, append-only)
     uv run python -m pulse.workers.forward show
 
 ``import-fills`` stores the file as an immutable raw object FIRST, then calls the same import as the API (``fills.json`` = a JSON
@@ -17,7 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from pulse import config
@@ -51,6 +52,9 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--end", required=True)
     p.add_argument("--knowledge-as-of", required=True)
     p.add_argument("--policy", default="twr-cost-x1-v1")
+    p = sub.add_parser("monitor", help="forward monitor: rank IC and top-decile excess of published rankings whose horizon has been observed")
+    p.add_argument("--as-of", default=None, help="point-in-time cut-off (ISO instant with offset); default now")
+    p.add_argument("--slot", default="main")
     sub.add_parser("show")
     return ap
 
@@ -79,6 +83,14 @@ def run(argv: list[str] | None = None) -> int:
             req = {"account_id": UUID(a.account), "expected_account_version": head["current_sequence"], "raw_object_id": rid,
                    "mapping_version": a.mapping_version, "fills": fills}
             out = portfolio_service.import_broker_fills(conn, UUID(a.principal), _wire_req(req))
+        elif a.cmd == "monitor":
+            from pulse.application import forward_monitor
+            from pulse.application.data_service import DataService
+
+            as_of = _t(a.as_of) if a.as_of else datetime.now(timezone.utc)
+            if as_of.tzinfo is None:
+                raise SystemExit("--as-of needs a timezone offset")
+            out = forward_monitor.monitor(DataService(conn, LakeStore(cfg.lake_root)), as_of=as_of, slot=a.slot)
         elif a.cmd == "readmodels":
             out = portfolio_service.build_readmodels(conn, UUID(a.account), a.version, {"start": _t(a.start), "end": _t(a.end)}, _t(a.knowledge_as_of), [], a.policy)
         else:

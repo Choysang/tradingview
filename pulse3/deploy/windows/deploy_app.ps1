@@ -42,7 +42,7 @@ $rc = Native { & "$root\app\.venv\Scripts\python.exe" -m pulse.adapters.postgres
 if ($rc[-1] -ne 0) { throw "migrate failed" }
 Remove-Item Env:PGPASSWORD
 
-Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\pulse3_env.ps1" $root -Force
+Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\run_intraday_import.ps1", "$root\app\deploy\windows\run_news_import.ps1", "$root\app\deploy\windows\pulse3_env.ps1" $root -Force
 $ps = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Get-ScheduledTask -TaskName Pulse3Api -ErrorAction SilentlyContinue)) {
     $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_api.ps1"
@@ -55,6 +55,20 @@ if (-not (Get-ScheduledTask -TaskName Pulse3Daily -ErrorAction SilentlyContinue)
     $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 18:10
     $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 3) -StartWhenAvailable
     Register-ScheduledTask -TaskName Pulse3Daily -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
+}
+# Legacy recorder imports (BF live lane): the old system records, pulse3 reads. Registered once; re-running the deploy keeps them.
+if (-not (Get-ScheduledTask -TaskName Pulse3IntradayImport -ErrorAction SilentlyContinue)) {
+    $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_intraday_import.ps1"
+    $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 15:45
+    $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 1) -StartWhenAvailable
+    Register-ScheduledTask -TaskName Pulse3IntradayImport -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
+}
+if (-not (Get-ScheduledTask -TaskName Pulse3NewsImport -ErrorAction SilentlyContinue)) {
+    $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_news_import.ps1"
+    $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 08:00
+    $t.Repetition = (New-ScheduledTaskTrigger -Once -At 08:00 -RepetitionInterval (New-TimeSpan -Minutes 10) -RepetitionDuration (New-TimeSpan -Hours 14)).Repetition   # 08:00-22:00 every 10 min
+    $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 9) -MultipleInstances IgnoreNew
+    Register-ScheduledTask -TaskName Pulse3NewsImport -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
 }
 Start-ScheduledTask -TaskName Pulse3Api
 Write-Output "deployed $Round"

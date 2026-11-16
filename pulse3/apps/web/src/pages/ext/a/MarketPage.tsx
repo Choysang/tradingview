@@ -11,6 +11,8 @@ import { ReleaseBar } from '../../../components/ReleaseBar';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
 import { useReleaseSelection } from '../../../hooks/useRelease';
 import { fmtInt } from '../../../lib/format';
+import { SealClockCard } from '../../bf/live/SealClock';
+import { VITAL_QUERY, growthQuery, screenHref } from '../../bf/board/screenLink';
 import './ext-a.css';
 import { Bars, Gauge, Sparkline, num, pctText } from './charts';
 import { STREAM_LABEL, useMarketToday, usePanel, useReleaseStream } from './hooks';
@@ -54,21 +56,25 @@ function Mood({ t }: { t: Thermometer }) {
   );
 }
 
-function VitalsTiles({ v }: { v: Vitals }) {
-  const tile = (label: string, value: string, note?: string, tone?: string) => (
-    <div className="card ea-tile"><div className="muted small">{label}</div><div className={`ea-tile-v mono ${tone ?? ''}`}>{value}</div>{note && <div className="small muted">{note}</div>}</div>
+export function VitalsTiles({ v }: { v: Vitals }) {
+  // links: tiles whose idea the screen language can express open /screen with a question; the others carry no link
+  const tile = (label: string, value: string, note?: string, tone?: string, links: Array<{ q: string; text: string }> = []) => (
+    <div className="card ea-tile"><div className="muted small">{label}</div><div className={`ea-tile-v mono ${tone ?? ''}`}>{value}</div>{note && <div className="small muted">{note}</div>}
+      {links.map((l) => <Link key={l.q} className="bd-link" to={screenHref({ q: l.q })} title={`在筛选中查看：${l.q}`}>{l.text}</Link>)}
+    </div>
   );
+  const maxQ = VITAL_QUERY.maxHeight(v.max_height);
   const none = (n: number | null) => (n == null ? '—' : fmtInt(n));
   return (
     <section aria-label="市场体征">
       <div className="ea-tiles">
-        {tile('涨停', none(v.limit_up), `封板率 ${pctText(v.seal_rate_pct, 1, false)}`, 'up')}
-        {tile('炸板', none(v.broken), '触及涨停价但收盘未封住', 'down')}
+        {tile('涨停', none(v.limit_up), `封板率 ${pctText(v.seal_rate_pct, 1, false)}`, 'up', [{ q: VITAL_QUERY.limitUp, text: '在筛选中查看 →' }])}
+        {tile('炸板', none(v.broken), '触及涨停价但收盘未封住（筛选暂不支持炸板）', 'down')}
         {tile('跌停', none(v.limit_down))}
-        {tile('最高连板', v.max_height == null ? '—' : `${v.max_height} 板`, v.max_height_stocks.map((s) => s.name).join('、'))}
+        {tile('最高连板', v.max_height == null ? '—' : `${v.max_height} 板`, v.max_height_stocks.map((s) => s.name).join('、'), undefined, maxQ ? [{ q: maxQ, text: '在筛选中查看 →' }] : [])}
         {tile('昨日涨停溢价', pctText(v.premium.close_pct), `开盘 ${pctText(v.premium.open_pct)} · 样本 ${v.premium.sample_count}`)}
         {tile('成交额（估算）', bigWan(v.volume.amount_estimate_cny), v.volume.ratio_vs_20d_mean ? `量比近 20 日均 ${v.volume.ratio_vs_20d_mean}` : '近 20 日均量不足', undefined)}
-        {tile('上涨 / 下跌', `${fmtInt(v.up)} / ${fmtInt(v.down)}`, `平盘 ${fmtInt(v.flat)}`)}
+        {tile('上涨 / 下跌', `${fmtInt(v.up)} / ${fmtInt(v.down)}`, `平盘 ${fmtInt(v.flat)}`, undefined, [{ q: VITAL_QUERY.up, text: '看上涨' }, { q: VITAL_QUERY.down, text: '看下跌' }])}
       </div>
       <p className="muted small">
         统计范围：沪深主板，{fmtInt(v.coverage.observed)}/{v.coverage.expected_instruments == null ? '?' : fmtInt(v.coverage.expected_instruments)} 只有当日日线；
@@ -127,15 +133,16 @@ function ThemesView({ t, releaseId }: { t: Themes; releaseId: string | null }) {
   );
 }
 
-function GrowthView({ g }: { g: GrowthStrip }) {
+export function GrowthView({ g }: { g: GrowthStrip }) {
   return (
     <section className="card" aria-label="连阳梯度">
       <div className="ea-head"><h3>连阳梯度</h3><span className="muted small">3 连阳及以上 {fmtInt(g.ge3_total)} 只</span></div>
       <div className="ea-growth">
         {g.buckets.map((b) => (
-          <div key={b.streak} className="ea-growth-cell" title={b.top.map((s) => `${s.name} ${pctText(s.pct)}`).join('\n')}>
+          <Link key={b.streak} className="ea-growth-cell" to={screenHref({ q: growthQuery(b.streak) })}
+            title={`在筛选中查看：${growthQuery(b.streak)}（筛选只支持“至少 N 连阳”）\n${b.top.map((s) => `${s.name} ${pctText(s.pct)}`).join('\n')}`}>
             <div className="mono ea-growth-n">{fmtInt(b.count)}</div><div className="small muted">{b.label}</div>
-          </div>
+          </Link>
         ))}
       </div>
       <p className="muted small">{g.definition}</p>
@@ -185,13 +192,8 @@ export function MarketPage() {
       {vi.body && <VitalsTiles v={vi.body} />}
       <div className="ea-two">
         {la.body && <LadderView l={la.body} />}
-        <section className="card" aria-label="封板时钟">
-          <div className="ea-head"><h3>封板时钟</h3><Badge tone="warn">待接入</Badge></div>
-          <EmptyState>
-            {data?.capability_gaps.filter((g) => g.reason_code === 'NO_INTRADAY_SEAL_TIMES').map((g) => g.requirement)[0]
-              ?? '首次封板时间需要盘中数据'}。目前只有日线和少量报价快照，所以不显示封板时间分布，也不编造。
-          </EmptyState>
-        </section>
+        <SealClockCard sessionDate={th.body?.session} releaseId={rid ?? null}
+          missingNote={data?.capability_gaps.filter((g) => g.reason_code === 'NO_INTRADAY_SEAL_TIMES').map((g) => g.requirement)[0]} />
       </div>
       {br.body && (
         <section className="card" aria-label="涨跌分布">

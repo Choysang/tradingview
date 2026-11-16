@@ -6,7 +6,9 @@ import { EmptyState, Loading, SectionTitle } from '../../../components/States';
 import { useToast } from '../../../components/Toast';
 import { fmtTime } from '../../../lib/format';
 import { ALERT_POLICY_VERSION, SCOPE_KIND_LABEL, buildRuleBody, validateDraft, withEnabled, type RuleDraft, type ScopeKind } from './alertRule';
+import { ApiError } from '../../../api/client';
 import { explainError, extGet, extPost } from './api';
+import { PUSH_STATUS_LABEL, type TestPushData } from './bfOps';
 import { ExtError } from './common';
 import type { AlertDestination, AlertRuleEntry, AlertRulesData } from './types';
 
@@ -25,6 +27,29 @@ function DestBadges({ ids, dests }: { ids: string[]; dests: AlertDestination[] }
         const d = dests.find((x) => x.destination_id === id);
         return <Badge key={id} tone={d?.enabled ? 'neutral' : 'warn'} title={d ? `${d.label}（${d.endpoint === 'configured' ? '已配置' : '未配置地址'}）` : id}>{d ? CHANNEL[d.channel] : '未知去向'}</Badge>;
       })}
+    </span>
+  );
+}
+
+/** 发送测试: one test message to one of the user's own destinations, recorded server-side like a delivery. A click = one Idempotency-Key. */
+export function TestPushButton({ dest }: { dest: AlertDestination }) {
+  const key = useRef(crypto.randomUUID());
+  const qc = useQueryClient();
+  const push = useMutation({
+    mutationFn: () => extPost<TestPushData>('bf/ops/test-push', { destination_id: dest.destination_id }, key.current),
+    onSuccess: () => { key.current = crypto.randomUUID(); void qc.invalidateQueries({ queryKey: ['extc', 'list-user-alerts'] }); },
+    // only a definite business answer (4xx) ends this attempt; on a network error or 5xx the send may have happened,
+    // so the next click reuses the key and the server replays the stored answer instead of sending again
+    onError: (e) => { if (e instanceof ApiError && e.status >= 400 && e.status < 500) key.current = crypto.randomUUID(); },
+  });
+  const res = push.data?.data;
+  const label = `${CHANNEL[dest.channel]} ${dest.label}`;
+  return (
+    <span className="chips">
+      <button type="button" className="btn btn-small" disabled={!dest.enabled || push.isPending} onClick={() => push.mutate()} aria-label={`向${label}发送测试消息`}
+        title={dest.enabled ? '发送一条标明「测试」的消息，并记入告警记录' : '该去向未配置，无法测试'}>{push.isPending ? '发送中…' : '发送测试'}</button>
+      {res && <Badge tone={res.status === 'failed' ? 'bad' : res.status === 'unknown' ? 'warn' : 'good'} title={res.error_code ?? undefined}>{PUSH_STATUS_LABEL[res.status]}{res.error_code ? `（${res.error_code}）` : ''}</Badge>}
+      {push.error && <span className="field-error" role="alert">测试失败：{explainError(push.error)}</span>}
     </span>
   );
 }
@@ -71,6 +96,15 @@ export function AlertRuleEditor() {
           : 'Webhook 推送只有在服务器配置了推送地址后才会生效；当前未配置，只会产生站内告警。'}
         <span>浏览器不会向任何地址发送内容。</span>
       </div>
+      <h3>通知去向</h3>
+      <ul className="plain" aria-label="通知去向">
+        {dests.map((d) => (
+          <li key={d.destination_id} className="item-head">
+            <span>{CHANNEL[d.channel]} {d.label}{d.enabled ? '' : '（未启用）'}</span>
+            <TestPushButton dest={d} />
+          </li>
+        ))}
+      </ul>
       {data.rules.length === 0 ? <EmptyState>还没有告警规则。</EmptyState> : (
         <div className="table-wrap">
           <table className="table">

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:board:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'board' (docs/LEGACY_TRIAGE.md rows #38/#39 watch cards, #30 theme map, #50 palette search). All figures derive from point-in-time raw daily bars pinned to a release; amounts are estimates (volume x close).",
+  "$defs": {
+    "WatchSparkPoint": {
+      "type": "object", "additionalProperties": false, "required": ["d", "c"],
+      "properties": {
+        "d": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "c": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}
+      }
+    },
+    "WatchRank": {
+      "type": "object", "additionalProperties": false, "required": ["alpha_rank", "total", "horizon_id", "forecast_target"],
+      "properties": {
+        "alpha_rank": {"$ref": "urn:pulse:contracts:v3#/$defs/PositiveInteger"},
+        "total": {"$ref": "urn:pulse:contracts:v3#/$defs/PositiveInteger"},
+        "horizon_id": {"type": "string"},
+        "forecast_target": {"type": "string"}
+      }
+    },
+    "WatchCard": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instrument_id", "session", "last_close", "pct_change", "pct_missing_reason", "amount_estimate_cny", "spark", "rank"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "session": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "last_close": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "pct_change": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "pct_missing_reason": {"oneOf": [{"enum": ["no_bar", "no_previous_bar", "unverifiable_move"]}, {"type": "null"}]},
+        "amount_estimate_cny": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "spark": {"type": "array", "maxItems": 40, "items": {"$ref": "#/$defs/WatchSparkPoint"}},
+        "rank": {"oneOf": [{"$ref": "#/$defs/WatchRank"}, {"type": "null"}]}
+      }
+    },
+    "WatchCards": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_id", "amount_is_estimate", "method", "cards"],
+      "properties": {
+        "release_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "amount_is_estimate": {"const": true},
+        "method": {"type": "string"},
+        "cards": {"type": "array", "maxItems": 60, "items": {"$ref": "#/$defs/WatchCard"}}
+      }
+    },
+    "ThemeMapNode": {
+      "type": "object", "additionalProperties": false,
+      "required": ["node_id", "name", "members", "observed", "pct_samples", "amount_estimate_cny", "avg_pct"],
+      "properties": {
+        "node_id": {"type": "string"},
+        "name": {"type": "string"},
+        "members": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "observed": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "pct_samples": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "amount_estimate_cny": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "avg_pct": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "ThemeMap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_id", "taxonomy_id", "taxonomy_version", "membership_snapshot_id", "session", "amount_is_estimate", "method", "nodes"],
+      "properties": {
+        "release_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "taxonomy_id": {"type": "string"},
+        "taxonomy_version": {"$ref": "urn:pulse:contracts:v3#/$defs/PositiveInteger"},
+        "membership_snapshot_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "session": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "amount_is_estimate": {"const": true},
+        "method": {"type": "string"},
+        "nodes": {"type": "array", "items": {"$ref": "#/$defs/ThemeMapNode"}}
+      }
+    },
+    "InstrumentHit": {
+      "type": "object", "additionalProperties": false, "required": ["instrument_id", "code", "name", "is_risk_warning"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "code": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "name": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "is_risk_warning": {"oneOf": [{"type": "boolean"}, {"type": "null"}]}
+      }
+    },
+    "InstrumentSearch": {
+      "type": "object", "additionalProperties": false, "required": ["query", "items"],
+      "properties": {
+        "query": {"type": "string"},
+        "items": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/InstrumentHit"}}
+      }
+    }
+  }
+}

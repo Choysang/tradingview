@@ -3,17 +3,21 @@
  * data-health pills (never a single green light) and the theme switch.
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { NavLink, Outlet, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { routesA } from '../routes/extA';
 import { routesB } from '../routes/extB';
 import { routesC } from '../routes/extC';
+import { routesBf } from '../routes/bf';
 import { dataStatusQuery } from '../api/keys';
 import { USE_MOCK } from '../config';
 import { useSyntheticSeen } from '../hooks/useSynthetic';
 import { useTheme } from '../hooks/useTheme';
 import { useUpdatesStatus } from '../hooks/useUpdates';
 import { fmtAge } from '../lib/format';
+import { shortcutFor } from '../pages/bf/board/palette';
 import { Badge } from './Badges';
+import { CommandPalette } from './CommandPalette';
 
 const BASE_NAV: Array<[string, string]> = [
   ['/', '首页'],
@@ -22,7 +26,7 @@ const BASE_NAV: Array<[string, string]> = [
   ['/portfolio', '账户与可行动'],
   ['/data', '数据状态'],
 ];
-const NAV: Array<[string, string]> = [...BASE_NAV, ...[...routesA, ...routesB, ...routesC].map((r): [string, string] => [`/${r.path}`, r.label])];
+const NAV: Array<[string, string]> = [...BASE_NAV, ...[...routesA, ...routesB, ...routesC, ...routesBf].map((r): [string, string] => [`/${r.path}`, r.label])];
 
 async function mockSwitch(name: string): Promise<void> {
   await fetch(`/__mock/${name}`, { method: 'POST' });
@@ -66,6 +70,21 @@ export function Shell() {
   const upd = useUpdatesStatus();
   const [sp] = useSearchParams();
   const carry = sp.get('release');
+  const { pathname } = useLocation();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  // Ctrl/Cmd+K opens the command palette; "/" focuses the screen ask bar on /screen (never while typing in a field)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      const action = shortcutFor(e, pathname);
+      if (action === 'toggle-palette') { e.preventDefault(); setPaletteOpen((o) => !o); }
+      else if (action === 'focus-ask') {
+        const ask = document.querySelector<HTMLInputElement>('input[aria-label="问句"]');
+        if (ask) { e.preventDefault(); ask.focus(); }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pathname]);
   const themeLabel = theme.choice === 'auto' ? '跟随系统' : theme.choice === 'light' ? '浅色' : '深色';
   return (
     <div className="app">
@@ -90,12 +109,14 @@ export function Shell() {
           ))}
         </nav>
         <div className="topbar-right">
+          <button className="btn btn-small btn-ghost" onClick={() => setPaletteOpen(true)} aria-label="打开搜索（Ctrl+K）" title="搜索股票或页面（Ctrl+K / Cmd+K）">搜索 <span className="muted small">Ctrl K</span></button>
           <GlobalHealth />
           <span className="muted small" title="最近一次更新轮询">{upd.lastOkAt ? `更新 ${fmtAge(new Date(upd.lastOkAt).toISOString())}` : '更新中'}</span>
           <button className="btn btn-small btn-ghost" onClick={theme.cycle} aria-label={`主题：${themeLabel}`}>{themeLabel}</button>
         </div>
       </header>
       <main className="main"><Outlet /></main>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} pages={NAV.map(([path, label]) => ({ path, label }))} release={carry} />
       <footer className="footer">
         平台输出的是基于规则与统计的研究结果，不构成投资建议，也不代替你下单。排名是同一目标下的相对顺序，除非标明「校准概率」，否则不是上涨概率。
       </footer>

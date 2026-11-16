@@ -31,7 +31,7 @@ from pulse.adapters.models.rules import RulesProvider
 from pulse.adapters.models.runner import ModelRunner
 from pulse.adapters.postgres import ingest_repo
 from pulse.adapters.postgres import intelligence_repo as repo
-from pulse.adapters.sources import cls_news, eastmoney_news, fundflow, guba, lhb
+from pulse.adapters.sources import cls_news, eastmoney_news, fundflow, guba, legacy_recordings, lhb
 from pulse.adapters.sources.http import Capture, SourceBlocked, TransportFailure
 from pulse.application.data_service import DataService, Summary
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
@@ -43,7 +43,7 @@ from pulse.domain.intelligence.verification import EvidenceItem
 
 UTC = timezone.utc
 CST = ZoneInfo("Asia/Shanghai")
-NEWS_SOURCES = (eastmoney_news.SOURCE_ID, cls_news.SOURCE_ID)
+NEWS_SOURCES = (eastmoney_news.SOURCE_ID, cls_news.SOURCE_ID, legacy_recordings.NEWS_SOURCE_ID)  # last: recorded feed imported from the old system
 NEWS_TOKEN = "pulse.intel.news_claim@1"
 LEGACY_SOURCE = "legacy_warehouse"
 TOPIC_WORDS = ("政府补助", "回购", "减持", "增持", "分红", "权益分派", "业绩预告", "业绩快报", "中标", "合同", "订单", "重组", "收购", "诉讼", "仲裁",
@@ -254,7 +254,8 @@ class IntelligenceService:
         for rid in set(raw_ids):
             row = self.conn.execute("SELECT source_id, content_hash FROM ingest.raw_object WHERE raw_object_id=%s", (rid,)).fetchone()
             body = self.lake.read_object(row["content_hash"])
-            parse = feeds.parse_eastmoney_news if row["source_id"] == eastmoney_news.SOURCE_ID else feeds.parse_cls_roll
+            parse = {eastmoney_news.SOURCE_ID: feeds.parse_eastmoney_news, legacy_recordings.NEWS_SOURCE_ID: legacy_recordings.parse_recorded_news}.get(
+                row["source_id"], feeds.parse_cls_roll)
             out[rid] = {r.source_record_id: r for r in parse(body, row["source_id"]).records}
         return out
 

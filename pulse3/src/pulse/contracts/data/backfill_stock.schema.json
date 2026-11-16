@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:stock:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill, lane stock (docs/LEGACY_TRIAGE.md rows 41, 159, 43): server-computed chart indicator series and the stock statistics card. Payloads are the `data` member of the v3 envelope; the meta is the v3 ResponseMeta.",
+  "$defs": {
+    "IndicatorBar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bar_open_time", "trade_date", "is_final"],
+      "description": "One bar of the window the indicators were computed from, in window order. Index i of every series value list belongs to bars[i].",
+      "properties": {
+        "bar_open_time": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "trade_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "is_final": {"type": "boolean", "description": "false: the bar's period has not ended, the value at this index may still change."}
+      }
+    },
+    "IndicatorSeries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "indicator", "output", "pane", "label", "params", "definition_version", "implementation_digest", "warmup_bars", "first_valid_index", "valid_count", "values"],
+      "properties": {
+        "key": {"type": "string", "minLength": 1, "description": "Stable series id, e.g. ma20, boll_upper, macd_hist, kdj_j, rsi14."},
+        "indicator": {"type": "string", "enum": ["ma", "ema", "boll", "macd", "kdj", "rsi"]},
+        "output": {"type": "string", "minLength": 1, "description": "Kernel output name (ma, ema, mid/upper/lower, macd/signal/hist, k/d/j, rsi)."},
+        "pane": {"type": "string", "enum": ["price", "sub"], "description": "price: drawn on the price pane; sub: drawn in a selectable sub-pane."},
+        "label": {"type": "string", "minLength": 1},
+        "params": {"type": "object", "additionalProperties": {"type": "number"}},
+        "definition_version": {"type": "string"},
+        "implementation_digest": {"$ref": "urn:pulse:contracts:v3#/$defs/Hash"},
+        "warmup_bars": {"type": "integer", "minimum": 0, "description": "Bars at the start of a window that cannot have a value."},
+        "first_valid_index": {"type": ["integer", "null"], "minimum": 0},
+        "valid_count": {"type": "integer", "minimum": 0},
+        "values": {
+          "type": "array",
+          "description": "Same length as bars. null = missing (warm-up, or a missing input inside the window); never 0.",
+          "items": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+        }
+      }
+    },
+    "StockIndicators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instrument_id", "release_id", "decision_as_of", "availability_policy_version", "timeframe", "adjustment_mode", "adjustment_version",
+                   "snapshot_id", "window_hash", "window_start", "window_end", "window_complete", "numeric_policy", "requested", "bars", "series"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "release_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "decision_as_of": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "availability_policy_version": {"type": "string"},
+        "timeframe": {"$ref": "urn:pulse:contracts:v3#/$defs/Timeframe"},
+        "adjustment_mode": {"$ref": "urn:pulse:contracts:v3#/$defs/AdjustmentMode"},
+        "adjustment_version": {"type": ["string", "null"]},
+        "snapshot_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID", "description": "The bars snapshot the series were computed from."},
+        "window_hash": {"$ref": "urn:pulse:contracts:v3#/$defs/Hash", "description": "Equals getStockBars data.window_hash for the same window; a page draws the series only when it equals the hash of the candles it shows."},
+        "window_start": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "window_end": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "window_complete": {"type": "boolean"},
+        "numeric_policy": {"type": "string"},
+        "requested": {"type": "array", "items": {"type": "string", "enum": ["ma", "ema", "boll", "macd", "kdj", "rsi"]}, "uniqueItems": true},
+        "bars": {"type": "array", "items": {"$ref": "#/$defs/IndicatorBar"}},
+        "series": {"type": "array", "items": {"$ref": "#/$defs/IndicatorSeries"}}
+      }
+    },
+    "StatField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "status", "value", "value_kind", "unit", "as_of", "basis", "reason"],
+      "properties": {
+        "key": {"type": "string", "enum": ["turnover_amount", "turnover_rate", "dist_to_60d_high", "limit_up_count_1y", "limit_streak", "up_streak", "listing_date",
+                                           "first_seal_time", "last_seal_time", "seal_amount", "open_board_count"]},
+        "label": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "enum": ["ok", "estimated", "unavailable"], "description": "estimated: computed from a documented approximation (page labels it 估算); unavailable: the data does not exist in pulse3 (page shows 暂无数据 and the reason)."},
+        "value": {"type": ["string", "null"], "description": "decimal / integer / ISO date as text; null exactly when status is unavailable."},
+        "value_kind": {"type": ["string", "null"], "enum": ["decimal", "integer", "date", null]},
+        "unit": {"type": ["string", "null"]},
+        "as_of": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}], "description": "Trading date the value refers to."},
+        "basis": {"type": ["string", "null"], "description": "How the value was computed (inputs, window, approximation)."},
+        "reason": {"type": ["string", "null"], "description": "Why the value is missing or approximate; required when status is not ok."}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "unavailable"}}}, "then": {"properties": {"value": {"type": "null"}, "value_kind": {"type": "null"}, "reason": {"type": "string", "minLength": 1}}}, "else": {"properties": {"value": {"type": "string"}, "value_kind": {"type": "string"}}}},
+        {"if": {"properties": {"status": {"const": "estimated"}}}, "then": {"properties": {"reason": {"type": "string", "minLength": 1}}}}
+      ]
+    },
+    "StockStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instrument_id", "release_id", "decision_as_of", "availability_policy_version", "price_basis", "bars_snapshot_id", "last_trade_date", "fields"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "release_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "decision_as_of": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp", "description": "The cutoff: nothing recorded after it is used."},
+        "availability_policy_version": {"type": "string"},
+        "price_basis": {"$ref": "urn:pulse:contracts:v3#/$defs/AdjustmentMode", "description": "Price series the price statistics were computed on."},
+        "bars_snapshot_id": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/UUID"}, {"type": "null"}]},
+        "last_trade_date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}], "description": "Date of the newest daily bar visible at the cutoff."},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/StatField"}}
+      }
+    }
+  }
+}

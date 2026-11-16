@@ -17,6 +17,7 @@ import { CommunityTab, EVIDENCE_TABS, FundTab, NewsTab, SeatsTab } from '../comp
 import { WatchStar } from '../components/Lists';
 import { MetaStrip } from '../components/MetaStrip';
 import { PlanCard } from '../components/PlanCard';
+import { IndicatorControls, IndicatorNotes } from '../components/IndicatorPanes';
 import { PriceChart, type ChartLine } from '../components/PriceChart';
 import { ReleaseBar } from '../components/ReleaseBar';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../components/States';
@@ -33,6 +34,10 @@ import { gradeOfInstance } from '../lib/grades';
 import { classifyPlan, sortPlans } from '../lib/planKind';
 import { toChartNumber } from '../lib/decimal';
 import type { AdjustmentMode } from '../api/types';
+import type { SubPaneId } from './bf/stock/api';
+import { StockStatsCard } from './bf/stock/StockStatsCard';
+import { SealFactsPanel } from './bf/live/SealClock';
+import { useStockIndicators } from './bf/stock/useStockIndicators';
 
 const TF_GROUPS: Array<{ label: string; options: Array<[ChartTimeframe, string]> }> = [
   { label: '分钟', options: [['1m', '1分'], ['5m', '5分'], ['15m', '15分'], ['1h', '60分']] },
@@ -59,6 +64,8 @@ export function StockPage() {
   const theme = useTheme();
   const toast = useToast();
   const [drawMode, setDrawMode] = useState(false);
+  const boll = layout.doc.panes.boll ?? false;
+  const setBoll = (v: boolean) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, boll: v } });
   const tf = layout.doc.timeframe;
   const adj = layout.doc.adjustment;
 
@@ -92,6 +99,14 @@ export function StockPage() {
 
   const ann = useAnnotations(instrumentId);
   const wsReleaseId = ws?.data.release_id ?? null;
+  // ---- indicator series: computed by the server from the same bars as the candles (MA/EMA/BOLL on price, one sub-pane)
+  // the saved choice wins; documents saved before KDJ/RSI existed fall back to the macd flag
+  const sub: SubPaneId | 'none' = layout.doc.panes.sub ?? (layout.doc.panes.macd ? 'macd' : 'none');
+  const overlayOn = useMemo(() => ({ ma: layout.doc.panes.ma, ema: layout.doc.panes.ema, boll }), [layout.doc.panes.ma, layout.doc.panes.ema, boll]);
+  const indicators = useStockIndicators({ instrumentId, releaseId: wsReleaseId, timeframe: tf, adjustment: adj, win: barsQ.data?.data ?? null, on: overlayOn, sub });
+  const onSub = (v: SubPaneId | 'none'): void => {
+    layout.save({ ...layout.doc, panes: { ...layout.doc.panes, sub: v, macd: v === 'macd' } });
+  };
   const staleWs = !!ws && !!rid && ws.data.release_id !== rid;
 
   const setView = (v: 'public' | 'account'): void => setSp((p) => { const n = new URLSearchParams(p); if (v === 'account') n.set('view', 'account'); else n.delete('view'); return n; }, { replace: true });
@@ -179,7 +194,7 @@ export function StockPage() {
               <label className="check"><input type="checkbox" checked={layout.doc.panes.volume} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, volume: e.target.checked } })} />成交量</label>
               <label className="check"><input type="checkbox" checked={layout.doc.panes.ma} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, ma: e.target.checked } })} />MA</label>
               <label className="check"><input type="checkbox" checked={layout.doc.panes.ema} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, ema: e.target.checked } })} />EMA</label>
-              <label className="check"><input type="checkbox" checked={layout.doc.panes.macd} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, macd: e.target.checked } })} />MACD</label>
+              <IndicatorControls boll={boll} onBoll={setBoll} sub={sub} onSub={onSub} />
               <button className={`btn btn-small ${drawMode ? 'btn-on' : ''}`} aria-pressed={drawMode} onClick={() => setDrawMode((d) => !d)}>{drawMode ? '点击图上位置画线…' : '画水平线'}</button>
               {layout.saving && <span className="muted small">保存布局…</span>}
             </div>
@@ -193,10 +208,10 @@ export function StockPage() {
             {barWindow && (
               <>
                 {barWindow.bars.length === 0 ? <EmptyState>该窗口没有K线（{barWindow.window_complete ? '已确认为空' : '未确认完整，可能只是尚未取到'}）。</EmptyState> : (
-                  <PriceChart bars={barWindow} showVolume={layout.doc.panes.volume} lines={lines} drawMode={drawMode} onPickPrice={picked} themeVersion={theme.version} />
+                  <PriceChart bars={barWindow} showVolume={layout.doc.panes.volume} lines={lines} drawMode={drawMode} onPickPrice={picked} themeVersion={theme.version} overlays={indicators.overlays} subSeries={indicators.subSeries} />
                 )}
                 <BarNotes win={barWindow} meta={barsQ.data!.meta} />
-                <IndicatorPanes layoutPanes={layout.doc.panes} features={ws.data.features} />
+                <IndicatorNotes view={indicators} />
               </>
             )}
           </section>
@@ -216,6 +231,8 @@ export function StockPage() {
 
         <aside className="wb-side">
           <QuoteCard quote={quote} loading={quoteQ.isLoading} error={quoteQ.error} />
+          <StockStatsCard instrumentId={instrumentId} releaseId={wsReleaseId} />
+          <SealFactsPanel instrumentId={instrumentId} releaseId={wsReleaseId} />
 
           <section aria-label="交易计划">
             <SectionTitle title="买卖计划" hint="冻结在本次发布。计划是条件与区间，不是一定能成交的价格。" />
@@ -312,30 +329,5 @@ function BarNotes({ win, meta }: { win: BarWindow; meta: { quality_status: strin
       {unfinished > 0 && <li className="flag flag-warn">最后 {unfinished} 根K线所在周期尚未结束（is_final = false），颜色较浅。</li>}
       {meta.quality_status !== 'valid' && gaps === 0 && <li className="flag flag-warn">本窗口数据质量：{meta.quality_status}</li>}
     </ul>
-  );
-}
-
-/**
- * MA / EMA / MACD must come from server values. v3.0.0 has no operation or field that
- * carries indicator series (gap G2), so the panes show what the server reports about the
- * feature and say plainly that the series is missing. Nothing is computed here.
- */
-function IndicatorPanes({ layoutPanes, features }: { layoutPanes: { ma: boolean; ema: boolean; macd: boolean }; features: Array<{ key: { feature_id: string }; result_state: string; computed_at: string | null }> }) {
-  const rows: Array<[keyof typeof layoutPanes, string, string]> = [['ma', '均线 MA', 'price.ma'], ['ema', '指数均线 EMA', 'price.ema'], ['macd', 'MACD', 'price.macd']];
-  const shown = rows.filter(([k]) => layoutPanes[k]);
-  if (shown.length === 0) return null;
-  return (
-    <div className="indicator-panes" aria-label="指标副图">
-      {shown.map(([k, label, id]) => {
-        const f = features.find((x) => x.key.feature_id === id);
-        const why = !f ? '服务器没有为这次发布提供该指标' : f.result_state === 'READY' ? `服务器已计算（${fmtTime(f.computed_at)}），但当前接口版本没有提供可读取的数值序列` : f.result_state === 'FAILED' ? '服务器计算失败' : '服务器仍在计算';
-        return (
-          <div key={k} className="indicator-pane">
-            <b>{label}</b> <MissingText>缺失</MissingText>
-            <span className="muted small"> {why}。页面不会自己计算指标。</span>
-          </div>
-        );
-      })}
-    </div>
   );
 }

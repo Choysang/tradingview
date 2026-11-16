@@ -512,6 +512,10 @@ def build_release(conn: psycopg.Connection, lake: LakeStore, *, as_of: datetime 
                   account_id: uuid.UUID | None = None, clock=lambda: datetime.now(timezone.utc)) -> BuildResult:
     """Build and publish one release. ``conn`` must be autocommit. Idempotent per input context."""
     t0 = time.monotonic()
+    # A cutoff after the wall time would claim unrecorded data and block later builds. The wall time is used, not the
+    # injected clock: tests replay a build with a clock earlier than the cutoff they ask for.
+    if as_of is not None and as_of > datetime.now(timezone.utc):
+        raise ValueError(f"as_of {as_of.isoformat()} is in the future")
     svc = DataService(conn, lake, clock=clock)
     svc.bootstrap()
     inputs = resolve_inputs(svc, lake, cfg, as_of)

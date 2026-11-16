@@ -65,6 +65,17 @@ def respond_ext(operation_id: str, data: Any, m: dict, status: int = 200) -> JSO
     return respond(operation_id, data, m, status, schema_id=contracts.EXT_ID)
 
 
+def respond_backfill(lane: str, definition: str, data: Any, m: dict, status: int = 200) -> JSONResponse:
+    """Legacy-feature backfill reads (docs/LEGACY_TRIAGE.md): the payload is checked against
+    ``backfill_<lane>.schema.json`` definition ``definition`` before it leaves; the envelope meta is the v3 ResponseMeta."""
+    sid = contracts.backfill_id(lane)
+    wire = contracts.to_wire(data)
+    contracts.check(definition, wire, sid)
+    body = {"meta": contracts.to_wire(m), "data": wire}
+    contracts.check("ResponseMeta", body["meta"])
+    return JSONResponse(body, status_code=status)
+
+
 def error_response(err: ApiError) -> JSONResponse:
     body = contracts.to_wire({"meta": meta(quality_status="invalid", freshness_state="unknown"),
                               "error": {"code": err.code, "message": err.message, "retryable": err.retryable,

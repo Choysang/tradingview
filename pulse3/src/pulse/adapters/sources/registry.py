@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from pulse.domain.market.units import profile_hash
 
-from . import cninfo, legacy, sina, tencent
+from . import cninfo, legacy, legacy_recordings, sina, tencent
 
 CONTRACT_VERSION = "3.0.0"
 
@@ -48,6 +48,8 @@ SOURCES = {
     "sina": ("Sina Finance quotes", "https://finance.sina.com.cn"),
     "tencent": ("Tencent Finance quotes", "https://gu.qq.com"),
     "cninfo_announcements": ("CNINFO listed-company announcements", "http://www.cninfo.com.cn"),
+    legacy_recordings.SOURCE_ID: ("Legacy recorder files: intraday snapshots, guba, extended intraday (read-only import)", "file://pulse/data"),
+    legacy_recordings.NEWS_SOURCE_ID: ("Legacy 7x24 news recorder (read-only import)", "file://pulse/data/news"),
 }
 
 _QUOTE_POLICY = {"timezone": "Asia/Shanghai", "calendar_id": "xshg_xshe_sessions", "rate_limit": "<=1 request/second",
@@ -90,6 +92,20 @@ _add(EndpointSpec("tencent", "minute_query", tencent.SCHEMA_VERSION, tencent.MAP
                   tencent.MINUTE_QUERY_PROFILE, _p("minute/query", estimated=True), True, "minute_close_sampled"))
 _add(EndpointSpec("cninfo_announcements", cninfo.ENDPOINT_ID, cninfo.SCHEMA_VERSION, cninfo.MAPPING_VERSION,
                   "EvidenceDocument", "poll", 6 * 3600, 600, None, cninfo.ENDPOINT_POLICY, True, "announcements_official"))
+
+
+def _lr(source: str, endpoint: str, contract: str, stale: int, dataset: str | None = None) -> None:
+    """Legacy recorder files (BF live lane): sampled 60 s snapshots are ESTIMATED data, see the endpoint policy."""
+    _add(EndpointSpec(source, endpoint, legacy_recordings.SCHEMA_VERSION, legacy_recordings.MAPPING_VERSION, contract, "batch", stale, None, None,
+                      legacy_recordings.ENDPOINT_POLICIES[endpoint], True, dataset))
+
+
+_lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_QUOTES, "CanonicalQuote", 2 * 86400)
+_lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_HOT, "CanonicalQuote", 2 * 86400)
+_lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_EXT, "CanonicalQuote", 2 * 86400)
+_lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_GUBA, "EvidenceDocument", 2 * 86400)
+_lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_ALERTS, "EvidenceDocument", 2 * 86400)
+_lr(legacy_recordings.NEWS_SOURCE_ID, legacy_recordings.EP_NEWS, "EvidenceDocument", 1800)
 
 
 def spec(source_id: str, endpoint_id: str) -> EndpointSpec:

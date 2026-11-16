@@ -6,6 +6,7 @@ import { Loading } from '../../../components/States';
 import { useToast } from '../../../components/Toast';
 import { RUN_STATE_LABEL } from '../../../lib/format';
 import { buildParameterArtifact, errorCode, explainError, extGet, extPost, getJobRun } from './api';
+import { JOB_LABELS } from './bfOps';
 import { isoSeconds } from './time';
 import type { JobDefinition, JobDefinitionsData, RunJobData } from './types';
 
@@ -24,6 +25,7 @@ export function validateJobForm(v: JobFormValues): Record<string, string> {
 const toLocalInput = (ms: number): string => new Date(ms - new Date(ms).getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 const TERMINAL = new Set(['succeeded', 'failed', 'cancelled']);
 const defKey = (d: JobDefinition): string => `${d.job_id}@${d.job_version}`;
+const jobName = (d: JobDefinition): string => { const l = JOB_LABELS[d.application_operation]; return l ? `${l.label}（${d.application_operation}）` : d.application_operation; };
 
 function RunStatus({ runId }: { runId: string }) {
   const q = useQuery({
@@ -79,13 +81,14 @@ export function RunJobForm() {
       {defs.isLoading ? <Loading /> : denied ? <p className="callout" role="alert">无查看任务定义权限</p> : defs.error ? <p className="field-error" role="alert">任务定义读取失败：{explainError(defs.error)}</p> : manual.length === 0 ? <p className="muted">没有允许手动触发的已登记任务。</p> : (
         <form className="form" onSubmit={(e) => { e.preventDefault(); submit(); }} aria-label="运行任务表单">
           <label>已登记任务
-            <select value={sel} onChange={(e) => { setSel(e.target.value); touch(); }} aria-invalid={!!errs.definition}>
+            <select value={sel} onChange={(e) => { setSel(e.target.value); touch(); const next = manual.find((d) => defKey(d) === e.target.value); if (next && params.trim() === '{}') setParams(JOB_LABELS[next.application_operation]?.params ?? '{}'); }} aria-invalid={!!errs.definition}>
               <option value="">请选择…</option>
-              {manual.map((d) => <option key={defKey(d)} value={defKey(d)} disabled={!d.enabled}>{d.application_operation} v{d.job_version}{d.enabled ? '' : '（已停用）'}</option>)}
+              {manual.map((d) => <option key={defKey(d)} value={defKey(d)} disabled={!d.enabled}>{jobName(d)} v{d.job_version}{d.enabled ? '' : '（已停用）'}</option>)}
             </select>
             {errs.definition && <span className="field-error">{errs.definition}</span>}
           </label>
           <label>计划运行时间<input type="datetime-local" value={scheduledFor} onChange={(e) => { setScheduledFor(e.target.value); touch(); }} />{errs.scheduledFor && <span className="field-error">{errs.scheduledFor}</span>}</label>
+          {definition && JOB_LABELS[definition.application_operation] && <p className="muted small" style={{ gridColumn: '1 / -1', margin: 0 }} role="note">{JOB_LABELS[definition.application_operation]?.hint}</p>}
           {definition && (
             <dl className="kv compact" style={{ gridColumn: '1 / -1' }}>
               <dt>任务编号</dt><dd className="mono small">{definition.job_id}</dd>
@@ -103,7 +106,7 @@ export function RunJobForm() {
         <div className="dialog-scrim">
           <div className="dialog" role="alertdialog" aria-modal="true" aria-labelledby="job-confirm-title">
             <h3 id="job-confirm-title" style={{ margin: 0 }}>确认运行任务？</h3>
-            <p>将运行 <b>{definition.application_operation}</b> v{definition.job_version}，计划时间 {scheduledFor.replace('T', ' ')}。任务可能写入数据，提交后不能撤回。</p>
+            <p>将运行 <b>{jobName(definition)}</b> v{definition.job_version}，计划时间 {scheduledFor.replace('T', ' ')}。任务可能写入数据，提交后不能撤回。</p>
             <div className="dialog-actions">
               <button className="btn" autoFocus onClick={() => setConfirming(false)}>取消</button>
               <button className="btn btn-on" onClick={go}>确认运行</button>

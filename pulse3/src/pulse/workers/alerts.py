@@ -38,6 +38,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--principal", required=True)
     sub.add_parser("scan")
     sub.add_parser("deliver")
+    sub.add_parser("daily-report")
     p = sub.add_parser("calendar-sync")
     p.add_argument("--days", type=int, default=60)
     p.add_argument("--min-interval", type=float, default=1.0)
@@ -63,6 +64,9 @@ def run(argv: list[str] | None = None) -> int:
             out = alert_service.scan(conn)
         elif a.cmd == "deliver":
             out = alert_service.deliver(conn)
+        elif a.cmd == "daily-report":                     # legacy #135: after-close summary of the current release
+            from pulse.application import bf_report_service
+            out = bf_report_service.push(conn)
         elif a.cmd == "calendar-sync":
             client = RateLimitedClient(min_interval_seconds=a.min_interval)
             try:

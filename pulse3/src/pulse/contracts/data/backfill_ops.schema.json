@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:ops:v1",
+  "title": "Pulse3 legacy backfill: operations lane",
+  "description": "Agent access manifest (#63/#64), test push (#97) and forward monitor (#169). Money, ratios and statistics are decimal strings, missing is null, instants are UTC Z strings.",
+  "x-contract-version": "1.0.0",
+  "$defs": {
+    "ManifestOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation_id", "method", "path", "summary", "auth", "auth_basis", "auth_detail", "contract_id", "source", "idempotency_key_required"],
+      "properties": {
+        "operation_id": {"type": "string", "minLength": 1},
+        "method": {"enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]},
+        "path": {"type": "string", "pattern": "^/"},
+        "summary": {"type": ["string", "null"]},
+        "auth": {"enum": ["public", "session", "operator", "unspecified"]},
+        "auth_basis": {"enum": ["contract", "declared", "none"], "description": "where the auth value comes from: the shipped contract, a route declaration, or nothing (auth is then unspecified)"},
+        "auth_detail": {"type": ["string", "null"]},
+        "contract_id": {"type": ["string", "null"]},
+        "source": {"enum": ["core", "ext", "backfill"]},
+        "idempotency_key_required": {"type": "boolean"}
+      }
+    },
+    "ManifestData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_version", "contract_version", "operation_count", "generated_from", "operations"],
+      "properties": {
+        "manifest_version": {"type": "string"},
+        "contract_version": {"type": "string"},
+        "operation_count": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "generated_from": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["core_api_binding_rows", "mounted_backfill_routes"],
+          "properties": {
+            "core_api_binding_rows": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+            "mounted_backfill_routes": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}
+          }
+        },
+        "operations": {"type": "array", "items": {"$ref": "#/$defs/ManifestOperation"}}
+      }
+    },
+    "TestPushRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["destination_id", "idempotency_key"],
+      "properties": {
+        "destination_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 200}
+      }
+    },
+    "TestPushData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alert_id", "destination_id", "channel", "status", "error_code", "recorded_at", "is_test"],
+      "properties": {
+        "alert_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "destination_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "channel": {"enum": ["in_app", "webhook"]},
+        "status": {"enum": ["confirmed", "accepted", "failed", "unknown"]},
+        "error_code": {"type": ["string", "null"]},
+        "recorded_at": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "is_test": {"const": true}
+      }
+    },
+    "ForwardMonitorRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_id", "ranking_id", "horizon_id", "horizon_sessions", "decision_as_of", "decision_session", "status", "pending_reason",
+                   "entry_session", "exit_session", "sessions_after", "n_ranked", "n_evaluable", "top_n", "top_evaluable", "rank_ic",
+                   "top_decile_mean_gross", "universe_median_gross", "top_decile_excess", "missing_reason", "return_basis", "method_version",
+                   "record_kind", "evaluated_at", "snapshot_id"],
+      "properties": {
+        "release_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "ranking_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "horizon_id": {"type": "string"},
+        "horizon_sessions": {"$ref": "urn:pulse:contracts:v3#/$defs/PositiveInteger"},
+        "decision_as_of": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"},
+        "decision_session": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "status": {"enum": ["resolved", "pending"]},
+        "pending_reason": {"anyOf": [{"enum": ["HORIZON_NOT_REACHED", "AWAITING_MONITOR_RUN", "DECISION_SESSION_NOT_OBSERVED"]}, {"type": "null"}]},
+        "entry_session": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "exit_session": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "sessions_after": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}, {"type": "null"}], "description": "observed sessions after the decision session (progress of a pending horizon)"},
+        "n_ranked": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}, {"type": "null"}]},
+        "n_evaluable": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}, {"type": "null"}]},
+        "top_n": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}, {"type": "null"}]},
+        "top_evaluable": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"}, {"type": "null"}]},
+        "rank_ic": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}], "description": "Spearman(-alpha_rank, gross forward return); null while pending or not computable"},
+        "top_decile_mean_gross": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "universe_median_gross": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "top_decile_excess": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}], "description": "top-decile mean minus universe median, gross of every cost"},
+        "missing_reason": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+        "return_basis": {"const": "gross"},
+        "method_version": {"type": "string"},
+        "record_kind": {"anyOf": [{"enum": ["live_forward", "reconstruction"]}, {"type": "null"}]},
+        "evaluated_at": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+        "snapshot_id": {"anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/UUID"}, {"type": "null"}]}
+      }
+    },
+    "ForwardMonitorData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot_key", "method_version", "return_basis", "note", "resolved_count", "pending_count", "rows"],
+      "properties": {
+        "slot_key": {"type": "string"},
+        "method_version": {"type": "string"},
+        "return_basis": {"const": "gross"},
+        "note": {"type": "string"},
+        "resolved_count": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "pending_count": {"$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"},
+        "rows": {"type": "array", "items": {"$ref": "#/$defs/ForwardMonitorRow"}}
+      }
+    }
+  }
+}

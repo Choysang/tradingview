@@ -1,0 +1,12 @@
+/* research lane (replay equity, regime attribution, heatmap, archive). Tokens come from the shell; scoped under .bfr. */
+.bfr .equity { margin: 8px 0; } .bfr .equity svg { width: 100%; height: auto; display: block; }
+.bfr .eq-nav { stroke: var(--accent, #2563eb); stroke-width: 1.6; } .bfr .eq-dd { stroke: var(--bad, #c0392b); stroke-width: 1.2; }
+.bfr .eq-base { stroke: var(--border, #888); stroke-dasharray: 4 4; stroke-width: 1; }
+.bfr .scroll { overflow: auto; max-height: 60vh; border: 1px solid var(--border); border-radius: 8px; }
+.bfr table .num { text-align: right; font-variant-numeric: tabular-nums; } .bfr td.pos { color: var(--good, #1a7f37); } .bfr td.neg { color: var(--bad, #c0392b); }
+.bfr tr.open td { opacity: 0.75; }
+.bfr .rcell { text-align: center; min-width: 96px; } .bfr .rcell.thin { opacity: 0.45; } .bfr .rcell.empty { opacity: 0.5; }
+.bfr .thin-flag { color: var(--muted); font-weight: 600; }
+.bfr .dim { margin: 6px 0; } .bfr h4 { margin: 12px 0 4px; }
+.bfr .filters { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; } .bfr .filters label { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--muted); gap: 3px; }
+.bfr ul.plain { list-style: none; padding: 0; margin: 6px 0; }

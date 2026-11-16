@@ -418,6 +418,56 @@ def deliver(conn: psycopg.Connection, now: datetime | None = None, *, transport=
     return summary
 
 
+# ---- test push (backfill #97) ------------------------------------------------------------------------------------------------------
+TEST_RULE_NS = "test-push-rule"
+
+
+def send_test_push(conn: psycopg.Connection, principal: UUID, destination_id: UUID, idempotency_key: str, *, transport=None,
+              now: datetime | None = None) -> dict:
+    """Send one clearly-labelled test message to one of the caller's own destinations and record it like a delivery.
+
+    Runs inside the idempotent command transaction (``PgCommandStore``): the same key replays the stored answer and never
+    sends twice. A real intent (tier ``RULE``, rule id derived from the principal, evidence ``is_test = true``) plus one
+    delivery attempt are written, so the inbox and ``listUserAlerts`` show it. In-app destinations are ``confirmed``;
+    webhook ones carry the provider's answer (``accepted`` / ``failed`` / ``unknown``). The URL is never read into the
+    result or any log. Sends are refused under pytest unless a fake ``transport`` is injected (``webhook.send``).
+    """
+    now = now or ops_service.now_utc()
+    dests = {d["destination_id"]: d for d in ensure_destinations(conn, principal, now)}
+    d = dests.get(destination_id)
+    if d is None:
+        raise AlertError(404, "NOT_FOUND", "通知去向不存在（或不属于当前用户）")
+    if not d["enabled"]:
+        raise AlertError(409, "DESTINATION_NOT_CONFIGURED", "该通知去向未配置，无法测试推送")
+    body = {"tier": "RULE", "headline": "测试推送：Pulse 告警通道自检", "category": "test", "direction": "unclear",
+            "reason": "用户手动触发的测试消息，不是真实告警", "policy_version": "test-push-v1", "rule_id": str(uuid.uuid5(DEST_NS, f"{principal}|{TEST_RULE_NS}")),
+            "instruments": [], "industries": [], "held_in_industry": [], "claim_status": "测试消息", "assertion_type": "test",
+            "verification_note": "测试消息，不对应任何新闻或证券", "source_claim_revision_ids": [], "claim_id": None,
+            "available_at": now, "event_time": now, "trigger": "manual_test_push", "already_reacted": None, "is_test": True}
+    art = ops_service.put_artifact(conn, kind="alert-evidence", contract_id=EVIDENCE_CONTRACT, schema_version=EVIDENCE_VERSION, body=body, owner=principal)
+    alert_id = uuid.uuid5(DEST_NS, f"{principal}|test-push|{idempotency_key}")
+    conn.execute(
+        "INSERT INTO notification.alert_intent(alert_id, principal_id, rule_id, rule_version, tier, dedup_key, based_on_release_id, evidence_artifact,"
+        " raised_at, expires_at, supersedes, source_claim_revision_id) VALUES (%s,%s,%s,1,'RULE',%s,NULL,%s,%s,%s,NULL,NULL)",
+        (alert_id, principal, uuid.UUID(body["rule_id"]), f"test-push:{idempotency_key}", art["ref"], now, now + timedelta(seconds=T.ALERT_LIFETIME_SECONDS)))
+    if d["channel"] == "in_app":
+        status, provider_id, error = "confirmed", None, None
+    else:
+        cfg = webhook.load_config()
+        if cfg is None:
+            raise AlertError(409, "DESTINATION_NOT_CONFIGURED", "服务器未配置推送地址，无法测试推送")
+        try:
+            res = webhook.send(cfg, contracts.to_wire(body), transport=transport)       # wire form: the generic payload embeds the alert as JSON
+        except webhook.SendDisabled as e:
+            raise AlertError(409, "SEND_DISABLED", str(e)) from e
+        status, provider_id, error = res.status, res.provider_message_id, res.error_code
+    conn.execute("INSERT INTO notification.delivery_attempt(attempt_id, alert_id, destination_id, attempt_number, status, provider_message_id, started_at, completed_at, error_code)"
+                 " VALUES (%s,%s,%s,1,%s,%s,%s,%s,%s)",
+                 (uuid.uuid5(DEST_NS, f"{alert_id}|attempt|1"), alert_id, destination_id, status, provider_id, now, now, error))
+    return {"alert_id": alert_id, "destination_id": destination_id, "channel": d["channel"], "status": status,
+            "error_code": error, "recorded_at": now, "is_test": True}
+
+
 @ops_service.register_handler("AlertService.scan")
 def _job_scan(conn, run, args) -> dict:
     return scan(conn, ops_service.now_utc())

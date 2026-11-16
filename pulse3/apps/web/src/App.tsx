@@ -14,8 +14,9 @@ import { DataStatusPage, PapersPage, PortfolioPage } from './pages/SmallPages';
 import { routesA } from './routes/extA';
 import { routesB } from './routes/extB';
 import { routesC } from './routes/extC';
+import { routesBf } from './routes/bf';
 
-export const EXT_ROUTES = [...routesA, ...routesB, ...routesC];
+export const EXT_ROUTES = [...routesA, ...routesB, ...routesC, ...routesBf];
 
 export function makeQueryClient(): QueryClient {
   return new QueryClient({

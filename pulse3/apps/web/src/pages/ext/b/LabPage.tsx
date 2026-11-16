@@ -13,12 +13,13 @@ import { ops } from '../../../api/ops';
 import type { Strategy } from '../../../api/types';
 import { Badge, MissingText } from '../../../components/Badges';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
+import { RegimeHeatmapView } from '../../bf/research/RegimeHeatmap';
 import { extB, isNotReady, type AnalogNeighbor, type ScreenAst } from './api';
 import { CATALOG, allOf, cellOf, compare, dayInstant, makeAst, metricPct, outcomeSummary, pct, showValue } from './helpers';
 import './ext-b.css';
 
-type Tab = 'patterns' | 'factors' | 'analogs' | 'interval';
-const TABS: Array<[Tab, string]> = [['patterns', '形态雷达'], ['factors', '因子检验'], ['analogs', '相似情景'], ['interval', '区间统计']];
+type Tab = 'patterns' | 'factors' | 'analogs' | 'interval' | 'regime';
+const TABS: Array<[Tab, string]> = [['patterns', '形态雷达'], ['factors', '因子检验'], ['analogs', '相似情景'], ['interval', '区间统计'], ['regime', '战法×市场环境']];
 
 export function LabPage() {
   const [tab, setTab] = useState<Tab>('patterns');
@@ -32,14 +33,18 @@ export function LabPage() {
       {tab === 'factors' && <Factors />}
       {tab === 'analogs' && <Analogs />}
       {tab === 'interval' && <Interval />}
+      {tab === 'regime' && <RegimeHeatmapView />}
     </div>
   );
 }
+
+const PATTERN_FAMILY_TEXT: Record<string, string> = { trend: '趋势', volume: '量能', reversal: '反转', breakout: '突破', volatility: '波动' };
 
 // ---- pattern radar -------------------------------------------------------------------------------------------------------
 function Patterns() {
   const ctx = useQuery({ queryKey: ['extb', 'context'], queryFn: ({ signal }) => extB.context(signal), staleTime: 60_000 });
   const [picked, setPicked] = useState<string | null>(null);
+  const [family, setFamily] = useState('');
   const c = ctx.data?.data;
   const runs = useQueries({
     queries: CATALOG.patterns.map((p) => ({
@@ -60,12 +65,21 @@ function Patterns() {
   });
   if (ctx.isLoading) return <Loading />;
   if (ctx.isError) return <ErrorState error={ctx.error} what="输入快照" onRetry={() => ctx.refetch()} />;
-  const sel = picked ? runs[CATALOG.patterns.findIndex((p) => p.id === picked)] : undefined;
+  const pickedVisible = !!picked && (!family || CATALOG.patterns.find((p) => p.id === picked)?.family === family);
+  const sel = pickedVisible ? runs[CATALOG.patterns.findIndex((p) => p.id === picked)] : undefined;
+  const families = [...new Set(CATALOG.patterns.map((p) => p.family))];
   return (
     <>
+      <div className="filters">
+        <label>形态类别<select aria-label="形态类别" value={family} onChange={(e) => setFamily(e.target.value)}>
+          <option value="">全部（{CATALOG.patterns.length}）</option>
+          {families.map((f) => <option key={f} value={f}>{PATTERN_FAMILY_TEXT[f] ?? f}（{CATALOG.patterns.filter((p) => p.family === f).length}）</option>)}
+        </select></label>
+      </div>
       <p className="muted small">每条规则是一次冻结的筛选（最新完成交易日，已剔除 ST）。「0 只」是诚实的答案；历史不足的股票记为未知，不算没命中。</p>
       <div className="cards">
         {CATALOG.patterns.map((p, i) => {
+          if (family && p.family !== family) return null;
           const r = runs[i];
           const cov = r?.data?.page.meta.coverage;
           return (

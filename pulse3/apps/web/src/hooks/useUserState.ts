@@ -22,7 +22,7 @@ export interface LayoutDoc {
   schema: 'pulse.web.layout/1';
   timeframe: ChartTimeframe;
   adjustment: AdjustmentMode;
-  panes: { volume: boolean; ma: boolean; ema: boolean; macd: boolean };
+  panes: { volume: boolean; ma: boolean; ema: boolean; macd: boolean; boll?: boolean; sub?: 'macd' | 'kdj' | 'rsi' | 'none' };
   evidenceTab: 'news' | 'community' | 'fund' | 'seats';
 }
 

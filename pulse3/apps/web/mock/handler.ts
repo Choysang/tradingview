@@ -17,6 +17,7 @@ import {
   buildDataStatus, buildEvaluation, buildJobRun, buildLeague, buildModelRun, buildPapers, type CreatedExperiment,
 } from './research.ts';
 import { EVIDENCE_PAGE, buildCommunity, buildEvidence, buildFundFlow, buildPlan, buildSeats, buildWorkspace } from './stock.ts';
+import { handleBfStock } from './bf_stock.ts';
 import { buildMeta, decodeCursor, encodeCursor, errorResponse, iso, opaque, uuid, type MockResponse } from './util.ts';
 
 const RANK_PAGE = 5;
@@ -110,6 +111,9 @@ export function handle(s: MockState, req: MockRequest): MockResponse {
 
   // ---- dev switches (not part of the contract) ----
   if (path.startsWith('/__mock/')) return devSwitch(s, req, now);
+
+  // ---- legacy backfill reads of the stock lane (not contract operations; see mock/bf_stock.ts) ----
+  if (method === 'GET' && path.startsWith('/v1/x/bf/stock/')) return handleBfStock(path, q, now, findRelease(s, q.get('release_id')) ?? (q.get('release_id') ? undefined : currentRelease(s)));
 
   const m = (re: RegExp): RegExpExecArray | null => re.exec(path);
   let g: RegExpExecArray | null;

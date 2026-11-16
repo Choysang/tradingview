@@ -3,15 +3,18 @@
  * server value from getStockBars; the browser never aggregates K-lines or computes
  * indicators. Source gaps stay gaps (bars with null prices are not drawn or filled).
  * Plan zones / drawings are shown only when their price basis matches the chart.
+ * Indicator overlays (MA/EMA/BOLL on the price pane) and one sub-pane (MACD/KDJ/RSI) are drawn from server series
+ * (`DrawnSeries`, see pages/bf/stock/indicatorDraw.ts); null values are gaps, nothing is computed here.
  */
 import { useEffect, useRef } from 'react';
 import {
-  CandlestickSeries, ColorType, CrosshairMode, HistogramSeries, LineStyle, createChart,
-  type IChartApi, type IPriceLine, type ISeriesApi, type Time, type UTCTimestamp,
+  CandlestickSeries, ColorType, CrosshairMode, HistogramSeries, LineSeries, LineStyle, createChart,
+  type IChartApi, type IPriceLine, type ISeriesApi, type Time,
 } from 'lightweight-charts';
 import type { BarWindow } from '../api/types';
 import { toChartNumber } from '../lib/decimal';
 import { isIntraday } from '../lib/barsParams';
+import { barTime, type DrawnSeries } from '../pages/bf/stock/indicatorDraw';
 
 export interface ChartLine {
   id: string;
@@ -35,8 +38,6 @@ function ohlc(b: AnyBar): { o: number | null; h: number | null; l: number | null
   return { o: toChartNumber(b.open_price), h: toChartNumber(b.high_price), l: toChartNumber(b.low_price), c: toChartNumber(b.close_price) };
 }
 
-const CST_OFFSET_S = 8 * 3600;
-
 /** Pure mapping from contract bars to chart points (tested without a canvas). */
 export function plotBars(win: BarWindow, colors: { up: string; down: string; upSoft: string; downSoft: string }): PlottedBars {
   const intraday = isIntraday(win.timeframe);
@@ -48,7 +49,7 @@ export function plotBars(win: BarWindow, colors: { up: string; down: string; upS
   for (const b of win.bars) {
     const { o, h, l, c } = ohlc(b);
     if (o === null || h === null || l === null || c === null) { gaps += 1; continue; }
-    const time: Time = intraday ? ((Math.floor(Date.parse(b.bar_open_time) / 1000) + CST_OFFSET_S) as UTCTimestamp) : (b.trade_date as Time);
+    const time: Time = barTime(b, intraday);
     const k = String(time);
     if (seen.has(k)) continue;
     seen.add(k);
@@ -74,14 +75,19 @@ export interface PriceChartProps {
   drawMode: boolean;
   onPickPrice?: (price: number) => void;
   themeVersion: number;
+  /** Server indicator lines drawn on the price pane. */
+  overlays?: DrawnSeries[];
+  /** Server series of the selected sub-pane (own pane below price / volume). */
+  subSeries?: DrawnSeries[];
 }
 
-export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, themeVersion }: PriceChartProps) {
+export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, themeVersion, overlays, subSeries }: PriceChartProps) {
   const host = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const volRef = useRef<ISeriesApi<'Histogram'> | null>(null);
   const priceLines = useRef<IPriceLine[]>([]);
+  const extraRef = useRef<Array<ISeriesApi<'Line'> | ISeriesApi<'Histogram'>>>([]);
   const drawRef = useRef(drawMode);
   const pickRef = useRef(onPickPrice);
   drawRef.current = drawMode;
@@ -105,7 +111,7 @@ export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, the
       const price = candleRef.current.coordinateToPrice(p.point.y);
       if (price !== null && Number.isFinite(price)) pickRef.current?.(price);
     });
-    return () => { chart.remove(); chartRef.current = null; candleRef.current = null; volRef.current = null; priceLines.current = []; };
+    return () => { chart.remove(); chartRef.current = null; candleRef.current = null; volRef.current = null; priceLines.current = []; extraRef.current = []; };
   }, []);
 
   // data + theme
@@ -137,6 +143,37 @@ export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, the
     }
     chart.timeScale().fitContent();
   }, [bars, showVolume, themeVersion]);
+
+  // indicator overlays and sub-pane (after the data effect so the volume pane is settled)
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    for (const old of extraRef.current) chart.removeSeries(old);
+    extraRef.current = [];
+    const up = cssVar('--up', '#e5484d');
+    const down = cssVar('--down', '#2fa36b');
+    const add = (d: DrawnSeries, pane: number): void => {
+      if (d.points.length === 0) return;
+      if (d.kind === 'histogram') {
+        const h = chart.addSeries(HistogramSeries, { priceLineVisible: false, lastValueVisible: false, title: d.label }, pane);
+        h.setData(d.points.map((p) => ({ time: p.time, value: p.value, color: p.value >= 0 ? up : down })));
+        extraRef.current.push(h);
+        return;
+      }
+      const l = chart.addSeries(LineSeries, { color: d.color, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, title: pane === 0 ? '' : d.label }, pane);
+      l.setData(d.points);
+      extraRef.current.push(l);
+    };
+    for (const o of overlays ?? []) add(o, 0);
+    const sub = (subSeries ?? []).filter((s) => s.points.length > 0);
+    if (sub.length > 0) {
+      const pane = showVolume ? 2 : 1;
+      for (const s of sub) add(s, pane);
+      const panes = chart.panes();
+      panes[0]?.setStretchFactor(3);
+      panes[pane]?.setStretchFactor(1.5);
+    }
+  }, [overlays, subSeries, showVolume, bars, themeVersion]);
 
   // lines
   useEffect(() => {

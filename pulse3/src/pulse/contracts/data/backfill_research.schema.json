@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:research:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'research' (docs/LEGACY_TRIAGE.md rows #17/#20 playbook equity and trades, #18/#24 regime attribution and heatmap, #76 experiment archive). Equity is the x1 (user cost profile) replay through the execution kernel; trade returns are gross of fees; regime labels are the uncalibrated market-state regime read at the last completed session before each entry.",
+  "$defs": {
+    "RegimeTag": {
+      "type": "object", "additionalProperties": false, "required": ["session", "trend", "liquidity", "sentiment", "style", "basis"],
+      "properties": {
+        "session": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "trend": {"type": "string"}, "liquidity": {"type": "string"}, "sentiment": {"type": "string"}, "style": {"type": "string"},
+        "basis": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "ReplayTrade": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instrument_id", "code", "entry_day", "exit_day", "quantity", "entry_price", "exit_price", "gross_return", "holding_sessions", "exit_reason", "status", "regime_at_entry"],
+      "properties": {
+        "instrument_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "code": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "entry_day": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "exit_day": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "quantity": {"type": "integer", "minimum": 1},
+        "entry_price": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "exit_price": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "gross_return": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "holding_sessions": {"oneOf": [{"type": "integer", "minimum": 0}, {"type": "null"}]},
+        "exit_reason": {"oneOf": [{"enum": ["stop_loss", "take_profit", "trailing_stop", "chandelier", "below_ma5", "stall", "bias", "shadow", "scale_out", "holding_days", "unknown"]}, {"type": "null"}]},
+        "status": {"enum": ["closed", "open"]},
+        "regime_at_entry": {"oneOf": [{"$ref": "#/$defs/RegimeTag"}, {"type": "null"}]}
+      }
+    },
+    "EquityPoint": {
+      "type": "object", "additionalProperties": false, "required": ["d", "nav", "drawdown"],
+      "properties": {
+        "d": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "nav": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "drawdown": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "Equity": {
+      "type": "object", "additionalProperties": false, "required": ["points", "max_drawdown", "final_nav", "net_return"],
+      "properties": {
+        "points": {"type": "array", "items": {"$ref": "#/$defs/EquityPoint"}},
+        "max_drawdown": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "final_nav": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "net_return": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "RegimeHeader": {
+      "type": "object", "additionalProperties": false, "required": ["available", "reason", "regime_version", "release_id", "through", "basis"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "reason": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "regime_version": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "release_id": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/UUID"}, {"type": "null"}]},
+        "through": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "basis": {"type": "string"}
+      }
+    },
+    "AttributionCell": {
+      "type": "object", "additionalProperties": false, "required": ["bucket", "label", "trade_count", "avg_return", "win_rate", "insufficient_sample"],
+      "properties": {
+        "bucket": {"type": "string"}, "label": {"type": "string"},
+        "trade_count": {"type": "integer", "minimum": 0},
+        "avg_return": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "win_rate": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "insufficient_sample": {"type": "boolean"}
+      }
+    },
+    "AttributionDimension": {
+      "type": "object", "additionalProperties": false, "required": ["dimension", "label", "cells", "unclassified"],
+      "properties": {
+        "dimension": {"enum": ["trend", "liquidity", "sentiment", "style"]},
+        "label": {"type": "string"},
+        "cells": {"type": "array", "items": {"$ref": "#/$defs/AttributionCell"}},
+        "unclassified": {
+          "type": "object", "additionalProperties": false, "required": ["count", "reasons"],
+          "properties": {"count": {"type": "integer", "minimum": 0}, "reasons": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}}
+        }
+      }
+    },
+    "Attribution": {
+      "type": "object", "additionalProperties": false, "required": ["regime", "version", "min_trades", "closed_trades", "open_trades", "dimensions"],
+      "properties": {
+        "regime": {"$ref": "#/$defs/RegimeHeader"},
+        "version": {"type": "string"},
+        "min_trades": {"type": "integer", "minimum": 1},
+        "closed_trades": {"type": "integer", "minimum": 0},
+        "open_trades": {"type": "integer", "minimum": 0},
+        "dimensions": {"type": "array", "items": {"$ref": "#/$defs/AttributionDimension"}}
+      }
+    },
+    "PlaybookReplay": {
+      "type": "object", "additionalProperties": false, "required": ["experiment", "initial_cash", "window", "equity", "trades", "attribution", "caveats"],
+      "properties": {
+        "experiment": {
+          "type": "object", "additionalProperties": false,
+          "required": ["experiment_id", "instance_id", "catalog_id", "playbook_id", "completed_at", "cost_policy_version", "price_basis", "artifact_ref"],
+          "properties": {
+            "experiment_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+            "instance_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+            "catalog_id": {"type": "string"}, "playbook_id": {"type": "string"},
+            "completed_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+            "cost_policy_version": {"type": "string"}, "price_basis": {"type": "string"}, "artifact_ref": {"type": "string"}
+          }
+        },
+        "initial_cash": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "window": {
+          "type": "object", "additionalProperties": false, "required": ["start", "end", "sessions"],
+          "properties": {"start": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, "end": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, "sessions": {"type": "integer", "minimum": 0}}
+        },
+        "equity": {"$ref": "#/$defs/Equity"},
+        "trades": {
+          "type": "object", "additionalProperties": false, "required": ["total", "closed", "open", "shown", "items"],
+          "properties": {
+            "total": {"type": "integer", "minimum": 0}, "closed": {"type": "integer", "minimum": 0}, "open": {"type": "integer", "minimum": 0},
+            "shown": {"type": "integer", "minimum": 0}, "items": {"type": "array", "items": {"$ref": "#/$defs/ReplayTrade"}}
+          }
+        },
+        "attribution": {"$ref": "#/$defs/Attribution"},
+        "caveats": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "HeatmapColumn": {
+      "type": "object", "additionalProperties": false, "required": ["dimension", "label", "buckets"],
+      "properties": {
+        "dimension": {"enum": ["trend", "liquidity", "sentiment", "style"]}, "label": {"type": "string"},
+        "buckets": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["bucket", "label"], "properties": {"bucket": {"type": "string"}, "label": {"type": "string"}}}}
+      }
+    },
+    "HeatmapRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["catalog_id", "playbook_id", "experiment_id", "completed_at", "regime_available", "closed_trades", "dimensions"],
+      "properties": {
+        "catalog_id": {"type": "string"}, "playbook_id": {"type": "string"},
+        "experiment_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "completed_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+        "regime_available": {"type": "boolean"},
+        "closed_trades": {"type": "integer", "minimum": 0},
+        "dimensions": {"type": "array", "items": {"$ref": "#/$defs/AttributionDimension"}}
+      }
+    },
+    "RegimeHeatmap": {
+      "type": "object", "additionalProperties": false, "required": ["version", "min_trades", "columns", "rows", "note"],
+      "properties": {
+        "version": {"type": "string"}, "min_trades": {"type": "integer", "minimum": 1},
+        "columns": {"type": "array", "items": {"$ref": "#/$defs/HeatmapColumn"}},
+        "rows": {"type": "array", "items": {"$ref": "#/$defs/HeatmapRow"}},
+        "note": {"type": "string"}
+      }
+    },
+    "ExperimentArchiveItem": {
+      "type": "object", "additionalProperties": false,
+      "required": ["experiment_id", "instance_id", "display_name", "catalog_id", "kind", "run_purpose", "run_state", "started_at", "completed_at", "error_code", "net_return_validation", "max_drawdown", "trade_count", "has_replay"],
+      "properties": {
+        "experiment_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "instance_id": {"$ref": "urn:pulse:contracts:v3#/$defs/UUID"},
+        "display_name": {"type": "string"},
+        "catalog_id": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "kind": {"enum": ["playbook", "factor", "exit_rule", "intraday_t", "other"]},
+        "run_purpose": {"enum": ["screening", "validation", "shadow", "blind_final"]},
+        "run_state": {"enum": ["queued", "running", "completed", "failed", "cancelled"]},
+        "started_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+        "completed_at": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"}, {"type": "null"}]},
+        "error_code": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "net_return_validation": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "max_drawdown": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "trade_count": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "has_replay": {"type": "boolean"}
+      }
+    },
+    "ExperimentArchive": {
+      "type": "object", "additionalProperties": false, "required": ["items", "page", "order"],
+      "properties": {
+        "items": {"type": "array", "items": {"$ref": "#/$defs/ExperimentArchiveItem"}},
+        "page": {
+          "type": "object", "additionalProperties": false, "required": ["next_cursor", "limit"],
+          "properties": {"next_cursor": {"oneOf": [{"type": "string"}, {"type": "null"}]}, "limit": {"type": "integer", "minimum": 1}}
+        },
+        "order": {"type": "string"}
+      }
+    }
+  }
+}

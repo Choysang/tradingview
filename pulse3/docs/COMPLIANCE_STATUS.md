@@ -45,5 +45,6 @@ mapping, client compatibility and verification).
 
 ## Known limits (not package items)
 
-- No intraday first-seal time (no tick data source). Turnover is estimated where the source has no amount.
-- pulse3 has no intraday recorder or 7x24 news schedule yet; the old system still records both.
+- First-seal times come from the old system's intraday recordings (imported as `legacy_recordings`) until the cutover. Turnover is estimated where the source has no amount.
+- News and intraday are imported from the old system's recordings on a schedule (`Pulse3NewsImport` every 10 minutes, `Pulse3IntradayImport` 15:45); the pulse3 native recorder is not scheduled before the cutover.
+- Legacy feature backfill (batches 1 and 2): see `docs/LEGACY_TRIAGE.md`.

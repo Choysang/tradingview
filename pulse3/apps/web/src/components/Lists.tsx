@@ -10,6 +10,7 @@ import { ACTION_STATUS_LABEL, POOL_STATE_LABEL, fmtTime } from '../lib/format';
 import { toFixed, toPercent } from '../lib/decimal';
 import { Badge, MissingText } from './Badges';
 import { DetailsButton } from './Diagnostics';
+import { PlanSummary } from '../pages/bf/board/PlanSummary';
 import type { Tone } from '../lib/version';
 
 export function stockHref(instrumentId: string, releaseId: string | null, horizonKey?: string): string {
@@ -65,6 +66,7 @@ export function RankingRows({ entries, releaseId, horizonKey }: { entries: reado
                 {prob ? <Badge tone="good" title="仅在事件定义并校准后才显示概率">校准概率 {prob}</Badge> : <span className="muted small">相对分 {toFixed(e.relative_rank_score, 2) ?? <MissingText />}，不是上涨概率</span>}
                 {e.plan_ref === null && <Badge tone="warn" title="本次发布没有为它生成计划">无交易计划</Badge>}
               </div>
+              {e.plan_ref !== null && <PlanSummary planRef={e.plan_ref} releaseId={releaseId} />}
             </div>
             <div className="row-side">
               <Badge tone={STATUS_TONE[e.action_status]}>{ACTION_STATUS_LABEL[e.action_status]}</Badge>
