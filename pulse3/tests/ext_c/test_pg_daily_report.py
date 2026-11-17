@@ -39,3 +39,16 @@ def test_report_repeats_the_release_and_is_sent_once(conn, monkeypatch):
     rows = conn.execute("SELECT status FROM notification.delivery_attempt d JOIN notification.alert_intent i USING (alert_id)"
                         " WHERE i.principal_id=%s ORDER BY status", (me,)).fetchall()
     assert [r["status"] for r in rows] == ["accepted", "confirmed"]
+
+
+def test_a_known_principal_without_destinations_gets_the_report_in_app(conn, monkeypatch):
+    """The single-user site's principal never opened the alert page: the report still reaches its in-app inbox."""
+    monkeypatch.delenv("PULSE_PUSH_WEBHOOK", raising=False)
+    a = S.seed_instrument(conn, "600003", "丙股份")
+    S.publish(conn, slot="main", ranking=[a])
+    me = uuid.uuid4()
+    out = R.push(conn, only=[me], ensure_for=[me])
+    assert out["status"] == "done" and out["sent"] == 1
+    rows = conn.execute("SELECT d.status, x.channel FROM notification.delivery_attempt d JOIN notification.alert_intent i USING (alert_id)"
+                        " JOIN notification.destination x ON x.destination_id=d.destination_id WHERE i.principal_id=%s", (me,)).fetchall()
+    assert [(r["status"], r["channel"]) for r in rows] == [("confirmed", "in_app")]

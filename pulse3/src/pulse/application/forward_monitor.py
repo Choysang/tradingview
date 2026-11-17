@@ -12,7 +12,10 @@ Invariants:
 * append-only: a resolved ranking is written once (a new READY snapshot holds only new rows); nothing is overwritten and a
   ranking that is already stored is never recomputed; a ranking whose exit-session coverage is below half of the ranked
   instruments stays pending (it is not frozen on a half-ingested day);
-* only releases published in the requested slot (``decision.release_publication``) and in state READY/SUPERSEDED are used.
+* only releases published in the requested slot (``decision.release_publication``) and in state READY/SUPERSEDED are used;
+* cost stays bounded as releases accumulate: each snapshot lists its ranking ids in its coverage document, so finding what is
+  resolved reads the database only (older snapshots without the list are read once from the lake), and a ranking still
+  unresolved ``MAX_PENDING_DAYS`` after its decision is reported as ``expired`` and no longer pins the bar window back.
 Not covered: net-of-cost statistics, benchmark-relative returns, sector rankings, per-regime splits.
 """
 from __future__ import annotations
@@ -38,6 +41,7 @@ from pulse.domain.research import forward_ic as F
 DATASET = "forward_monitor"
 CONTRACT = "pulse.analysis_artifact"            # the registered derived-artifact contract (no new contract_version rows needed)
 MIN_COVERAGE_SHARE = Decimal("0.5")
+MAX_PENDING_DAYS = 150                          # calendar days; the longest horizon (60 sessions) is about 90
 RETURN_BASIS = "gross"
 NOTE = ("rank IC = Spearman(-alpha_rank, forward return); excess = top-decile mean minus universe median; "
         "all returns are gross (no cost deducted); pending horizons have no number")
@@ -73,11 +77,32 @@ def stored_snapshots(conn: psycopg.Connection) -> list[dict]:
                         (DATASET,)).fetchall()
 
 
+def _listed_ids(man: dict) -> set[str] | None:
+    """Ranking ids a snapshot holds, from its coverage document; None for snapshots written before the list existed."""
+    ids = (man.get("coverage_document") or {}).get("ranking_ids")
+    return None if ids is None else set(ids)
+
+
+def resolved_ids(conn: psycopg.Connection, lake: LakeStore) -> set[str]:
+    """Ids of every stored ranking. Reads the lake only for snapshots without an id list."""
+    out: set[str] = set()
+    for man in stored_snapshots(conn):
+        ids = _listed_ids(man)
+        if ids is None:
+            df = lake.read_snapshot_frames(man["content_hash"])
+            ids = set() if df is None else set(df["ranking_id"].to_list())
+        out |= ids
+    return out
+
+
 def stored_rows(conn: psycopg.Connection, lake: LakeStore, ranking_ids: Sequence[uuid.UUID] | None = None) -> dict[str, dict]:
-    """Resolved rows by ranking id (first stored row wins: a ranking is written once)."""
+    """Resolved rows by ranking id (first stored row wins: a ranking is written once). Only snapshots that can hold a wanted id are read."""
     want = None if ranking_ids is None else {str(i) for i in ranking_ids}
     out: dict[str, dict] = {}
     for man in stored_snapshots(conn):
+        listed = _listed_ids(man)
+        if want is not None and listed is not None and not (listed & (want - set(out))):
+            continue
         df = lake.read_snapshot_frames(man["content_hash"])
         for r in df.iter_rows(named=True):
             if (want is None or r["ranking_id"] in want) and r["ranking_id"] not in out:
@@ -92,10 +117,13 @@ def _returns(ranked: Sequence[tuple[str, int]], series: Mapping[str, Sequence], 
 def monitor(svc: DataService, *, as_of: datetime, slot: str = B.SLOT_KEY) -> dict[str, Any]:
     """Resolve every published market ranking whose horizon is observed and not stored yet; publish one immutable snapshot."""
     conn, lake = svc.conn, svc.lake
-    done = set(stored_rows(conn, lake))
-    todo = [r for r in _slot_rankings(conn, slot, as_of) if str(r["ranking_id"]) not in done]
+    done = resolved_ids(conn, lake)
+    open_ = [r for r in _slot_rankings(conn, slot, as_of) if str(r["ranking_id"]) not in done]
+    oldest = as_of - timedelta(days=MAX_PENDING_DAYS)
+    todo = [r for r in open_ if r["decision_as_of"] >= oldest]
+    expired = len(open_) - len(todo)                 # never resolvable in practice (decision session never observed): reported, not hidden
     if not todo:
-        return {"published": False, "evaluated": 0, "pending": 0, "resolved": 0}
+        return {"published": False, "evaluated": 0, "pending": 0, "resolved": 0, "expired": expired}
     stocks = MT.load_stocks(conn, as_of, B.AVAILABILITY_POLICY)
     ids = [str(i) for i in stocks]
     since = min(r["decision_as_of"] for r in todo).astimezone(B.CST).date() - timedelta(days=10)
@@ -125,12 +153,13 @@ def monitor(svc: DataService, *, as_of: datetime, slot: str = B.SLOT_KEY) -> dic
         rows.append({"ranking_id": str(r["ranking_id"]), "release_id": str(r["release_id"]), "horizon_id": r["horizon_id"],
                      "evaluated_at": as_of.isoformat(), "body": text, "body_sha256": sha256(text.encode("utf-8")).hexdigest()})
     if not rows:
-        return {"published": False, "evaluated": len(todo), "pending": pending, "resolved": 0}
+        return {"published": False, "evaluated": len(todo), "pending": pending, "resolved": 0, "expired": expired}
     frame = pl.DataFrame(rows).sort("ranking_id")
     cov = {"dataset": DATASET, "method_version": F.METHOD_VERSION, "return_basis": RETURN_BASIS, "evaluated_at": as_of.isoformat(), "rows": len(rows),
-           "frame_sha256": sha256(frame.write_csv().encode("utf-8")).hexdigest(), "slot": slot, "note": NOTE}
+           "ranking_ids": sorted(r["ranking_id"] for r in rows), "frame_sha256": sha256(frame.write_csv().encode("utf-8")).hexdigest(), "slot": slot, "note": NOTE}
     man = B.publish_derived(svc, DATASET, frame, cov, contract_id=CONTRACT, watermark=as_of)
-    return {"published": True, "evaluated": len(todo), "pending": pending, "resolved": len(rows), "snapshot_id": str(man["snapshot_id"])}
+    return {"published": True, "evaluated": len(todo), "pending": pending, "resolved": len(rows), "expired": expired,
+            "snapshot_id": str(man["snapshot_id"])}
 
 
 # ---- read model ------------------------------------------------------------------------------------------------------------------

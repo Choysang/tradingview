@@ -55,7 +55,11 @@ Batch 1 and batch 2 are ported. Reads are under `/v1/x/bf/<lane>` with one contr
 | live | 103, 185, 131, 187, 132, 188, 104, 186, 5, 124 | during the parallel run pulse3 imports the old server's recordings as the declared source `legacy_recordings` (the previous day is re-imported to catch late files); the native recorder exists but is not scheduled, so the same IP does not send twice the requests; seal reads are pinned to the release cutoff |
 | report | 135 | `alerts daily-report` after the daily build, once per (principal, release); in-app only on the server until the cutover, so the old system and pulse3 do not both push |
 
-Known limit: the forward monitor reads every published ranking on each run; its cost grows with the number of releases.
+Forward monitor cost (2026-11-17): each snapshot lists its ranking ids in its coverage document, so a run reads the lake only
+for snapshots that can hold a wanted id, and a ranking unresolved 150 days after its decision is reported as `expired`.
+
+Server check (2026-11-16 and 2026-11-17 runs): the daily build, forward monitor and daily report steps ran unattended
+(`done ok=True`). The daily report first sent nothing: the site's principal had no destination. The report now creates the default destinations (in-app always on) for the site's known principals first.
 
 ## Batch 3: research tools, ported one at a time through the research registry
 

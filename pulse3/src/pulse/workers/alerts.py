@@ -65,8 +65,13 @@ def run(argv: list[str] | None = None) -> int:
         elif a.cmd == "deliver":
             out = alert_service.deliver(conn)
         elif a.cmd == "daily-report":                     # legacy #135: after-close summary of the current release
+            from pulse.api import auth
             from pulse.application import bf_report_service
-            out = bf_report_service.push(conn)
+            known = set(auth._sessions().values())                # the site's principals (session map, and the loopback-only dev principal)
+            dev = auth.validate_dev_principal()
+            if dev is not None:
+                known.add(dev)
+            out = bf_report_service.push(conn, ensure_for=sorted(known))
         elif a.cmd == "calendar-sync":
             client = RateLimitedClient(min_interval_seconds=a.min_interval)
             try:

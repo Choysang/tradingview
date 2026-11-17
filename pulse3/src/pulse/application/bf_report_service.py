@@ -57,15 +57,21 @@ def compose(conn: psycopg.Connection) -> dict | None:
             "text": "\n".join(lines + ([f"降级组件：{', '.join(cur.degraded_components)}"] if cur.degraded_components else []) + [DISCLAIMER])}
 
 
-def push(conn: psycopg.Connection, *, now: datetime | None = None, transport=None, only: list[UUID] | None = None) -> dict:
+def push(conn: psycopg.Connection, *, now: datetime | None = None, transport=None, only: list[UUID] | None = None,
+         ensure_for: list[UUID] = ()) -> dict:
     """Send the report for the current release to every principal's enabled destinations, once per release.
 
-    `only` limits the run to the given principals (used by tests that share a database).
+    `only` limits the run to the given principals (used by tests that share a database). `ensure_for` names the site's
+    known principals: their default destinations (in-app always on, webhook only when configured) are created first, so a
+    user who never opened the alert page still gets the report in the inbox.
     """
     now = now or ops_service.now_utc()
     rep = compose(conn)
     if rep is None:
         return {"status": "skipped", "reason": "no READY release in slot main", "sent": 0}
+    for p in ensure_for:
+        with conn.transaction():
+            A.ensure_destinations(conn, p, now)
     principals = [r["principal_id"] for r in conn.execute("SELECT DISTINCT principal_id FROM notification.destination").fetchall()]
     if only is not None:
         principals = [p for p in principals if p in set(only)]

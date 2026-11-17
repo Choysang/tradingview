@@ -129,3 +129,19 @@ def test_http_read_is_contract_checked_needs_a_session_and_serves_pending(world_
     twenty = next(x for x in data["rows"] if x["horizon_id"] == "20td")
     assert twenty["status"] == "pending" and twenty["pending_reason"] == "AWAITING_MONITOR_RUN" and twenty["rank_ic"] is None
     assert api.get("/v1/x/bf/ops/forward-monitor", release_id=uuid.uuid4()).json()["data"]["rows"] == []
+
+
+def test_resolved_ids_come_from_the_coverage_list_and_old_rankings_expire(world_m, monkeypatch):
+    """Finding what is resolved reads the database only; a ranking unresolved MAX_PENDING_DAYS after its decision is counted
+    as expired and stops pinning the bar window back (it stays pending in the read model, never a number)."""
+    conn, _, svc, rid, _ = world_m
+    FM.monitor(svc, as_of=S.t(2026, 10, 20, 19, 0))
+    mf = conn.execute("SELECT coverage_document FROM market.dataset_manifest WHERE dataset_id=%s AND manifest_state='READY'", (FM.DATASET,)).fetchall()
+    assert [len(m["coverage_document"]["ranking_ids"]) for m in mf] == [1]
+    monkeypatch.setattr(svc.lake, "read_snapshot_frames", lambda *a, **k: (_ for _ in ()).throw(AssertionError("lake read")))
+    assert FM.resolved_ids(conn, svc.lake) == set(mf[0]["coverage_document"]["ranking_ids"])
+    monkeypatch.undo()
+    late = FM.monitor(svc, as_of=S.t(2026, 10, 7, 16, 0) + FM.timedelta(days=FM.MAX_PENDING_DAYS + 1))
+    assert late["expired"] >= 1 and late["published"] is False and late["evaluated"] == 0
+    rows = FM.read_rows(conn, svc.lake, as_of=S.t(2026, 10, 20, 19, 0))
+    assert {r["status"] for r in rows} == {"resolved", "pending"} and all(r["rank_ic"] is None for r in rows if r["status"] == "pending")
