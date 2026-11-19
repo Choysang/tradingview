@@ -1,0 +1,9 @@
+{
+ "state": "not_computed",
+ "reason": null,
+ "experiment_id": "66666666-6666-4666-8666-666666666666",
+ "factor_id": "FL:momentum_20",
+ "job": null,
+ "series": null,
+ "worker_hint": "uv run python -m pulse.workers.fillr run"
+}

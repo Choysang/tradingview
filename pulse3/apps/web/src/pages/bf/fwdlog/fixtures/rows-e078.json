@@ -1,0 +1,81 @@
+{
+ "meta": {
+  "request_id": "027c43fa-34d5-4548-9766-f9fe17bfe379",
+  "generated_at": "2026-11-18T07:50:14.042172Z",
+  "trace_id": "ce3ba587ee2b424787f76043fec253dc",
+  "contract_version": "3.0.0",
+  "release_id": null,
+  "decision_as_of": null,
+  "availability_policy_version": null,
+  "input_snapshot_refs": [],
+  "quality_status": "partial",
+  "freshness_state": "not_expected",
+  "coverage": {
+   "policy_version": "bf-fwdlog-v1",
+   "expected_count": null,
+   "observed_count": 2,
+   "missing_count": null,
+   "unverifiable_reasons": [
+    "forward_log_in_progress",
+    "recordings_are_60s_sampled_snapshots"
+   ]
+  },
+  "warnings": [
+   {
+    "code": "SHADOW_FORWARD_LOG",
+    "message": "前向影子记录：不下单、不入账、不改任何规则；决策日之前的指标只是进度",
+    "affected_component": "fwdlog",
+    "evidence_ref": null
+   }
+  ],
+  "next_cursor": null,
+  "actionability_id": null
+ },
+ "data": {
+  "experiment_key": "E078",
+  "dataset": "fwdlog_e078_halfhour",
+  "total": 2,
+  "rows": [
+   {
+    "session_date": "2026-11-12",
+    "row_key": "2026-11-12",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "date": "2026-11-12",
+     "ew": {
+      "n": 10,
+      "x": "3.0928",
+      "x2": "3.0928",
+      "y": "1"
+     },
+     "index": {
+      "n": 1,
+      "x": "1.0101",
+      "x2": "0.6711",
+      "y": "0.198"
+     },
+     "provenance": {
+      "ext_snapshot_id": "390fc710-c546-4a12-a35c-453d87ba0442",
+      "quote_content_hash": "5017526de3fd3ac48d3742170d3bc85acf03a5710883713f35eead8fcc8c2e61",
+      "quote_manifest_version": 1,
+      "quote_snapshot_id": "a041d736-bcf6-4281-922d-b7165afa4669"
+     }
+    }
+   },
+   {
+    "session_date": "2026-11-13",
+    "row_key": "2026-11-13",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "date": "2026-11-13",
+     "ew": null,
+     "provenance": {
+      "quote_content_hash": "b66f5a510b8aad78c397cc3001d5b3ae81a904e0e6a3f38b6ded9a0ae7ab8795",
+      "quote_manifest_version": 2,
+      "quote_snapshot_id": "f7209ea2-1d5d-4878-a2aa-1cee94d79b80"
+     }
+    }
+   }
+  ]
+ }
+}

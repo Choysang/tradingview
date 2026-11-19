@@ -1,0 +1,1315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:lab:v1",
+  "title": "Pulse3 legacy backfill: lab lane",
+  "description": "Historical experiment ledger (#177/#178) with the retired-tool lookup, the tear sheet (#160/#161) and the batch comparison (#36/#77). Money, ratios and statistics are decimal strings, missing is null with a reason, instants are UTC Z strings.",
+  "x-contract-version": "1.0.0",
+  "$defs": {
+    "LedgerImportInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_sha256",
+        "label",
+        "entry_count",
+        "imported_at",
+        "import_ref",
+        "is_latest",
+        "source_file"
+      ],
+      "properties": {
+        "ledger_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "entry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "imported_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "import_ref": {
+          "type": "string"
+        },
+        "is_latest": {
+          "type": "boolean"
+        },
+        "source_file": {
+          "type": "string"
+        }
+      }
+    },
+    "EntryBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "verdict"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verdict": {
+          "oneOf": [
+            {
+              "enum": [
+                "works",
+                "mixed",
+                "inconclusive",
+                "fails"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "LedgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "date",
+        "round",
+        "track",
+        "name",
+        "hypothesis",
+        "config",
+        "results",
+        "verdict",
+        "why",
+        "regime",
+        "reactivate_when",
+        "artifacts",
+        "supersedes",
+        "superseded_by",
+        "caveat",
+        "retired_families"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^E[0-9]{3,}$"
+        },
+        "date": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+        },
+        "round": {
+          "type": "string"
+        },
+        "track": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "hypothesis": {
+          "type": "string"
+        },
+        "config": {
+          "type": "string"
+        },
+        "results": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "verdict": {
+          "enum": [
+            "works",
+            "mixed",
+            "inconclusive",
+            "fails"
+          ]
+        },
+        "why": {
+          "type": "string"
+        },
+        "regime": {
+          "type": "string"
+        },
+        "reactivate_when": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "superseded_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "caveat": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_families": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "LedgerCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "by_verdict",
+        "by_track"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_verdict": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "works",
+            "mixed",
+            "inconclusive",
+            "fails"
+          ],
+          "properties": {
+            "works": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "mixed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "inconclusive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fails": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "by_track": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "LedgerList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger",
+        "empty_reason",
+        "counts",
+        "matched",
+        "offset",
+        "limit",
+        "next_offset",
+        "entries",
+        "note"
+      ],
+      "properties": {
+        "ledger": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LedgerImportInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty_reason": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counts": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LedgerCounts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "next_offset": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LedgerEntry"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "RetiredFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family_id",
+        "name",
+        "tools",
+        "ledger_ids",
+        "also_see",
+        "old_rows",
+        "reason",
+        "reason_zh",
+        "entries"
+      ],
+      "properties": {
+        "family_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ledger_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "also_see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "old_rows": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reason_zh": {
+          "type": "string"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EntryBrief"
+          }
+        }
+      }
+    },
+    "RetiredTools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "source",
+        "ledger",
+        "query",
+        "families"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "ledger": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LedgerImportInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "query": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tool",
+            "ledger_id"
+          ],
+          "properties": {
+            "tool": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ledger_id": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "families": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RetiredFamily"
+          }
+        }
+      }
+    },
+    "LedgerEntryDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger",
+        "entry",
+        "supersedes_entries",
+        "superseded_by_entries",
+        "retired_families"
+      ],
+      "properties": {
+        "ledger": {
+          "$ref": "#/$defs/LedgerImportInfo"
+        },
+        "entry": {
+          "$ref": "#/$defs/LedgerEntry"
+        },
+        "supersedes_entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EntryBrief"
+          }
+        },
+        "superseded_by_entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EntryBrief"
+          }
+        },
+        "retired_families": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RetiredFamily"
+          }
+        }
+      }
+    },
+    "LedgerImports": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "imports",
+        "not_imported"
+      ],
+      "properties": {
+        "imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LedgerImportInfo"
+          }
+        },
+        "not_imported": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "file",
+              "sha256"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "file": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "reason"
+      ],
+      "properties": {
+        "value": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "DrawdownSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sessions",
+        "peak_session",
+        "recovery_session",
+        "recovered"
+      ],
+      "properties": {
+        "sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peak_session": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recovery_session": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recovered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "TearSheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "periods_per_year",
+        "sessions",
+        "returns",
+        "missing_nav_sessions",
+        "first_session",
+        "last_session",
+        "trades",
+        "longest_drawdown",
+        "metrics"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "periods_per_year": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "returns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_nav_sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_session": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_session": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trades": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "closed",
+                "open",
+                "breakeven"
+              ],
+              "properties": {
+                "closed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "open": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "breakeven": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "longest_drawdown": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DrawdownSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total_return",
+            "annualised_return",
+            "annualised_volatility",
+            "sharpe",
+            "sortino",
+            "max_drawdown",
+            "calmar",
+            "longest_drawdown_sessions",
+            "profit_factor",
+            "win_rate",
+            "avg_win",
+            "avg_loss",
+            "payoff_ratio",
+            "avg_win_return",
+            "avg_loss_return",
+            "exposure"
+          ],
+          "properties": {
+            "total_return": {
+              "$ref": "#/$defs/Metric"
+            },
+            "annualised_return": {
+              "$ref": "#/$defs/Metric"
+            },
+            "annualised_volatility": {
+              "$ref": "#/$defs/Metric"
+            },
+            "sharpe": {
+              "$ref": "#/$defs/Metric"
+            },
+            "sortino": {
+              "$ref": "#/$defs/Metric"
+            },
+            "max_drawdown": {
+              "$ref": "#/$defs/Metric"
+            },
+            "calmar": {
+              "$ref": "#/$defs/Metric"
+            },
+            "longest_drawdown_sessions": {
+              "$ref": "#/$defs/Metric"
+            },
+            "profit_factor": {
+              "$ref": "#/$defs/Metric"
+            },
+            "win_rate": {
+              "$ref": "#/$defs/Metric"
+            },
+            "avg_win": {
+              "$ref": "#/$defs/Metric"
+            },
+            "avg_loss": {
+              "$ref": "#/$defs/Metric"
+            },
+            "payoff_ratio": {
+              "$ref": "#/$defs/Metric"
+            },
+            "avg_win_return": {
+              "$ref": "#/$defs/Metric"
+            },
+            "avg_loss_return": {
+              "$ref": "#/$defs/Metric"
+            },
+            "exposure": {
+              "$ref": "#/$defs/Metric"
+            }
+          }
+        }
+      }
+    },
+    "TearSheetData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "window",
+        "basis",
+        "tearsheet",
+        "caveats"
+      ],
+      "properties": {
+        "subject": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id",
+            "label",
+            "catalog_id",
+            "experiment_id"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "replay",
+                "book"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "catalog_id": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "experiment_id": {
+              "oneOf": [
+                {
+                  "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "sessions"
+          ],
+          "properties": {
+            "start": {
+              "oneOf": [
+                {
+                  "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "end": {
+              "oneOf": [
+                {
+                  "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sessions": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "initial_nav",
+            "trade_pnl",
+            "nav_basis"
+          ],
+          "properties": {
+            "initial_nav": {
+              "oneOf": [
+                {
+                  "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "trade_pnl": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "nav_basis": {
+              "type": "string"
+            }
+          }
+        },
+        "tearsheet": {
+          "$ref": "#/$defs/TearSheet"
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BatchCompareRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idempotency_key",
+        "screen_run_id",
+        "playbook_id"
+      ],
+      "properties": {
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "screen_run_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "playbook_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "top_n": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "window_sessions": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 750
+        }
+      }
+    },
+    "BatchCompareReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt"
+      ],
+      "properties": {
+        "receipt": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/JobReceipt"
+        }
+      }
+    },
+    "BatchRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sort_position",
+        "instrument_id",
+        "code",
+        "name",
+        "status",
+        "skip_reason",
+        "tearsheet"
+      ],
+      "properties": {
+        "sort_position": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "instrument_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "code": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "no_trades",
+            "skipped"
+          ]
+        },
+        "skip_reason": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tearsheet": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TearSheet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "BatchResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "screen",
+        "playbook",
+        "window",
+        "initial_cash",
+        "cost_policy_version",
+        "price_basis",
+        "rows",
+        "caveats"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "screen": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "screen_run_id",
+            "decision_as_of",
+            "universe_policy_version",
+            "true_rows",
+            "selected",
+            "panel_matches_screen"
+          ],
+          "properties": {
+            "screen_run_id": {
+              "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+            },
+            "decision_as_of": {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            "universe_policy_version": {
+              "type": "string"
+            },
+            "true_rows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "selected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "panel_matches_screen": {
+              "type": "boolean"
+            }
+          }
+        },
+        "playbook": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "catalog_id",
+            "name",
+            "family"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "catalog_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "family": {
+              "type": "string"
+            }
+          }
+        },
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "sessions"
+          ],
+          "properties": {
+            "start": {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            "end": {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+            },
+            "sessions": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "initial_cash": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+        },
+        "cost_policy_version": {
+          "type": "string"
+        },
+        "price_basis": {
+          "type": "string"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BatchRow"
+          }
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BatchRunBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_run_id",
+        "run_state",
+        "error_code",
+        "scheduled_for",
+        "completed_at",
+        "request",
+        "summary"
+      ],
+      "properties": {
+        "job_run_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "run_state": {
+          "enum": [
+            "queued",
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "error_code": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scheduled_for": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "completed_at": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "screen_run_id",
+            "playbook_id",
+            "top_n",
+            "window_sessions"
+          ],
+          "properties": {
+            "screen_run_id": {
+              "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+            },
+            "playbook_id": {
+              "type": "string"
+            },
+            "top_n": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "window_sessions": {
+              "type": "integer",
+              "minimum": 60,
+              "maximum": 750
+            }
+          }
+        },
+        "summary": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "instruments",
+                "with_trades",
+                "skipped"
+              ],
+              "properties": {
+                "instruments": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "with_trades": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "skipped": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "BatchRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run",
+        "result",
+        "result_ref"
+      ],
+      "properties": {
+        "run": {
+          "$ref": "#/$defs/BatchRunBrief"
+        },
+        "result": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/BatchResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_ref": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "BatchRunList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "page",
+        "order"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BatchRunBrief"
+          }
+        },
+        "page": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "next_cursor",
+            "limit"
+          ],
+          "properties": {
+            "next_cursor": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "order": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

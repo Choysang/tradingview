@@ -31,6 +31,7 @@ export function ExperimentArchive() {
   const items = q.data?.pages.flatMap((p) => p.data.items) ?? [];
   return (
     <section className="bfr archive">
+      <p className="muted">旧系统的 92 条实验结论（含已退役工具的原因）见 <Link to="/lab/ledger">历史实验台账</Link>。</p>
       <div className="filters">
         <label className="select-label">策略实例（UUID）<input value={instance} onChange={(e) => setInstance(e.target.value)} placeholder="全部" aria-invalid={!validInstance} /></label>
         <label className="select-label">目的<select value={purpose} onChange={(e) => setPurpose(e.target.value as RunPurpose | '')}><option value="">全部</option>{PURPOSES.map((p) => <option key={p} value={p}>{RUN_PURPOSE_LABEL[p]}</option>)}</select></label>

@@ -1,0 +1,47 @@
+{
+ "version": "monthly-returns-v1",
+ "subject": {
+  "label": "turtle_55",
+  "catalog_id": "PB:turtle_55",
+  "experiment_id": "11111111-1111-4111-8111-111111111111"
+ },
+ "window": {
+  "start": "2025-12-01",
+  "end": "2026-03-31",
+  "sessions": 80
+ },
+ "months": [
+  {
+   "year": 2025,
+   "month": 12,
+   "value": "0.021000000000",
+   "sessions": 22,
+   "reason": null
+  },
+  {
+   "year": 2026,
+   "month": 1,
+   "value": "-0.034500000000",
+   "sessions": 20,
+   "reason": null
+  },
+  {
+   "year": 2026,
+   "month": 2,
+   "value": null,
+   "sessions": 1,
+   "reason": "no_nav_in_month"
+  },
+  {
+   "year": 2026,
+   "month": 3,
+   "value": "0.081000000000",
+   "sessions": 22,
+   "reason": null
+  }
+ ],
+ "basis": "月收益 = 当月最后一个有净值的交易日净值 / 上月最后一个有净值的净值 - 1",
+ "caveats": [
+  "首月、末月可能只有部分交易日"
+ ]
+}

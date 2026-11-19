@@ -1,0 +1,11 @@
+/* Batch 6 page. Only theme tokens of styles.css are used, so light and dark follow the app. */
+.b6-block { margin: 8px 0 18px; }
+.b6-table-wrap { overflow-x: auto; }
+.b6-table { border-collapse: collapse; min-width: 100%; }
+.b6-table th, .b6-table td { padding: 3px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.b6-table th:first-child, .b6-table td:first-child, .b6-table th.left, .b6-table td.left { text-align: left; }
+.b6-table th { color: var(--muted); font-weight: normal; }
+.b6-bar { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 4px 0; min-width: 120px; }
+.b6-bar > span { display: block; height: 100%; background: var(--accent); }
+.b6-notes { margin: 4px 0; padding-left: 18px; }
+.b6-sha { font-size: 0.78rem; word-break: break-all; }

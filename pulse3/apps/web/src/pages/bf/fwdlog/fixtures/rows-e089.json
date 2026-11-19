@@ -1,0 +1,196 @@
+{
+ "meta": {
+  "request_id": "6a636c72-ca66-4912-8418-76457de6ce5e",
+  "generated_at": "2026-11-18T07:50:14.080165Z",
+  "trace_id": "cefdf99c4169466f99623e86c27dea39",
+  "contract_version": "3.0.0",
+  "release_id": null,
+  "decision_as_of": null,
+  "availability_policy_version": null,
+  "input_snapshot_refs": [],
+  "quality_status": "partial",
+  "freshness_state": "not_expected",
+  "coverage": {
+   "policy_version": "bf-fwdlog-v1",
+   "expected_count": null,
+   "observed_count": 4,
+   "missing_count": null,
+   "unverifiable_reasons": [
+    "forward_log_in_progress",
+    "recordings_are_60s_sampled_snapshots"
+   ]
+  },
+  "warnings": [
+   {
+    "code": "SHADOW_FORWARD_LOG",
+    "message": "前向影子记录：不下单、不入账、不改任何规则；决策日之前的指标只是进度",
+    "affected_component": "fwdlog",
+    "evidence_ref": null
+   }
+  ],
+  "next_cursor": null,
+  "actionability_id": null
+ },
+ "data": {
+  "experiment_key": "E089",
+  "dataset": "fwdlog_e089_state",
+  "total": 4,
+  "rows": [
+   {
+    "session_date": "2026-11-10",
+    "row_key": "2026-11-10",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "date": "2026-11-10",
+     "etf_amount": null,
+     "ew_pct": null,
+     "ext_missing": true,
+     "health": {
+      "a50_bars": 0,
+      "blocked": [],
+      "cffex_gap_min": null,
+      "cnh_bars": 0,
+      "end": null,
+      "failed_requests": null,
+      "merged": false,
+      "missed": null,
+      "never_returned": 0
+     },
+     "late_heavy": null,
+     "late_share": null,
+     "n_etf": 0,
+     "n_ew": 0,
+     "panic_support": null,
+     "provenance": {
+      "ext_snapshot_id": null,
+      "ext_summary_sha256": null,
+      "quote_snapshot_id": null
+     },
+     "ratio": null,
+     "surge": null,
+     "up_share": null,
+     "vwap_gap_pct": null
+    }
+   },
+   {
+    "session_date": "2026-11-11",
+    "row_key": "2026-11-11",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "date": "2026-11-11",
+     "etf_amount": null,
+     "ew_pct": null,
+     "ext_missing": true,
+     "health": {
+      "a50_bars": 0,
+      "blocked": [],
+      "cffex_gap_min": null,
+      "cnh_bars": 0,
+      "end": null,
+      "failed_requests": null,
+      "merged": false,
+      "missed": null,
+      "never_returned": 0
+     },
+     "late_heavy": null,
+     "late_share": null,
+     "n_etf": 0,
+     "n_ew": 0,
+     "panic_support": null,
+     "provenance": {
+      "ext_snapshot_id": null,
+      "ext_summary_sha256": null,
+      "quote_snapshot_id": null
+     },
+     "ratio": null,
+     "surge": null,
+     "up_share": null,
+     "vwap_gap_pct": null
+    }
+   },
+   {
+    "session_date": "2026-11-12",
+    "row_key": "2026-11-12",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "a50_pct": null,
+     "cnh_pct": null,
+     "date": "2026-11-12",
+     "etf_amount": "21000000000",
+     "ew_pct": "4.1237",
+     "futures": {
+      "IC": null,
+      "IF": null,
+      "IH": null,
+      "IM": null
+     },
+     "gold_pct": null,
+     "health": {
+      "a50_bars": 0,
+      "blocked": [],
+      "cffex_gap_min": null,
+      "cnh_bars": 0,
+      "end": "done",
+      "failed_requests": 0,
+      "merged": true,
+      "missed": 0,
+      "never_returned": 0
+     },
+     "hsi_pct": null,
+     "late_heavy": false,
+     "late_share": "0.2",
+     "n_etf": 7,
+     "n_ew": 10,
+     "oil_pct": null,
+     "panic_support": false,
+     "provenance": {
+      "ext_snapshot_id": "390fc710-c546-4a12-a35c-453d87ba0442",
+      "ext_summary_sha256": "c25cd9b03c6df914a90bf65d36b6ab634fd6b78ecd57f6dbbbdb99dac62bb3a2",
+      "quote_snapshot_id": "a041d736-bcf6-4281-922d-b7165afa4669"
+     },
+     "ratio": "0.782",
+     "sh_pct": "2.2222",
+     "surge": false,
+     "up_share": "1",
+     "vwap_gap_pct": "-99.9867"
+    }
+   },
+   {
+    "session_date": "2026-11-13",
+    "row_key": "2026-11-13",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "date": "2026-11-13",
+     "etf_amount": null,
+     "ew_pct": "5",
+     "ext_missing": true,
+     "health": {
+      "a50_bars": 0,
+      "blocked": [],
+      "cffex_gap_min": null,
+      "cnh_bars": 0,
+      "end": null,
+      "failed_requests": null,
+      "merged": false,
+      "missed": null,
+      "never_returned": 0
+     },
+     "late_heavy": null,
+     "late_share": null,
+     "n_etf": 0,
+     "n_ew": 10,
+     "panic_support": null,
+     "provenance": {
+      "ext_snapshot_id": null,
+      "ext_summary_sha256": null,
+      "quote_snapshot_id": "f7209ea2-1d5d-4878-a2aa-1cee94d79b80"
+     },
+     "ratio": null,
+     "surge": null,
+     "up_share": "1",
+     "vwap_gap_pct": null
+    }
+   }
+  ]
+ }
+}

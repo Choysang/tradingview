@@ -1,0 +1,21 @@
+/* fill-research lane (playbook board cells, custom run, monthly heatmap, factor series, analog tab). Tokens come from the shell. */
+.fit-ring .ring-bg { fill: none; stroke: var(--border); stroke-width: 4; }
+.fit-ring .ring-fg { fill: none; stroke: var(--accent, #2f6fed); stroke-width: 4; stroke-linecap: round; }
+.fit-ring .ring-text { font-size: 11px; fill: currentColor; font-variant-numeric: tabular-nums; }
+.spark polyline { stroke-width: 1.5; } .spark.pos polyline { stroke: var(--good, #1a7f37); } .spark.neg polyline { stroke: var(--bad, #c0392b); }
+.board-detail { margin: 8px 0; } .board-detail .plain { list-style: none; padding: 0; }
+.bffr .pos, .board-detail .pos, table .pos { color: var(--good, #1a7f37); } .bffr .neg, .board-detail .neg, table .neg { color: var(--bad, #c0392b); }
+.bffr .num { text-align: right; font-variant-numeric: tabular-nums; }
+.bffr .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 14px; margin: 8px 0; }
+.bffr .form-grid label { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--muted); gap: 3px; }
+.bffr .run-list { margin-top: 16px; } .bffr .run-result { margin: 12px 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; }
+.bffr .queued-note { padding: 8px 10px; border: 1px dashed var(--border); border-radius: 8px; margin: 8px 0; }
+/* monthly returns heatmap */
+.month-grid { border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 6px 0; }
+.month-grid th, .month-grid td { padding: 3px 6px; text-align: right; font-size: 0.85rem; border: 1px solid var(--border); }
+.month-grid td.none { color: var(--muted); } .month-grid td.pos { color: inherit; } .month-grid td.neg { color: inherit; }
+.month-grid td.missing { background: repeating-linear-gradient(45deg, transparent 0 4px, var(--surface-2) 4px 8px); }
+/* factor series charts */
+.fs-chart { width: 100%; max-width: 640px; height: 130px; } .fs-chart .grid { stroke: var(--border); stroke-dasharray: 3 3; }
+.fs-chart .ic { stroke: var(--accent, #2f6fed); fill: none; stroke-width: 1.2; } .fs-chart .ls { stroke: var(--good, #1a7f37); fill: none; stroke-width: 1.5; }
+.fs-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }

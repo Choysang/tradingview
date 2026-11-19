@@ -1,0 +1,18 @@
+/* Fill-market lane styles: crowd panel, watch tape, bear banner. Colours use the shared tokens (red = up, green = down). */
+.fm-up { color: var(--up); }
+.fm-down { color: var(--down); }
+.fm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+.fm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.fm-list header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.fm-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.fm-role { color: var(--muted); font-size: 0.8rem; min-width: 2.2em; }
+.fm-chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 1px 8px; border-radius: 10px; background: var(--surface-2); text-decoration: none; }
+.fm-chip i { font-style: normal; font-size: 0.75rem; color: var(--muted); }
+.fm-spread { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+.fm-table { width: 100%; border-collapse: collapse; }
+.fm-table th, .fm-table td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--border); font-weight: 400; }
+.fm-names { margin-top: 10px; }
+.fm-tape { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.fm-tape li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.fm-bear { border-left: 4px solid var(--down); }
+.fm-plus-note { font-weight: 400; }

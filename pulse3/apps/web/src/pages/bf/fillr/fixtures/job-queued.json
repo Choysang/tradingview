@@ -1,0 +1,10 @@
+{
+ "state": "queued",
+ "receipt": {
+  "job_run_id": "99999999-9999-4999-8999-999999999999",
+  "resource_id": "99999999-9999-4999-8999-999999999999",
+  "run_state": "queued",
+  "poll_operation_id": "getJobRun"
+ },
+ "worker_hint": "x"
+}

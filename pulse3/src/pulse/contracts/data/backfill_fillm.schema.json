@@ -1,0 +1,763 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pulse:contracts:backfill:fillm:v1",
+ "x-contract-version": "1.0.0",
+ "description": "Legacy-feature backfill lane 'fillm' (docs/LEGACY_TRIAGE.md rows #32/#90/#155 crowd and linkage, #43 stock stats additions, #114/#115/#174 calendar store status). Point in time, pinned to a release; missing is null with a reason.",
+ "$defs": {
+  "CrowdStock": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "instrument_id",
+    "code",
+    "name",
+    "pct_change",
+    "is_limit_up",
+    "limit_streak"
+   ],
+   "properties": {
+    "instrument_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "code": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "name": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "pct_change": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "is_limit_up": {
+     "oneOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "limit_streak": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    }
+   }
+  },
+  "DiffusionDay": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "session",
+    "observed",
+    "limit_ups",
+    "up_share",
+    "strong_followers"
+   ],
+   "properties": {
+    "session": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+    },
+    "observed": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "limit_ups": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "up_share": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "strong_followers": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    }
+   }
+  },
+  "IndustryDiffusion": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "node_id",
+    "name",
+    "members",
+    "observed",
+    "limit_ups",
+    "up_share",
+    "avg_pct",
+    "leader",
+    "followers",
+    "spread"
+   ],
+   "properties": {
+    "node_id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "members": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "observed": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "limit_ups": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "up_share": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "avg_pct": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "leader": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/CrowdStock"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "followers": {
+     "type": "array",
+     "maxItems": 8,
+     "items": {
+      "$ref": "#/$defs/CrowdStock"
+     }
+    },
+    "spread": {
+     "type": "array",
+     "maxItems": 10,
+     "items": {
+      "$ref": "#/$defs/DiffusionDay"
+     }
+    }
+   }
+  },
+  "InstitutionRow": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "instrument_id",
+    "code",
+    "name",
+    "institution_rows",
+    "buy_cny",
+    "sell_cny",
+    "net_cny",
+    "net_reason"
+   ],
+   "properties": {
+    "instrument_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "code": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "name": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "institution_rows": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "buy_cny": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sell_cny": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "net_cny": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "net_reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "InstitutionNet": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "status",
+    "session_date",
+    "rows",
+    "reports_seen",
+    "basis",
+    "notes"
+   ],
+   "properties": {
+    "status": {
+     "enum": [
+      "ok",
+      "no_seat_reports",
+      "no_institution_rows"
+     ]
+    },
+    "session_date": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rows": {
+     "type": "array",
+     "maxItems": 50,
+     "items": {
+      "$ref": "#/$defs/InstitutionRow"
+     }
+    },
+    "reports_seen": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "basis": {
+     "type": "string"
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "NameClusters": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "status",
+    "reason",
+    "retire_recommended"
+   ],
+   "properties": {
+    "status": {
+     "const": "unavailable"
+    },
+    "reason": {
+     "type": "string"
+    },
+    "retire_recommended": {
+     "const": true
+    }
+   }
+  },
+  "CrowdSnapshot": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "release_id",
+    "session_date",
+    "taxonomy_id",
+    "taxonomy_version",
+    "membership_snapshot_id",
+    "method",
+    "sessions_in_spread",
+    "industries",
+    "institutions",
+    "name_clusters",
+    "notes"
+   ],
+   "properties": {
+    "release_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "session_date": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "taxonomy_id": {
+     "type": "string"
+    },
+    "taxonomy_version": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "membership_snapshot_id": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "method": {
+     "type": "string"
+    },
+    "sessions_in_spread": {
+     "type": "array",
+     "items": {
+      "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+     }
+    },
+    "industries": {
+     "type": "array",
+     "maxItems": 20,
+     "items": {
+      "$ref": "#/$defs/IndustryDiffusion"
+     }
+    },
+    "institutions": {
+     "$ref": "#/$defs/InstitutionNet"
+    },
+    "name_clusters": {
+     "$ref": "#/$defs/NameClusters"
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "PlusCoverage": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "window_sessions",
+    "sessions_covered",
+    "first_session",
+    "last_session",
+    "touched",
+    "sealed_at_close",
+    "policy_version",
+    "sessions_excluded_other_policy"
+   ],
+   "properties": {
+    "window_sessions": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "sessions_covered": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "first_session": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "last_session": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "touched": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "sealed_at_close": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "policy_version": {
+     "type": "string"
+    },
+    "sessions_excluded_other_policy": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    }
+   }
+  },
+  "StatPlusField": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "key",
+    "label",
+    "status",
+    "value",
+    "value_kind",
+    "unit",
+    "as_of",
+    "basis",
+    "reason",
+    "coverage"
+   ],
+   "properties": {
+    "key": {
+     "enum": [
+      "volume_ratio",
+      "float_cap",
+      "seal_success_rate_1y"
+     ]
+    },
+    "label": {
+     "type": "string",
+     "minLength": 1
+    },
+    "status": {
+     "enum": [
+      "ok",
+      "estimated",
+      "unavailable"
+     ]
+    },
+    "value": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "value_kind": {
+     "oneOf": [
+      {
+       "enum": [
+        "decimal",
+        "integer"
+       ]
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "unit": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "as_of": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "basis": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "coverage": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/PlusCoverage"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "status": {
+        "const": "unavailable"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "value": {
+        "type": "null"
+       },
+       "reason": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     },
+     "else": {
+      "properties": {
+       "value": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "status": {
+        "const": "estimated"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "reason": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    }
+   ]
+  },
+  "StockStatsPlus": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "instrument_id",
+    "release_id",
+    "decision_as_of",
+    "fields"
+   ],
+   "properties": {
+    "instrument_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "release_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "decision_as_of": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+    },
+    "fields": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/StatPlusField"
+     }
+    }
+   }
+  },
+  "CalendarStoreEvent": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "event_id",
+    "name",
+    "category",
+    "status",
+    "event_date",
+    "event_end_date",
+    "first_seen_at"
+   ],
+   "properties": {
+    "event_id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "category": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    },
+    "event_date": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+    },
+    "event_end_date": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "first_seen_at": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+    }
+   }
+  },
+  "CalendarStoreStatus": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "present",
+    "snapshot_id",
+    "events",
+    "revisions",
+    "source_sha256",
+    "imported_at",
+    "latest_first_seen_at",
+    "reader",
+    "sample"
+   ],
+   "properties": {
+    "present": {
+     "type": "boolean"
+    },
+    "snapshot_id": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "events": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "revisions": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/SafeInteger"
+    },
+    "source_sha256": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "imported_at": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "latest_first_seen_at": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "reader": {
+     "type": "string"
+    },
+    "sample": {
+     "type": "array",
+     "maxItems": 5,
+     "items": {
+      "$ref": "#/$defs/CalendarStoreEvent"
+     }
+    }
+   }
+  }
+ }
+}

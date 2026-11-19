@@ -11,7 +11,10 @@ Invariants
 * Output series have exactly one value per bar; a value is ``None`` in the warm-up and wherever an input in its window is
   missing (kernel null policy); never 0, never forward-filled.
 * A statistic that pulse3 does not hold point-in-time is ``unavailable`` with the reason; an approximation is ``estimated``
-  with the reason. Seal times, seal amount and board-break counts need intraday records that do not exist yet.
+  with the reason. Seal facts DO exist now, but only as estimates from the imported 60 s recordings (``bf_live_service``, policy
+  seal-facts-v2, one dataset per recorded session): they are served by ``/v1/x/bf/live/seal-facts`` and, as the seal success rate over
+  the covered sessions, by ``bf_fillm_stock``. The four intraday fields of THIS card stay unavailable because its field type has no
+  time value and no estimate flag for them; the card never infers them from daily bars.
 Not covered: intraday statistics, per-session ST price-limit classes (the board class percent is used), Decimal-exact kernels
 (numeric policy ``float64-v1``, values are rounded to 6 decimals on the wire).
 """
@@ -175,7 +178,7 @@ def indicator_bars(window: Mapping[str, Any]) -> list[dict]:
 
 # ---- statistics card -------------------------------------------------------------------------------------------
 INTRADAY_KEYS = ("first_seal_time", "last_seal_time", "seal_amount", "open_board_count")
-NO_INTRADAY = "pulse3 尚未采集分时与盘口记录，日线无法还原这个数值，这里不推断、不填充"
+NO_INTRADAY = "这个数值只能由分时快照估算（见封板事实接口 /v1/x/bf/live/seal-facts）；日线无法还原，本卡片不推断、不填充"
 
 
 @dataclass(frozen=True)

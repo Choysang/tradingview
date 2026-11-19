@@ -1,0 +1,11 @@
+{
+ "ledger": null,
+ "empty_reason": "NOT_IMPORTED：先运行 uv run python -m pulse.workers.lab import-ledger",
+ "counts": null,
+ "matched": 0,
+ "offset": 0,
+ "limit": 100,
+ "next_offset": null,
+ "entries": [],
+ "note": "这是旧实验室留下的历史记录，只读；它们不是 pulse3 的实验（pulse3 的试验先登记、后运行）。"
+}

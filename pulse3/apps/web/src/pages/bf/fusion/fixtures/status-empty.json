@@ -1,0 +1,71 @@
+{
+ "score_name": "fusion_static40_safe",
+ "implementation": "fusion-static40-safe-v1",
+ "current": {
+  "rows": 0,
+  "dates": 0,
+  "first_date": null,
+  "last_date": null
+ },
+ "asof": {
+  "rows": 0,
+  "dates": 0,
+  "first_date": null,
+  "last_date": null
+ },
+ "last_run": null,
+ "books": [
+  {
+   "key": "main",
+   "last_date": null,
+   "rows": 0
+  },
+  {
+   "key": "h10",
+   "last_date": null,
+   "rows": 0
+  }
+ ],
+ "frozen_data": [
+  {
+   "file": "factor_expressions.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "file": "level_safety.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ ],
+ "preregistrations": [
+  {
+   "key": "main",
+   "ledger_id": "E036/E040",
+   "document": "docs/research/2026-11-01-round7-plan.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "h10",
+   "ledger_id": "E065",
+   "document": "docs/research/2026-11-07-batch1-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "monitor",
+   "ledger_id": "E068",
+   "document": "docs/research/2026-11-07-batch2-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "x20",
+   "ledger_id": "E085",
+   "document": "docs/research/2026-11-08-batch4-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "os20",
+   "ledger_id": "E081",
+   "document": "docs/research/2026-11-08-os20-shock-rebound-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ ]
+}

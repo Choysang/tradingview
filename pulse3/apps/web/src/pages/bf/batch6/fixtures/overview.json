@@ -1,0 +1,227 @@
+{
+ "meta": {
+  "quality_status": "partial"
+ },
+ "data": {
+  "spec_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "first_evaluated": "2026-11-19",
+  "history": {
+   "as_of": "2026-11-18T00:00:00Z",
+   "decision_days": {
+    "first": "2025-11-14",
+    "last": "2026-11-11",
+    "sessions": 240
+   },
+   "rows": [
+    {
+     "hypothesis": "H1",
+     "experiment": "E093",
+     "segment": "DEV",
+     "sign": -1,
+     "hold": 3,
+     "signals": 30,
+     "attempted": 28,
+     "filled": 20,
+     "fill_rate": "0.71428571",
+     "matched": 20,
+     "signal_days": 12,
+     "mean_ret_net": "0.0095",
+     "mean_baseline": "0.002",
+     "excess": "-0.004",
+     "p_value": "0.003",
+     "holm_p_adj": null,
+     "blocks": 40,
+     "reliable": true,
+     "note": null
+    },
+    {
+     "hypothesis": "H1",
+     "experiment": "E093",
+     "segment": "PRE",
+     "sign": -1,
+     "hold": 3,
+     "signals": 30,
+     "attempted": 28,
+     "filled": 20,
+     "fill_rate": "0.71428571",
+     "matched": 20,
+     "signal_days": 12,
+     "mean_ret_net": "0.0095",
+     "mean_baseline": "0.002",
+     "excess": "-0.004",
+     "p_value": "0.003",
+     "holm_p_adj": "0.02",
+     "blocks": 40,
+     "reliable": true,
+     "note": null
+    },
+    {
+     "hypothesis": "H2",
+     "experiment": "E093",
+     "segment": "DEV",
+     "sign": 1,
+     "hold": 3,
+     "signals": 30,
+     "attempted": 28,
+     "filled": 20,
+     "fill_rate": "0.71428571",
+     "matched": 20,
+     "signal_days": 12,
+     "mean_ret_net": "0.0095",
+     "mean_baseline": "0.002",
+     "excess": "0.006",
+     "p_value": "0.003",
+     "holm_p_adj": null,
+     "blocks": 40,
+     "reliable": true,
+     "note": null
+    },
+    {
+     "hypothesis": "H2",
+     "experiment": "E093",
+     "segment": "PRE",
+     "sign": 1,
+     "hold": 3,
+     "signals": 30,
+     "attempted": 28,
+     "filled": 20,
+     "fill_rate": "0.71428571",
+     "matched": 20,
+     "signal_days": 12,
+     "mean_ret_net": "0.0095",
+     "mean_baseline": "0.002",
+     "excess": "0.006",
+     "p_value": "0.003",
+     "holm_p_adj": "0.02",
+     "blocks": 40,
+     "reliable": true,
+     "note": null
+    }
+   ],
+   "verdicts": [
+    {
+     "hypothesis": "H1",
+     "passed": true,
+     "reason": "ok"
+    },
+    {
+     "hypothesis": "H2",
+     "passed": false,
+     "reason": "no"
+    }
+   ],
+   "event_counts": [
+    {
+     "key": "break:PRE",
+     "count": 12
+    }
+   ],
+   "notes": [
+    "bars since 2025-10"
+   ]
+  },
+  "forward": [
+   {
+    "experiment": "E095",
+    "hypothesis": "H5",
+    "sign": 1,
+    "days_evaluated": 21,
+    "signal_days": 21,
+    "experiment_signal_days": 21,
+    "target_days": 40,
+    "signals": 21,
+    "filled": 21,
+    "exit_deferred": 0,
+    "resolved_later": 0,
+    "fill_rate": "1",
+    "mean_ret_net": "0.01",
+    "excess": "0.01",
+    "p_value": "0",
+    "holm_p_adj": null,
+    "state": "descriptive",
+    "passed": null,
+    "reason": null
+   },
+   {
+    "experiment": "E095",
+    "hypothesis": "H6",
+    "sign": -1,
+    "days_evaluated": 21,
+    "signal_days": 21,
+    "experiment_signal_days": 21,
+    "target_days": 40,
+    "signals": 0,
+    "filled": 0,
+    "exit_deferred": 0,
+    "resolved_later": 0,
+    "fill_rate": null,
+    "mean_ret_net": null,
+    "excess": "-0.01",
+    "p_value": "0",
+    "holm_p_adj": null,
+    "state": "descriptive",
+    "passed": null,
+    "reason": null
+   },
+   {
+    "experiment": "E096",
+    "hypothesis": "H7",
+    "sign": 1,
+    "days_evaluated": 0,
+    "signal_days": 0,
+    "experiment_signal_days": 0,
+    "target_days": 40,
+    "signals": 0,
+    "filled": 0,
+    "exit_deferred": 0,
+    "resolved_later": 0,
+    "fill_rate": null,
+    "mean_ret_net": null,
+    "excess": null,
+    "p_value": null,
+    "holm_p_adj": null,
+    "state": "collecting",
+    "passed": null,
+    "reason": "collecting: fewer than 20 signal days"
+   }
+  ],
+  "fieldcheck": {
+   "sessions": [
+    "2026-11-12",
+    "2026-11-13"
+   ],
+   "unmatched_buy_computable": true,
+   "bid1_ask1_lots_0915_0924": "indicative matched quantity (matched, not unmatched)",
+   "bid2_ask2_lots_0915_0924": "unmatched surplus",
+   "bid_ask_book_at_0925": "resting orders after matching = unmatched",
+   "unmatched_buy_definition": "sum of bid1..bid5",
+   "auction_rows": 100,
+   "final_rows": 10,
+   "shares": [
+    {
+     "name": "share_bid1_lots_eq_ask1_lots",
+     "value": "1"
+    },
+    {
+     "name": "share_bid1_ask1_px_eq_price",
+     "value": "1"
+    },
+    {
+     "name": "share_bid2_and_ask2_both_positive",
+     "value": "0"
+    },
+    {
+     "name": "share_final_amount_eq_lots_x_price",
+     "value": "1"
+    },
+    {
+     "name": "share_final_book_uncrossed",
+     "value": "1"
+    }
+   ]
+  },
+  "sessions_decided": [
+   "2026-11-19"
+  ]
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "score_name": "fusion_static40_safe",
+ "implementation": "fusion-static40-safe-v1",
+ "current": {
+  "rows": 400,
+  "dates": 4,
+  "first_date": "2026-11-03",
+  "last_date": "2026-11-06"
+ },
+ "asof": {
+  "rows": 200,
+  "dates": 2,
+  "first_date": "2026-11-05",
+  "last_date": "2026-11-06"
+ },
+ "last_run": {
+  "run_id": "abc123def456",
+  "written_on": "2026-11-06",
+  "status": "done",
+  "code": null,
+  "detail": null,
+  "session": "2026-11-06",
+  "seconds": "612.4",
+  "peak_memory_mb": "1750.0"
+ },
+ "books": [
+  {
+   "key": "main",
+   "last_date": "2026-11-06",
+   "rows": 2
+  },
+  {
+   "key": "h10",
+   "last_date": "2026-11-06",
+   "rows": 2
+  }
+ ],
+ "frozen_data": [
+  {
+   "file": "factor_expressions.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "file": "level_safety.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ ],
+ "preregistrations": [
+  {
+   "key": "main",
+   "ledger_id": "E036/E040",
+   "document": "docs/research/2026-11-01-round7-plan.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "h10",
+   "ledger_id": "E065",
+   "document": "docs/research/2026-11-07-batch1-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "monitor",
+   "ledger_id": "E068",
+   "document": "docs/research/2026-11-07-batch2-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "x20",
+   "ledger_id": "E085",
+   "document": "docs/research/2026-11-08-batch4-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "key": "os20",
+   "ledger_id": "E081",
+   "document": "docs/research/2026-11-08-os20-shock-rebound-preregistration.md",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ ]
+}

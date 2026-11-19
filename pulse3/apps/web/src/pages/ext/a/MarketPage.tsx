@@ -12,6 +12,8 @@ import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../componen
 import { useReleaseSelection } from '../../../hooks/useRelease';
 import { fmtInt } from '../../../lib/format';
 import { SealClockCard } from '../../bf/live/SealClock';
+import { BearBanner } from '../../bf/fillm/BearBanner';
+import { CrowdPanel } from '../../bf/fillm/CrowdPanel';
 import { VITAL_QUERY, growthQuery, screenHref } from '../../bf/board/screenLink';
 import './ext-a.css';
 import { Bars, Gauge, Sparkline, num, pctText } from './charts';
@@ -188,6 +190,7 @@ export function MarketPage() {
       {today.data && <MetaStrip meta={today.data.meta} title="市场总览" />}
       {stale && <p className="flag flag-warn" role="alert">这是旧发布包（已被取代、已过期或数据过旧），下面的内容不是当前分析。</p>}
       {noComponent && <EmptyState>该发布包没有市场状态组件，无法显示市场总览。</EmptyState>}
+      <BearBanner regime={rg.body} />
       {th.body && <Mood t={th.body} />}
       {vi.body && <VitalsTiles v={vi.body} />}
       <div className="ea-two">
@@ -207,6 +210,7 @@ export function MarketPage() {
         {gr.body && <GrowthView g={gr.body} />}
       </div>
       {rg.body && <RegimeBanner r={rg.body} />}
+      <CrowdPanel releaseId={rid ?? null} />
       <TapePanel />
       {data && data.capability_gaps.length > 0 && (
         <details className="small card">

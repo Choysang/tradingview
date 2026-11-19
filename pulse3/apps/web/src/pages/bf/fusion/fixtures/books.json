@@ -1,0 +1,96 @@
+{
+ "books": [
+  {
+   "key": "main",
+   "label": "Book main",
+   "rule": "hold 5, 20 slots, top 40",
+   "ledger_id": "E036/E040",
+   "rows": [
+    {
+     "date": "2026-11-05",
+     "gate_w": "0.2500",
+     "new_buys_allowed": 1,
+     "try_buy": [],
+     "offer_top10": [
+      "600513",
+      "603937"
+     ],
+     "holdings": [
+      "002632",
+      "603937"
+     ],
+     "nav": "168.1000",
+     "ungated_nav": "156.8422",
+     "nav_since_freeze_pct": null,
+     "scores_sha256_16": "2f4e9a18f9645597"
+    },
+    {
+     "date": "2026-11-06",
+     "gate_w": "0.2500",
+     "new_buys_allowed": 1,
+     "try_buy": [
+      "600513"
+     ],
+     "offer_top10": [
+      "600513",
+      "603937"
+     ],
+     "holdings": [
+      "002632",
+      "603937"
+     ],
+     "nav": "168.3577",
+     "ungated_nav": "156.8422",
+     "nav_since_freeze_pct": "0.458",
+     "scores_sha256_16": "2f4e9a18f9645597"
+    }
+   ]
+  },
+  {
+   "key": "h10",
+   "label": "Book h10",
+   "rule": "hold 10, 20 slots, top 40",
+   "ledger_id": "E065",
+   "rows": [
+    {
+     "date": "2026-11-05",
+     "gate_w": "1.0000",
+     "new_buys_allowed": 1,
+     "try_buy": [],
+     "offer_top10": [
+      "600513",
+      "603937"
+     ],
+     "holdings": [
+      "002632",
+      "603937"
+     ],
+     "nav": "168.1000",
+     "ungated_nav": "156.8422",
+     "nav_since_freeze_pct": null,
+     "scores_sha256_16": "2f4e9a18f9645597"
+    },
+    {
+     "date": "2026-11-06",
+     "gate_w": "1.0000",
+     "new_buys_allowed": 1,
+     "try_buy": [
+      "600513"
+     ],
+     "offer_top10": [
+      "600513",
+      "603937"
+     ],
+     "holdings": [
+      "002632",
+      "603937"
+     ],
+     "nav": "168.3577",
+     "ungated_nav": "156.8422",
+     "nav_since_freeze_pct": "0.458",
+     "scores_sha256_16": "2f4e9a18f9645597"
+    }
+   ]
+  }
+ ]
+}

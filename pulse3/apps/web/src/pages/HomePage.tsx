@@ -20,6 +20,7 @@ import { useReleaseSelection, type ReleaseCtx } from '../hooks/useRelease';
 import { useWatchlists } from '../hooks/useUserState';
 import { RANK_KIND_LABEL, fmtTime } from '../lib/format';
 import { SuggestedCards, WatchCards } from './bf/board/WatchCards';
+import { WatchTape } from './bf/fillm/WatchTape';
 
 type EntryKey = 'market' | 'sector' | 'heating' | 'mine';
 const ENTRIES: Array<{ key: EntryKey; title: string; hint: string }> = [
@@ -207,6 +208,7 @@ function MineEntry({ rel }: { rel: ReleaseCtx }) {
       {!wl.isLoading && members.length === 0 && <EmptyState>还没有自选股票。在榜单或个股页点击 ☆ 加入。</EmptyState>}
       {rid && members.length > 0 && <WatchCards releaseId={rid} ids={members.slice(0, 60).map((m) => m.instrument_id)} />}
       {rid && !wl.isLoading && !wl.error && members.length === 0 && <SuggestedCards releaseId={rid} />}
+      {members.length > 0 && <WatchTape watchIds={members.map((m) => m.instrument_id)} />}
       {members.length > 0 && (
         <ul className="rows">
           {members.map((m) => (

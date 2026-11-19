@@ -13,6 +13,7 @@ import { ops } from '../../../api/ops';
 import type { Strategy } from '../../../api/types';
 import { Badge, MissingText } from '../../../components/Badges';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
+import { FactorSeriesPanel } from '../../bf/fillr/FactorSeriesPanel';
 import { RegimeHeatmapView } from '../../bf/research/RegimeHeatmap';
 import { extB, isNotReady, type AnalogNeighbor, type ScreenAst } from './api';
 import { CATALOG, allOf, cellOf, compare, dayInstant, makeAst, metricPct, outcomeSummary, pct, showValue } from './helpers';
@@ -146,6 +147,7 @@ function FactorCard({ s }: { s: Strategy }) {
             </tbody>
           </table>
         )}
+      {meta?.id && ev.data?.data.run_state === 'completed' && <FactorSeriesPanel factorId={`FL:${meta.id}`} />}
     </section>
   );
 }

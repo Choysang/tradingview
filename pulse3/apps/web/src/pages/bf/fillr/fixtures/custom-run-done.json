@@ -1,0 +1,295 @@
+{
+ "run": {
+  "job_run_id": "33333333-3333-4333-8333-333333333333",
+  "run_state": "succeeded",
+  "error_code": null,
+  "scheduled_for": "2026-11-18T08:00:00Z",
+  "completed_at": "2026-11-18T08:05:00Z",
+  "playbook_id": "turtle_55",
+  "label": "我的海龟",
+  "request": {
+   "holding_days": 3,
+   "stop_loss_pct": 4.0,
+   "max_positions": 3
+  },
+  "strategy": {
+   "strategy_id": "44444444-4444-4444-8444-444444444444",
+   "strategy_version": 1
+  },
+  "summary": {
+   "verdict": "effective",
+   "fitness": "68.5",
+   "net_return": "0.083200000000",
+   "trades": 2
+  }
+ },
+ "result": {
+  "version": "fillr-custom-result-v1",
+  "exploratory": true,
+  "playbook": {
+   "id": "turtle_55",
+   "catalog_id": "PB:turtle_55",
+   "name": "海龟55日突破"
+  },
+  "request": {
+   "holding_days": 3,
+   "stop_loss_pct": 4.0,
+   "max_positions": 3
+  },
+  "effective": {
+   "params": {
+    "min_margin": 1.0
+   },
+   "holding_days": 3,
+   "stop_loss_pct": 4.0,
+   "take_profit_pct": null,
+   "trailing_stop_pct": 10.0,
+   "max_positions": 3,
+   "max_new_per_day": 2
+  },
+  "base": {
+   "params": {
+    "min_margin": 1.0
+   },
+   "holding_days": 60,
+   "stop_loss_pct": 10.0,
+   "take_profit_pct": null,
+   "trailing_stop_pct": 10.0,
+   "max_positions": 8,
+   "max_new_per_day": 2
+  },
+  "window": {
+   "start": "2025-01-02",
+   "end": "2026-06-30",
+   "sessions": 360,
+   "decision_as_of": "2026-11-17T08:00:00Z"
+  },
+  "initial_cash": "1000000.000000000000",
+  "cost_policy_version": "user-account-2026",
+  "evaluation": {
+   "version": "playbook-board-v1",
+   "split_day": "2026-05-06",
+   "sample_label": "out_of_sample",
+   "full": {
+    "trades": 64,
+    "win_rate": "0.546875",
+    "avg_return": "0.014200000000",
+    "t_stat": "2.410000000000",
+    "sharpe": "1.120000000000",
+    "sessions": 300
+   },
+   "in_sample": {
+    "trades": 41,
+    "win_rate": "0.560976",
+    "avg_return": "0.016000000000",
+    "t_stat": "2.100000000000",
+    "sharpe": "1.300000000000",
+    "sessions": 180
+   },
+   "out_of_sample": {
+    "trades": 23,
+    "win_rate": "0.521739",
+    "avg_return": "0.011000000000",
+    "t_stat": "1.400000000000",
+    "sharpe": "0.900000000000",
+    "sessions": 120
+   },
+   "recent": {
+    "trades": 9,
+    "win_rate": "0.555555",
+    "avg_return": "0.009000000000",
+    "t_stat": null,
+    "sharpe": null,
+    "sessions": 60
+   },
+   "verdict": "effective",
+   "verdict_reason": "样本外平均收益 +1.10%、夏普 0.90，全样本 t 值 2.41，共 64 笔，样本外验证有效。块自助只有 6 块（少于 10），p = 0.031 仅供参考，不据此改判（E082）。",
+   "fitness": "68.5",
+   "fitness_reasons": [
+    "样本外质量 20.1/35：夏普 0.90、平均收益 +1.10%",
+    "当前趋势（牛市）10.0/20：14 笔平均 +1.00%",
+    "当前情绪（修复）5.4/15：该环境仅 4 笔（<10），回退全样本平均 +1.42% 并打 6 折",
+    "近 60 日 6.8/15：9 笔平均 +0.90%",
+    "显著性 8.0/10：t 值 2.41",
+    "样本量 1.6/5：64 笔"
+   ],
+   "block": {
+    "p_value": "0.0310",
+    "blocks": 6,
+    "block": 20,
+    "reliable": false,
+    "reason": "fewer_than_10_blocks_report_only"
+   },
+   "missing": []
+  },
+  "metrics": [
+   {
+    "name": "net_return",
+    "slice": "overall",
+    "value": "0.083200000000",
+    "unit": "ratio",
+    "missing_reason": null
+   },
+   {
+    "name": "net_return",
+    "slice": "validation",
+    "value": "0.021000000000",
+    "unit": "ratio",
+    "missing_reason": null
+   },
+   {
+    "name": "excess_return_vs_csi300",
+    "slice": "validation",
+    "value": null,
+    "unit": "ratio",
+    "missing_reason": "benchmark_missing"
+   },
+   {
+    "name": "max_drawdown",
+    "slice": "overall",
+    "value": "-0.061000000000",
+    "unit": "ratio",
+    "missing_reason": null
+   }
+  ],
+  "equity": [
+   {
+    "d": "2025-01-02",
+    "nav": "1000000.000000000000"
+   },
+   {
+    "d": "2025-01-03",
+    "nav": "1004500.000000000000"
+   },
+   {
+    "d": "2025-01-04",
+    "nav": "1009000.000000000000"
+   },
+   {
+    "d": "2025-01-05",
+    "nav": "1013500.000000000000"
+   },
+   {
+    "d": "2025-01-06",
+    "nav": "1018000.000000000000"
+   },
+   {
+    "d": "2025-01-07",
+    "nav": "1015000.000000000000"
+   },
+   {
+    "d": "2025-01-08",
+    "nav": "1019500.000000000000"
+   },
+   {
+    "d": "2025-01-09",
+    "nav": "1024000.000000000000"
+   },
+   {
+    "d": "2025-01-10",
+    "nav": "1028500.000000000000"
+   },
+   {
+    "d": "2025-01-11",
+    "nav": "1033000.000000000000"
+   },
+   {
+    "d": "2025-01-12",
+    "nav": "1030000.000000000000"
+   },
+   {
+    "d": "2025-01-13",
+    "nav": "1034500.000000000000"
+   },
+   {
+    "d": "2025-01-14",
+    "nav": "1039000.000000000000"
+   },
+   {
+    "d": "2025-01-15",
+    "nav": "1043500.000000000000"
+   },
+   {
+    "d": "2025-01-16",
+    "nav": "1048000.000000000000"
+   },
+   {
+    "d": "2025-01-17",
+    "nav": "1045000.000000000000"
+   },
+   {
+    "d": "2025-01-18",
+    "nav": "1049500.000000000000"
+   },
+   {
+    "d": "2025-01-19",
+    "nav": "1054000.000000000000"
+   },
+   {
+    "d": "2025-01-20",
+    "nav": "1058500.000000000000"
+   },
+   {
+    "d": "2025-01-21",
+    "nav": "1063000.000000000000"
+   },
+   {
+    "d": "2025-01-22",
+    "nav": "1060000.000000000000"
+   },
+   {
+    "d": "2025-01-23",
+    "nav": "1064500.000000000000"
+   },
+   {
+    "d": "2025-01-24",
+    "nav": "1069000.000000000000"
+   },
+   {
+    "d": "2025-01-25",
+    "nav": "1073500.000000000000"
+   },
+   {
+    "d": "2025-01-26",
+    "nav": "1078000.000000000000"
+   },
+   {
+    "d": "2025-02-03",
+    "nav": null
+   }
+  ],
+  "trades": {
+   "total": 2,
+   "closed": 1,
+   "shown": 2,
+   "items": [
+    {
+     "code": "600001",
+     "entry_day": "2026-03-02",
+     "exit_day": "2026-03-05",
+     "entry_price": "10.120000000000",
+     "exit_price": "10.650000000000",
+     "gross_return": "0.052371541502",
+     "status": "closed",
+     "exit_reason": "holding_days"
+    },
+    {
+     "code": "600002",
+     "entry_day": "2026-06-29",
+     "exit_day": null,
+     "entry_price": "8.000000000000",
+     "exit_price": null,
+     "gross_return": null,
+     "status": "open",
+     "exit_reason": null
+    }
+   ]
+  },
+  "caveats": [
+   "自定义回测是探索性的：参数由您事后选择",
+   "样本外 = 验证时段"
+  ]
+ },
+ "result_ref": "fillr-custom-result:abc",
+ "worker_hint": "x"
+}

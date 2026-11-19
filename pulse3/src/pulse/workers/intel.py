@@ -21,6 +21,7 @@ Not covered: scheduling; there is deliberately no full-market crawl (explicit co
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import date, datetime, timedelta, timezone
 
@@ -54,14 +55,18 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, default=500)
     p.add_argument("--provider", choices=("rules", "openai"), default="rules")
     p = sub.add_parser("community")
-    p.add_argument("--codes", nargs="+", required=True)
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--codes", nargs="+")
+    g.add_argument("--focus", type=int, metavar="N", help="the focus set: plan instruments of the current release and holdings (at most N)")
     p.add_argument("--pages", type=int, default=2)
     p.add_argument("--window-hours", type=int, default=24)
     p = sub.add_parser("seats")
     p.add_argument("--days", type=int, default=0, help="live: last N weekdays including today (0 = none)")
     p.add_argument("--legacy", action="store_true", help="normalize legacy lhb raw objects")
     p = sub.add_parser("fundflow")
-    p.add_argument("--codes", nargs="+", required=True)
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--codes", nargs="+")
+    g.add_argument("--focus", type=int, metavar="N", help="the focus set: plan instruments of the current release and holdings (at most N)")
     p.add_argument("--limit", type=int, default=10)
     sub.add_parser("counts")
     return ap
@@ -99,6 +104,12 @@ def run(argv: list[str] | None = None) -> int:
     try:
         svc.bootstrap()
         out = []
+        if getattr(a, "focus", None):
+            from pulse.workers.analysis import _focus_codes
+            a.codes = _focus_codes(conn, a.focus)
+            if not a.codes:
+                print(json.dumps({"note": "focus set is empty (no published plans, no holdings)", "http_requests": 0}))
+                return 0
         if a.cmd == "news":
             if a.source in ("eastmoney", "both"):
                 out.append(svc.ingest_news(EastmoneyNewsAdapter(client), "eastmoney", pages=a.pages, page_size=a.page_size))

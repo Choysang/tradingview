@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from pulse.domain.market.units import profile_hash
 
-from . import cninfo, legacy, legacy_recordings, sina, tencent
+from . import cninfo, legacy, legacy_calendar, legacy_recordings, sina, tencent
 
 CONTRACT_VERSION = "3.0.0"
 
@@ -50,6 +50,7 @@ SOURCES = {
     "cninfo_announcements": ("CNINFO listed-company announcements", "http://www.cninfo.com.cn"),
     legacy_recordings.SOURCE_ID: ("Legacy recorder files: intraday snapshots, guba, extended intraday (read-only import)", "file://pulse/data"),
     legacy_recordings.NEWS_SOURCE_ID: ("Legacy 7x24 news recorder (read-only import)", "file://pulse/data/news"),
+    legacy_calendar.SOURCE_ID: ("Legacy event calendar store events.jsonl (read-only import)", "file://pulse/data/calendar"),
 }
 
 _QUOTE_POLICY = {"timezone": "Asia/Shanghai", "calendar_id": "xshg_xshe_sessions", "rate_limit": "<=1 request/second",
@@ -106,6 +107,8 @@ _lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_EXT, "CanonicalQuote", 2 *
 _lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_GUBA, "EvidenceDocument", 2 * 86400)
 _lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_ALERTS, "EvidenceDocument", 2 * 86400)
 _lr(legacy_recordings.NEWS_SOURCE_ID, legacy_recordings.EP_NEWS, "EvidenceDocument", 1800)
+_add(EndpointSpec(legacy_calendar.SOURCE_ID, legacy_calendar.ENDPOINT_ID, legacy_calendar.SCHEMA_VERSION, legacy_calendar.MAPPING_VERSION, "EvidenceDocument",
+                  "batch", 7 * 86400, None, None, legacy_calendar.POLICY, True, None))
 
 
 def spec(source_id: str, endpoint_id: str) -> EndpointSpec:

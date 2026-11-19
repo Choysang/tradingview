@@ -1,0 +1,2 @@
+# the ledger is hashed byte for byte: git must not rewrite its line endings
+experiments.jsonl -text

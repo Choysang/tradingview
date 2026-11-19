@@ -1,0 +1,11 @@
+{
+ "state": "not_built",
+ "instrument_id": "88888888-8888-4888-8888-888888888888",
+ "release_id": "22222222-2222-4222-8222-222222222222",
+ "selection_policy_version": "analog-knn-matured-v1:h20",
+ "feature_key_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "decision_as_of": "2026-11-17T08:00:00Z",
+ "job": null,
+ "study": null,
+ "worker_hint": "uv run python -m pulse.workers.fillr run"
+}

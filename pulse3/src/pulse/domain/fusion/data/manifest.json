@@ -1,0 +1,22 @@
+{
+ "kind": "fusion-frozen-data-manifest",
+ "score": "fusion_static40_safe",
+ "frozen_on": "2026-11-01",
+ "files": {
+  "factor_expressions.json": "422c1ea10894516e9fa2acf3520bc4294a0f27907d9d8649bb81a0e1f6c34fbd",
+  "level_safety.json": "dc5d312962bd51f25b5c92362476e78c6dfe35a2695f3830ff01db3b8af6cc33"
+ },
+ "sources": {
+  "mined_pool.json (top 200 by |pre_ic|)": "0d3dd0b35d5db8777381af2a5cc6d173f17e4da4ee7e0c9caf83a4090e5e6751",
+  "rl_alphagen.json (pool)": "8e588a5d4be2b9815582b97a23b1c9156c5885f44bd65ad34701c386ca20bdaf",
+  "level_safety.json (PC run of 2026-11-17)": "c3e761edb56876dc591d23647e749d0e10a7ecb901a17692db2a219547b1d28e",
+  "zoo": "expression strings of scripts/lab/zoo.py zoo() on 2026-11-17"
+ },
+ "preregistrations": {
+  "main": "263cdf6b2f3a76fa799dd2604f3026e9bcddbe0559688fc786cdeda7f3524750",
+  "h10": "cf821a4c094fe8ad3d37b1f2c66f1fb0cf9c6a6eac4800c9562d61463d7302ee",
+  "monitor": "7b9b51c449755c751adde378f444bf2a3f4919cb249aedc9a03c5952952f6ce9",
+  "x20": "a24023c319a21a9855e0a4417690ac742a505e70c43a365497953808bef7587c",
+  "os20": "1c8fc43bbc84e39b5b0158fe3544bae6da87747c81e454ca949a1a1f98b63f57"
+ }
+}

@@ -278,7 +278,7 @@ def metrics_of(conn, experiment_id):
 def test_missing_data_playbooks_are_recorded_failed_trials_with_the_reason(experiments):
     res, conn, _ = experiments
     for cid, code in (("PB:value_pe_pb", "data_not_available:fundamentals_pit"), ("PB:industry_follower", "data_not_available:sector_membership_history"),
-                      ("PB:small_cap", "data_not_available:float_cap_history_not_point_in_time")):
+                      ("PB:small_cap", "data_not_available:float_cap:no_instrument_has_a_cap_version_usable_in_the_panel")):
         assert res[cid]["state"] == "failed" and res[cid]["error"] == code
         row = conn.execute("select run_state, error_code from research.experiment_run where experiment_id=%s", (res[cid]["experiment_id"],)).fetchone()
         assert row["run_state"] == "failed" and row["error_code"] == code

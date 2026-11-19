@@ -1,0 +1,15 @@
+{
+ "board": "PlaybookBoard",
+ "custom-receipt": "CustomRunReceipt",
+ "custom-run-queued": "CustomRun",
+ "custom-run-done": "CustomRun",
+ "custom-run-list": "CustomRunList",
+ "monthly": "MonthlyReturns",
+ "factor-not-computed": "FactorSeriesStatus",
+ "factor-queued": "FactorSeriesStatus",
+ "factor-ready": "FactorSeriesStatus",
+ "analog-not-built": "AnalogStatus",
+ "analog-queued": "AnalogStatus",
+ "analog-ready": "AnalogStatus",
+ "job-queued": "JobQueued"
+}

@@ -14,7 +14,8 @@ function Step($name, [string[]]$argv) {
 }
 # The research snapshot is exactly the imported window (not merged with earlier ones): keep it long enough for
 # listing age, 250-session features and the chart window.
-$since = (Get-Date).AddDays(-400).ToString('yyyy-MM-dd')
+# 600 calendar days (about 400 sessions): the fusion scorer's longest expression window needs it (BF_FUSION.md).
+$since = (Get-Date).AddDays(-600).ToString('yyyy-MM-dd')
 $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).
@@ -29,4 +30,20 @@ if ($ok) { $null = Step 'forward-daily' @('-m', 'pulse.workers.forward', 'daily'
 if ($ok) { $null = Step 'forward-monitor' @('-m', 'pulse.workers.forward', 'monitor') }
 # Legacy #135: after-close summary of the release just published (once per release; nothing new if rerun).
 if ($ok) { $null = Step 'daily-report' @('-m', 'pulse.workers.alerts', 'daily-report') }
+# Ranking outcomes (#12/#94 track record): resolve published rankings whose horizon is now observed (append-only).
+if ($ok) { $null = Step 'outcomes' @('-m', 'pulse.workers.analysis', 'outcomes') }
+# Calendar (#114/#115): Eastmoney financial calendar, <= 1 request/s, a few requests; events derived from announcement
+# titles; index-futures and option expiries for this month and the next.
+$null = Step 'calendar-sync' @('-m', 'pulse.workers.alerts', 'calendar-sync', '--days', '60')
+$null = Step 'calendar-derive' @('-m', 'pulse.workers.alerts', 'calendar-derive')
+# The old system's calendar store as a declared pulse3 source (until the cutover; read by the fwdlog M3 catalyst rule later).
+$null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
+$cst = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time')
+foreach ($m in @($cst, $cst.AddMonths(1))) { $null = Step "calendar-expiries-$($m.ToString('yyyy-MM'))" @('-m', 'pulse.workers.alerts', 'calendar-expiries', '--year', "$($m.Year)", '--month', "$($m.Month)") }
+# Fund flow of the focus set (plan instruments + holdings, at most 60 codes; the old system does not crawl it).
+if ($ok) { $null = Step 'fundflow' @('-m', 'pulse.workers.intel', 'fundflow', '--focus', '60') }
+# Fusion main book (batch 3, E012/E022 static40_safe + books E036/E040/E065/E068/E081/E085): last, about 13 CPU minutes.
+if ($ok) { $null = Step 'fusion-daily' @('-m', 'pulse.workers.fusion', 'daily') }
+# Factor series (#37/#80) for completed factor experiments that lack one; executed by Pulse3Jobs.
+$null = Step 'fillr-factor-series' @('-m', 'pulse.workers.fillr', 'enqueue-factor-series')
 Add-Content $log "== $(Get-Date -Format s) done ok=$ok"

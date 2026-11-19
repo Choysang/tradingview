@@ -9,6 +9,7 @@ import { Badge, MissingText } from '../../../components/Badges';
 import { DetailsButton } from '../../../components/Diagnostics';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
 import { fmtTime } from '../../../lib/format';
+import { StatsPlusRows } from '../fillm/StatsPlus';
 import { bfStock } from './api';
 import { formatStat } from './statsFormat';
 
@@ -46,6 +47,7 @@ export function StockStatsCard({ instrumentId, releaseId }: { instrumentId: stri
               );
             })}
           </dl>
+          <StatsPlusRows instrumentId={instrumentId} releaseId={releaseId} />
         </>
       )}
     </section>

@@ -1,0 +1,425 @@
+{
+ "version": "retired-tools-v1",
+ "source": "docs/LEGACY_TRIAGE.md, batch 3, table \"Retired research tools\" (2026-11-17). The code of these tools is not ported; the finding stays in the imported ledger.",
+ "ledger": {
+  "ledger_sha256": "b493b767ded4fc7a1a7fff9ce0420b68511f94120c6d1f9a4f2bf57e73f170e1",
+  "label": "2026-11-09",
+  "entry_count": 92,
+  "imported_at": "2026-11-17T08:00:00Z",
+  "import_ref": "lab-ledger-import:0123456789abcdef0123456789abcdef01234567",
+  "is_latest": true,
+  "source_file": "docs/research/ledger/experiments.jsonl"
+ },
+ "query": {
+  "tool": null,
+  "ledger_id": null
+ },
+ "families": [
+  {
+   "family_id": "traditional_batteries",
+   "name": "Traditional rule batteries, Sequoia audit, exit-only tests",
+   "tools": [
+    "trad_battery",
+    "trad_exits",
+    "sequoia_audit",
+    "exit_tails",
+    "trullas_div"
+   ],
+   "ledger_ids": [
+    "E003",
+    "E033",
+    "E058",
+    "E060"
+   ],
+   "also_see": [
+    "E062"
+   ],
+   "old_rows": [],
+   "reason": "Fail against the same-day matched baseline (E062).",
+   "reason_zh": "与同日匹配基准相比不成立（E062）。",
+   "entries": [
+    {
+     "id": "E003",
+     "name": "传统战法 75 条（统一持有 5 日）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E033",
+     "name": "传统战法按自身卖法重测 + WCTC 入场信号（主板）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E058",
+     "name": "Sequoia-X 策略审计：6 套原版 + spec 变体 + 停机坪 / 回踩年线，同日同池随机基准与双硬门控；高窄旗形时序锁修复；三项转化（HTF 网格与 htf_score、突破后缩量回踩、数据完整度门控）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E060",
+     "name": "固定入场只比卖法：固定 5/10/20 日 vs 均线不封顶移动止损（千万均线模式）vs David 二段式（+1.5R 卖一半、盈利后保本、MA10 或 1.618 扩展）；以及 David Trullás 四维背离（MACD 12/26/9、RSI 14、量、斐波那契）按共振数递增仓位",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "playbook_rotation",
+   "name": "Playbook rotation and selection",
+   "tools": [
+    "strategy_panel",
+    "style_switch",
+    "analog_select"
+   ],
+   "ledger_ids": [
+    "E005",
+    "E006",
+    "E035",
+    "E042"
+   ],
+   "also_see": [],
+   "old_rows": [
+    22,
+    152
+   ],
+   "reason": "Fail; the regime timeline itself is ported (domain/market_state/regime.py). Old rows: #22, and the rotation part of #152.",
+   "reason_zh": "不成立；市场环境时间线本身已移植（domain/market_state/regime.py）。旧功能行：#22，以及 #152 的轮动部分。",
+   "entries": [
+    {
+     "id": "E005",
+     "name": "追近期冠军战法（近 20/60/120 日前 5）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E006",
+     "name": "状态模型选战法（市场与情绪 → 战法，LightGBM）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E035",
+     "name": "风格切换：抱团趋势 vs 主方案（主板）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E042",
+     "name": "R7-1 类比状态选择子策略 vs 近 30 日最优 vs 固定主方案",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "leader_cycle_simulations",
+   "name": "Leader-cycle simulations",
+   "tools": [
+    "replay",
+    "cycles",
+    "claims_check",
+    "b1_regime"
+   ],
+   "ledger_ids": [
+    "E027",
+    "E030",
+    "E037",
+    "E038",
+    "E054"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail on daily bars; reactivation needs intraday matching, which the paper replay covers.",
+   "reason_zh": "日线上不成立；重启需要分时撮合，纸面回放已覆盖。",
+   "entries": [
+    {
+     "id": "E027",
+     "name": "逐日仿真：龙头（连板≥4）打板/开盘买/断板低吸/补位龙/跟风首板/生肖谐音/追涨停（主板）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E030",
+     "name": "按龙头切周期 v1（cycles.py：每天唯一主线 + 10 日窗口）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E037",
+     "name": "逐日仿真 replay2（ST 按价格识别）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E038",
+     "name": "用户纠正稿的数值主张：主升期阈值与游资漏斗（主板，日线执行）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E054",
+     "name": "第一周复盘 + B1 日线近似按市场状态检验（昨日涨停、次日高开 2~7% 开盘买）",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "market_gates_calendar",
+   "name": "Market-wide gates and calendar clustering",
+   "tools": [
+    "exposure breadth gate",
+    "regime.py clustering",
+    "r7_2 scaling"
+   ],
+   "ledger_ids": [
+    "E018",
+    "E020",
+    "E044"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail.",
+   "reason_zh": "不成立。",
+   "entries": [
+    {
+     "id": "E018",
+     "name": "宽度、跌停数、情绪闸门",
+     "verdict": "fails"
+    },
+    {
+     "id": "E020",
+     "name": "日历块聚类（1/3/6 个月，全市场）+ 类比选战法",
+     "verdict": "fails"
+    },
+    {
+     "id": "E044",
+     "name": "R7-2(b) 按市场状态缩放新买入（1.0 / 0.25 / 0），单独及与净值均线降仓组合",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "us_overnight",
+   "name": "US overnight",
+   "tools": [
+    "overnight_us",
+    "hist_index_events US drop"
+   ],
+   "ledger_ids": [
+    "E072",
+    "E084"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail.",
+   "reason_zh": "不成立。",
+   "entries": [
+    {
+     "id": "E072",
+     "name": "美股隔夜 → A 股开盘跳空、日内、次日（标普、纳指、费城半导体、中概金龙；半导体行业映射）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E084",
+     "name": "美股大跌（标普窗口收益 ≤ −1.5%）后 A 股次日反弹（2010-01 ~ 2023-10 指数留出样本）",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "stock_level_rl",
+   "name": "Stock-level reinforcement learning",
+   "tools": [
+    "rl_fqi"
+   ],
+   "ledger_ids": [
+    "E015"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail.",
+   "reason_zh": "不成立。",
+   "entries": [
+    {
+     "id": "E015",
+     "name": "股票级离线 RL（FQI + LightGBM，持有/空仓）",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "short_window_mining",
+   "name": "Short-window mining, factor registry rerun, Chan pattern fix",
+   "tools": [
+    "gp_mine window",
+    "registry",
+    "p0_patterns PIT"
+   ],
+   "ledger_ids": [
+    "E010",
+    "E047",
+    "E061"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail.",
+   "reason_zh": "不成立。",
+   "entries": [
+    {
+     "id": "E010",
+     "name": "近半年窗口 GP（只用 2026-01~06）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E047",
+     "name": "R7-7 因子登记簿主板重跑：真实上市日期 + R7-3 逐日申万主线标签",
+     "verdict": "fails"
+    },
+    {
+     "id": "E061",
+     "name": "E050 缠论三买前视偏差修正：逐日（PIT）分型重算",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "vetoes_turnover_variants",
+   "name": "Vetoes and turnover variants",
+   "tools": [
+    "overbought_veto",
+    "neg_veto_bite",
+    "rank_buffer",
+    "random_controls",
+    "llm_reverse"
+   ],
+   "ledger_ids": [
+    "E063",
+    "E064",
+    "E066",
+    "E079",
+    "E080"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Fail.",
+   "reason_zh": "不成立。",
+   "entries": [
+    {
+     "id": "E063",
+     "name": "主书分数降换手：持 5 日 vs 持 10 日 vs 排名缓冲退出（前 100 / 前 200 保留）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E064",
+     "name": "大模型判断反向使用（600 张已记录卡片：匿名 / 带名称公告 / 加题材拓扑，不调用 API）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E066",
+     "name": "冻结主书的两种随机对照：A 选股对照（同买卖日期，换成同市值×同波动档随机股），B 完整策略对照（100 个随机打分器走同一规则含防守闸门）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E079",
+     "name": "超涨否决对冻结主书的增量：决策日 5 日行业调整后涨幅前 10% 的股票不进前 40 名候选",
+     "verdict": "fails"
+    },
+    {
+     "id": "E080",
+     "name": "利空公告否决对冻结主书的命中率检查（只数命中，不看收益）",
+     "verdict": "fails"
+    }
+   ]
+  },
+  {
+   "family_id": "one_off_data_ops",
+   "name": "One-off data and ops scripts",
+   "tools": [
+    "backfill_index_day",
+    "ann_fetch",
+    "ext_daily",
+    "export_*"
+   ],
+   "ledger_ids": [
+    "E069",
+    "E087",
+    "E090"
+   ],
+   "also_see": [],
+   "old_rows": [],
+   "reason": "Done once; the data now comes through pulse3 sources.",
+   "reason_zh": "只需做一次；数据现在经 pulse3 的数据源进入。",
+   "entries": [
+    {
+     "id": "E069",
+     "name": "服务器 11-05 日线与 11-05/06 指数补齐，E068 被标记的决策日重算",
+     "verdict": "works"
+    },
+    {
+     "id": "E087",
+     "name": "E076 修复与换源：录制进程崩溃修复；期货改用中金所文件，恒指、黄金、原油改用腾讯，A50 与离岸人民币改用东方财富分钟线",
+     "verdict": "mixed"
+    },
+    {
+     "id": "E090",
+     "name": "分钟线分段请求：每 100 只暂停 120 秒，避开腾讯 WAF（运维实验）",
+     "verdict": "inconclusive"
+    }
+   ]
+  },
+  {
+   "family_id": "descriptive_studies",
+   "name": "Descriptive studies",
+   "tools": [
+    "calendar_effects",
+    "macro_events",
+    "etf_surge",
+    "zodiac",
+    "demon",
+    "theme_check",
+    "cninfo_industry"
+   ],
+   "ledger_ids": [
+    "E021",
+    "E026",
+    "E028",
+    "E052",
+    "E073",
+    "E074",
+    "E083"
+   ],
+   "also_see": [
+    "E089"
+   ],
+   "old_rows": [],
+   "reason": "Descriptive only; the forward rules they suggest are E089 (ported) or wait for a pre-registration.",
+   "reason_zh": "只是描述性研究；它们提示的前向规则是 E089（已移植），或等待预注册。",
+   "entries": [
+    {
+     "id": "E021",
+     "name": "主题核查：市值加权 vs 等权（Sina 概念，全市场）",
+     "verdict": "works"
+    },
+    {
+     "id": "E026",
+     "name": "行业与题材数据源",
+     "verdict": "works"
+    },
+    {
+     "id": "E028",
+     "name": "生肖谐音炒作（龙年/马年先例，羊年进行中）",
+     "verdict": "inconclusive"
+    },
+    {
+     "id": "E052",
+     "name": "星期效应与股指期货交割日（主板日线）",
+     "verdict": "mixed"
+    },
+    {
+     "id": "E073",
+     "name": "宏观日历事件研究：美国 CPI、非农、FOMC，中国 CPI、PMI、社融、LPR，政治局会议，国常会（描述性）",
+     "verdict": "inconclusive"
+    },
+    {
+     "id": "E074",
+     "name": "宽基 ETF 放量日（7 只宽基 ETF 合计成交额 ≥ 20 日中位数 2 倍，描述性）",
+     "verdict": "inconclusive"
+    },
+    {
+     "id": "E083",
+     "name": "FOMC 反应日开盘不新开仓：反应日开盘 → 收盘收益 vs 其他日（2010-01 ~ 2023-10 指数留出样本）",
+     "verdict": "works"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+/* Forward experiments page. Only theme tokens of styles.css are used, so light and dark follow the app. */
+.fl-list { display: flex; flex-direction: column; gap: 14px; margin: 8px 0; }
+.fl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fl-head h3 { margin: 0; }
+.fl-bar { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 6px 0 2px; }
+.fl-bar > span { display: block; height: 100%; background: var(--accent); }
+.fl-metrics { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.fl-metrics th, .fl-metrics td { text-align: left; padding: 3px 10px 3px 0; border-bottom: 1px solid var(--border); font-weight: normal; }
+.fl-metrics td.num, .fl-rows td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.fl-rows-wrap { overflow-x: auto; }
+.fl-rows { border-collapse: collapse; min-width: 100%; }
+.fl-rows th, .fl-rows td { padding: 3px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.fl-rows th { text-align: left; color: var(--muted); font-weight: normal; }
+.fl-pending { margin: 4px 0; padding-left: 18px; }
+.fl-sha { font-size: 0.78rem; }

@@ -1,0 +1,95 @@
+{
+ "ledger": {
+  "ledger_sha256": "b493b767ded4fc7a1a7fff9ce0420b68511f94120c6d1f9a4f2bf57e73f170e1",
+  "label": "2026-11-09",
+  "entry_count": 92,
+  "imported_at": "2026-11-17T08:00:00Z",
+  "import_ref": "lab-ledger-import:0123456789abcdef0123456789abcdef01234567",
+  "is_latest": true,
+  "source_file": "docs/research/ledger/experiments.jsonl"
+ },
+ "entry": {
+  "id": "E003",
+  "date": "2026-11-01",
+  "round": "5",
+  "track": "traditional",
+  "name": "传统战法 75 条（统一持有 5 日）",
+  "hypothesis": "网传与冠军战法有超额",
+  "config": "信号次日开盘买，持 5 日，0.2% 成本，按日聚类 t，BH q=0.10",
+  "results": {
+   "PRE": "0/75 通过",
+   "SELECT": "0/75",
+   "VERIFY": "0/75"
+  },
+  "verdict": "fails",
+  "why": "统一持有 5 日、不带原作者的止损止盈，对部分战法不公平；阈值多为常见写法；BH 0 条也可能是统计力不足",
+  "regime": "牛转熊",
+  "reactivate_when": "按原作者的持有期与止损重测（第 6 轮）",
+  "artifacts": [
+   "scripts/lab/trad_battery.py"
+  ],
+  "supersedes": [],
+  "superseded_by": [
+   "E033"
+  ],
+  "caveat": null,
+  "retired_families": [
+   "traditional_batteries"
+  ]
+ },
+ "supersedes_entries": [],
+ "superseded_by_entries": [
+  {
+   "id": "E033",
+   "name": "传统战法按自身卖法重测 + WCTC 入场信号（主板）",
+   "verdict": "fails"
+  }
+ ],
+ "retired_families": [
+  {
+   "family_id": "traditional_batteries",
+   "name": "Traditional rule batteries, Sequoia audit, exit-only tests",
+   "tools": [
+    "trad_battery",
+    "trad_exits",
+    "sequoia_audit",
+    "exit_tails",
+    "trullas_div"
+   ],
+   "ledger_ids": [
+    "E003",
+    "E033",
+    "E058",
+    "E060"
+   ],
+   "also_see": [
+    "E062"
+   ],
+   "old_rows": [],
+   "reason": "Fail against the same-day matched baseline (E062).",
+   "reason_zh": "与同日匹配基准相比不成立（E062）。",
+   "entries": [
+    {
+     "id": "E003",
+     "name": "传统战法 75 条（统一持有 5 日）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E033",
+     "name": "传统战法按自身卖法重测 + WCTC 入场信号（主板）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E058",
+     "name": "Sequoia-X 策略审计：6 套原版 + spec 变体 + 停机坪 / 回踩年线，同日同池随机基准与双硬门控；高窄旗形时序锁修复；三项转化（HTF 网格与 htf_score、突破后缩量回踩、数据完整度门控）",
+     "verdict": "fails"
+    },
+    {
+     "id": "E060",
+     "name": "固定入场只比卖法：固定 5/10/20 日 vs 均线不封顶移动止损（千万均线模式）vs David 二段式（+1.5R 卖一半、盈利后保本、MA10 或 1.618 扩展）；以及 David Trullás 四维背离（MACD 12/26/9、RSI 14、量、斐波那契）按共振数递增仓位",
+     "verdict": "fails"
+    }
+   ]
+  }
+ ]
+}

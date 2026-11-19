@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:fwdlog:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'fwdlog' (docs/LEGACY_TRIAGE.md batch 3): the forward experiments E077 / E078 (tail-of-day picks, index half hours), E089 (market-state log with recorder health) and the intraday paper replay (triggers v2.1, E053-E059). Every experiment is a SHADOW record: nothing is booked and no rule changes. A metric before the pre-registered decision day is provisional and carries a pending_reason; missing values are null, never 0. Money, price and ratio values are decimal strings.",
+  "$defs": {
+    "ExperimentKey": {"type": "string", "enum": ["E077", "E078", "E089", "PAPER"]},
+    "Preregistration": {
+      "type": "object", "additionalProperties": false, "required": ["file", "sha256"],
+      "properties": {"file": {"type": "string"}, "sha256": {"$ref": "urn:pulse:contracts:v3#/$defs/Hash"}}
+    },
+    "RegistryRef": {
+      "type": "object", "additionalProperties": false, "required": ["registered", "experiment_id", "run_state"],
+      "properties": {
+        "registered": {"type": "boolean"},
+        "experiment_id": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/UUID"}, {"type": "null"}]},
+        "run_state": {"type": ["string", "null"], "description": "research.experiment_run.run_state; a forward shadow run stays 'running' while it records"}
+      }
+    },
+    "Progress": {
+      "type": "object", "additionalProperties": false, "required": ["unit", "done", "target", "remaining", "share"],
+      "properties": {
+        "unit": {"type": "string"},
+        "done": {"type": "integer", "minimum": 0},
+        "target": {"type": "integer", "minimum": 1},
+        "remaining": {"type": "integer", "minimum": 0},
+        "share": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal", "description": "min(done, target) / target"}
+      }
+    },
+    "Decision": {
+      "type": "object", "additionalProperties": false, "required": ["check_at", "check_unit", "decided", "verdict", "pending_reason"],
+      "properties": {
+        "check_at": {"type": "integer", "minimum": 1},
+        "check_unit": {"type": "string"},
+        "decided": {"type": "boolean"},
+        "verdict": {"type": ["string", "null"], "description": "works / mixed / fails only after the decision day, else null"},
+        "pending_reason": {"type": ["string", "null"], "description": "'pending until N ...' while the decision day has not come"}
+      }
+    },
+    "Metric": {
+      "type": "object", "additionalProperties": false, "required": ["name", "value", "provisional", "pending_reason"],
+      "properties": {
+        "name": {"type": "string"},
+        "value": {"type": ["string", "integer", "boolean", "null"], "description": "decimal string, count, flag, or null when it cannot be computed yet"},
+        "provisional": {"type": "boolean", "description": "true = shown for progress only, it decides nothing"},
+        "pending_reason": {"type": ["string", "null"]}
+      }
+    },
+    "PendingDay": {
+      "type": "object", "additionalProperties": false, "required": ["session_date", "reason"],
+      "properties": {"session_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, "reason": {"type": "string"}}
+    },
+    "RuleRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rule", "triggered", "mean_return_pct", "mean_vs_close_pct", "median_vs_close_pct", "better_than_close_share", "shadow"],
+      "properties": {
+        "rule": {"type": "string"},
+        "triggered": {"type": "integer", "minimum": 0},
+        "mean_return_pct": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}], "description": "fill price against the book's cost (previous close), percent, no cost deducted"},
+        "mean_vs_close_pct": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "median_vs_close_pct": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "better_than_close_share": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "shadow": {"type": "boolean"}
+      }
+    },
+    "ExperimentCard": {
+      "type": "object", "additionalProperties": false,
+      "required": ["experiment_key", "title", "ledger_ids", "purpose", "rules_version", "preregistration", "registry", "status", "first_session", "last_session",
+                   "sessions_decided", "progress", "decision", "metrics", "pending", "rule_table", "notes"],
+      "properties": {
+        "experiment_key": {"$ref": "#/$defs/ExperimentKey"},
+        "title": {"type": "string"},
+        "ledger_ids": {"type": "array", "items": {"type": "string"}},
+        "purpose": {"const": "shadow"},
+        "rules_version": {"type": "string"},
+        "preregistration": {"type": "array", "items": {"$ref": "#/$defs/Preregistration"}},
+        "registry": {"$ref": "#/$defs/RegistryRef"},
+        "status": {"type": "string", "enum": ["not_started", "recording", "decision_reached"]},
+        "first_session": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "last_session": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "sessions_decided": {"type": "integer", "minimum": 0},
+        "progress": {"$ref": "#/$defs/Progress"},
+        "decision": {"$ref": "#/$defs/Decision"},
+        "metrics": {"type": "array", "items": {"$ref": "#/$defs/Metric"}},
+        "pending": {"type": "array", "items": {"$ref": "#/$defs/PendingDay"}},
+        "rule_table": {"oneOf": [{"type": "array", "items": {"$ref": "#/$defs/RuleRow"}}, {"type": "null"}], "description": "paper replay: the sell rules side by side, pooled over every decided session"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "ExperimentsData": {
+      "type": "object", "additionalProperties": false, "required": ["experiments", "notes"],
+      "properties": {
+        "experiments": {"type": "array", "items": {"$ref": "#/$defs/ExperimentCard"}},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "DailyRow": {
+      "type": "object", "additionalProperties": false, "required": ["session_date", "row_key", "decided_at", "values"],
+      "properties": {
+        "session_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "row_key": {"type": "string"},
+        "decided_at": {"$ref": "urn:pulse:contracts:v3#/$defs/Timestamp", "description": "when the row was written; a decided day is never rewritten"},
+        "values": {"type": "object", "description": "the stored row exactly as the old log keeps it (E077: signals, ret/cell/ex/net percent; E078: x/x2/y per series; E089: state and health; PAPER: the day's tables), plus provenance"}
+      }
+    },
+    "RowsData": {
+      "type": "object", "additionalProperties": false, "required": ["experiment_key", "dataset", "total", "rows"],
+      "properties": {
+        "experiment_key": {"$ref": "#/$defs/ExperimentKey"},
+        "dataset": {"type": "string"},
+        "total": {"type": "integer", "minimum": 0},
+        "rows": {"type": "array", "items": {"$ref": "#/$defs/DailyRow"}}
+      }
+    },
+    "PaperFillsData": {
+      "type": "object", "additionalProperties": false, "required": ["session_date", "kind", "total", "rows"],
+      "properties": {
+        "session_date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "kind": {"type": "string", "enum": ["buys", "sells"]},
+        "total": {"type": "integer", "minimum": 0},
+        "rows": {"type": "array", "items": {"type": "object"}, "description": "shadow buys (B1 / B3, three queue scenarios) or the sell rules of the book, one object per fill"}
+      }
+    }
+  }
+}

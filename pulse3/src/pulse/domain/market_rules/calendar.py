@@ -5,14 +5,18 @@ client date (execution_standard.md section 2, advance_session). The authoritativ
 CalendarService belongs to another work package; this module defines the port and
 two small implementations.
 Invariants: ``next_trading_day`` is strictly after its argument.
-Not covered: holidays, special sessions - ``WeekdayOnlyCalendar`` ignores them and
-must only be used for synthetic data; production passes an ``ExplicitCalendar``
-built from CalendarService output.
+Not covered: special sessions - ``WeekdayOnlyCalendar`` ignores holidays and must only be used for
+synthetic data; production passes an ``ExplicitCalendar`` built from CalendarService output.
+Future sessions: ``forward_days`` counts days after the last observed session with the official closure
+schedule of ``holidays.py`` (2026/2027); a year without a complete citation keeps the weekday rule and is
+reported as ``assumed``.
 """
 from __future__ import annotations
 
 from datetime import date, timedelta
 from typing import Iterable, Protocol
+
+from .holidays import weekday_tail
 
 
 class TradingCalendar(Protocol):
@@ -50,3 +54,8 @@ class WeekdayOnlyCalendar:
         while not self.is_trading_day(d):
             d += timedelta(days=1)
         return d
+
+
+def forward_days(last_observed: date, calendar_days: int = 10) -> tuple[list[date], bool]:
+    """Sessions within ``calendar_days`` calendar days after the last observed one, and whether holidays may be missing (``assumed``)."""
+    return weekday_tail(last_observed, calendar_days)

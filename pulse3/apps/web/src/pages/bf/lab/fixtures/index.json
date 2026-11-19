@@ -1,0 +1,10 @@
+{
+ "ledger-list": "LedgerList",
+ "ledger-empty": "LedgerList",
+ "ledger-entry": "LedgerEntryDetail",
+ "retired-tools": "RetiredTools",
+ "tearsheet-replay": "TearSheetData",
+ "tearsheet-book": "TearSheetData",
+ "batch-run": "BatchRun",
+ "batch-list": "BatchRunList"
+}

@@ -1,0 +1,21 @@
+{
+ "description": "Frozen inputs of the fwdlog lane (LEGACY_TRIAGE batch 3). sha256 of every file; a test recomputes them. A change is a new experiment, not an edit.",
+ "files": {
+  "etf_amount_seed.csv": "4afaa58bfba266c67e19d89e9a7970b5ed9a5f246e797b041d9704b5c8f84daf",
+  "event_links_v1.json": "ac92d2fd7470c94a6ab9f42cd82577e653170d35279277eb3e8e18ef9f156d0f",
+  "ledger_entries.json": "d4c224a3d74d47c88bc193ae93935141f18d1b96b0dca55455369a30746800da",
+  "prereg/2026-11-03-three-pillars-spec.md": "2126980ff5e97f5a144167ab2bf2dd1295597e89c26dca411811f44fdc0328d4",
+  "prereg/2026-11-07-week1-review.md": "c043dc67cbb1dca4787e33be4e38430158f2a56a6b29e2f63a5af8b665654d36",
+  "prereg/2026-11-08-batch4-preregistration.md": "a24023c319a21a9855e0a4417690ac742a505e70c43a365497953808bef7587c",
+  "prereg/2026-11-09-batch5-preregistration.md": "af3a5781f54a5e0eeba8f5ceedaec92433485e17d7107b50f1f161615acb7abc",
+  "sw_industry.parquet": "122d4d6570ff6602c470554afc8b46c3a35ab435c55f72efc423a43e1dc0cdd4"
+ },
+ "sources": {
+  "sw_industry.parquet": "PC .work/lab/main/sw_industry.parquet (identical to the server copy, 2658 main-board codes, 申万 level-2 with join dates), frozen 2026-11-17",
+  "etf_amount_seed.csv": "E074 Sina daily bars: sum of the 7 broad ETFs' amount per session up to 2026-11-09 (E089 baseline seed)",
+  "event_links_v1.json": "old event-links-v1 rule table (calendar event name -> 申万 level-2 industries), data not code",
+  "ledger_entries.json": "experiment ledger entries E053-E057, E059, E076, E077, E078, E087, E089 (specification of the ported experiments)",
+  "prereg/*": "pre-registration documents of the ported experiments"
+ },
+ "hash_rule": "sha256 of the file bytes; for text files (md, json, csv) CRLF is normalised to LF first so a Windows checkout hashes the same"
+}

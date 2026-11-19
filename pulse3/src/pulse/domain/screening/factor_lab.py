@@ -115,6 +115,7 @@ class FactorResult:
     long_short_periods: int
     top_turnover: float | None
     ic_series: list[tuple[str, float | None]] = field(default_factory=list)
+    long_short_series: list[tuple[str, float, float]] = field(default_factory=list)   # (session, period top-minus-bottom return, cumulative growth - 1)
     notes: list[str] = field(default_factory=list)
 
 
@@ -175,10 +176,12 @@ def run_factor(views: Sequence[InstrumentView], sessions: Sequence[str], factor:
             t = icir * math.sqrt(len(vals))
     growth, periods, changed = 1.0, 0, []
     prev: set[str] | None = None
+    ls_series: list[tuple[str, float, float]] = []
     for s in sorted(per_date_buckets)[::horizon]:
         means, top = per_date_buckets[s]
         growth *= 1.0 + (means[-1] - means[0])
         periods += 1
+        ls_series.append((sessions[s], means[-1] - means[0], growth - 1.0))
         if prev is not None and top:
             changed.append(1.0 - len(prev & top) / len(top))
         prev = top
@@ -187,4 +190,4 @@ def run_factor(views: Sequence[InstrumentView], sessions: Sequence[str], factor:
     return FactorResult(
         factor.id, horizon, len(vals), (sum(names) / len(names)) if names else None, mean, std, icir, t, pos_share,
         [(bucket_sum[q] / bucket_n[q]) if bucket_n[q] else None for q in range(QUANTILES)], bucket_n,
-        (growth - 1.0) if periods else None, periods, (sum(changed) / len(changed)) if changed else None, ics, notes)
+        (growth - 1.0) if periods else None, periods, (sum(changed) / len(changed)) if changed else None, ics, ls_series, notes)

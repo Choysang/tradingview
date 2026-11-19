@@ -1,0 +1,170 @@
+{
+ "meta": {
+  "request_id": "eccc660c-b592-4c8b-a204-6ba8a126fd14",
+  "generated_at": "2026-11-18T07:50:14.117031Z",
+  "trace_id": "ba43d9256b4b4d04aa0028bcba02dff3",
+  "contract_version": "3.0.0",
+  "release_id": null,
+  "decision_as_of": null,
+  "availability_policy_version": null,
+  "input_snapshot_refs": [],
+  "quality_status": "partial",
+  "freshness_state": "not_expected",
+  "coverage": {
+   "policy_version": "bf-fwdlog-v1",
+   "expected_count": null,
+   "observed_count": 2,
+   "missing_count": null,
+   "unverifiable_reasons": [
+    "forward_log_in_progress",
+    "recordings_are_60s_sampled_snapshots"
+   ]
+  },
+  "warnings": [
+   {
+    "code": "SHADOW_FORWARD_LOG",
+    "message": "前向影子记录：不下单、不入账、不改任何规则；决策日之前的指标只是进度",
+    "affected_component": "fwdlog",
+    "evidence_ref": null
+   }
+  ],
+  "next_cursor": null,
+  "actionability_id": null
+ },
+ "data": {
+  "experiment_key": "PAPER",
+  "dataset": "fwdlog_paper_days",
+  "total": 2,
+  "rows": [
+   {
+    "session_date": "2026-11-12",
+    "row_key": "2026-11-12",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "book_day": "2026-11-11",
+     "book_size": 10,
+     "booked": {
+      "B1": false,
+      "B3": false
+     },
+     "buys": [],
+     "day": "2026-11-12",
+     "events_linked": 0,
+     "held_back": {
+      "strict": 0,
+      "tape": 0
+     },
+     "market": {
+      "day": "2026-11-11",
+      "failed": "unknown",
+      "failed_rate": "0",
+      "heat": "unknown",
+      "limit_ups": 10
+     },
+     "no_minute_bars": 0,
+     "provenance": {
+      "bars_visible_sessions": 18,
+      "book": 10,
+      "calendar_events": 0,
+      "calendar_events_sha256": null,
+      "events_linked": 0,
+      "picked_codes": 10,
+      "previous_session": "2026-11-11",
+      "quote_content_hash": "5017526de3fd3ac48d3742170d3bc85acf03a5710883713f35eead8fcc8c2e61",
+      "quote_manifest_version": 1,
+      "quote_snapshot_id": "a041d736-bcf6-4281-922d-b7165afa4669"
+     },
+     "sells": [
+      {
+       "better_than_close_share": "0",
+       "mean_return_pct": "-6.3730084348641049671977507",
+       "mean_vs_close_pct": "-1.08910891089108910891089109",
+       "median_vs_close_pct": "-1.08910891089108910891089109",
+       "rule": "S0_open",
+       "shadow": false,
+       "triggered": 10
+      },
+      {
+       "better_than_close_share": "0",
+       "mean_return_pct": "-5.34208059981255857544517338",
+       "mean_vs_close_pct": "0",
+       "median_vs_close_pct": "0",
+       "rule": "HOLD_close",
+       "shadow": false,
+       "triggered": 10
+      },
+      {
+       "better_than_close_share": "0",
+       "mean_return_pct": "-6.3730084348641049671977507",
+       "mean_vs_close_pct": "-1.08910891089108910891089109",
+       "median_vs_close_pct": "-1.08910891089108910891089109",
+       "rule": "POLICY_v2",
+       "shadow": false,
+       "triggered": 10
+      },
+      {
+       "better_than_close_share": "0",
+       "mean_return_pct": "-6.3730084348641049671977507",
+       "mean_vs_close_pct": "-1.08910891089108910891089109",
+       "median_vs_close_pct": "-1.08910891089108910891089109",
+       "rule": "POLICY_v3_shadow",
+       "shadow": false,
+       "triggered": 10
+      }
+     ],
+     "t1": {
+      "booked_buys": 0,
+      "not_sellable_today": 0
+     },
+     "triggers_version": "triggers-v2.1"
+    }
+   },
+   {
+    "session_date": "2026-11-13",
+    "row_key": "2026-11-13",
+    "decided_at": "2026-11-13T10:00:00Z",
+    "values": {
+     "book_day": "2026-11-12",
+     "book_size": 0,
+     "booked": {
+      "B1": false,
+      "B3": false
+     },
+     "buys": [],
+     "day": "2026-11-13",
+     "events_linked": 0,
+     "held_back": {
+      "strict": 0,
+      "tape": 0
+     },
+     "market": {
+      "day": "2026-11-12",
+      "failed": "unknown",
+      "failed_rate": null,
+      "heat": "unknown",
+      "limit_ups": 0
+     },
+     "no_minute_bars": 0,
+     "provenance": {
+      "bars_visible_sessions": 19,
+      "book": 0,
+      "calendar_events": 0,
+      "calendar_events_sha256": null,
+      "events_linked": 0,
+      "picked_codes": 0,
+      "previous_session": "2026-11-12",
+      "quote_content_hash": "b66f5a510b8aad78c397cc3001d5b3ae81a904e0e6a3f38b6ded9a0ae7ab8795",
+      "quote_manifest_version": 2,
+      "quote_snapshot_id": "f7209ea2-1d5d-4878-a2aa-1cee94d79b80"
+     },
+     "sells": [],
+     "t1": {
+      "booked_buys": 0,
+      "not_sellable_today": 0
+     },
+     "triggers_version": "triggers-v2.1"
+    }
+   }
+  ]
+ }
+}

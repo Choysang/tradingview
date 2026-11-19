@@ -1,0 +1,30 @@
+/* lab lane (historical ledger, tear sheet, batch comparison). Tokens come from the shell; scoped under .bfl. */
+.bfl .counts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.bfl .filters { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; align-items: end; }
+.bfl .filters label, .bfl .select-label { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--muted); gap: 3px; }
+.bfl ul.plain { list-style: none; padding: 0; margin: 6px 0; }
+.bfl .scroll { overflow: auto; max-height: 60vh; border: 1px solid var(--border); border-radius: 8px; }
+.bfl table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.bfl .pos { color: var(--good, #1a7f37); } .bfl .neg { color: var(--bad, #c0392b); }
+.bfl tr.skipped td { opacity: 0.6; } .bfl tr.current td { background: var(--surface-2); }
+.bfl code.tool { display: inline-block; margin: 0 4px 2px 0; }
+/* ledger */
+.bfl .entries li { margin: 8px 0; }
+.bfl .entry { border: 1px solid var(--border); border-left-width: 4px; border-radius: 8px; padding: 8px 12px; background: var(--surface); }
+.bfl .entry.verdict-works { border-left-color: var(--good, #1a7f37); } .bfl .entry.verdict-fails { border-left-color: var(--bad, #c0392b); }
+.bfl .entry.verdict-mixed { border-left-color: var(--warn-fg, #b7791f); } .bfl .entry.verdict-inconclusive { border-left-color: var(--muted); }
+.bfl .entry summary { cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.bfl .entry-name { font-weight: 600; }
+.bfl .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 10px 0; }
+.bfl .why-grid > div { padding: 8px 10px; border-radius: 6px; background: var(--surface-2); } .bfl .why-grid h4 { margin: 0 0 4px; } .bfl .why-grid p { margin: 0; }
+.bfl .entry-facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; } .bfl .entry-facts dt { color: var(--muted); } .bfl .entry-facts dd { margin: 0; }
+.bfl .entry-link { margin-right: 10px; }
+.bfl .entry-detail { margin: 10px 0; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; } .bfl .retired-note { margin: 6px 0; }
+.bfl .retired { margin-top: 24px; }
+/* tear sheet */
+.bfl .metric-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 8px 0; }
+.bfl .metric-group { margin: 0; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
+.bfl .group-title { font-weight: 600; margin-bottom: 4px; }
+.bfl .metric { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; } .bfl .metric dt { color: var(--muted); } .bfl .metric dd { margin: 0; text-align: right; }
+.bfl .metric .reason { display: block; color: var(--muted); }
+.bfl .batch .form { align-items: end; } .bfl .batch-run { margin: 12px 0; } .bfl .archive { margin-top: 20px; }

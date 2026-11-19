@@ -1,0 +1,41 @@
+{
+ "date": "2026-11-06",
+ "kind": "asof",
+ "available_dates": [
+  "2026-11-05",
+  "2026-11-06"
+ ],
+ "rule": "static40, level-safe, main board",
+ "rows": [
+  {
+   "rank": 1,
+   "code": "600000",
+   "display_name": "Name 0",
+   "score": "0.300000"
+  },
+  {
+   "rank": 2,
+   "code": "600001",
+   "display_name": "Name 1",
+   "score": "0.290000"
+  },
+  {
+   "rank": 3,
+   "code": "600002",
+   "display_name": null,
+   "score": "0.280000"
+  },
+  {
+   "rank": 4,
+   "code": "600003",
+   "display_name": "Name 3",
+   "score": "0.270000"
+  },
+  {
+   "rank": 5,
+   "code": "600004",
+   "display_name": "Name 4",
+   "score": "0.260000"
+  }
+ ]
+}

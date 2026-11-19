@@ -1,0 +1,41 @@
+{
+ "items": [
+  {
+   "job_run_id": "00000000-0000-0000-0000-0000000000b1",
+   "run_state": "succeeded",
+   "error_code": null,
+   "scheduled_for": "2026-11-12T01:00:00Z",
+   "completed_at": "2026-11-12T01:00:09Z",
+   "request": {
+    "screen_run_id": "00000000-0000-0000-0000-0000000000a1",
+    "playbook_id": "turtle_55",
+    "top_n": 10,
+    "window_sessions": 250
+   },
+   "summary": {
+    "instruments": 3,
+    "with_trades": 1,
+    "skipped": 1
+   }
+  },
+  {
+   "job_run_id": "00000000-0000-0000-0000-0000000000b2",
+   "run_state": "failed",
+   "error_code": "NO_MATCHING_ROWS",
+   "scheduled_for": "2026-11-12T01:00:00Z",
+   "completed_at": "2026-11-12T01:00:09Z",
+   "request": {
+    "screen_run_id": "00000000-0000-0000-0000-0000000000a1",
+    "playbook_id": "turtle_55",
+    "top_n": 10,
+    "window_sessions": 250
+   },
+   "summary": null
+  }
+ ],
+ "page": {
+  "next_cursor": null,
+  "limit": 20
+ },
+ "order": "按排队时间由新到旧；只显示你自己发起的对比"
+}

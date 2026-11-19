@@ -1,0 +1,105 @@
+{
+ "subject": {
+  "kind": "book",
+  "id": "main_h5",
+  "label": "主书 5 日持有（检验中）",
+  "catalog_id": null,
+  "experiment_id": null
+ },
+ "window": {
+  "start": "2026-03-02",
+  "end": "2026-03-09",
+  "sessions": 8
+ },
+ "basis": {
+  "initial_nav": null,
+  "trade_pnl": null,
+  "nav_basis": "execution.tracked_book_day.nav_cny"
+ },
+ "tearsheet": {
+  "version": "tearsheet-v1",
+  "periods_per_year": 252,
+  "sessions": 8,
+  "returns": 5,
+  "missing_nav_sessions": 1,
+  "first_session": "2026-03-02",
+  "last_session": "2026-03-09",
+  "trades": null,
+  "longest_drawdown": {
+   "sessions": 5,
+   "peak_session": "2026-03-03",
+   "recovery_session": "2026-03-08",
+   "recovered": true
+  },
+  "metrics": {
+   "total_return": {
+    "value": "0.030693069307",
+    "reason": null
+   },
+   "annualised_return": {
+    "value": "1.969318651028",
+    "reason": null
+   },
+   "annualised_volatility": {
+    "value": "0.274247270159",
+    "reason": null
+   },
+   "sharpe": {
+    "value": "0.967579579757",
+    "reason": null
+   },
+   "sortino": {
+    "value": "1.509372713352",
+    "reason": null
+   },
+   "max_drawdown": {
+    "value": "-0.034408391334",
+    "reason": null
+   },
+   "calmar": {
+    "value": "57.233673957669",
+    "reason": null
+   },
+   "longest_drawdown_sessions": {
+    "value": "5",
+    "reason": null
+   },
+   "profit_factor": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "win_rate": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "avg_win": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "avg_loss": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "payoff_ratio": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "avg_win_return": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "avg_loss_return": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   },
+   "exposure": {
+    "value": null,
+    "reason": "trade_list_unavailable"
+   }
+  }
+ },
+ "caveats": [
+  "净值曲线是执行内核按用户费用口径回放的结果，已扣费；价格为前复权研究序列，只用于研究。",
+  "盈亏比、胜率、盈亏因子按成交均价之差计算（毛收益，未扣费）；费用只体现在净值里。"
+ ]
+}

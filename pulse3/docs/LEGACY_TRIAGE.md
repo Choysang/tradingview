@@ -61,12 +61,97 @@ for snapshots that can hold a wanted id, and a ranking unresolved 150 days after
 Server check (2026-11-16 and 2026-11-17 runs): the daily build, forward monitor and daily report steps ran unattended
 (`done ok=True`). The daily report first sent nothing: the site's principal had no destination. The report now creates the default destinations (in-app always on) for the site's known principals first.
 
-## Batch 3: research tools, ported one at a time through the research registry
+## Batch 3: research tools (user decision 2026-11-17: recommended plan plus the PC fusion main book)
 
-Old lab scripts (#167-#184, #22/#152 rotation, #36/#77 batch comparison, #160 tear sheet, #171 curve gate,
-#172/#173 tail and state forward logs). The old research lab keeps running unchanged until each tool has a
-registered pulse3 equivalent; a tool enters pulse3 only with a pre-registration and a test, as the package requires
-for strategy candidates.
+Source: the old lab scripts (`scripts/lab/`, about 70) and the experiment ledger (`docs/research/ledger/experiments.jsonl`,
+92 entries: 16 works, 21 mixed, 27 inconclusive, 28 fails). A tool enters pulse3 only with its pre-registration and a test.
+A forward experiment that is still recording moves only after pulse3 and the old system ran in parallel and agreed day by
+day (the reconciliation is the acceptance test).
+
+| Lane | What comes back | Old rows / ledger | Acceptance |
+|---|---|---|---|
+| lab | the whole ledger imported as read-only history (verdict, reason, when to reactivate, artifacts) and linked from the experiment archive | #177, #178 | 92 of 92 entries, byte-exact source hash |
+| lab | tear sheet: Sortino, Calmar, longest drawdown in sessions, profit factor, win rate, average win and loss, exposure | #160, #161 | hand-computed fixtures |
+| lab | batch comparison: one playbook replayed on the top 10 of a screen run, through the job queue | #36, #77 | job test |
+| fwdlog | tail-of-day forward log (E077) and index first/last half hour (E078) from the imported 60 s snapshots | #173 | same rows as the old log for every common day |
+| fwdlog | market-state forward log with recorder health (E089) | #174 | same rows as the old log |
+| fwdlog | intraday paper replay, triggers v2.1: B1 and B3 shadow, S1/S3/M3 sells (E053-E059) | #163, #165, #166, #171, #164 (box5 as a shadow, E059) | same fills as the old paper log |
+| fusion | the round-5 static fusion scorer (`static40_safe`, main board): factor expression engine, zoo + mined pool + AlphaGen expressions as frozen data, level-safety filter, expanding-window IC weights | #168, family B (engine only) | top-40 overlap >= 95% against the PC scores for the last 60 sessions (the PC's own reproduction gate) |
+| fusion | frozen main book (5-day hold, 20 positions), 10-day shadow (E065), curve gate 20 d / 0.3 (E036/E040), OS20 (E081), X20 basket (E085), and the fusion forward monitor (E068) | #169, #170, #172 | same decisions as the PC logs for every common day |
+
+Deferred, not retired: factor mining and model training (GP E007, AlphaGen E009, LLM mining E008, LightGBM). The mined
+pool is frozen data for the scorer; new mining stays in the old lab on the PC until a mining run is pre-registered in
+pulse3. E092 (web-search LLM) stays switched off; spending needs the user's approval.
+
+Retired research tools (the code is not ported; the finding stays in the imported ledger):
+
+| Family | Ledger | Reason |
+|---|---|---|
+| traditional rule batteries, Sequoia audit, exit-only tests (trad_battery, trad_exits, sequoia_audit, exit_tails, trullas_div) | E003, E033, E058, E060 | fail against the same-day matched baseline (E062) |
+| playbook rotation and selection (strategy_panel, style_switch, analog_select; old rows #22, #152 rotation part) | E005, E006, E035, E042 | fail; the regime timeline itself is ported (`domain/market_state/regime.py`) |
+| leader-cycle simulations (replay, cycles, claims_check, b1_regime) | E027, E030, E037, E038, E054 | fail on daily bars; reactivation needs intraday matching, which the paper replay covers |
+| market-wide gates and calendar clustering (exposure breadth gate, regime.py clustering, r7_2 scaling) | E018, E020, E044 | fail |
+| US overnight (overnight_us, hist_index_events US drop) | E072, E084 | fail |
+| stock-level RL (rl_fqi) | E015 | fail |
+| short-window mining, factor registry rerun, Chan pattern fix (gp_mine window, registry, p0_patterns PIT) | E010, E047, E061 | fail |
+| vetoes and turnover variants (overbought_veto, neg_veto_bite, rank_buffer, random_controls, llm_reverse) | E063, E064, E066, E079, E080 | fail |
+| one-off data and ops scripts (backfill_index_day, ann_fetch, ext_daily, export_*) | E069, E087, E090 | done once; the data now comes through pulse3 sources |
+| descriptive studies (calendar_effects, macro_events, etf_surge, zodiac, demon, theme_check, cninfo_industry) | E021, E026, E028, E052, E073, E074, E083 | descriptive only; the forward rules they suggest are E089 (ported) or wait for a pre-registration |
+
+## Audit 2026-11-18 and dispositions
+
+An independent row-by-row audit of all 206 inventory rows against the code (not the docs) found 116 ported, 69 partial,
+13 retired with a reason, 1 deferred, 3 missing, 4 in progress (fusion lane); 25 rows depended on a producer that was never
+scheduled and 26 rows read the old system at runtime. The per-row table is kept privately (`.work/audit/`). User decision
+(2026-11-18): fix step 1 now; step 2 (cutover readiness) writes and tests pulse3's own recorders but switches them on only
+at the cutover, so the old and new systems never double the requests from one IP.
+
+Numbering: batch 1 and 2 use the inventory order. Batch 3 above numbered sections 5-6 one higher: read "#168 fusion" as
+row 167, "#173 tail" as 172, "#174 state" as 173, "#177/#178 ledger" as 176/177, and the lab families as rows 178-183.
+
+Step 1, scheduling (producers that existed but never ran on the server):
+
+| Rows | Producer | Schedule |
+|---|---|---|
+| 15, 92, 19, 75, 84, 85, 87, 36 | `alerts drain`, `research run`, `screen-run`, `tactic-run`, `lab run-batch` | task Pulse3Jobs, every 5 minutes |
+| 9, 69, 127, 39 | `analysis actionability` + `analysis tape` | task Pulse3Tape, weekdays 09:30-15:05 every 5 minutes |
+| 12, 94 | `analysis outcomes` | Pulse3Daily, after the build |
+| 114, 115 | `alerts calendar-sync`, `calendar-derive`, `calendar-expiries` (this month and next) | Pulse3Daily |
+| 37, 80, 16, 82 | `research ext-b-run` (52 playbooks + 6 factors) | task Pulse3Weekly, Saturday 09:00 |
+| 32 | `intel fundflow --focus 60` (the old system never crawled it) | Pulse3Daily |
+| 136 | `intel community` (guba) | not before the cutover: the old recorder samples the same pages from the same IP |
+
+Step 1, ports in progress: #16/#82/#150 fitness and verdict, #21/#87 custom run form, #35 monthly heatmap, #37/#80 IC and
+long-short series, #42/#68/#158 analogs on demand, the matched baseline and block bootstrap (#182: E062, E082); #32/#90/#155
+industry diffusion, #43 stats fields, #142/#144/#146 cap facts for six playbooks, #39 watchlist tape, #13 bear banner from
+the regime trend, #121 forward exchange holidays, the old calendar seed as a pulse3 source.
+
+Step 1, retired or deferred with a reason (rows that had none):
+
+| Rows | Feature | Disposition |
+|---|---|---|
+| 10, 11, 154 | playbook-vote ensemble, its weights and the 总榜 tab | retired: replaced by the release ranking (one ranking model with explanations); selecting or weighting playbooks by recent fitness failed in the ledger (E005, E006, E042) |
+| 44, 123 | factor breakdown, four-dimension scoring engine | retired: replaced by the ranking's per-instrument explanation bodies, which carry their inputs |
+| 45 | plain-language observations | retired: generated sentences without an evidence trail; the evidence tabs show the same facts with their source |
+| 51 | 1-9 view keys | retired: Ctrl+K and `/` cover navigation; bare number keys collide with typing in forms |
+| 53 | top ribbon vitals | retired: the same vitals are on /market |
+| 164 | closing market state rule (E054) | retired: ledger E054 fails |
+| 165 | board rules M2 and M4 | retired: candidate thresholds never validated (E055 kept M3 only; M3 is ported in the paper replay) |
+| 196, 197 | single command entry and launchers | retired: replaced by `pulse.workers.*` and the scheduled tasks in `deploy/windows/` |
+| 134 | LLM fallback for news alerts | deferred: it spends API money; enabled only with the user's approval, like E092 |
+| 175 | holdings book | the PC fusion book's holdings come with the fusion lane; the light daily book is superseded by the forward books |
+| 177 | pre-registrations | kept as documents; each ported forward experiment records its pre-registration's sha256 in the research registry |
+| 178 (family A) | book, official_eval, cap_filter, lhasa_book, rolling_break, score_baskets, cond_reversal | retired: evaluation is the pulse3 reconcile and registry; findings stay in the ledger (E041, E051, E067, E070, E071); the X20 basket (E085) and OS20 (E081) are ported |
+| 179 (family B) | rl_alloc, lockbox, tengine_check, verify_all, jobq, harness, wctc_overlay | retired: RL failed (E015); lockbox is the pulse3 blind-final budget; engine checks and the job queue are replaced by the fusion engine tests and the pulse3 queue; the curve gate (E036/E040) is ported |
+| 180 (family C) | regime_eval, style_test | retired: E020 fails; E023 mixed and E024 needs a futures account (reactivation condition kept in the ledger) |
+| 181 (family D) | sectors, sw_industry | merged: pulse3 sector domain and the frozen 申万 map of the fwdlog lane |
+| 182 (family E) | trad_export, tech_signals, box5_scenarios, lhasa; sameday_base, matched_reeval, reeval_block | trad_export retired (E003); tech_signals merged into the server indicators (batch 1); box5 kept as the S_Box5m shadow (E059); lhasa deferred (E048 needs the user's approval for a portfolio test); the matched baseline and block bootstrap are being ported (E062, E082) |
+| 183 (family F) | llm, llm_ask, llm_eval, llm_live, llm_judge, llm_judge_pit, llm_judge_topo, llm_probe, llm_select, llm_track, pit_news | deferred with E092: every one spends API money (findings E001, E025, E046 inconclusive, E064 fails) |
+
+Step 2 (cutover readiness, recorders written and tested, switched on only at the cutover): #103/#185 intraday recorder with
+auction, order book and limit queues; #104/#186 extended recorder; #131/#187 news recorder; #108 adjusted and index bars and
+#112/#113 boards and listing dates from native sources; #49/#89 sync triggers; #119 a second quote source with fallback;
+#199/#203 keys, tools and paths out of `C:\pulse`; the fwdlog M3 catalyst read from the pulse3 calendar.
 
 ## Retired (with reason)
 

@@ -16,6 +16,7 @@ dependencies = [
   "jsonschema==4.26.0",
   "referencing>=0.35",
   "tzdata",
+  "numpy>=2.5.5",
 ]
 
 [dependency-groups]

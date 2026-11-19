@@ -1,0 +1,13 @@
+{
+ "state": "queued",
+ "reason": null,
+ "experiment_id": "66666666-6666-4666-8666-666666666666",
+ "factor_id": "FL:momentum_20",
+ "job": {
+  "job_run_id": "77777777-7777-4777-8777-777777777777",
+  "run_state": "queued",
+  "error_code": null
+ },
+ "series": null,
+ "worker_hint": "uv run python -m pulse.workers.fillr run"
+}

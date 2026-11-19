@@ -1,0 +1,68 @@
+{
+ "state": "ready",
+ "reason": null,
+ "experiment_id": "66666666-6666-4666-8666-666666666666",
+ "factor_id": "FL:momentum_20",
+ "job": null,
+ "worker_hint": "x",
+ "series": {
+  "version": "fillr-factor-series-v1",
+  "computed_from": "factor_lab.run_factor over the sealed context windows",
+  "items": [
+   {
+    "horizon": 5,
+    "slice": "train",
+    "days": 3,
+    "ic_mean": "0.020000000000",
+    "icir": "0.500000000000",
+    "periods": 2,
+    "long_short_return": "0.030000000000",
+    "ic": [
+     {
+      "d": "2025-03-03",
+      "ic": "0.050000000000"
+     },
+     {
+      "d": "2025-03-04",
+      "ic": null
+     },
+     {
+      "d": "2025-03-05",
+      "ic": "-0.010000000000"
+     },
+     {
+      "d": "2025-03-06",
+      "ic": "0.021000000000"
+     }
+    ],
+    "long_short": [
+     {
+      "d": "2025-03-03",
+      "period_return": "0.010000000000",
+      "cumulative": "0.010000000000"
+     },
+     {
+      "d": "2025-03-10",
+      "period_return": "0.019801980198",
+      "cumulative": "0.030000000000"
+     }
+    ],
+    "notes": [
+     "逐日 IC 为 Spearman 秩相关"
+    ]
+   },
+   {
+    "horizon": 5,
+    "slice": "validation",
+    "days": 0,
+    "ic_mean": null,
+    "icir": null,
+    "periods": 0,
+    "long_short_return": null,
+    "ic": [],
+    "long_short": [],
+    "notes": []
+   }
+  ]
+ }
+}

@@ -1,0 +1,249 @@
+{
+ "run": {
+  "job_run_id": "00000000-0000-0000-0000-0000000000b1",
+  "run_state": "succeeded",
+  "error_code": null,
+  "scheduled_for": "2026-11-12T01:00:00Z",
+  "completed_at": "2026-11-12T01:00:09Z",
+  "request": {
+   "screen_run_id": "00000000-0000-0000-0000-0000000000a1",
+   "playbook_id": "turtle_55",
+   "top_n": 10,
+   "window_sessions": 250
+  },
+  "summary": {
+   "instruments": 3,
+   "with_trades": 1,
+   "skipped": 1
+  }
+ },
+ "result": {
+  "version": "lab-batch-result-v1",
+  "screen": {
+   "screen_run_id": "00000000-0000-0000-0000-0000000000a1",
+   "decision_as_of": "2026-11-12T00:00:00Z",
+   "universe_policy_version": "screen-universe-main-v1",
+   "true_rows": 25,
+   "selected": 3,
+   "panel_matches_screen": true
+  },
+  "playbook": {
+   "id": "turtle_55",
+   "catalog_id": "PB:turtle_55",
+   "name": "海龟 55 日突破",
+   "family": "trend"
+  },
+  "window": {
+   "start": "2026-03-02",
+   "end": "2026-03-09",
+   "sessions": 8
+  },
+  "initial_cash": "1000000",
+  "cost_policy_version": "user_account_2026",
+  "price_basis": "legacy_forward_adjusted_research_only",
+  "rows": [
+   {
+    "sort_position": 1,
+    "instrument_id": "00000000-0000-0000-0000-000000000101",
+    "code": "600001",
+    "name": "测试600001",
+    "status": "ok",
+    "skip_reason": null,
+    "tearsheet": {
+     "version": "tearsheet-v1",
+     "periods_per_year": 252,
+     "sessions": 8,
+     "returns": 6,
+     "missing_nav_sessions": 1,
+     "first_session": "2026-03-02",
+     "last_session": "2026-03-09",
+     "trades": {
+      "closed": 3,
+      "open": 1,
+      "breakeven": 0
+     },
+     "longest_drawdown": {
+      "sessions": 5,
+      "peak_session": "2026-03-03",
+      "recovery_session": "2026-03-08",
+      "recovered": true
+     },
+     "metrics": {
+      "total_return": {
+       "value": "0.041",
+       "reason": null
+      },
+      "annualised_return": {
+       "value": "2.545667279474",
+       "reason": null
+      },
+      "annualised_volatility": {
+       "value": "0.252054164726",
+       "reason": null
+      },
+      "sharpe": {
+       "value": "2.543620135666",
+       "reason": null
+      },
+      "sortino": {
+       "value": "3.994884632782",
+       "reason": null
+      },
+      "max_drawdown": {
+       "value": "-0.034408391334",
+       "reason": null
+      },
+      "calmar": {
+       "value": "73.983908598051",
+       "reason": null
+      },
+      "longest_drawdown_sessions": {
+       "value": "5",
+       "reason": null
+      },
+      "profit_factor": {
+       "value": "1.282051282051",
+       "reason": null
+      },
+      "win_rate": {
+       "value": "0.333333333333",
+       "reason": null
+      },
+      "avg_win": {
+       "value": "45000",
+       "reason": null
+      },
+      "avg_loss": {
+       "value": "-17550",
+       "reason": null
+      },
+      "payoff_ratio": {
+       "value": "2.564102564103",
+       "reason": null
+      },
+      "avg_win_return": {
+       "value": "0.045",
+       "reason": null
+      },
+      "avg_loss_return": {
+       "value": "-0.0173",
+       "reason": null
+      },
+      "exposure": {
+       "value": "1",
+       "reason": null
+      }
+     }
+    }
+   },
+   {
+    "sort_position": 2,
+    "instrument_id": "00000000-0000-0000-0000-000000000102",
+    "code": "600002",
+    "name": "测试600002",
+    "status": "no_trades",
+    "skip_reason": null,
+    "tearsheet": {
+     "version": "tearsheet-v1",
+     "periods_per_year": 252,
+     "sessions": 3,
+     "returns": 3,
+     "missing_nav_sessions": 0,
+     "first_session": "2026-03-02",
+     "last_session": "2026-03-04",
+     "trades": {
+      "closed": 0,
+      "open": 0,
+      "breakeven": 0
+     },
+     "longest_drawdown": {
+      "sessions": 0,
+      "peak_session": "2026-03-04",
+      "recovery_session": "2026-03-04",
+      "recovered": true
+     },
+     "metrics": {
+      "total_return": {
+       "value": "0",
+       "reason": null
+      },
+      "annualised_return": {
+       "value": "0",
+       "reason": null
+      },
+      "annualised_volatility": {
+       "value": "0",
+       "reason": null
+      },
+      "sharpe": {
+       "value": null,
+       "reason": "zero_volatility"
+      },
+      "sortino": {
+       "value": null,
+       "reason": "no_downside"
+      },
+      "max_drawdown": {
+       "value": "0",
+       "reason": null
+      },
+      "calmar": {
+       "value": null,
+       "reason": "no_drawdown"
+      },
+      "longest_drawdown_sessions": {
+       "value": "0",
+       "reason": null
+      },
+      "profit_factor": {
+       "value": null,
+       "reason": "no_closed_trades"
+      },
+      "win_rate": {
+       "value": null,
+       "reason": "no_closed_trades"
+      },
+      "avg_win": {
+       "value": null,
+       "reason": "no_wins"
+      },
+      "avg_loss": {
+       "value": null,
+       "reason": "no_losses"
+      },
+      "payoff_ratio": {
+       "value": null,
+       "reason": "no_wins"
+      },
+      "avg_win_return": {
+       "value": null,
+       "reason": "no_wins"
+      },
+      "avg_loss_return": {
+       "value": null,
+       "reason": "no_losses"
+      },
+      "exposure": {
+       "value": "0",
+       "reason": null
+      }
+     }
+    }
+   },
+   {
+    "sort_position": 3,
+    "instrument_id": "00000000-0000-0000-0000-000000000103",
+    "code": null,
+    "name": null,
+    "status": "skipped",
+    "skip_reason": "not_in_panel",
+    "tearsheet": null
+   }
+  ],
+  "caveats": [
+   "每只股票单独回放：整个账户只交易这一只（最多 1 个持仓），走同一个执行内核和用户费用口径；列是这一只的净值与成交统计。",
+   "这 N 只股票是用决策时点的数据选出来的，回放窗口又截止在同一时点：它衡量的是这条规则在「现在看起来强」的股票上过去的表现，不是样本外检验。"
+  ]
+ },
+ "result_ref": "lab-batch-result:0123456789abcdef0123456789abcdef01234567"
+}

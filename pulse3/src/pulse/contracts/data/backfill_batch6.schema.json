@@ -1,0 +1,503 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pulse:contracts:backfill:batch6:v1",
+ "x-contract-version": "1.0.0",
+ "description": "Batch 6 short-term research (E093-E096): historical results of E093 / E094 per segment, forward progress of E095 / E096, the auction field check.",
+ "$defs": {
+  "HistoryRow": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "hypothesis",
+    "experiment",
+    "segment",
+    "sign",
+    "hold",
+    "signals",
+    "attempted",
+    "filled",
+    "fill_rate",
+    "matched",
+    "signal_days",
+    "mean_ret_net",
+    "mean_baseline",
+    "excess",
+    "p_value",
+    "holm_p_adj",
+    "blocks",
+    "reliable",
+    "note"
+   ],
+   "properties": {
+    "hypothesis": {
+     "type": "string"
+    },
+    "experiment": {
+     "type": "string"
+    },
+    "segment": {
+     "type": "string",
+     "enum": [
+      "PRE",
+      "DEV"
+     ]
+    },
+    "sign": {
+     "type": "integer"
+    },
+    "hold": {
+     "type": "integer"
+    },
+    "signals": {
+     "type": "integer"
+    },
+    "attempted": {
+     "type": "integer"
+    },
+    "filled": {
+     "type": "integer"
+    },
+    "fill_rate": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "matched": {
+     "type": "integer"
+    },
+    "signal_days": {
+     "type": "integer"
+    },
+    "mean_ret_net": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "mean_baseline": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "excess": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "p_value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "holm_p_adj": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "blocks": {
+     "type": "integer"
+    },
+    "reliable": {
+     "type": "boolean"
+    },
+    "note": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "Verdict": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "hypothesis",
+    "passed",
+    "reason"
+   ],
+   "properties": {
+    "hypothesis": {
+     "type": "string"
+    },
+    "passed": {
+     "type": "boolean"
+    },
+    "reason": {
+     "type": "string"
+    }
+   }
+  },
+  "Count": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "key",
+    "count"
+   ],
+   "properties": {
+    "key": {
+     "type": "string"
+    },
+    "count": {
+     "type": "integer"
+    }
+   }
+  },
+  "HistoryBlock": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "as_of",
+    "decision_days",
+    "rows",
+    "verdicts",
+    "event_counts",
+    "notes"
+   ],
+   "properties": {
+    "as_of": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "decision_days": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "first",
+        "last",
+        "sessions"
+       ],
+       "properties": {
+        "first": {
+         "type": "string"
+        },
+        "last": {
+         "type": "string"
+        },
+        "sessions": {
+         "type": "integer"
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rows": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/HistoryRow"
+     }
+    },
+    "verdicts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Verdict"
+     }
+    },
+    "event_counts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Count"
+     }
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "ForwardRow": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "experiment",
+    "hypothesis",
+    "sign",
+    "days_evaluated",
+    "signal_days",
+    "experiment_signal_days",
+    "target_days",
+    "signals",
+    "filled",
+    "exit_deferred",
+    "resolved_later",
+    "fill_rate",
+    "mean_ret_net",
+    "excess",
+    "p_value",
+    "holm_p_adj",
+    "state",
+    "passed",
+    "reason"
+   ],
+   "properties": {
+    "experiment": {
+     "type": "string"
+    },
+    "hypothesis": {
+     "type": "string"
+    },
+    "sign": {
+     "type": "integer"
+    },
+    "days_evaluated": {
+     "type": "integer"
+    },
+    "signal_days": {
+     "type": "integer"
+    },
+    "experiment_signal_days": {
+     "type": "integer"
+    },
+    "target_days": {
+     "type": "integer"
+    },
+    "signals": {
+     "type": "integer"
+    },
+    "filled": {
+     "type": "integer"
+    },
+    "exit_deferred": {
+     "type": "integer"
+    },
+    "resolved_later": {
+     "type": "integer"
+    },
+    "fill_rate": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "mean_ret_net": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "excess": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "p_value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "holm_p_adj": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "state": {
+     "type": "string",
+     "enum": [
+      "collecting",
+      "descriptive",
+      "judged"
+     ]
+    },
+    "passed": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "reason": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "NamedShare": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "name",
+    "value"
+   ],
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "FieldCheck": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "sessions",
+    "unmatched_buy_computable",
+    "bid1_ask1_lots_0915_0924",
+    "bid2_ask2_lots_0915_0924",
+    "bid_ask_book_at_0925",
+    "unmatched_buy_definition",
+    "auction_rows",
+    "final_rows",
+    "shares"
+   ],
+   "properties": {
+    "sessions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "unmatched_buy_computable": {
+     "type": "boolean"
+    },
+    "bid1_ask1_lots_0915_0924": {
+     "type": "string"
+    },
+    "bid2_ask2_lots_0915_0924": {
+     "type": "string"
+    },
+    "bid_ask_book_at_0925": {
+     "type": "string"
+    },
+    "unmatched_buy_definition": {
+     "type": "string"
+    },
+    "auction_rows": {
+     "type": "integer"
+    },
+    "final_rows": {
+     "type": "integer"
+    },
+    "shares": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/NamedShare"
+     }
+    }
+   }
+  },
+  "Overview": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "spec_sha256",
+    "first_evaluated",
+    "history",
+    "forward",
+    "fieldcheck",
+    "sessions_decided"
+   ],
+   "properties": {
+    "spec_sha256": {
+     "type": "string"
+    },
+    "first_evaluated": {
+     "type": "string"
+    },
+    "history": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/HistoryBlock"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "forward": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ForwardRow"
+     }
+    },
+    "fieldcheck": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/FieldCheck"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sessions_decided": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,114 @@
+{
+ "experiments": [
+  {
+   "key": "monitor",
+   "label": "Experiment monitor",
+   "ledger_id": "E068",
+   "document": "docs/research/2026-11-07-batch2-preregistration.md",
+   "document_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "summary": {
+    "decision_dates": 2,
+    "unflagged": 1,
+    "mean_ic": "0.0392",
+    "nw_t": null,
+    "remaining": 99
+   },
+   "rows": [
+    {
+     "date": "2026-11-02",
+     "n": 2477,
+     "ic": "0.0222",
+     "decile_spread": "-0.184",
+     "top_ex": "-0.002",
+     "top_sv": "0.411",
+     "flagged": false,
+     "coverage_fail_days": []
+    },
+    {
+     "date": "2026-11-03",
+     "n": 2148,
+     "ic": "0.0423",
+     "decile_spread": "0.325",
+     "top_ex": "0.001",
+     "top_sv": "0.181",
+     "flagged": true,
+     "coverage_fail_days": [
+      "2026-11-05"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "x20",
+   "label": "Experiment x20",
+   "ledger_id": "E085",
+   "document": "docs/research/2026-11-08-batch4-preregistration.md",
+   "document_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "summary": {},
+   "rows": [
+    {
+     "date": "2026-11-03",
+     "x20": "0.999059",
+     "ew": "0.999297",
+     "excess_pct": "-0.024",
+     "n_x20": 1982,
+     "n_ew": 2477,
+     "trade_day": true,
+     "turnover_x20": "0.5",
+     "turnover_ew": "0.5"
+    },
+    {
+     "date": "2026-11-04",
+     "x20": "1.019548",
+     "ew": "1.019013",
+     "excess_pct": "0.052",
+     "n_x20": 1982,
+     "n_ew": 2477,
+     "trade_day": false,
+     "turnover_x20": null,
+     "turnover_ew": null
+    }
+   ]
+  },
+  {
+   "key": "os20",
+   "label": "Experiment os20",
+   "ledger_id": "E081",
+   "document": "docs/research/2026-11-08-os20-shock-rebound-preregistration.md",
+   "document_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "summary": {
+    "dates": 1,
+    "ex_gap": "-3.129",
+    "p_gap": "1.0"
+   },
+   "rows": [
+    {
+     "date": "2026-11-02",
+     "mkt20": "-7.563",
+     "flagged": false,
+     "coverage_fail_days": [],
+     "groups": [
+      {
+       "group": "OS20_GAP",
+       "n": 128,
+       "ex": "-3.129",
+       "raw": "-4.117"
+      },
+      {
+       "group": "OS20_NOGAP",
+       "n": 119,
+       "ex": "-1.428",
+       "raw": "-2.247"
+      },
+      {
+       "group": "OS5_GAP",
+       "n": 106,
+       "ex": null,
+       "raw": null
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "books": [
+  {
+   "key": "main",
+   "label": "Book main",
+   "rule": "hold 5, 20 slots, top 40",
+   "ledger_id": "E036/E040",
+   "rows": []
+  },
+  {
+   "key": "h10",
+   "label": "Book h10",
+   "rule": "hold 10, 20 slots, top 40",
+   "ledger_id": "E065",
+   "rows": []
+  }
+ ]
+}

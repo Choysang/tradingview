@@ -1,0 +1,414 @@
+{
+ "meta": {
+  "request_id": "2bf76b11-be86-443a-8238-557d3aa209b8",
+  "generated_at": "2026-11-18T07:50:13.903989Z",
+  "trace_id": "d859dc4c0f95421c969a689fc850f122",
+  "contract_version": "3.0.0",
+  "release_id": null,
+  "decision_as_of": null,
+  "availability_policy_version": null,
+  "input_snapshot_refs": [],
+  "quality_status": "partial",
+  "freshness_state": "not_expected",
+  "coverage": {
+   "policy_version": "bf-fwdlog-v1",
+   "expected_count": null,
+   "observed_count": 9,
+   "missing_count": null,
+   "unverifiable_reasons": [
+    "forward_log_in_progress",
+    "recordings_are_60s_sampled_snapshots"
+   ]
+  },
+  "warnings": [
+   {
+    "code": "SHADOW_FORWARD_LOG",
+    "message": "前向影子记录：不下单、不入账、不改任何规则；决策日之前的指标只是进度",
+    "affected_component": "fwdlog",
+    "evidence_ref": null
+   }
+  ],
+  "next_cursor": null,
+  "actionability_id": null
+ },
+ "data": {
+  "experiments": [
+   {
+    "experiment_key": "E077",
+    "title": "Tail-of-day stock picks (forward)",
+    "ledger_ids": [
+     "E077"
+    ],
+    "purpose": "shadow",
+    "rules_version": "fwdlog-rules-v1",
+    "preregistration": [
+     {
+      "file": "prereg/2026-11-08-batch4-preregistration.md",
+      "sha256": "a24023c319a21a9855e0a4417690ac742a505e70c43a365497953808bef7587c"
+     }
+    ],
+    "registry": {
+     "registered": true,
+     "experiment_id": "818b8511-1aab-5c33-90b3-89f7ac32de76",
+     "run_state": "running"
+    },
+    "first_session": "2026-11-12",
+    "last_session": "2026-11-12",
+    "sessions_decided": 1,
+    "pending": [
+     {
+      "session_date": "2026-11-13",
+      "reason": "recorded, not decided yet: the daily step has not run since the recording was imported, or it waits for data (see worker output)"
+     }
+    ],
+    "rule_table": null,
+    "notes": [],
+    "status": "recording",
+    "progress": {
+     "unit": "decision_days",
+     "done": 1,
+     "target": 40,
+     "remaining": 39,
+     "share": "0.025"
+    },
+    "decision": {
+     "check_at": 40,
+     "check_unit": "decision_days",
+     "decided": false,
+     "verdict": null,
+     "pending_reason": "pending until 40 decision days with at least 25 signal days"
+    },
+    "metrics": [
+     {
+      "name": "decision_days",
+      "value": 1,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "signal_days",
+      "value": 1,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "mean_excess_pct",
+      "value": "0.1",
+      "provisional": true,
+      "pending_reason": "pending until 40 decision days with at least 25 signal days"
+     },
+     {
+      "name": "p_boot",
+      "value": null,
+      "provisional": true,
+      "pending_reason": "pending until 40 decision days with at least 25 signal days"
+     },
+     {
+      "name": "mean_net_pct",
+      "value": "7.748",
+      "provisional": true,
+      "pending_reason": "pending until 40 decision days with at least 25 signal days"
+     },
+     {
+      "name": "h1_excess_positive_and_p_below_0_05",
+      "value": null,
+      "provisional": false,
+      "pending_reason": "pending until 40 decision days with at least 25 signal days"
+     },
+     {
+      "name": "h2_net_positive",
+      "value": null,
+      "provisional": false,
+      "pending_reason": "pending until 40 decision days with at least 25 signal days"
+     }
+    ]
+   },
+   {
+    "experiment_key": "E078",
+    "title": "Index first half hour -> last half hour (forward)",
+    "ledger_ids": [
+     "E078"
+    ],
+    "purpose": "shadow",
+    "rules_version": "fwdlog-rules-v1",
+    "preregistration": [
+     {
+      "file": "prereg/2026-11-08-batch4-preregistration.md",
+      "sha256": "a24023c319a21a9855e0a4417690ac742a505e70c43a365497953808bef7587c"
+     }
+    ],
+    "registry": {
+     "registered": true,
+     "experiment_id": "bed322c5-d2f8-556b-a778-c3652e145628",
+     "run_state": "running"
+    },
+    "first_session": "2026-11-12",
+    "last_session": "2026-11-13",
+    "sessions_decided": 2,
+    "pending": [],
+    "rule_table": null,
+    "notes": [],
+    "status": "recording",
+    "progress": {
+     "unit": "sessions",
+     "done": 2,
+     "target": 60,
+     "remaining": 58,
+     "share": "0.0333"
+    },
+    "decision": {
+     "check_at": 60,
+     "check_unit": "sessions",
+     "decided": false,
+     "verdict": null,
+     "pending_reason": "pending until 60 sessions; slopes are provisional"
+    },
+    "metrics": [
+     {
+      "name": "sessions",
+      "value": 2,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "index_days",
+      "value": 1,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "index_slope",
+      "value": null,
+      "provisional": true,
+      "pending_reason": "pending until 60 sessions; slopes are provisional"
+     },
+     {
+      "name": "index_newey_west_t",
+      "value": null,
+      "provisional": true,
+      "pending_reason": "pending until 60 sessions; slopes are provisional"
+     },
+     {
+      "name": "ew_slope",
+      "value": null,
+      "provisional": true,
+      "pending_reason": "pending until 60 sessions; slopes are provisional"
+     },
+     {
+      "name": "h1_index_t_at_least_2_and_ew_same_sign",
+      "value": null,
+      "provisional": false,
+      "pending_reason": "pending until 60 sessions; slopes are provisional"
+     }
+    ]
+   },
+   {
+    "experiment_key": "E089",
+    "title": "Market-state forward log with recorder health",
+    "ledger_ids": [
+     "E089",
+     "E087",
+     "E076"
+    ],
+    "purpose": "shadow",
+    "rules_version": "fwdlog-rules-v1",
+    "preregistration": [
+     {
+      "file": "prereg/2026-11-09-batch5-preregistration.md",
+      "sha256": "af3a5781f54a5e0eeba8f5ceedaec92433485e17d7107b50f1f161615acb7abc"
+     }
+    ],
+    "registry": {
+     "registered": true,
+     "experiment_id": "4965b93c-681b-5277-bd1f-d373e6d7cfef",
+     "run_state": "running"
+    },
+    "first_session": "2026-11-10",
+    "last_session": "2026-11-13",
+    "sessions_decided": 4,
+    "pending": [],
+    "rule_table": null,
+    "notes": [
+     "extended recording or state row lost on 2026-11-10, 2026-11-11, 2026-11-13: read that day's recorder log"
+    ],
+    "status": "recording",
+    "progress": {
+     "unit": "independent_episodes",
+     "done": 0,
+     "target": 10,
+     "remaining": 10,
+     "share": "0"
+    },
+    "decision": {
+     "check_at": 10,
+     "check_unit": "independent_episodes",
+     "decided": false,
+     "verdict": null,
+     "pending_reason": "pending until 10 independent panic-support episodes (about 0 so far); the log changes no rule"
+    },
+    "metrics": [
+     {
+      "name": "sessions_logged",
+      "value": 4,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "ext_missing",
+      "value": 3,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "with_ratio",
+      "value": 1,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "surge_days",
+      "value": 0,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "late_heavy_days",
+      "value": 0,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "late_share_median",
+      "value": "0.2",
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "panic_episodes",
+      "value": 0,
+      "provisional": false,
+      "pending_reason": "pending until 10 independent panic-support episodes (about 0 so far); the log changes no rule"
+     },
+     {
+      "name": "a50_cnh_missing_days",
+      "value": 1,
+      "provisional": false,
+      "pending_reason": null
+     },
+     {
+      "name": "cffex_slow_days",
+      "value": 0,
+      "provisional": false,
+      "pending_reason": null
+     }
+    ]
+   },
+   {
+    "experiment_key": "PAPER",
+    "title": "Intraday paper replay, triggers v2.1 (B1/B3 shadow, S1/S3/M3, box shadow)",
+    "ledger_ids": [
+     "E053",
+     "E055",
+     "E056",
+     "E057",
+     "E059"
+    ],
+    "purpose": "shadow",
+    "rules_version": "triggers-v2.1",
+    "preregistration": [
+     {
+      "file": "prereg/2026-11-07-week1-review.md",
+      "sha256": "c043dc67cbb1dca4787e33be4e38430158f2a56a6b29e2f63a5af8b665654d36"
+     },
+     {
+      "file": "prereg/2026-11-03-three-pillars-spec.md",
+      "sha256": "2126980ff5e97f5a144167ab2bf2dd1295597e89c26dca411811f44fdc0328d4"
+     }
+    ],
+    "registry": {
+     "registered": true,
+     "experiment_id": "2f19e79b-c099-57a7-a574-e676c33f46f5",
+     "run_state": "running"
+    },
+    "first_session": "2026-11-12",
+    "last_session": "2026-11-13",
+    "sessions_decided": 2,
+    "pending": [],
+    "rule_table": [
+     {
+      "rule": "HOLD_close",
+      "triggered": 10,
+      "mean_return_pct": "-5.3421",
+      "mean_vs_close_pct": "0",
+      "median_vs_close_pct": "0",
+      "better_than_close_share": "0",
+      "shadow": false
+     },
+     {
+      "rule": "POLICY_v2",
+      "triggered": 10,
+      "mean_return_pct": "-6.373",
+      "mean_vs_close_pct": "-1.0891",
+      "median_vs_close_pct": "-1.0891",
+      "better_than_close_share": "0",
+      "shadow": false
+     },
+     {
+      "rule": "POLICY_v3_shadow",
+      "triggered": 10,
+      "mean_return_pct": "-6.373",
+      "mean_vs_close_pct": "-1.0891",
+      "median_vs_close_pct": "-1.0891",
+      "better_than_close_share": "0",
+      "shadow": false
+     },
+     {
+      "rule": "S0_open",
+      "triggered": 10,
+      "mean_return_pct": "-6.373",
+      "mean_vs_close_pct": "-1.0891",
+      "median_vs_close_pct": "-1.0891",
+      "better_than_close_share": "0",
+      "shadow": false
+     }
+    ],
+    "notes": [
+     "B1 and B3 are shadow records (never booked); E059's box rule S_Box5m is a shadow sell row"
+    ],
+    "status": "recording",
+    "progress": {
+     "unit": "recorded_sessions",
+     "done": 2,
+     "target": 20,
+     "remaining": 18,
+     "share": "0.1"
+    },
+    "decision": {
+     "check_at": 20,
+     "check_unit": "recorded_sessions",
+     "decided": false,
+     "verdict": null,
+     "pending_reason": "pending until 20 recorded sessions; the tables are descriptive"
+    },
+    "metrics": [
+     {
+      "name": "sessions",
+      "value": 2,
+      "provisional": false,
+      "pending_reason": "pending until 20 recorded sessions; the tables are descriptive"
+     },
+     {
+      "name": "sell_rules_compared",
+      "value": 4,
+      "provisional": false,
+      "pending_reason": null
+     }
+    ]
+   }
+  ],
+  "notes": [
+   "Every experiment is a shadow record: nothing is booked and no rule is changed by it.",
+   "A metric marked provisional is shown for progress only; the pre-registered decision needs the day named in pending_reason."
+  ]
+ }
+}

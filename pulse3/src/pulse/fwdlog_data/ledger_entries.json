@@ -1,0 +1,266 @@
+[
+ {
+  "round": "P1",
+  "track": "hot_money",
+  "name": "P1 盘中纸面回放第 1 天（11-02）：B1 / B3 三档撮合，S0 / S1 / S3 / 开板即卖 / M3-Tape / M3-Strict 并排",
+  "hypothesis": "录制数据上跑通时间锁读取、T+1 账本、三档排队撮合；看各卖法相对持有到收盘的差别",
+  "config": "scripts/lab/paper_replay.py 2026-11-02；triggers-v1、event-links-v1；持仓簿 = 10-30 主板非 ST 涨停 42 只，每只约 1 万元",
+  "results": {
+   "B1": "触发 12，三档全部成交（开盘未封板，按 ask1 成交），D0 均值 +0.53%、中位 +1.35%",
+   "B3": "触发 59；成交 乐观 54 / 基准 43 / 悲观 42；D0 均值 −0.26 / −0.33 / −0.33%",
+   "卖法相对收盘": "开盘卖 −0.25%（42）；S3 跌破 VWAP −1.72%（35）；S1 封单衰减 +2.86%（6）；开板即卖 +0.42%（14）；M3-Tape −0.01%（14，压住 295 个快照）；M3-Strict 与开板即卖相同（催化全部未知，从不判良性）；M3 出场 −0.64%（4）",
+   "T+1": "今日 BASE 买入 55 笔全部不计入今日可卖"
+  },
+  "verdict": "inconclusive",
+  "why": "只有 1 天；结构上 M3 只能改变开板卖出（良性要求在 VWAP 之上，S3 要求在之下，S1 只在封板时触发）；M3-Strict 在没有关联催化时等于开板即卖；收益未扣成本，B1 的昨日竞价用成交额代理",
+  "regime": "2026-11-02 单日",
+  "reactivate_when": "录满 20 个交易日后按日汇总；有关联催化的持仓出现后再比较 Tape 与 Strict",
+  "artifacts": [
+   ".work/lab/main/paper/2026-11-02/summary.md",
+   ".work/lab/main/paper/2026-11-02/opportunities.parquet",
+   ".work/lab/main/paper/2026-11-02/sells.parquet"
+  ],
+  "id": "E053",
+  "date": "2026-11-02"
+ },
+ {
+  "round": "P1",
+  "track": "hot_money",
+  "name": "第一周复盘 + B1 日线近似按市场状态检验（昨日涨停、次日高开 2~7% 开盘买）",
+  "hypothesis": "B1 竞价弱转强在某些市场状态下有正期望；持有的昨日涨停股次日开盘卖优于收盘卖",
+  "config": "scripts/lab/b1_regime.py；主板 2023-11~2026-10；状态 = 涨停家数、炸板率在过去 250 日的分位；扣 0.15%；周数据由 11-07 补拉的腾讯日线与东财涨停池",
+  "results": {
+   "B1 日线": "PRE 冷 −0.97 / 中 −1.19 / 热 −0.84；DEV −0.47 / −1.31 / −1.20；高炸板 PRE −1.17、DEV −1.51；胜率约 39%；n≈8,600；所有可成交的高开区间都为负，仅开盘≥9.5%（基本买不进）为正",
+   "开盘卖 − 收盘卖": "PRE 冷 +0.09 / 中 +0.50 / 热 +0.59；DEV 冷 −0.29 / 中 +0.58 / 热 +0.71",
+   "第一周": "11-02 B1 12 笔持有到周五 −3.24%；B3 43 笔次日开盘卖 +0.31%（胜率 67%）；S1 相对次日开盘 +5.51%（6）、M3 出场 +2.50%（4）、开板即卖 −1.50%（14）",
+   "前向批次": "融合前 30 +5.87% vs 中证 1000 +4.97%、随机对照 +7.10%（10 只）；组内分数秩相关 +0.35；大模型 27 个回避均值 +6.15%，p 与收益秩相关 −0.20"
+  },
+  "verdict": "fails",
+  "why": "B1 的前提（次日开盘追昨日涨停）三年里任何市场状态下都为负；开盘卖持仓在非冷状态稳定更好；盘中卖法只有 1 个入场日",
+  "regime": "2023-11~2026-10 全状态；第一周为中小盘普涨、打板炸板率高",
+  "reactivate_when": "出现可检验成交的竞价版本（开盘封板排队）或作者共识版 B1（M4）时再检验；开盘卖规则在冷状态单独复核",
+  "artifacts": [
+   "docs/research/2026-11-07-week1-review.md",
+   "scripts/lab/b1_regime.py"
+  ],
+  "id": "E054",
+  "date": "2026-11-07"
+ },
+ {
+  "round": "P1",
+  "track": "hot_money",
+  "name": "triggers-v2 采用：B1 改影子记录；卖出规则 v2（昨日涨停持仓非冷状态开盘卖，否则 S1 / M3 出场，再否则收盘）",
+  "hypothesis": "按 E054 的日线证据调整纸面规则，前向检验 20 个录制日",
+  "config": "backend/app/domain/triggers.py（B1_ACTIVE False、sell_policy）、backend/app/domain/market_state.py、scripts/lab/paper_replay.py 的 POLICY_v2 行；开板即卖保留为对照行",
+  "results": {
+   "11-02 重跑": "10-30 收盘状态 mid / hi_fail；POLICY_v2 全部开盘卖，相对收盘 −0.25%，相对次日开盘 +0.33%（E054）；B1 12 笔不再记账；T+1 检查 43/43"
+  },
+  "verdict": "inconclusive",
+  "why": "规则依据三年日线，但盘中部分（S1 / M3）只有 1 个入场日",
+  "regime": "自 2026-11-09 起前向",
+  "reactivate_when": "满 20 个录制日后与 v1 各规则并排比较；冷状态样本单独看",
+  "supersedes": [
+   "E053"
+  ],
+  "artifacts": [
+   "backend/app/domain/triggers.py",
+   "backend/app/domain/market_state.py"
+  ],
+  "id": "E055",
+  "date": "2026-11-07"
+ },
+ {
+  "round": "P1",
+  "track": "hot_money",
+  "name": "纸面回放第一周全量（11-02~11-06，服务器录制，triggers-v2 + 影子 v3、B3 实时炸板率分组）",
+  "hypothesis": "v2 卖出规则优于持有；开盘封板的持仓留到 S1/M3 出场（v3）更好；B3 在实时炸板率低时有效",
+  "config": "服务器上重跑 paper_replay.py 5 天；后续价格来自服务器仓库日线；未扣成本",
+  "results": {
+   "买点": "B1（影子）63 笔次日开盘卖 −1.91%（胜率 31%）；B3 基准档 107 笔 −1.77%（38%），11-02 +0.31、11-03 −3.27、11-04 −1.46、11-05 −4.63",
+   "卖点相对次日开盘": "M3 出场 +4.11（41）；S1 +3.57（67）；POLICY_v2/开盘卖 +1.91（366）；S3 +1.84；v3 影子 +1.78；持有到收盘 +1.78；开板即卖 +1.65，M3-Tape +1.45",
+   "B3 按实时炸板率": "<20% −1.12（17）、20~25% −3.05（34）、25~30% −0.69（30）、≥30% −1.78（26），无单调关系"
+  },
+  "verdict": "mixed",
+  "why": "v2 小幅好于持有；v3 不优于 v2；B3 本周为负且实时炸板率解释不了；只有 4 个完整入场日",
+  "regime": "2026-11-02~11-06，中小盘普涨、打板炸板率高",
+  "reactivate_when": "满 20 个录制日后重比；B3 若持续为负则改影子",
+  "supersedes": [
+   "E055"
+  ],
+  "artifacts": [
+   ".work/lab/main/paper_server/",
+   ".work/lab/main/paper_server/week_buys.parquet",
+   ".work/lab/main/paper_server/week_sells.parquet"
+  ],
+  "id": "E056",
+  "date": "2026-11-07"
+ },
+ {
+  "round": "P1",
+  "track": "hot_money",
+  "name": "triggers-v2.1：B3 改影子记录（与 B1 一样只记录不记账）",
+  "hypothesis": "按 E056 结果停用盘中打板买入的记账，继续前向记录以便复查",
+  "config": "backend/app/domain/triggers.py B3_ACTIVE False、ACTIVE 映射；paper_replay 按 ACTIVE 决定记账",
+  "results": {
+   "依据": "E056：B3 基准档 107 笔次日开盘卖 −1.77%，胜率 38%；实时炸板率分组无单调关系"
+  },
+  "verdict": "inconclusive",
+  "why": "只有 4 个完整入场日；规则调整，不是新证据",
+  "regime": "自 2026-11-09 起前向",
+  "reactivate_when": "满 20 个录制日后 B3 影子结果转正，或找到能区分好坏日的盘中状态",
+  "supersedes": [
+   "E055"
+  ],
+  "artifacts": [
+   "backend/app/domain/triggers.py"
+  ],
+  "id": "E057",
+  "date": "2026-11-07"
+ },
+ {
+  "round": "P2",
+  "track": "hot_money",
+  "name": "五蜡烛箱体突破剥头皮（1 分钟收盘确认、重绘收敛、SL 在突破 K 线极值外、TP 1.5R、1% 风险仓位）三场景：可转债 T+0、主板做 T、涨停持仓卖点 S_Box5m",
+  "hypothesis": "箱体至少收敛一次再突破、止损跨度 ≥ 0.4% 时有正期望；S_Box5m 作为涨停持仓卖点优于开盘卖",
+  "config": "backend/app/domain/box5.py（25 项单元测试）；scripts/lab/box5_scenarios.py；数据 11-02~11-06 快照合成 1 分钟 K 线（主板 81~93% 的 K 线只有一个快照，只能收盘确认，入场取下一根开盘）；随机基准 = 同日随机品种与分钟、同持仓时长、100 轮",
+  "results": {
+   "A 可转债": "原版 7185 笔胜率 43.4% 净 −0.013%（随机 −0.016%，p 0.22）；收敛版 766 笔 +0.027%（随机 +0.008%，p 0.18）",
+   "B 主板做 T": "原版正 T −0.096%、倒 T −0.258%；收敛版正 T −0.036%（p 0.70）、倒 T −0.395%；都不如全天持有，也不优于随机",
+   "C S_Box5m": "全账本 293 笔相对次日开盘 +1.92%，开盘卖 / POLICY_v2 +1.91%，持有到收盘 +1.78%，S3 +1.31%，M3-Tape +2.20%，S1 +2.23%；触发中位 09:49"
+  },
+  "verdict": "inconclusive",
+  "why": "只有 5 个录制日且同一周行情；K 线多为单快照，盘中触价不可测；三个场景都没有显示出优势",
+  "regime": "2026-11-02~11-06，中小盘普涨、炸板率高",
+  "reactivate_when": "满 20 个录制日，或拿到逐笔 / 3 秒快照后重跑；S_Box5m 建议先做纸面影子行",
+  "artifacts": [
+   "backend/app/domain/box5.py",
+   "backend/tests/test_box5.py",
+   "scripts/lab/box5_scenarios.py",
+   ".work/lab/main/box5/report.md",
+   "docs/research/2026-11-03-three-pillars-spec.md"
+  ],
+  "id": "E059",
+  "date": "2026-11-07"
+ },
+ {
+  "id": "E076",
+  "round": "P4",
+  "track": "data",
+  "name": "盘中录制扩展：宽基 ETF、主要指数、股指期货、A50、恒指期货、离岸人民币、黄金、原油，每 60 秒（服务器部署）",
+  "hypothesis": "盘中状态信号（宽基放量、指数日内动量、外盘冲击）需要这些品种的分钟级记录",
+  "config": "backend/app/warehouse/intraday_ext.py，独立进程；腾讯 qt.gtimg.cn 录 7 只 ETF 和 10 个指数，新浪 hq.sinajs.cn 录 IF/IH/IC/IM 主力和挂牌合约、A50、恒指、黄金、原油、USDCNH；09:00~16:00 每 60 秒，15:01:30 一次收盘快照；来源被拦截或连续失败 20 次就当天停用，不重试；计划任务 PulseIntradayExt（工作日 08:58）",
+  "results": {
+   "本机": "42 个品种全部返回，49 项测试全过",
+   "服务器": "腾讯 17 个品种正常；新浪对服务器 IP 返回 HTTP 403，按规则当天停用：期货、A50、恒指、黄金、原油、离岸人民币在服务器上录不到",
+   "部署": "2026-11-08 r10，哈希核对一致"
+  },
+  "verdict": "mixed",
+  "why": "ETF 和指数已能在服务器录制（E074 宽基放量、E078 上证指数用到）；期货、外汇、商品需要另一个服务器能访问的来源",
+  "regime": "前向 2026-11 起",
+  "reactivate_when": "为期货、A50、外汇、黄金换一个服务器可访问的公开来源（例如东方财富行情接口，先从服务器探测，每种最多 3 次请求），然后连续 5 个交易日无缺口",
+  "artifacts": [
+   "backend/app/warehouse/intraday_ext.py",
+   "backend/tests/test_intraday_ext.py",
+   "backend/tests/fixtures/intraday_ext/"
+  ],
+  "supersedes": [],
+  "date": "2026-11-08"
+ },
+ {
+  "id": "E077",
+  "round": "P4",
+  "track": "pattern",
+  "name": "尾盘选股法（前向）：14:30 与 14:50 都涨 3~5%、量比 ≥ 1、换手 5~10%、流通市值 ≤ 200 亿、近 20 日有涨停，14:50 买入，次日 10:00 卖出",
+  "hypothesis": "尾盘强势股次日早盘有溢价（也是'小热巴'一路做法的量化版本）",
+  "config": "服务器 60 秒全市场快照；每天最多 5 只（按量比）；对照为同一天股票池里同一流通市值五分位；往返成本 0.252%；scripts/lab/tail_forward.py，计划任务 PulseForwardLab（工作日 17:45）；第 40 个交易日判定",
+  "results": {
+   "中期（2026-11-02 ~ 11-05 共 4 个决策日，不作判定）": "匹配超额均值 −0.674%，扣费后绝对收益 −0.699%"
+  },
+  "verdict": "inconclusive",
+  "why": "前向刚开始，只有 4 天",
+  "regime": "前向 2026-11 起",
+  "reactivate_when": "第 40 个交易日（且至少 25 天有信号）：匹配超额 > 0 且 p < 0.05，扣费后收益 > 0",
+  "artifacts": [
+   "scripts/lab/tail_forward.py",
+   "docs/research/2026-11-08-batch4-preregistration.md"
+  ],
+  "supersedes": [],
+  "date": "2026-11-08"
+ },
+ {
+  "id": "E078",
+  "round": "P4",
+  "track": "timing",
+  "name": "指数首半小时（含隔夜）→ 尾盘半小时（前向）：上证指数（E076 录制）与主板等权",
+  "hypothesis": "Gao 等（2018）的日内动量在 A 股成立：10:00 / 前收 预测 14:30 → 收盘",
+  "config": "x = 10:00 / 前收 − 1，x2 = 10:00 / 开盘 − 1，y = 收盘 / 14:30 − 1；斜率的 Newey-West t（滞后 1）；主序列上证指数，副序列主板等权（从 2026-11-02 起）；第 60 个交易日判定；A 股 ETF 是 T+1，所以只作状态信号",
+  "results": {
+   "启动": "主板等权已记录 5 天（11-02 ~ 11-06）；上证指数序列从 E076 上线后开始"
+  },
+  "verdict": "inconclusive",
+  "why": "前向刚开始",
+  "regime": "前向 2026-11 起",
+  "reactivate_when": "第 60 个交易日：上证斜率 > 0 且 t ≥ 2，并且等权序列同号",
+  "artifacts": [
+   "scripts/lab/tail_forward.py",
+   "docs/research/2026-11-08-batch4-preregistration.md"
+  ],
+  "supersedes": [],
+  "date": "2026-11-08"
+ },
+ {
+  "id": "E087",
+  "date": "2026-11-09",
+  "round": "P4",
+  "track": "data",
+  "name": "E076 修复与换源：录制进程崩溃修复；期货改用中金所文件，恒指、黄金、原油改用腾讯，A50 与离岸人民币改用东方财富分钟线",
+  "hypothesis": "服务器被新浪拒绝后，期货、A50、汇率、黄金能从服务器可访问的其他公开来源取得；run 路径从未完整跑过，需要端到端验证",
+  "config": "backend/app/warehouse/intraday_ext.py：一个 naive CST 时钟；一轮一个来源出错不影响其他来源；每个来源单线程排队；超时计入失败；连续 5 次旧时间戳才判非交易日。来源：qt.gtimg.cn（ETF、指数、hf_HSI、hf_GC、hf_CL，每分钟）；www.cffex.com.cn/quote_{IF,IH,IC,IM}.txt（每分钟请求，带持仓量，quote_ts 取 Last-Modified）；push2his.eastmoney.com trends2（A50 和离岸人民币的当日 1 分钟线，15:01:30 与 16:00:30 各取一次，请求间隔 3 秒）。新浪已移除。",
+  "results": {
+   "崩溃": "2026-11-09 08:58 的真实运行在第一次分钟轮询崩溃（TypeError: can't subtract offset-naive and offset-aware datetimes），当天 E076 全部品种没有录到，summary 还错写成 stop time",
+   "修复验证": "86 项录制测试、全部 1042 项后端测试通过；在服务器上用真实来源把 run 路径窗口移到当下跑了 3 分钟：退出码 0，grid 4 次、close 1 次、end 1 次",
+   "腾讯与中金所": "服务器上 36 个品种全部返回（ETF 7、指数 10、恒指期货、黄金、原油、期货合约 16）。收盘后中金所文件每 5 分 15 秒更新一次，盘中间隔未验证",
+   "东方财富": "A50 与离岸人民币未验证通过。服务器访问 push2 被 302 到 push2delay，后者 11 次请求 10 次 HTTP 502；push2his 成功 2 次后，后续 7 次都是连接被断开。本机访问正常。已停止探测，首次真实尝试是下一个交易日 15:01:30",
+   "11-09 补数": "只补回上证指数：服务器请求分钟接口时 web.ifzq.gtimg.cn 返回 HTTP 501（当日 16:22 PulseIntraday 已触发同一 WAF，属既有现象），按规则不重试。文件来自部署前在本机试跑时取得的同一接口结果，共 242 行，kind=backfill；其他品种当天的数据无法补回",
+   "tail_forward": "E078 上证收盘价改为 15:00~15:05 内最后一笔，原先取 15:00 后第一笔，可能早于最终收盘价。E076 此前没有录到指数，已记录的 E078 数据不受影响"
+  },
+  "verdict": "mixed",
+  "why": "期货、恒指、黄金、原油已能从服务器取得；A50 与离岸人民币的来源从服务器访问不稳定；期货文件的颗粒度可能只有约 5 分钟，也没有成交额",
+  "regime": "前向 2026-11 起",
+  "reactivate_when": "看下一个交易日的 summary.json：A50 和离岸人民币若连续 5 个交易日取不到，改为由本机 20:30 流水线抓取（ndays=2）后推到服务器；若盘中中金所文件也是约 5 分钟更新，把请求降到每 5 分钟一次",
+  "artifacts": [
+   "backend/app/warehouse/intraday_ext.py",
+   "backend/tests/test_intraday_ext.py",
+   "backend/tests/fixtures/intraday_ext/",
+   "scripts/lab/backfill_index_day.py",
+   "scripts/lab/tail_forward.py"
+  ],
+  "supersedes": [
+   "E076"
+  ]
+ },
+ {
+  "id": "E089",
+  "date": "2026-11-09",
+  "round": "P4",
+  "track": "timing",
+  "name": "市场状态前向日志：宽基 ETF 放量、尾盘成交占比、广度、跨市场、期货基差，附录制健康检查",
+  "hypothesis": "E074 留下的假设：'暴跌日 + 宽基放量' 之后 5 日主板等权高于平均，也就是这种日子不要恐慌卖出",
+  "config": "docs/research/2026-11-09-batch5-preregistration.md 第 2 节；scripts/lab/state_forward.py，由 PulseForwardLab 每日运行；surge = 7 只 ETF 合计成交额 / 前 20 日中位数 >= 2.0；panic_support = surge 且主板等权 <= -3%；late_heavy = 14:30 后成交占比 >= 0.30（没有历史校准）",
+  "results": {
+   "单位核对": "录制的 7 只 ETF 成交额合计（周末试跑读到的 11-06 数）19,490,111,985 元，与新浪日线合计完全相同",
+   "种子": "25 个交易日，到 2026-11-09；首行要等 2026-11-10 17:45",
+   "审查后加固": "录制中途死掉时报 null 不报平静；假期重复数据不计入；坏文件只损失当天一行；半行日志不阻塞后续；录制丢失单独提示"
+  },
+  "verdict": "inconclusive",
+  "why": "前向刚开始；按历史频率 3 年约 4 段行情，近期不会有结论，也不改变任何买卖规则",
+  "regime": "前向 2026-11 起",
+  "reactivate_when": "panic_support 攒满 10 段独立行情时检验 H1；前 20 个录制日看 late_share 分布，阈值要改算新实验。健康检查提示 A50 或离岸人民币连续 5 天缺失时改由本机抓取；IF 主力更新间隔连续 3 天 >= 4 分钟时把中金所请求降到每 5 分钟一次",
+  "artifacts": [
+   "scripts/lab/state_forward.py",
+   "backend/tests/test_lab_state_forward.py",
+   "docs/research/2026-11-09-batch5-preregistration.md"
+  ],
+  "supersedes": []
+ }
+]

@@ -170,15 +170,15 @@ def typed_feature(run: dict, iid: str, f: dict) -> dict[str, Any]:
 # --------------------------------------------------------------------------------------------------------
 # jobs
 # --------------------------------------------------------------------------------------------------------
-_JOBS_READY = False
+_JOBS_READY: set[tuple] = set()      # databases (host, port, name) already seeded by this process
 
 
 def ensure_jobs(conn: psycopg.Connection) -> None:
     """Register this group's job definitions once per process (idempotent in the database)."""
-    global _JOBS_READY
-    if not _JOBS_READY:
+    key = (conn.info.host, conn.info.port, conn.info.dbname)   # per database: one process may talk to several (tests, tools)
+    if key not in _JOBS_READY:
         seed_jobs(conn)
-        _JOBS_READY = True
+        _JOBS_READY.add(key)
 
 
 def seed_jobs(conn: psycopg.Connection) -> None:

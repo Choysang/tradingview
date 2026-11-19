@@ -24,6 +24,8 @@ from datetime import date, timedelta
 from decimal import Decimal
 from typing import Iterable
 
+from pulse.domain.market_rules.holidays import is_open
+
 LOT = 100
 MAIN_H5 = "main_h5"
 SHADOW_H10 = "shadow_h10"
@@ -58,7 +60,8 @@ class HybridCalendar:
         if day <= self._days[-1]:
             i = bisect.bisect_left(self._days, day)
             return i < len(self._days) and self._days[i] == day
-        return day.weekday() < 5
+        state = is_open(day)             # the official closure schedule when it is complete for that year, else Monday-Friday
+        return day.weekday() < 5 if state is None else state
 
     def next_trading_day(self, day: date) -> date:
         d = day + timedelta(days=1)

@@ -25,7 +25,7 @@ from pulse.domain.execution import (NO_FILL_QUEUE, Bar, DailyBarMatcher, Executi
                                     PathScenario)
 from pulse.domain.execution.entrypoints import RunLog, process_bar
 from pulse.domain.execution.numeric import MARKET_TIMEZONE
-from pulse.domain.market_rules import CostProfile, CostProfileRegistry, ExplicitCalendar, InstrumentSpec, RuleNotVerified
+from pulse.domain.market_rules import CostProfile, CostProfileRegistry, ExplicitCalendar, forward_days, InstrumentSpec, RuleNotVerified
 
 from .exits import ExitRules, HoldState, exit_decision
 from .view import InstrumentView, ok
@@ -106,7 +106,7 @@ def replay(*, signals: Mapping[str, Sequence], views: Mapping[str, InstrumentVie
            sessions: Sequence[str], cfg: ReplayConfig, opening_positions: Mapping[str, Mapping] | None = None,
            run_id: str = "pb") -> ReplayResult:
     days = [date.fromisoformat(s) for s in sessions]
-    tail = [days[-1] + timedelta(days=k) for k in range(1, 11) if (days[-1] + timedelta(days=k)).weekday() < 5]
+    tail, _assumed = forward_days(days[-1], 10)
     cal = ExplicitCalendar(days + tail)          # approximate weekdays after the window, only for T+1 dates of the last buys
     initial = {"trading_day": sessions[cfg.start], "opening_cash": str(cfg.cash), "positions": dict(opening_positions or {}),
                "sale_proceeds_reusable": True}

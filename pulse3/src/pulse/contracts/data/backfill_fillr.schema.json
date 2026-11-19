@@ -1,0 +1,1747 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pulse:contracts:backfill:fillr:v1",
+ "x-contract-version": "1.0.0",
+ "description": "Legacy-feature backfill lane 'fillr' (docs/LEGACY_TRIAGE.md, coverage audit 2026-11-18): #16/#82/#150 playbook board fitness and verdict, #21/#87 custom run, #35 monthly returns, #37/#80 factor daily IC and long-short series, #42/#68/#158 analog study on demand. Every statistic is computed on the server from stored experiments; a missing value is null with a reason; a queued job is reported as queued until a worker runs it.",
+ "$defs": {
+  "BlockInfo": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "p_value",
+    "blocks",
+    "block",
+    "reliable",
+    "reason"
+   ],
+   "properties": {
+    "p_value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "blocks": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "block": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "reliable": {
+     "type": "boolean"
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "SampleStats": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "trades",
+    "win_rate",
+    "avg_return",
+    "t_stat",
+    "sharpe",
+    "sessions"
+   ],
+   "properties": {
+    "trades": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "win_rate": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "avg_return": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "t_stat": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sharpe": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sessions": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "RegimeNow": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "available",
+    "reason",
+    "release_id",
+    "trend",
+    "sentiment",
+    "through"
+   ],
+   "properties": {
+    "available": {
+     "type": "boolean"
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "release_id": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "trend": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sentiment": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "through": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "EvaluationBlock": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "version",
+    "split_day",
+    "sample_label",
+    "full",
+    "in_sample",
+    "out_of_sample",
+    "recent",
+    "verdict",
+    "verdict_reason",
+    "fitness",
+    "fitness_reasons",
+    "block",
+    "missing"
+   ],
+   "properties": {
+    "version": {
+     "type": "string"
+    },
+    "split_day": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sample_label": {
+     "enum": [
+      "out_of_sample",
+      "in_sample_only"
+     ]
+    },
+    "full": {
+     "$ref": "#/$defs/SampleStats"
+    },
+    "in_sample": {
+     "$ref": "#/$defs/SampleStats"
+    },
+    "out_of_sample": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/SampleStats"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "recent": {
+     "$ref": "#/$defs/SampleStats"
+    },
+    "verdict": {
+     "oneOf": [
+      {
+       "enum": [
+        "effective",
+        "regime_dependent",
+        "weak",
+        "overfit",
+        "insufficient"
+       ]
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "verdict_reason": {
+     "type": "string"
+    },
+    "fitness": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fitness_reasons": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "block": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/BlockInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "missing": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "BoardItem": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "catalog_id",
+    "playbook_id",
+    "name",
+    "family",
+    "horizon",
+    "state",
+    "reason",
+    "experiment_id",
+    "completed_at",
+    "evaluation",
+    "sparkline",
+    "sparkline_start",
+    "sparkline_end"
+   ],
+   "properties": {
+    "catalog_id": {
+     "type": "string"
+    },
+    "playbook_id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "family": {
+     "type": "string"
+    },
+    "horizon": {
+     "type": "string"
+    },
+    "state": {
+     "enum": [
+      "evaluated",
+      "not_run",
+      "unavailable",
+      "failed"
+     ]
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "experiment_id": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "completed_at": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "evaluation": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/EvaluationBlock"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sparkline": {
+     "type": "array",
+     "items": {
+      "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+     }
+    },
+    "sparkline_start": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sparkline_end": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "PlaybookBoard": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "version",
+    "regime_now",
+    "items",
+    "counts",
+    "notes"
+   ],
+   "properties": {
+    "version": {
+     "type": "string"
+    },
+    "regime_now": {
+     "$ref": "#/$defs/RegimeNow"
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/BoardItem"
+     }
+    },
+    "counts": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "total",
+      "evaluated",
+      "not_run",
+      "unavailable",
+      "failed"
+     ],
+     "properties": {
+      "total": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "evaluated": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "not_run": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "unavailable": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "failed": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "CustomRunOverrides": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [],
+   "properties": {
+    "params": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "holding_days": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 120
+    },
+    "stop_loss_pct": {
+     "oneOf": [
+      {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "maximum": 50
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "take_profit_pct": {
+     "oneOf": [
+      {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "maximum": 200
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "trailing_stop_pct": {
+     "oneOf": [
+      {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "maximum": 50
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "max_positions": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 50
+    },
+    "max_new_per_day": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 50
+    }
+   }
+  },
+  "CustomRunRequest": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "idempotency_key",
+    "playbook_id",
+    "overrides"
+   ],
+   "properties": {
+    "idempotency_key": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 200
+    },
+    "playbook_id": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 80
+    },
+    "label": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "overrides": {
+     "$ref": "#/$defs/CustomRunOverrides"
+    }
+   }
+  },
+  "CustomRunReceipt": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "receipt",
+    "draft",
+    "worker_hint"
+   ],
+   "properties": {
+    "receipt": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/JobReceipt"
+    },
+    "draft": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "strategy_id",
+      "strategy_version",
+      "instance_id"
+     ],
+     "properties": {
+      "strategy_id": {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      "strategy_version": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "instance_id": {
+       "oneOf": [
+        {
+         "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  },
+  "EffectiveRules": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "params",
+    "holding_days",
+    "stop_loss_pct",
+    "take_profit_pct",
+    "trailing_stop_pct",
+    "max_positions",
+    "max_new_per_day"
+   ],
+   "properties": {
+    "params": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "holding_days": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "stop_loss_pct": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "take_profit_pct": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "trailing_stop_pct": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "max_positions": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "max_new_per_day": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "CustomTrade": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "code",
+    "entry_day",
+    "exit_day",
+    "entry_price",
+    "exit_price",
+    "gross_return",
+    "status",
+    "exit_reason"
+   ],
+   "properties": {
+    "code": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "entry_day": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+    },
+    "exit_day": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "entry_price": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+    },
+    "exit_price": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "gross_return": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "status": {
+     "enum": [
+      "closed",
+      "open"
+     ]
+    },
+    "exit_reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CustomMetric": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "name",
+    "slice",
+    "value",
+    "unit",
+    "missing_reason"
+   ],
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "slice": {
+     "type": "string"
+    },
+    "value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "unit": {
+     "type": "string"
+    },
+    "missing_reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CustomRunResult": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "version",
+    "exploratory",
+    "playbook",
+    "request",
+    "effective",
+    "base",
+    "window",
+    "initial_cash",
+    "cost_policy_version",
+    "evaluation",
+    "metrics",
+    "equity",
+    "trades",
+    "caveats"
+   ],
+   "properties": {
+    "version": {
+     "type": "string"
+    },
+    "exploratory": {
+     "type": "boolean"
+    },
+    "playbook": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "catalog_id",
+      "name"
+     ],
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "catalog_id": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      }
+     }
+    },
+    "request": {
+     "$ref": "#/$defs/CustomRunOverrides"
+    },
+    "effective": {
+     "$ref": "#/$defs/EffectiveRules"
+    },
+    "base": {
+     "$ref": "#/$defs/EffectiveRules"
+    },
+    "window": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "start",
+      "end",
+      "sessions",
+      "decision_as_of"
+     ],
+     "properties": {
+      "start": {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      "end": {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+      },
+      "sessions": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "decision_as_of": {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+      }
+     }
+    },
+    "initial_cash": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+    },
+    "cost_policy_version": {
+     "type": "string"
+    },
+    "evaluation": {
+     "$ref": "#/$defs/EvaluationBlock"
+    },
+    "metrics": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/CustomMetric"
+     }
+    },
+    "equity": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "d",
+       "nav"
+      ],
+      "properties": {
+       "d": {
+        "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+       },
+       "nav": {
+        "oneOf": [
+         {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+         },
+         {
+          "type": "null"
+         }
+        ]
+       }
+      }
+     }
+    },
+    "trades": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "total",
+      "closed",
+      "shown",
+      "items"
+     ],
+     "properties": {
+      "total": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "closed": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "shown": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "items": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/CustomTrade"
+       }
+      }
+     }
+    },
+    "caveats": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "CustomRunBrief": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "job_run_id",
+    "run_state",
+    "error_code",
+    "scheduled_for",
+    "completed_at",
+    "playbook_id",
+    "label",
+    "request",
+    "strategy",
+    "summary"
+   ],
+   "properties": {
+    "job_run_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "run_state": {
+     "enum": [
+      "queued",
+      "running",
+      "succeeded",
+      "failed",
+      "cancelled"
+     ]
+    },
+    "error_code": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "scheduled_for": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+    },
+    "completed_at": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "playbook_id": {
+     "type": "string"
+    },
+    "label": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "request": {
+     "$ref": "#/$defs/CustomRunOverrides"
+    },
+    "strategy": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "strategy_id",
+        "strategy_version"
+       ],
+       "properties": {
+        "strategy_id": {
+         "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "strategy_version": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "summary": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "verdict",
+        "fitness",
+        "net_return",
+        "trades"
+       ],
+       "properties": {
+        "verdict": {
+         "oneOf": [
+          {
+           "enum": [
+            "effective",
+            "regime_dependent",
+            "weak",
+            "overfit",
+            "insufficient"
+           ]
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "fitness": {
+         "oneOf": [
+          {
+           "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "net_return": {
+         "oneOf": [
+          {
+           "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "trades": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CustomRunList": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "items",
+    "page",
+    "order",
+    "worker_hint"
+   ],
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/CustomRunBrief"
+     }
+    },
+    "page": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "next_cursor",
+      "limit"
+     ],
+     "properties": {
+      "next_cursor": {
+       "oneOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "limit": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    },
+    "order": {
+     "type": "string"
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  },
+  "CustomRun": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "run",
+    "result",
+    "result_ref",
+    "worker_hint"
+   ],
+   "properties": {
+    "run": {
+     "$ref": "#/$defs/CustomRunBrief"
+    },
+    "result": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/CustomRunResult"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "result_ref": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  },
+  "MonthReturn": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "year",
+    "month",
+    "value",
+    "sessions",
+    "reason"
+   ],
+   "properties": {
+    "year": {
+     "type": "integer",
+     "minimum": 1990,
+     "maximum": 2200
+    },
+    "month": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 12
+    },
+    "value": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sessions": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "MonthlyReturns": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "version",
+    "subject",
+    "window",
+    "months",
+    "basis",
+    "caveats"
+   ],
+   "properties": {
+    "version": {
+     "type": "string"
+    },
+    "subject": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "label",
+      "catalog_id",
+      "experiment_id"
+     ],
+     "properties": {
+      "label": {
+       "type": "string"
+      },
+      "catalog_id": {
+       "type": "string"
+      },
+      "experiment_id": {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      }
+     }
+    },
+    "window": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "start",
+      "end",
+      "sessions"
+     ],
+     "properties": {
+      "start": {
+       "oneOf": [
+        {
+         "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "end": {
+       "oneOf": [
+        {
+         "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "sessions": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    "months": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/MonthReturn"
+     }
+    },
+    "basis": {
+     "type": "string"
+    },
+    "caveats": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "JobQueued": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "state",
+    "receipt",
+    "worker_hint"
+   ],
+   "properties": {
+    "state": {
+     "enum": [
+      "ready",
+      "queued",
+      "running"
+     ]
+    },
+    "receipt": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/JobReceipt"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  },
+  "FactorSeriesRequest": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "idempotency_key",
+    "experiment_id"
+   ],
+   "properties": {
+    "idempotency_key": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 200
+    },
+    "experiment_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    }
+   }
+  },
+  "FactorSeriesOne": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "horizon",
+    "slice",
+    "days",
+    "ic_mean",
+    "icir",
+    "periods",
+    "long_short_return",
+    "ic",
+    "long_short",
+    "notes"
+   ],
+   "properties": {
+    "horizon": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "slice": {
+     "enum": [
+      "train",
+      "validation"
+     ]
+    },
+    "days": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "ic_mean": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "icir": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "periods": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "long_short_return": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ic": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "d",
+       "ic"
+      ],
+      "properties": {
+       "d": {
+        "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+       },
+       "ic": {
+        "oneOf": [
+         {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+         },
+         {
+          "type": "null"
+         }
+        ]
+       }
+      }
+     }
+    },
+    "long_short": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "d",
+       "period_return",
+       "cumulative"
+      ],
+      "properties": {
+       "d": {
+        "$ref": "urn:pulse:contracts:v3#/$defs/Date"
+       },
+       "period_return": {
+        "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+       },
+       "cumulative": {
+        "$ref": "urn:pulse:contracts:v3#/$defs/Decimal"
+       }
+      }
+     }
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "FactorSeriesStatus": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "state",
+    "reason",
+    "experiment_id",
+    "factor_id",
+    "job",
+    "series",
+    "worker_hint"
+   ],
+   "properties": {
+    "state": {
+     "enum": [
+      "ready",
+      "not_computed",
+      "queued",
+      "running",
+      "failed",
+      "no_experiment"
+     ]
+    },
+    "reason": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "experiment_id": {
+     "oneOf": [
+      {
+       "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "factor_id": {
+     "oneOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "job": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "job_run_id",
+        "run_state",
+        "error_code"
+       ],
+       "properties": {
+        "job_run_id": {
+         "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "run_state": {
+         "type": "string"
+        },
+        "error_code": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "series": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "version",
+        "computed_from",
+        "items"
+       ],
+       "properties": {
+        "version": {
+         "type": "string"
+        },
+        "computed_from": {
+         "type": "string"
+        },
+        "items": {
+         "type": "array",
+         "items": {
+          "$ref": "#/$defs/FactorSeriesOne"
+         }
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  },
+  "AnalogStudyRequest": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "idempotency_key",
+    "instrument_id",
+    "release_id",
+    "selection_policy_version"
+   ],
+   "properties": {
+    "idempotency_key": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 200
+    },
+    "instrument_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "release_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "selection_policy_version": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 80
+    }
+   }
+  },
+  "AnalogStatus": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "state",
+    "instrument_id",
+    "release_id",
+    "selection_policy_version",
+    "feature_key_hash",
+    "decision_as_of",
+    "job",
+    "study",
+    "worker_hint"
+   ],
+   "properties": {
+    "state": {
+     "enum": [
+      "ready",
+      "not_built",
+      "queued",
+      "running",
+      "failed"
+     ]
+    },
+    "instrument_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "release_id": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+    },
+    "selection_policy_version": {
+     "type": "string"
+    },
+    "feature_key_hash": {
+     "type": "string"
+    },
+    "decision_as_of": {
+     "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+    },
+    "job": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "job_run_id",
+        "run_state",
+        "error_code"
+       ],
+       "properties": {
+        "job_run_id": {
+         "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "run_state": {
+         "type": "string"
+        },
+        "error_code": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "study": {
+     "oneOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "snapshot_id",
+        "content_hash",
+        "horizon_sessions",
+        "neighbors"
+       ],
+       "properties": {
+        "snapshot_id": {
+         "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "content_hash": {
+         "type": "string"
+        },
+        "horizon_sessions": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "neighbors": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "worker_hint": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

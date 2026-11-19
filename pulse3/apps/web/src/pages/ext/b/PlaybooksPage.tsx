@@ -13,12 +13,15 @@ import type { Evaluation, Strategy } from '../../../api/types';
 import { Badge, GradeBadge, MissingText } from '../../../components/Badges';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../../../components/States';
 import { useToast } from '../../../components/Toast';
+import { BoardCells, BoardDetail, BoardHead, usePlaybookBoard } from '../../bf/fillr/BoardCells';
+import { CustomRunPanel } from '../../bf/fillr/CustomRunForm';
+import type { BoardItem } from '../../bf/fillr/api';
 import { ReplayPanel } from '../../bf/research/ReplayPanel';
 import { extB, explain, type ReplaySpec } from './api';
 import { CATALOG, dayInstant, metricPct, type PlaybookDef } from './helpers';
 import './ext-b.css';
 
-type Tab = 'library' | 'tactics';
+type Tab = 'library' | 'custom' | 'tactics';
 const HORIZON_TEXT: Record<string, string> = { short: '短线', swing: '波段', long: '长线' };
 const REQ_TEXT: Record<string, string> = {
   fundamentals_pit: '需要按发布时点保存的财务数据', sector_membership_history: '需要按时点保存的板块成员', instrument_name_history: '需要证券简称历史',
@@ -32,9 +35,10 @@ export function PlaybooksPage() {
       <SectionTitle title="战法库" hint="52 个战法都只是「已登记 · 未检验」的定义：旧站的回测数字不沿用。要获得状态，必须经过统一实验路径（封存评价上下文 + 执行内核回放 + 用户费用口径及 2 倍/3 倍压力 + 基准）。" />
       <div className="segmented" role="tablist">
         <button role="tab" aria-selected={tab === 'library'} className={tab === 'library' ? 'on' : ''} onClick={() => setTab('library')}>战法库</button>
+        <button role="tab" aria-selected={tab === 'custom'} className={tab === 'custom' ? 'on' : ''} onClick={() => setTab('custom')}>自定义回测</button>
         <button role="tab" aria-selected={tab === 'tactics'} className={tab === 'tactics' ? 'on' : ''} onClick={() => setTab('tactics')}>卖法与做T回放</button>
       </div>
-      {tab === 'library' ? <Library /> : <Tactics />}
+      {tab === 'library' ? <Library /> : tab === 'custom' ? <CustomRunPanel /> : <Tactics />}
     </div>
   );
 }
@@ -44,6 +48,7 @@ function Library() {
   const [horizon, setHorizon] = useState('');
   const [data, setData] = useState('');
   const [open, setOpen] = useState<string | null>(null);
+  const { query: boardQ, byPlaybook: boardBy, board } = usePlaybookBoard();
   const reg = useQuery({ queryKey: ['extb', 'registry'], queryFn: ({ signal }) => ops.listStrategies({ method_family: 'rule', role: 'selection' }, { signal }), staleTime: 30_000 });
   const byPlaybook = useMemo(() => {
     const m = new Map<string, Strategy>();
@@ -64,14 +69,16 @@ function Library() {
       {reg.isLoading && <Loading />}
       {reg.isError && <ErrorState error={reg.error} what="战法登记库" onRetry={() => reg.refetch()} />}
       {reg.isSuccess && byPlaybook.size === 0 && <EmptyState>登记库里还没有战法定义：先运行 <code>uv run python -m pulse.workers.research ext-b-register</code>。</EmptyState>}
+      {boardQ.isError && <ErrorState error={boardQ.error} what="战法适配度" onRetry={() => boardQ.refetch()} />}
+      {board && <p className="muted small">适配度 / 判定由服务器从已保存的回放计算（样本外 = 验证时段）：已评估 {board.counts.evaluated}，未回测 {board.counts.not_run}，缺数据 {board.counts.unavailable}，失败 {board.counts.failed}。当前环境：{board.regime_now.available ? `趋势 ${board.regime_now.trend ?? '缺失'} · 情绪 ${board.regime_now.sentiment ?? '缺失'}` : `缺失（${board.regime_now.reason}）`}。</p>}
       <table className="table playbooks">
-        <thead><tr><th>战法</th><th>类别</th><th>周期</th><th>持有</th><th>证据</th><th>数据</th><th /></tr></thead>
+        <thead><tr><th>战法</th><th>类别</th><th>周期</th><th>持有</th><th>证据</th><BoardHead /><th>数据</th><th /></tr></thead>
         <tbody>
           {list.map((p) => {
             const s = byPlaybook.get(p.id);
             const inst = s?.instances[0];
             return (
-              <FragmentRow key={p.id} p={p} s={s} lifecycle={inst?.lifecycle} open={open === p.id} onToggle={() => setOpen(open === p.id ? null : p.id)} />
+              <FragmentRow key={p.id} p={p} s={s} board={boardBy.get(p.id)} lifecycle={inst?.lifecycle} open={open === p.id} onToggle={() => setOpen(open === p.id ? null : p.id)} />
             );
           })}
         </tbody>
@@ -80,7 +87,7 @@ function Library() {
   );
 }
 
-function FragmentRow({ p, s, lifecycle, open, onToggle }: { p: PlaybookDef; s: Strategy | undefined; lifecycle: string | undefined; open: boolean; onToggle: () => void }) {
+function FragmentRow({ p, s, board, lifecycle, open, onToggle }: { p: PlaybookDef; s: Strategy | undefined; board: BoardItem | undefined; lifecycle: string | undefined; open: boolean; onToggle: () => void }) {
   return (
     <>
       <tr>
@@ -89,14 +96,16 @@ function FragmentRow({ p, s, lifecycle, open, onToggle }: { p: PlaybookDef; s: S
         <td>{HORIZON_TEXT[p.horizon]}</td>
         <td>{p.holding_days} 日{p.stop_loss_pct ? `，止损 ${p.stop_loss_pct}%` : ''}{p.trailing_stop_pct ? `，追踪 ${p.trailing_stop_pct}%` : ''}</td>
         <td><GradeBadge grade="untested" /> <span className="muted small">{lifecycle === 'specified' ? '已登记' : lifecycle ?? '未登记'}</span></td>
+        <BoardCells item={board} />
         <td>{p.requires.length ? <Badge tone="bad" title={p.requires.map((r) => REQ_TEXT[r] ?? r).join('；')}>缺数据</Badge> : <Badge tone="good">齐全</Badge>}</td>
         <td><Link to="/screen" className="small">去筛选</Link></td>
       </tr>
       {open && (
-        <tr className="detail"><td colSpan={7}>
+        <tr className="detail"><td colSpan={11}>
           <p>{p.rule}</p>
           <p className="muted small">来源：{p.source}。{p.requires.length ? `缺少：${p.requires.map((r) => REQ_TEXT[r] ?? r).join('；')}。实验会被记录为失败试验（data_not_available），不会编造结果。` : ''}</p>
           <div className="chips">{p.params.map((x) => <span key={x.key} className="chip">{x.label} {x.value}</span>)}<span className="chip">最多 {p.max_positions} 只</span></div>
+          <BoardDetail item={board} />
           {s ? <Experiments strategy={s} /> : <MissingText>未登记</MissingText>}
           {s && p.requires.length === 0 && <><h4>净值曲线与成交</h4><ReplayPanel catalogId={`PB:${p.id}`} /></>}
         </td></tr>

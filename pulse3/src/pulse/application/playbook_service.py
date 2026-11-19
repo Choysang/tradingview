@@ -32,6 +32,7 @@ from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import market_repo, research_repo, strategy_repo
 from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.postgres.jobs import PgJobStore
+from pulse.application import bf_fillm_caps as BFC
 from pulse.application import bf_research_service as BF
 from pulse.application import bindings as B
 from pulse.application import screen_service as S
@@ -202,14 +203,14 @@ def replay_context(conn: psycopg.Connection) -> dict:
                       for r in insts]})
 
 
-_TACTIC_JOBS_READY = False
+_TACTIC_JOBS_READY: set[tuple] = set()      # databases (host, port, name) already seeded by this process
 
 
 def ensure_jobs(conn: psycopg.Connection) -> None:
-    global _TACTIC_JOBS_READY
-    if not _TACTIC_JOBS_READY:
+    key = (conn.info.host, conn.info.port, conn.info.dbname)   # per database: one process may talk to several (tests, tools)
+    if key not in _TACTIC_JOBS_READY:
         seed_jobs(conn)
-        _TACTIC_JOBS_READY = True
+        _TACTIC_JOBS_READY.add(key)
 
 
 def seed_jobs(conn: psycopg.Connection) -> None:
@@ -358,12 +359,16 @@ def evaluate_playbook(conn: psycopg.Connection, lake: LakeStore, spec, pb: L.Pla
     for req in pb.requires:
         if req in PERMANENT_MISSING:
             raise DataUnavailable(f"data_not_available:{req}")
-        if req == "float_cap":
-            raise DataUnavailable("data_not_available:float_cap_history_not_point_in_time")
     panel0 = S.load_panel(conn, lake, spec.decision_as_of, with_caps=False)
     a, b, c = slice_bounds(panel0.sessions, spec)
     until = date.fromisoformat(panel0.sessions[c]) if c < len(panel0.sessions) else None
     panel = S.load_panel(conn, lake, spec.decision_as_of, until=until, board="main", with_caps=False) if until else panel0
+    if "float_cap" in pb.requires:           # cap versions known at each session (bf_fillm_caps); never the latest snapshot scaled back
+        panel, cap_cov = BFC.attach_pit_caps(conn, lake, panel)
+        if cap_cov.reason:
+            raise DataUnavailable(f"data_not_available:float_cap:{cap_cov.reason}")
+        if capture is not None:
+            capture["cap_coverage"] = cap_cov
     sessions = panel.sessions
     prepare(panel.views, sessions, [pb])
     sigs = {v.instrument_id: run_signal(pb, v, params) for v in panel.views}

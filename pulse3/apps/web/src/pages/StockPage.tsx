@@ -36,6 +36,7 @@ import { toChartNumber } from '../lib/decimal';
 import type { AdjustmentMode } from '../api/types';
 import type { SubPaneId } from './bf/stock/api';
 import { StockStatsCard } from './bf/stock/StockStatsCard';
+import { AnalogTab } from './bf/fillr/AnalogTab';
 import { SealFactsPanel } from './bf/live/SealClock';
 import { useStockIndicators } from './bf/stock/useStockIndicators';
 
@@ -64,6 +65,7 @@ export function StockPage() {
   const theme = useTheme();
   const toast = useToast();
   const [drawMode, setDrawMode] = useState(false);
+  const [lowerTab, setLowerTab] = useState<'evidence' | 'analog'>('evidence');
   const boll = layout.doc.panes.boll ?? false;
   const setBoll = (v: boolean) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, boll: v } });
   const tf = layout.doc.timeframe;
@@ -217,6 +219,11 @@ export function StockPage() {
           </section>
 
           <section className="card">
+            <div className="segmented" role="tablist" aria-label="证据与相似情景">
+              <button role="tab" aria-selected={lowerTab === 'evidence'} className={lowerTab === 'evidence' ? 'on' : ''} onClick={() => setLowerTab('evidence')}>四维证据</button>
+              <button role="tab" aria-selected={lowerTab === 'analog'} className={lowerTab === 'analog' ? 'on' : ''} onClick={() => setLowerTab('analog')}>相似情景</button>
+            </div>
+            {lowerTab === 'analog' ? <AnalogTab instrumentId={instrumentId} releaseId={wsReleaseId ?? null} /> : (<>
             <SectionTitle title="四个维度的证据" hint="消息、情绪、资金、龙虎榜各自独立呈现，不合成一个分数。" />
             <div className="segmented" role="tablist" aria-label="证据维度">
               {EVIDENCE_TABS.map((t) => <button key={t.key} role="tab" aria-selected={layout.doc.evidenceTab === t.key} className={layout.doc.evidenceTab === t.key ? 'on' : ''} onClick={() => layout.save({ ...layout.doc, evidenceTab: t.key })}>{t.label}</button>)}
@@ -226,6 +233,7 @@ export function StockPage() {
             {wsReleaseId && layout.doc.evidenceTab === 'community' && <CommunityTab instrumentId={instrumentId} releaseId={wsReleaseId} />}
             {wsReleaseId && layout.doc.evidenceTab === 'fund' && <FundTab instrumentId={instrumentId} releaseId={wsReleaseId} />}
             {wsReleaseId && layout.doc.evidenceTab === 'seats' && <SeatsTab instrumentId={instrumentId} releaseId={wsReleaseId} />}
+            </>)}
           </section>
         </div>
 

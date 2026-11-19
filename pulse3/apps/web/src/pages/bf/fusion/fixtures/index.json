@@ -1,0 +1,9 @@
+{
+ "status": "FusionStatus",
+ "scores": "FusionScores",
+ "books": "FusionBooks",
+ "experiments": "FusionExperiments",
+ "status-empty": "FusionStatus",
+ "scores-empty": "FusionScores",
+ "books-empty": "FusionBooks"
+}

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:fusion:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'fusion' (docs/LEGACY_TRIAGE.md batch 3): the frozen round-5 static40 score (main board), its two forward books and the forward experiments E068, E085 and E081. Every value is read from append-only datasets written by the daily step; the page only draws them. Ratios and NAVs are decimal strings, missing is null.",
+  "$defs": {
+    "DataFile": {
+      "type": "object", "additionalProperties": false, "required": ["file", "sha256"],
+      "properties": {"file": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+    },
+    "Preregistration": {
+      "type": "object", "additionalProperties": false, "required": ["key", "ledger_id", "document", "sha256"],
+      "properties": {
+        "key": {"enum": ["main", "h10", "monitor", "x20", "os20"]},
+        "ledger_id": {"type": "string"}, "document": {"type": "string"},
+        "sha256": {"oneOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]}
+      }
+    },
+    "DatasetSpan": {
+      "type": "object", "additionalProperties": false, "required": ["rows", "dates", "first_date", "last_date"],
+      "properties": {
+        "rows": {"type": "integer", "minimum": 0}, "dates": {"type": "integer", "minimum": 0},
+        "first_date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "last_date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]}
+      }
+    },
+    "RunInfo": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "written_on", "status", "code", "detail", "session", "seconds", "peak_memory_mb"],
+      "properties": {
+        "run_id": {"type": "string"}, "written_on": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "status": {"enum": ["done", "stopped"]},
+        "code": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "detail": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "session": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "seconds": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "peak_memory_mb": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "BookStatus": {
+      "type": "object", "additionalProperties": false, "required": ["key", "last_date", "rows"],
+      "properties": {"key": {"enum": ["main", "h10"]}, "rows": {"type": "integer", "minimum": 0},
+                     "last_date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]}}
+    },
+    "FusionStatus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["score_name", "implementation", "current", "asof", "last_run", "books", "frozen_data", "preregistrations"],
+      "properties": {
+        "score_name": {"type": "string"}, "implementation": {"type": "string"},
+        "current": {"$ref": "#/$defs/DatasetSpan"}, "asof": {"$ref": "#/$defs/DatasetSpan"},
+        "last_run": {"oneOf": [{"$ref": "#/$defs/RunInfo"}, {"type": "null"}]},
+        "books": {"type": "array", "items": {"$ref": "#/$defs/BookStatus"}},
+        "frozen_data": {"type": "array", "items": {"$ref": "#/$defs/DataFile"}},
+        "preregistrations": {"type": "array", "items": {"$ref": "#/$defs/Preregistration"}}
+      }
+    },
+    "ScoreRow": {
+      "type": "object", "additionalProperties": false, "required": ["rank", "code", "display_name", "score"],
+      "properties": {
+        "rank": {"type": "integer", "minimum": 1}, "code": {"type": "string"},
+        "display_name": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+        "score": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}
+      }
+    },
+    "FusionScores": {
+      "type": "object", "additionalProperties": false, "required": ["date", "kind", "available_dates", "rule", "rows"],
+      "properties": {
+        "date": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, {"type": "null"}]},
+        "kind": {"oneOf": [{"enum": ["asof", "current"]}, {"type": "null"}]},
+        "available_dates": {"type": "array", "items": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}},
+        "rule": {"type": "string"},
+        "rows": {"type": "array", "items": {"$ref": "#/$defs/ScoreRow"}}
+      }
+    },
+    "BookRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["date", "gate_w", "new_buys_allowed", "try_buy", "offer_top10", "holdings", "nav", "ungated_nav", "nav_since_freeze_pct", "scores_sha256_16"],
+      "properties": {
+        "date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "gate_w": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "new_buys_allowed": {"type": "integer", "minimum": 0},
+        "try_buy": {"type": "array", "items": {"type": "string"}},
+        "offer_top10": {"type": "array", "items": {"type": "string"}},
+        "holdings": {"type": "array", "items": {"type": "string"}},
+        "nav": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "ungated_nav": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "nav_since_freeze_pct": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "scores_sha256_16": {"type": "string"}
+      }
+    },
+    "Book": {
+      "type": "object", "additionalProperties": false, "required": ["key", "label", "rule", "ledger_id", "rows"],
+      "properties": {
+        "key": {"enum": ["main", "h10"]}, "label": {"type": "string"}, "rule": {"type": "string"}, "ledger_id": {"type": "string"},
+        "rows": {"type": "array", "items": {"$ref": "#/$defs/BookRow"}}
+      }
+    },
+    "FusionBooks": {
+      "type": "object", "additionalProperties": false, "required": ["books"],
+      "properties": {"books": {"type": "array", "items": {"$ref": "#/$defs/Book"}}}
+    },
+    "MonitorRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["date", "n", "ic", "decile_spread", "top_ex", "top_sv", "flagged", "coverage_fail_days"],
+      "properties": {
+        "date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}, "n": {"type": "integer", "minimum": 0},
+        "ic": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, "decile_spread": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "top_ex": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, "top_sv": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "flagged": {"type": "boolean"}, "coverage_fail_days": {"type": "array", "items": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}}
+      }
+    },
+    "BasketRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["date", "x20", "ew", "excess_pct", "n_x20", "n_ew", "trade_day", "turnover_x20", "turnover_ew"],
+      "properties": {
+        "date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "x20": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, "ew": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "excess_pct": {"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"},
+        "n_x20": {"type": "integer", "minimum": 0}, "n_ew": {"type": "integer", "minimum": 0}, "trade_day": {"type": "boolean"},
+        "turnover_x20": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "turnover_ew": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "Os20Group": {
+      "type": "object", "additionalProperties": false, "required": ["group", "n", "ex", "raw"],
+      "properties": {
+        "group": {"enum": ["OS20_GAP", "OS20_NOGAP", "OS5_GAP"]}, "n": {"type": "integer", "minimum": 0},
+        "ex": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "raw": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]}
+      }
+    },
+    "Os20Row": {
+      "type": "object", "additionalProperties": false, "required": ["date", "mkt20", "flagged", "coverage_fail_days", "groups"],
+      "properties": {
+        "date": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"},
+        "mkt20": {"oneOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "null"}]},
+        "flagged": {"type": "boolean"}, "coverage_fail_days": {"type": "array", "items": {"$ref": "urn:pulse:contracts:v3#/$defs/Date"}},
+        "groups": {"type": "array", "items": {"$ref": "#/$defs/Os20Group"}}
+      }
+    },
+    "SummaryValue": {
+      "anyOf": [{"$ref": "urn:pulse:contracts:v3#/$defs/Decimal"}, {"type": "integer"}, {"type": "boolean"}, {"type": "string"}, {"type": "null"}]
+    },
+    "ExperimentHead": {
+      "type": "object", "required": ["key", "label", "ledger_id", "document", "document_sha256", "summary"],
+      "properties": {
+        "key": {"enum": ["monitor", "x20", "os20"]}, "label": {"type": "string"}, "ledger_id": {"type": "string"}, "document": {"type": "string"},
+        "document_sha256": {"oneOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+        "summary": {"type": "object", "additionalProperties": {"$ref": "#/$defs/SummaryValue"}}
+      }
+    },
+    "MonitorExperiment": {
+      "allOf": [{"$ref": "#/$defs/ExperimentHead"}, {"type": "object", "required": ["rows"],
+        "properties": {"key": {"const": "monitor"}, "rows": {"type": "array", "items": {"$ref": "#/$defs/MonitorRow"}}}}]
+    },
+    "BasketExperiment": {
+      "allOf": [{"$ref": "#/$defs/ExperimentHead"}, {"type": "object", "required": ["rows"],
+        "properties": {"key": {"const": "x20"}, "rows": {"type": "array", "items": {"$ref": "#/$defs/BasketRow"}}}}]
+    },
+    "Os20Experiment": {
+      "allOf": [{"$ref": "#/$defs/ExperimentHead"}, {"type": "object", "required": ["rows"],
+        "properties": {"key": {"const": "os20"}, "rows": {"type": "array", "items": {"$ref": "#/$defs/Os20Row"}}}}]
+    },
+    "FusionExperiments": {
+      "type": "object", "additionalProperties": false, "required": ["experiments"],
+      "properties": {"experiments": {"type": "array", "items": {"oneOf": [
+        {"$ref": "#/$defs/MonitorExperiment"}, {"$ref": "#/$defs/BasketExperiment"}, {"$ref": "#/$defs/Os20Experiment"}]}}}
+    }
+  }
+}

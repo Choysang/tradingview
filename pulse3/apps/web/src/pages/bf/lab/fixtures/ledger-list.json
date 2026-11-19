@@ -1,0 +1,237 @@
+{
+ "ledger": {
+  "ledger_sha256": "b493b767ded4fc7a1a7fff9ce0420b68511f94120c6d1f9a4f2bf57e73f170e1",
+  "label": "2026-11-09",
+  "entry_count": 92,
+  "imported_at": "2026-11-17T08:00:00Z",
+  "import_ref": "lab-ledger-import:0123456789abcdef0123456789abcdef01234567",
+  "is_latest": true,
+  "source_file": "docs/research/ledger/experiments.jsonl"
+ },
+ "empty_reason": null,
+ "counts": {
+  "total": 92,
+  "by_verdict": {
+   "works": 16,
+   "mixed": 21,
+   "inconclusive": 27,
+   "fails": 28
+  },
+  "by_track": {
+   "data": 12,
+   "factor": 6,
+   "fusion": 13,
+   "hedge": 2,
+   "hot_money": 10,
+   "llm": 7,
+   "mining": 4,
+   "pattern": 3,
+   "regime": 7,
+   "rl": 1,
+   "rotation": 3,
+   "style": 1,
+   "theme": 4,
+   "timing": 15,
+   "traditional": 4
+  }
+ },
+ "matched": 92,
+ "offset": 0,
+ "limit": 7,
+ "next_offset": 7,
+ "entries": [
+  {
+   "id": "E001",
+   "date": "2026-11-01",
+   "round": "5",
+   "track": "llm",
+   "name": "大模型匿名卡片直接选股（gpt-6.1-terra，600 次）",
+   "hypothesis": "模型看量价与基本面摘要能判断 5 日超额",
+   "config": "20 个交易日 × 30 只，卡片无代码、名称、日期，推理强度 high",
+   "results": {
+    "2026-07~10": "IC +0.072（t 0.95）；13 次 buy 平均 +3.2%（t 2.2）"
+   },
+   "verdict": "inconclusive",
+   "why": "分数与 20 日动量相关 +0.39，在动量为负的时期追强势股；卡片去掉了新闻",
+   "regime": "7 月起转熊，动量因子为负",
+   "reactivate_when": "加入当日以前的公告与新闻（第 6 轮 PIT 新闻语料）；或动量为正的上涨期",
+   "artifacts": [
+    "scripts/lab/llm_judge.py",
+    "docs/research/2026-11-01-round5-fusion.md#1"
+   ],
+   "supersedes": [],
+   "superseded_by": [
+    "E025"
+   ],
+   "caveat": null,
+   "retired_families": []
+  },
+  {
+   "id": "E003",
+   "date": "2026-11-01",
+   "round": "5",
+   "track": "traditional",
+   "name": "传统战法 75 条（统一持有 5 日）",
+   "hypothesis": "网传与冠军战法有超额",
+   "config": "信号次日开盘买，持 5 日，0.2% 成本，按日聚类 t，BH q=0.10",
+   "results": {
+    "PRE": "0/75 通过",
+    "SELECT": "0/75",
+    "VERIFY": "0/75"
+   },
+   "verdict": "fails",
+   "why": "统一持有 5 日、不带原作者的止损止盈，对部分战法不公平；阈值多为常见写法；BH 0 条也可能是统计力不足",
+   "regime": "牛转熊",
+   "reactivate_when": "按原作者的持有期与止损重测（第 6 轮）",
+   "artifacts": [
+    "scripts/lab/trad_battery.py"
+   ],
+   "supersedes": [],
+   "superseded_by": [
+    "E033"
+   ],
+   "caveat": null,
+   "retired_families": [
+    "traditional_batteries"
+   ]
+  },
+  {
+   "id": "E004",
+   "date": "2026-11-01",
+   "round": "5",
+   "track": "factor",
+   "name": "行为金融因子（显著性、注意力、隔夜减日内、CGO、彩票偏好）",
+   "hypothesis": "人性偏差造成的错误定价跨周期存在",
+   "config": "5 日排名 IC，NW t",
+   "results": {
+    "PRE": "SALIENCE −0.065、ATTN −0.057、TOW +0.057、CGO −0.042",
+    "SELECT": "−0.149、−0.104、+0.124、−0.152"
+   },
+   "verdict": "works",
+   "why": "牛熊两段同向显著",
+   "regime": "牛与转熊都有效",
+   "reactivate_when": "常驻",
+   "artifacts": [
+    "scripts/lab/zoo.py"
+   ],
+   "supersedes": [],
+   "superseded_by": [],
+   "caveat": null,
+   "retired_families": []
+  },
+  {
+   "id": "E019",
+   "date": "2026-11-01",
+   "round": "5",
+   "track": "data",
+   "name": "前复权价格水平的前视",
+   "hypothesis": "仓库只有前复权价，价格、成交额水平类因子带后来分红送转的信息",
+   "config": "随机缩放检验：价格与成交额 k∈[0.5,1]，市值 k∈[0.9,1]，排名相关 ≥ 0.98 为安全",
+   "results": {
+    "挖掘池": "428 个中 396 个安全",
+    "例子": "AMIHUD20 0.9796 不安全，SIZE 0.9995 安全"
+   },
+   "verdict": "works",
+   "why": "比率类因子不受影响，水平类部分受影响",
+   "regime": "数据问题，与市场无关",
+   "reactivate_when": "长期修复：在服务器补复权因子",
+   "artifacts": [
+    "scripts/lab/tengine.py#level_safe"
+   ],
+   "supersedes": [],
+   "superseded_by": [
+    "E022"
+   ],
+   "caveat": null,
+   "retired_families": []
+  },
+  {
+   "id": "E022",
+   "date": "2026-11-01",
+   "round": "6",
+   "track": "data",
+   "name": "复权安全版融合（剔除 32 个前视水平因子，全市场）",
+   "hypothesis": "前复权水平类因子的前视会虚高回测",
+   "config": "396/428 个挖掘因子通过随机缩放检验；稳定加权 40；候选 40、20 仓、持 5 日",
+   "results": {
+    "PRE": "+103%（原 +123%）",
+    "SELECT": "+13.86%（原 +20.95%）",
+    "VERIFY": "−10.14%（原 −11.59%），每笔超额 +0.98（t 1.67）"
+   },
+   "verdict": "works",
+   "why": "前视有影响但不改变结论；后续默认用安全版",
+   "regime": "全段",
+   "reactivate_when": "常驻",
+   "artifacts": [
+    "scripts/lab/fusion.py",
+    "scripts/lab/tengine.py#level_safe"
+   ],
+   "supersedes": [
+    "E019"
+   ],
+   "superseded_by": [],
+   "caveat": null,
+   "retired_families": []
+  },
+  {
+   "id": "E036",
+   "date": "2026-11-01",
+   "round": "6",
+   "track": "timing",
+   "name": "WCTC 净值均线降仓（交易层面，主板主方案）",
+   "hypothesis": "净值跌破自身 20 日均线时新买入降到 3 成，能在真实撮合下减少熊市亏损",
+   "config": "curve_gate.py；降仓依据为前一日收盘时不降仓账户的净值；harness exposure 修正为只保留前 round(w*每日买入数) 只",
+   "results": {
+    "40 因子 PRE": "+59.6%（原 +47.2%），回撤 −9.4%（原 −19.5%），降仓日 24%",
+    "40 因子 SELECT": "+21.8%，未触发",
+    "40 因子 VERIFY": "−0.2%（原 −9.7%），回撤 −4.6%，降仓日 39%",
+    "10 因子": "PRE +67.5% / SELECT +15.0% / VERIFY −2.0%"
+   },
+   "verdict": "works",
+   "why": "亏损段里账户净值先走弱，降低新买入就少接下跌；参数取自 WCTC 做法未调参，但从 3 种风险流程中选了最好的",
+   "regime": "牛市（PRE）与熊市（9~10 月）都改善；7~8 月不触发",
+   "reactivate_when": "常驻；11 月起前向记录验证",
+   "artifacts": [
+    "scripts/lab/curve_gate.py",
+    "scripts/lab/harness.py",
+    ".work/lab/queue/0041_f_gate2.log"
+   ],
+   "supersedes": [
+    "E034"
+   ],
+   "superseded_by": [],
+   "caveat": null,
+   "retired_families": []
+  },
+  {
+   "id": "E048",
+   "date": "2026-11-01",
+   "round": "8",
+   "track": "hot_money",
+   "name": "P0 拉萨席位与一日游席位衰减（D+1 开盘买，D+5 / D+10 收盘卖）",
+   "hypothesis": "龙虎榜上拉萨系买入席位扎堆（3 家以上）或出现一日游席位的股票，之后 5~10 日系统性跑输，可作主书的风险信号",
+   "config": "主板可交易股；席位来自服务器仓库副本（59 万行，2023-10-31~2026-10-30）；拉萨 = 买方席位名含'拉萨'，按席位去重计数；一日游席位 = 后端 crowd._seats 的 PIT 评分（5 次以上已结算买入中 60% 次日卖出）；超额相对同日主板可交易均值；剔除 D+1 一字开盘；按日期聚类 t；scripts/lab/lhasa.py，.work/lab/main/lhasa.json",
+   "results": {
+    "拉萨 3+（全期 3126 次）": "次日跳空 −3.15%；D+1 开盘买 D+5 −2.52%（t −9.5），D+10 −3.84%（t −10.3）",
+    "拉萨 1~2（6262 次）": "跳空 −2.16%；D+5 −2.02%，D+10 −3.28%",
+    "上榜无拉萨（16390 次）": "跳空 +0.10%；D+5 −1.37%，D+10 −2.29%",
+    "一日游席位 1+（100 次）": "D+5 −4.54%（t −3.3），D+10 −6.16%（t −4.4）；去掉拉萨后 64 次仍 −4.32% / −5.42%",
+    "分期": "拉萨 3+ D+10：PRE −3.86%、SELECT −4.11%（39 次）、VERIFY −1.03%（25 次，不显著）；拉萨 1~2 三段 −3.2% / −3.7% / −4.7%"
+   },
+   "verdict": "works",
+   "why": "拉萨扎堆与一日游席位之后 5~10 日稳定跑输，且远差于上榜无拉萨；上榜本身也偏负。风险信号成立，但它在晚上才公布，只能管 D+1 及以后的持仓",
+   "regime": "2023-11~2026-10 主板",
+   "reactivate_when": "常驻：接入主书，对持仓与次日候选降权或剔除（待批准后做组合级回测）",
+   "artifacts": [
+    "scripts/lab/lhasa.py",
+    ".work/lab/main/lhasa.json",
+    ".work/lab/queue/0061_p0_lhasa6.log"
+   ],
+   "supersedes": [],
+   "superseded_by": [],
+   "caveat": "事件窗口重叠，按日期聚类的 t 仍偏高；一日游席位 2+ 三年只出现 1 次",
+   "retired_families": []
+  }
+ ],
+ "note": "这是旧实验室留下的历史记录，只读；它们不是 pulse3 的实验（pulse3 的试验先登记、后运行）。"
+}

@@ -4,6 +4,7 @@
  * computed on the server from the stored replay and only drawn here. Missing is shown as 缺失 / —, never 0; a regime cell below the
  * sample gate is faded and flagged 样本不足. An experiment without a stored replay says so and how to produce one.
  */
+import { TearSheetCard } from '../lab/TearSheetCard';
 import { useQuery } from '@tanstack/react-query';
 import { ApiError } from '../../../api/client';
 import { Badge, MissingText } from '../../../components/Badges';
@@ -24,7 +25,13 @@ export function ReplayPanel({ catalogId, tradesLimit = 30 }: { catalogId: string
     }
     return <ErrorState error={q.error} what="回放结果" onRetry={() => q.refetch()} />;
   }
-  return <ReplayView data={q.data!.data} />;
+  return (
+    <>
+      <ReplayView data={q.data!.data} />
+      <h4>回测体检表</h4>
+      <TearSheetCard source={{ catalogId }} />
+    </>
+  );
 }
 
 export function ReplayView({ data }: { data: PlaybookReplay }) {

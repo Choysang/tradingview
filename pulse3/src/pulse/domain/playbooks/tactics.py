@@ -21,7 +21,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pulse.domain.execution import (NO_FILL_QUEUE, BacktestReplay, DailyBarMatcher, ExecutionKernel, HoldComparison, Leg, LedgerReducer,
                                     LegPlan, LegPlanStrategy, PathScenario, compare_with_hold)
 from pulse.domain.execution.numeric import MARKET_TIMEZONE
-from pulse.domain.market_rules import CostProfile, CostProfileRegistry, ExplicitCalendar, InstrumentSpec
+from pulse.domain.market_rules import CostProfile, CostProfileRegistry, ExplicitCalendar, forward_days, InstrumentSpec
 
 from .exits import ExitRules
 from .replay import MATCHER_PARTICIPATION, ReplayConfig, ReplayResult, _bar, d4, replay
@@ -85,7 +85,7 @@ def run_intraday_t(*, mode: str, up_pct: float, rebuy_pct: float, share: float, 
     pos = opening_positions(views, sessions, start, lots)
     initial = {"trading_day": sessions[start], "opening_cash": str(cash), "positions": pos, "sale_proceeds_reusable": True}
     ledger = LedgerReducer(**initial)
-    tail = [days[-1] + timedelta(days=k) for k in range(1, 11) if (days[-1] + timedelta(days=k)).weekday() < 5]
+    tail, _assumed = forward_days(days[-1], 10)
     kernel = ExecutionKernel(ledger, dict(specs), ExplicitCalendar(days + tail), CostProfileRegistry((profile,)))
     matcher = DailyBarMatcher(MATCHER_PARTICIPATION)
     index = {iid: {d: k for k, d in enumerate(v.dates)} for iid, v in views.items()}

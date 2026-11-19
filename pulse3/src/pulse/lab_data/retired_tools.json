@@ -1,0 +1,106 @@
+{
+  "version": "retired-tools-v1",
+  "source": "docs/LEGACY_TRIAGE.md, batch 3, table \"Retired research tools\" (2026-11-17). The code of these tools is not ported; the finding stays in the imported ledger.",
+  "families": [
+    {
+      "family_id": "traditional_batteries",
+      "name": "Traditional rule batteries, Sequoia audit, exit-only tests",
+      "tools": ["trad_battery", "trad_exits", "sequoia_audit", "exit_tails", "trullas_div"],
+      "ledger_ids": ["E003", "E033", "E058", "E060"],
+      "also_see": ["E062"],
+      "old_rows": [],
+      "reason": "Fail against the same-day matched baseline (E062).",
+      "reason_zh": "与同日匹配基准相比不成立（E062）。"
+    },
+    {
+      "family_id": "playbook_rotation",
+      "name": "Playbook rotation and selection",
+      "tools": ["strategy_panel", "style_switch", "analog_select"],
+      "ledger_ids": ["E005", "E006", "E035", "E042"],
+      "also_see": [],
+      "old_rows": [22, 152],
+      "reason": "Fail; the regime timeline itself is ported (domain/market_state/regime.py). Old rows: #22, and the rotation part of #152.",
+      "reason_zh": "不成立；市场环境时间线本身已移植（domain/market_state/regime.py）。旧功能行：#22，以及 #152 的轮动部分。"
+    },
+    {
+      "family_id": "leader_cycle_simulations",
+      "name": "Leader-cycle simulations",
+      "tools": ["replay", "cycles", "claims_check", "b1_regime"],
+      "ledger_ids": ["E027", "E030", "E037", "E038", "E054"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail on daily bars; reactivation needs intraday matching, which the paper replay covers.",
+      "reason_zh": "日线上不成立；重启需要分时撮合，纸面回放已覆盖。"
+    },
+    {
+      "family_id": "market_gates_calendar",
+      "name": "Market-wide gates and calendar clustering",
+      "tools": ["exposure breadth gate", "regime.py clustering", "r7_2 scaling"],
+      "ledger_ids": ["E018", "E020", "E044"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail.",
+      "reason_zh": "不成立。"
+    },
+    {
+      "family_id": "us_overnight",
+      "name": "US overnight",
+      "tools": ["overnight_us", "hist_index_events US drop"],
+      "ledger_ids": ["E072", "E084"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail.",
+      "reason_zh": "不成立。"
+    },
+    {
+      "family_id": "stock_level_rl",
+      "name": "Stock-level reinforcement learning",
+      "tools": ["rl_fqi"],
+      "ledger_ids": ["E015"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail.",
+      "reason_zh": "不成立。"
+    },
+    {
+      "family_id": "short_window_mining",
+      "name": "Short-window mining, factor registry rerun, Chan pattern fix",
+      "tools": ["gp_mine window", "registry", "p0_patterns PIT"],
+      "ledger_ids": ["E010", "E047", "E061"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail.",
+      "reason_zh": "不成立。"
+    },
+    {
+      "family_id": "vetoes_turnover_variants",
+      "name": "Vetoes and turnover variants",
+      "tools": ["overbought_veto", "neg_veto_bite", "rank_buffer", "random_controls", "llm_reverse"],
+      "ledger_ids": ["E063", "E064", "E066", "E079", "E080"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Fail.",
+      "reason_zh": "不成立。"
+    },
+    {
+      "family_id": "one_off_data_ops",
+      "name": "One-off data and ops scripts",
+      "tools": ["backfill_index_day", "ann_fetch", "ext_daily", "export_*"],
+      "ledger_ids": ["E069", "E087", "E090"],
+      "also_see": [],
+      "old_rows": [],
+      "reason": "Done once; the data now comes through pulse3 sources.",
+      "reason_zh": "只需做一次；数据现在经 pulse3 的数据源进入。"
+    },
+    {
+      "family_id": "descriptive_studies",
+      "name": "Descriptive studies",
+      "tools": ["calendar_effects", "macro_events", "etf_surge", "zodiac", "demon", "theme_check", "cninfo_industry"],
+      "ledger_ids": ["E021", "E026", "E028", "E052", "E073", "E074", "E083"],
+      "also_see": ["E089"],
+      "old_rows": [],
+      "reason": "Descriptive only; the forward rules they suggest are E089 (ported) or wait for a pre-registration.",
+      "reason_zh": "只是描述性研究；它们提示的前向规则是 E089（已移植），或等待预注册。"
+    }
+  ]
+}

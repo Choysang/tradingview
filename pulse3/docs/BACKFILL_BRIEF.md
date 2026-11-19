@@ -47,3 +47,23 @@ browser only draws them.
   not fix it.
 - Final report: files changed, commands with exit codes and test counts, which triage rows (#) are done and how
   they were verified, what is not done.
+
+## Batch 3 (research tools) additions
+
+Lanes: `lab`, `fwdlog`, `fusion` (see `docs/LEGACY_TRIAGE.md`, batch 3). Each lane owns `routes_bf_<lane>.py`,
+`backfill_<lane>.schema.json`, `src/pulse/application/bf_<lane>_service.py` (more modules under its own names are fine),
+`src/pulse/workers/<lane>.py` for its CLI, `tests/bf_<lane>/`, `apps/web/src/pages/bf/<lane>/`.
+
+- The old lab scripts and the pre-registration documents are the SPECIFICATION of a ported tool. Read them to learn the
+  exact rules; do not import them, do not copy their code. Frozen inputs that are data (factor expression strings, the mined
+  pool JSON, AlphaGen expressions, seed lists, thresholds) are copied into `src/pulse/<lane>_data/` (or under the lane's
+  package) with their sha256 recorded in a manifest file and in the test.
+- A forward experiment keeps its pre-registered rules unchanged. It is registered in the pulse3 research registry
+  (`domain/research/experiments.py`, purpose `shadow`) with the pre-registration document's sha256.
+- Reconciliation is the acceptance test: a tool `reconcile` command compares pulse3 output with the old output file for every
+  common day and prints each difference with a reason. Unexplained differences = not done.
+- Old outputs for reconciliation: PC `.work/lab/live/*.jsonl|parquet`, `.work/lab/main/`; server `C:\pulse\logs`,
+  `C:\pulse\data\...`. `.work/` and server paths are private: never commit their content, never publish it.
+- Server budget: 2 CPU, 8 GB RAM shared with PostgreSQL and two web apps. A daily step must stay under 2.5 GB and 30 min.
+- Do not edit `deploy/windows/*.ps1`, `app.py`, `App.tsx`, `Shell.tsx`, `routes/*.tsx`: report the daily step and the
+  route you need; the integrator wires them.

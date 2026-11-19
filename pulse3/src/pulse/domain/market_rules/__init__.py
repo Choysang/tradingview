@@ -5,7 +5,7 @@ dates, not as strategy constants. Pure domain code (no IO).
 Invariants: every lookup is deterministic for (instrument, date); unverified
 combinations raise instead of guessing. Not covered: see each module docstring.
 """
-from .calendar import ExplicitCalendar, TradingCalendar, WeekdayOnlyCalendar
+from .calendar import ExplicitCalendar, TradingCalendar, WeekdayOnlyCalendar, forward_days
 from .costs import (CostEngine, CostProfile, CostProfileRegistry, FeeIncrement, FeeRule,
                     a_share_documented_partial, synthetic_fixed_fee)
 from .instruments import Board, Exchange, InstrumentKind, InstrumentSpec, UnsupportedInstrument
@@ -20,6 +20,6 @@ __all__ = [
     "FeeIncrement", "FeeRule", "InstrumentKind", "InstrumentSpec", "LOT_RULES_VERSION",
     "MARKET_RULES_VERSION", "PRICE_LIMIT_RULES_VERSION", "PriceBand", "PriceLimitRegistry",
     "PriceLimitRule", "RuleNotVerified", "TradingCalendar", "UnsupportedInstrument",
-    "WeekdayOnlyCalendar", "a_share_documented_partial", "eligible_on_for_buy", "lot_step",
+    "WeekdayOnlyCalendar", "forward_days", "a_share_documented_partial", "eligible_on_for_buy", "lot_step",
     "synthetic_fixed_fee", "validate_quantity",
 ]
