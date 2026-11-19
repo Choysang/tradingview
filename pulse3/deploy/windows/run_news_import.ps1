@@ -18,14 +18,19 @@ function Step($name, [string[]]$argv) {
     if ($LASTEXITCODE -ne 0) { Add-Content $log "!! $name failed exit $LASTEXITCODE"; return $false }
     return $true
 }
+# After the cutover the native news recorder stores documents and claims itself; only the scan and delivery run here.
+if (-not $cutover) {
 $null = Step 'legacy-news-prev' @('-m', 'pulse.workers.ingest', 'legacy-news', '--date', $prev)
 $ok = Step 'legacy-news' @('-m', 'pulse.workers.ingest', 'legacy-news', '--date', $day)
+}
 # the scan reads claims only; running it after a failed import still picks up claims that earlier runs produced
 $null = Step 'alerts-scan' @('-m', 'pulse.workers.alerts', 'scan')
 # delivery: in-app always; webhook only when pulse3 has its own push address configured (during the parallel run the old
 # system keeps pushing to the phone, so pulse3 leaves PULSE_PUSH_WEBHOOK unset to avoid duplicate messages)
 $null = Step 'alerts-deliver' @('-m', 'pulse.workers.alerts', 'deliver')
+if (-not $cutover) {
 $null = Step 'legacy-guba-prev' @('-m', 'pulse.workers.ingest', 'legacy-guba', '--date', $prev)
 $null = Step 'legacy-guba' @('-m', 'pulse.workers.ingest', 'legacy-guba', '--date', $day)
 $null = Step 'legacy-alerts-prev-comparison' @('-m', 'pulse.workers.ingest', 'legacy-alerts', '--date', $prev)
 $null = Step 'legacy-alerts-comparison' @('-m', 'pulse.workers.ingest', 'legacy-alerts', '--date', $day)
+}

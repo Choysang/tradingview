@@ -21,7 +21,14 @@ $venv = "$root\app\.venv"
 if (Test-Path "$root\app") { Get-ChildItem "$root\app" -Exclude '.venv' | Remove-Item -Recurse -Force }
 Expand-Archive "$in\app.zip" -DestinationPath "$root\app" -Force
 Set-Location "$root\app"
-$rc = Native { & $uv sync --frozen --no-dev --python 'C:\pulse\tools\python\cpython-3.13.15-windows-x86_64-none\python.exe' }
+# Own copies of uv and the interpreter (#203): copied once from C:\pulse\tools (read only there), then used from C:\pulse3\tools.
+if (-not (Test-Path "$tools\uv.exe") -and (Test-Path 'C:\pulse\tools\uv.exe')) {
+    New-Item -ItemType Directory -Force $tools | Out-Null
+    Copy-Item 'C:\pulse\tools\uv.exe' "$tools\uv.exe"
+    Copy-Item 'C:\pulse\tools\python' "$tools\python" -Recurse
+    $uv = "$tools\uv.exe"; $basepy = "$tools\$pyrel"
+}
+$rc = Native { & $uv sync --frozen --no-dev --python $basepy }
 if ($rc[-1] -ne 0) { throw "uv sync failed" }
 
 $bin = "$root\pg18\pgsql\bin"
@@ -45,7 +52,7 @@ $rc = Native { & "$root\app\.venv\Scripts\python.exe" -m pulse.workers.lab impor
 if ($rc[-1] -ne 0) { throw "ledger import failed" }
 Remove-Item Env:PGPASSWORD
 
-Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\run_intraday_import.ps1", "$root\app\deploy\windows\run_news_import.ps1", "$root\app\deploy\windows\run_fwdlog.ps1", "$root\app\deploy\windows\run_jobs.ps1", "$root\app\deploy\windows\run_tape.ps1", "$root\app\deploy\windows\run_weekly.ps1", "$root\app\deploy\windows\pulse3_env.ps1" $root -Force
+Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\run_intraday_import.ps1", "$root\app\deploy\windows\run_news_import.ps1", "$root\app\deploy\windows\run_fwdlog.ps1", "$root\app\deploy\windows\run_jobs.ps1", "$root\app\deploy\windows\run_tape.ps1", "$root\app\deploy\windows\run_weekly.ps1", "$root\app\deploy\windows\set_openai_key.ps1", "$root\app\deploy\windows\cutover.ps1", "$root\app\deploy\windows\run_intraday_record.ps1", "$root\app\deploy\windows\run_ext_record.ps1", "$root\app\deploy\windows\run_news_record.ps1", "$root\app\deploy\windows\run_refdata.ps1", "$root\app\deploy\windows\run_sync_jobs.ps1", "$root\app\deploy\windows\pulse3_env.ps1" $root -Force
 $ps = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Get-ScheduledTask -TaskName Pulse3Api -ErrorAction SilentlyContinue)) {
     $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_api.ps1"

@@ -20,7 +20,7 @@ $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--s
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).
 if ($ok) { $ok = Step 'live-daily-universe' @('-m', 'pulse.workers.ingest', 'live-daily', '--universe', '--source', 'sina', '--count', '10') }
-if ($ok) { $null = Step 'intel-news' @('-m', 'pulse.workers.intel', 'news', '--source', 'both', '--pages', '2') }
+if ($ok -and -not $cutover) { $null = Step 'intel-news' @('-m', 'pulse.workers.intel', 'news', '--source', 'both', '--pages', '2') }
 if ($ok) { $null = Step 'intel-claims' @('-m', 'pulse.workers.intel', 'claims') }
 if ($ok) { $null = Step 'intel-seats' @('-m', 'pulse.workers.intel', 'seats', '--days', '2') }
 if ($ok) { $ok = Step 'analysis-daily' @('-m', 'pulse.workers.analysis', 'daily') }
@@ -36,7 +36,7 @@ if ($ok) { $null = Step 'outcomes' @('-m', 'pulse.workers.analysis', 'outcomes')
 # titles; index-futures and option expiries for this month and the next.
 $null = Step 'calendar-sync' @('-m', 'pulse.workers.alerts', 'calendar-sync', '--days', '60')
 $null = Step 'calendar-derive' @('-m', 'pulse.workers.alerts', 'calendar-derive')
-# The old system's calendar store as a declared pulse3 source (until the cutover; read by the fwdlog M3 catalyst rule later).
+# The old system's calendar store as a declared pulse3 source (until the cutover; read by the fwdlog M3 catalyst rule).
 $null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
 $cst = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time')
 foreach ($m in @($cst, $cst.AddMonths(1))) { $null = Step "calendar-expiries-$($m.ToString('yyyy-MM'))" @('-m', 'pulse.workers.alerts', 'calendar-expiries', '--year', "$($m.Year)", '--month', "$($m.Month)") }

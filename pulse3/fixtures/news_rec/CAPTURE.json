@@ -1,0 +1,16 @@
+{
+ "captured_by": "lane C native news recorder, one request from the development PC",
+ "files": [
+  {
+   "file": "ths_push_p1.json",
+   "url": "https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=30",
+   "purpose": "raw Tonghuashun 7x24 answer for the native recorder parser tests (no ths fixture existed in pulse3)",
+   "status": 200,
+   "bytes": 38974,
+   "sha256": "b5d643c52a99a5166d2ed2d9584cc138080e1dc7d14d4fb7a4d10e5bf05c0890",
+   "fetched_at": "2026-11-19T01:39:43Z",
+   "referer": "https://news.10jqka.com.cn/realtimenews.html",
+   "user_agent": "Mozilla/5.0 (compatible; pulse3-data-plane/0.1)"
+  }
+ ]
+}

@@ -44,3 +44,21 @@ class EastmoneyNewsAdapter:
                        "req_trace": int(time.time() * 1000)})
         return self.client.request(source_id=SOURCE_ID, endpoint_id=ENDPOINT_ID, request_key=f"page:{sort_end or 'latest'}:{page_size}",
                                    url=f"{URL}?{q}", headers=HEADERS)
+
+
+def recorder_items(body: bytes) -> list[dict]:
+    """Items in the native news recorder's shape (see ``news_items``): the old recorder's mapping.
+
+    ``showTime`` (Asia/Shanghai text) is recorded as the source publication time; probe 2026-11-02 found it about two minutes
+    earlier than our first sight, so it may be an event time: trading uses only our own receipt time. ``stockList`` refs with a
+    market other than 0/1 (sectors ``90.BK..``, foreign ``105.``) are not A-share codes and are dropped."""
+    from .news_items import BadAnswer, cst_text_utc, load_json, stock_codes
+
+    j = load_json(body)
+    rows = (j.get("data") or {}).get("fastNewsList") if isinstance(j, dict) else None
+    if not isinstance(rows, list):
+        raise BadAnswer(f"em: no fastNewsList (code {j.get('code') if isinstance(j, dict) else '?'})")
+    return [{"item_id": str(x["code"]), "title": x.get("title") or "", "body": x.get("summary") or "", "url": None,
+             "source_published_at": cst_text_utc(x.get("showTime")), "source_modified_at": None,
+             "codes": stock_codes([s for s in x.get("stockList") or [] if str(s).split(".")[0] in ("0", "1")]),
+             "comments": x.get("pinglun_Num"), "level": None} for x in rows if isinstance(x, dict) and x.get("code")]

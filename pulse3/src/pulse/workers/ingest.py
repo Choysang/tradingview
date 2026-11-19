@@ -15,7 +15,7 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.ingest seal-facts --date 2026-11-12        # estimated seal facts from that dataset
     uv run python -m pulse.workers.ingest legacy-news --date 2026-11-12       # 7x24 messages -> documents -> claims (then alerts scan)
     uv run python -m pulse.workers.ingest legacy-ext|legacy-guba|legacy-alerts --date 2026-11-12
-    uv run python -m pulse.workers.ingest intraday-record --until 15:05 --universe   # native recorder, NOT scheduled before the M6 cutover
+    uv run python -m pulse.workers.ingest intraday-record --until 15:33 --universe   # native recorder, NOT scheduled before the M6 cutover
 
 Exit codes: 0 ok, 1 failure, 2 source blocked us (circuit OPEN, nothing half-published).
 Not covered: scheduling; there is deliberately no full-market live crawl command (pass explicit codes).
@@ -83,14 +83,19 @@ def _parser() -> argparse.ArgumentParser:
         p.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA or C:/pulse/data)")
         if name == "legacy-news":
             p.add_argument("--no-claims", action="store_true", help="documents only; skip claim extraction")
-    p = sub.add_parser("intraday-record", help="native 60 s quote recorder; NOT scheduled before the M6 cutover (the old system records meanwhile)")
-    p.add_argument("--until", type=time.fromisoformat, default=time(15, 5), help="stop at this Asia/Shanghai time (default 15:05)")
+    p = sub.add_parser("intraday-record", help="native main-board recorder (auction, 5-level book, hot subset; Tencent primary, optional Sina fallback); "
+                                                 "NOT scheduled before the M6 cutover (the old system records meanwhile)")
+    p.add_argument("--until", type=time.fromisoformat, default=time(15, 33), help="stop at this Asia/Shanghai time (default 15:33, after the after-hours session)")
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--codes", nargs="+")
     g.add_argument("--universe", action="store_true")
-    p.add_argument("--source", choices=("sina", "tencent"), default="sina")
-    p.add_argument("--cycle-seconds", type=float, default=60.0)
-    p.add_argument("--flush-every", type=int, default=10, help="cycles per published snapshot part")
+    p.add_argument("--source", choices=("sina", "tencent"), default="tencent", help="primary vendor (default tencent, the old recorder's vendor)")
+    p.add_argument("--fallback", choices=("sina", "tencent"), default=None,
+                   help="OPT-IN second vendor, used for the rest of the session after the primary is blocked (default: none, a block stops the run; "
+                        "hq.sinajs.cn already answered 403 to the server IP); must differ from --source")
+    p.add_argument("--cycle-seconds", type=float, default=60.0, help="period of the full-board snapshots")
+    p.add_argument("--flush-every", type=int, default=10, help="full cycles between published parts")
+    p.add_argument("--static-sessions", type=int, default=3, help="earlier sessions whose limit touches form the static pool (0 = none)")
     return ap
 
 
@@ -103,8 +108,10 @@ def _today_cst() -> date:
 
 def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
     """BF live lane commands (kept apart from the data-plane commands above)."""
-    from pulse.application.bf_live_service import IntradayRecorder, LegacyNewsImporter, LiveService
+    from pulse.application.bf_live_service import LegacyNewsImporter, LiveService
 
+    if a.cmd == "intraday-record" and a.fallback == a.source:
+        raise SystemExit("--fallback must be the other vendor than --source")
     day = getattr(a, "date", None) or _today_cst()
     rec = LegacyRecordings(getattr(a, "legacy_data", None))
     svc = LiveService(conn, lake, rec)
@@ -129,8 +136,22 @@ def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
     codes = list(a.codes) if a.codes else universe_codes(conn, lake)
     if not codes:
         raise SystemExit("no codes: pass --codes or import the research snapshot first")
+    from pulse.application.intraday_recorder import AllSourcesDown, IntradayRecorder, static_pool
+
     today = _today_cst()
-    return [IntradayRecorder(svc, client, source=a.source).run(codes, today, a.until, cycle_seconds=a.cycle_seconds, flush_every=a.flush_every)]
+    static = static_pool(svc, today, a.static_sessions) if a.static_sessions > 0 else set()
+    fallback = RateLimitedClient(min_interval_seconds=client.min_interval) if a.fallback else None   # its own circuit and pacing
+    try:
+        rec = IntradayRecorder(svc, client, source=a.source, fallback_client=fallback, static=static)
+        try:
+            return [rec.run(codes, today, a.until, cycle_seconds=a.cycle_seconds, flush_every=a.flush_every)]
+        except AllSourcesDown as exc:
+            if exc.summary is not None:
+                print(exc.summary.render())
+            raise
+    finally:
+        if fallback is not None:
+            fallback.close()
 
 
 def universe_codes(conn, lake: LakeStore, recent_sessions: int = 5) -> list[str]:

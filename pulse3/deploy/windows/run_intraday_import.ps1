@@ -18,8 +18,11 @@ function Step($name, [string[]]$argv) {
     if ($LASTEXITCODE -ne 0) { Add-Content $log "!! $name failed exit $LASTEXITCODE"; return $false }
     return $true
 }
-$ok = Step 'legacy-intraday' @('-m', 'pulse.workers.ingest', 'legacy-intraday', '--date', $day)
+# After the cutover the native recorder publishes the snapshots itself: only the seal facts are derived here.
+$ok = if ($cutover) { $true } else { Step 'legacy-intraday' @('-m', 'pulse.workers.ingest', 'legacy-intraday', '--date', $day) }
 if ($ok) { $null = Step 'seal-facts' @('-m', 'pulse.workers.ingest', 'seal-facts', '--date', $day) }
+if (-not $cutover) {
 $null = Step 'legacy-ext-prev' @('-m', 'pulse.workers.ingest', 'legacy-ext', '--date', $prev)
 $null = Step 'legacy-ext' @('-m', 'pulse.workers.ingest', 'legacy-ext', '--date', $day)
+}
 Add-Content $log "== $(Get-Date -Format s) done"

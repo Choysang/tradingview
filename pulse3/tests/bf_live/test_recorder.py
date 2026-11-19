@@ -1,4 +1,6 @@
-"""The native recorder (written, tested, NOT scheduled): mock transports only, rate limit, same dataset shape, stop on a block."""
+"""The native recorder (written, tested, NOT scheduled): mock transports only, rate limit, same dataset shape, stop on a block.
+
+The full behaviour (auction, fallback, both vendors blocked, holiday) is tested in tests/rec_intraday."""
 from __future__ import annotations
 
 from datetime import datetime, time, timedelta, timezone
@@ -65,28 +67,30 @@ def _recorder(conn, lake, legacy_root, world, chunk=1):
     svc = B.LiveService(conn, lake, LegacyRecordings(legacy_root), clock=world.now)
     svc.bootstrap()
     client = RateLimitedClient(min_interval_seconds=1.0, transport=httpx.MockTransport(world.handler), clock=world.monotonic, sleep=world.sleep, now=world.now)
-    return svc, client, B.IntradayRecorder(svc, client, chunk=chunk, sleep=world.sleep)
+    return svc, client, B.IntradayRecorder(svc, client, source="sina", chunk=chunk, sleep=world.sleep)
 
 
 def test_records_same_dataset_shape_at_most_one_request_per_second(conn, lake, legacy_root, world):
     svc, client, rec = _recorder(conn, lake, legacy_root, world)
     s = rec.run(["000001", "600000"], T.DAY, time(10, 0), cycle_seconds=60.0, flush_every=10)
-    assert s.counts["cycles"] == 2 and s.counts["rows_polled"] == 4 and s.counts["rows_published"] == 4 and client.requests_made == 4
+    hot = s.counts["polls_hot"]                                          # the sealed name (000001) joins the hot subset, polled every 10 s
+    assert s.counts["polls_full"] == 2 and hot >= 10 and s.counts["rows_polled"] == s.counts["rows_published"] == 4 + hot
+    assert client.requests_made == 4 + hot                               # chunk 1: one request per code of a full board, one per hot poll
     gaps = [b - a for a, b in zip(world.request_times, world.request_times[1:])]
     assert min(gaps) >= 1.0 - 1e-9                                       # never faster than one request per second
     man = svc.latest_ready(B.DATASET_QUOTES, T.DAY)
-    assert man["row_count"] == 4 and man["coverage_document"]["recorder"] == "pulse_native_sina" and man["coverage_document"]["not_tick_data"]
+    assert man["row_count"] == 4 + hot and man["coverage_document"]["recorder"] == "pulse_intraday_recorder" and man["coverage_document"]["not_tick_data"]
     df = lake.read_snapshot_frames(man["content_hash"])
     # the same columns as the imported legacy snapshots (the schema both producers share)
     assert set(df.columns) == set(B.LR_SNAPSHOT_SCHEMA)
     a = df.filter(df["code"] == "000001").sort("quote_at").row(0, named=True)
     assert str(a["limit_up"]) == "11.0000" and str(a["price"]) == "11.0000" and a["ask1_lots"] == 0.0 and a["bid1_lots"] == 5000.0   # shares / 100
-    assert a["bid2_px"] is None and a["quote_at"] == datetime(2026, 11, 12, 1, 58, tzinfo=UTC) and a["source_stream"] == "native"
+    assert a["bid2_px"] is None and a["quote_at"] == datetime(2026, 11, 12, 1, 58, 2, tzinfo=UTC) and a["source_stream"] == "quotes"
     # and the seal derivation reads it exactly like an imported day
     f = svc.publish_seal_facts(T.DAY)
     assert f.counts["sealed_ever_count"] == 1 and f.counts["instruments_observed"] == 2
     raws = conn.execute("SELECT count(*) n FROM ingest.raw_object WHERE source_id='sina'").fetchone()["n"]
-    assert raws == 4                                                     # every response kept as raw evidence
+    assert raws == 4 + hot                                               # every response kept as raw evidence
 
 
 def test_a_block_stops_immediately_and_keeps_what_was_captured(conn, lake, legacy_root, world):
@@ -105,7 +109,7 @@ def test_idle_outside_trading_windows_polls_nothing(conn, lake, legacy_root):
     w = World(datetime(2026, 11, 12, 4, 0, tzinfo=UTC))                  # 12:00 CST, lunch break
     svc, client, rec = _recorder(conn, lake, legacy_root, w)
     s = rec.run(["000001"], T.DAY, time(12, 5), cycle_seconds=60.0)
-    assert client.requests_made == 0 and s.counts["idle_waits"] >= 1 and svc.latest_ready(B.DATASET_QUOTES, T.DAY) is None
+    assert client.requests_made == 0 and "polls_full" not in s.counts and svc.latest_ready(B.DATASET_QUOTES, T.DAY) is None
 
 
 def test_native_limit_up_is_null_when_unverified_never_guessed():

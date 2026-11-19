@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from pulse.domain.market.units import profile_hash
 
-from . import cninfo, legacy, legacy_calendar, legacy_recordings, sina, tencent
+from . import cninfo, legacy, legacy_calendar, legacy_recordings, native_ext, native_intraday, native_news, native_ref, sina, tencent
 
 CONTRACT_VERSION = "3.0.0"
 
@@ -109,6 +109,11 @@ _lr(legacy_recordings.SOURCE_ID, legacy_recordings.EP_ALERTS, "EvidenceDocument"
 _lr(legacy_recordings.NEWS_SOURCE_ID, legacy_recordings.EP_NEWS, "EvidenceDocument", 1800)
 _add(EndpointSpec(legacy_calendar.SOURCE_ID, legacy_calendar.ENDPOINT_ID, legacy_calendar.SCHEMA_VERSION, legacy_calendar.MAPPING_VERSION, "EvidenceDocument",
                   "batch", 7 * 86400, None, None, legacy_calendar.POLICY, True, None))
+
+
+# Step 2 native sources (cutover readiness): each lane declares its endpoints in its own module.
+for _lane in (native_intraday, native_ext, native_news, native_ref):
+    _lane.register(_add, EndpointSpec, SOURCES)
 
 
 def spec(source_id: str, endpoint_id: str) -> EndpointSpec:

@@ -31,7 +31,7 @@ from pulse.adapters.models.rules import RulesProvider
 from pulse.adapters.models.runner import ModelRunner
 from pulse.adapters.postgres import ingest_repo
 from pulse.adapters.postgres import intelligence_repo as repo
-from pulse.adapters.sources import cls_news, eastmoney_news, fundflow, guba, legacy_recordings, lhb
+from pulse.adapters.sources import cls_news, eastmoney_news, fundflow, guba, legacy_recordings, lhb, native_news
 from pulse.adapters.sources.http import Capture, SourceBlocked, TransportFailure
 from pulse.application.data_service import DataService, Summary
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
@@ -43,7 +43,11 @@ from pulse.domain.intelligence.verification import EvidenceItem
 
 UTC = timezone.utc
 CST = ZoneInfo("Asia/Shanghai")
-NEWS_SOURCES = (eastmoney_news.SOURCE_ID, cls_news.SOURCE_ID, legacy_recordings.NEWS_SOURCE_ID)  # last: recorded feed imported from the old system
+NEWS_SOURCES = (eastmoney_news.SOURCE_ID, cls_news.SOURCE_ID, legacy_recordings.NEWS_SOURCE_ID,  # legacy: recorded feed imported from the old system
+                 native_news.SOURCE_ID)  # native: pulse3's own 7x24 recorder (same raw-object format as the legacy import)
+# the origin key of an own dispatch ("own:<source>:<day>:<title hash>") must not depend on which recorder stored the item: the legacy
+# import produced it with its own source id, so the native recorder (same items after the cutover) is keyed identically
+ORIGIN_KEY_SOURCE = {native_news.SOURCE_ID: legacy_recordings.NEWS_SOURCE_ID}
 NEWS_TOKEN = "pulse.intel.news_claim@1"
 LEGACY_SOURCE = "legacy_warehouse"
 TOPIC_WORDS = ("政府补助", "回购", "减持", "增持", "分红", "权益分派", "业绩预告", "业绩快报", "中标", "合同", "订单", "重组", "收购", "诉讼", "仲裁",
@@ -209,7 +213,7 @@ class IntelligenceService:
                 own = "财联社" if rec.own_dispatch else None
                 att = origin.detect_attribution(rec.body or rec.title, own_publisher=own)
                 day = rec.published_at.astimezone(CST).date().isoformat() if rec.published_at else "unknown"
-                group, ostatus = origin.document_origin(source_id=rec.source_id, title=rec.title, day=day, own_dispatch=rec.own_dispatch, attribution=att)
+                group, ostatus = origin.document_origin(source_id=ORIGIN_KEY_SOURCE.get(rec.source_id, rec.source_id), title=rec.title, day=day, own_dispatch=rec.own_dispatch, attribution=att)
                 fq = {"published_at": _fq("observed" if rec.published_at else "missing", raw_id, reason=None if rec.published_at else "source_value_null"),
                       "title": _fq("observed", raw_id),
                       "origin": _fq("derived", raw_id, "calculation", precision_note=f"{origin.POLICY_VERSION}; attribution={att.publisher if att else None}"),
@@ -254,7 +258,8 @@ class IntelligenceService:
         for rid in set(raw_ids):
             row = self.conn.execute("SELECT source_id, content_hash FROM ingest.raw_object WHERE raw_object_id=%s", (rid,)).fetchone()
             body = self.lake.read_object(row["content_hash"])
-            parse = {eastmoney_news.SOURCE_ID: feeds.parse_eastmoney_news, legacy_recordings.NEWS_SOURCE_ID: legacy_recordings.parse_recorded_news}.get(
+            parse = {eastmoney_news.SOURCE_ID: feeds.parse_eastmoney_news, legacy_recordings.NEWS_SOURCE_ID: legacy_recordings.parse_recorded_news,
+                     native_news.SOURCE_ID: legacy_recordings.parse_recorded_news}.get(
                 row["source_id"], feeds.parse_cls_roll)
             out[rid] = {r.source_record_id: r for r in parse(body, row["source_id"]).records}
         return out

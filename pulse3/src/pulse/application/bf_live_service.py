@@ -1,9 +1,9 @@
-"""BF live lane: import the old system's recordings, derive seal facts, serve the seal reads, record natively (not scheduled).
+"""BF live lane: import the old system's recordings, derive seal facts, serve the seal reads (the native recorder: intraday_recorder).
 
 Why: until the M6 cutover the old system records every session (intraday 60 s snapshots, 7x24 news, extended intraday). pulse3
 imports those files as a declared legacy source (``adapters.sources.legacy_recordings``) and builds its facts from them; its own
-recorder (:class:`IntradayRecorder`) is written and tested but not scheduled, so the two systems never double their requests to
-Sina/Tencent. Rows: LEGACY_TRIAGE #103/#185, #131/#187, #132/#188, #104/#186, #5/#124.
+recorder (``application.intraday_recorder.IntradayRecorder``, same dataset and frame schema) is written and tested but not scheduled, so the
+two systems never double their requests to Sina/Tencent. Rows: LEGACY_TRIAGE #103/#185, #131/#187, #132/#188, #104/#186, #5/#124.
 
 Datasets (lake manifest + ``market.dataset_manifest``, one version per import, the latest READY version of a session is the whole
 session): ``quote_snapshots_60s`` (cumulative over the session's parts), ``ext_quote_snapshots``, ``legacy_guba_samples``,
@@ -34,8 +34,8 @@ from pulse.adapters.postgres import ingest_repo
 from pulse.adapters.postgres import intelligence_repo as repo
 from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.sources import legacy_recordings as LR
-from pulse.adapters.sources import registry, sina, tencent
-from pulse.adapters.sources.http import Capture, RateLimitedClient, SourceBlocked, TransportFailure
+from pulse.adapters.sources import registry
+from pulse.adapters.sources.http import Capture
 from pulse.adapters.sources.legacy_recordings import LegacyRecordings, PartUnreadable, SchemaMismatch, SourcePart
 from pulse.application.data_service import DataService, Summary
 from pulse.application.intelligence_service import IntelligenceService
@@ -459,69 +459,26 @@ class LegacyNewsImporter(IntelligenceService):
         return total
 
 
-# ---- native recorder (written and tested, NOT scheduled before the M6 cutover) -------------------------------------------------------
-POLL_WINDOWS = ((time(9, 15), time(11, 31)), (time(13, 0), time(15, 6)))
+# ---- native recorder support (the recorder itself: ``application.intraday_recorder``, NOT scheduled before the M6 cutover) -----------------
 _LIMITS = PriceLimitRegistry()
 _EX = {"XSHG": Exchange.SSE, "XSHE": Exchange.SZSE, "XBSE": Exchange.BSE}
+MAIN_BOARD_PREFIX = ("000", "001", "002", "003", "600", "601", "603", "605")
+
+
+def limit_band(code: str, name: str, prev_close: Decimal | None, day: date) -> tuple[Decimal | None, Decimal | None]:
+    """(limit-up, limit-down) price from the versioned rules; (None, None), never a guess, when the rule or the previous close is missing."""
+    if prev_close is None or prev_close <= 0 or code[:3] not in MAIN_BOARD_PREFIX:
+        return None, None
+    try:
+        _, st = parse_display_name(name)
+        band = _LIMITS.band(InstrumentSpec(code, _EX[venue_for_code(code)], Board.MAIN, st), day, prev_close)
+        return band.limit_up, band.limit_down
+    except (ValueError, RuleNotVerified):
+        return None, None
 
 
 def _limit_up(code: str, name: str, prev_close: Decimal | None, day: date) -> Decimal | None:
-    """Limit-up price from the versioned rules; None (never a guess) when the rule or the previous close is missing."""
-    if prev_close is None or prev_close <= 0:
-        return None
-    try:
-        venue = venue_for_code(code)
-        if code[:3] not in ("000", "001", "002", "003", "600", "601", "603", "605"):
-            return None
-        _, st = parse_display_name(name)
-        spec = InstrumentSpec(code, _EX[venue], Board.MAIN, st)
-        return _LIMITS.band(spec, day, prev_close).limit_up
-    except (ValueError, RuleNotVerified):
-        return None
-
-
-def _px(v) -> Decimal | None:
-    try:
-        d = Decimal(str(v))
-    except Exception:  # noqa: BLE001 - vendor text such as "" or "-"
-        return None
-    return None if d <= 0 else d
-
-
-def native_rows(source: str, records: list[dict], poll_at: datetime, day: date) -> list[dict]:
-    """Vendor quote records (Sina shares / Tencent lots) -> rows of the snapshot dataset shape; unavailable levels stay None."""
-    out = []
-    for r in records:
-        code = r["symbol"][2:]
-        if source == "sina":
-            qt = datetime.strptime(r["quote_time"], "%Y-%m-%d %H:%M:%S")
-            vol = _dec(r["volume"]) / 100 if r["volume"] not in (None, "") else None
-            bid_l = _dec(r["bid1_volume"]) / 100 if r["bid1_volume"] not in (None, "") else None
-            ask_l = _dec(r["ask1_volume"]) / 100 if r["ask1_volume"] not in (None, "") else None
-            amount = _dec(r["amount"]) if r["amount"] not in (None, "") else None
-        else:
-            qt = datetime.strptime(r["quote_time"], "%Y%m%d%H%M%S")
-            vol = _dec(r["volume_lots"]) if r["volume_lots"] not in (None, "") else None
-            bid_l = _dec(r["bid1_lots"]) if r["bid1_lots"] not in (None, "") else None
-            ask_l = _dec(r["ask1_lots"]) if r["ask1_lots"] not in (None, "") else None
-            amount = _dec(r["amount_yuan"]) if r["amount_yuan"] not in (None, "") else None
-        prev = _px(r["prev_close"])
-        out.append({"code": code, "name": r["name"], "kind": "native", "poll_at": poll_at, "quote_at": qt.replace(tzinfo=CST).astimezone(UTC),
-                    "price": _px(r["last"]), "prev_close": prev, "open": _px(r["open"]), "high": _px(r["high"]), "low": _px(r["low"]),
-                    "bid1_px": _px(r["bid1_price"]), "ask1_px": _px(r["ask1_price"]), "bid1_lots": None if bid_l is None else float(bid_l),
-                    "ask1_lots": None if ask_l is None else float(ask_l), "volume_lots": None if vol is None else float(vol), "amount_yuan": amount,
-                    "limit_up": _limit_up(code, r["name"], prev, day)})
-    return out
-
-
-def _native_frame(rows: list[dict], day: date, stream: str) -> pl.DataFrame:
-    """Same columns as the imported snapshots; levels the Sina/Tencent single-quote endpoint does not carry are NULL."""
-    schema = LR_SNAPSHOT_SCHEMA
-    cols = {c: [r.get(c) for r in rows] for c in schema}
-    cols["source_stream"] = [stream] * len(rows)
-    cols["source_part"] = ["native"] * len(rows)
-    cols["session_date"] = [day] * len(rows)
-    return pl.DataFrame(cols, schema=schema)
+    return limit_band(code, name, prev_close, day)[0]
 
 
 def _snapshot_schema() -> dict:
@@ -539,107 +496,10 @@ def _snapshot_schema() -> dict:
 LR_SNAPSHOT_SCHEMA = _snapshot_schema()
 
 
-class IntradayRecorder:
-    """Polls Sina/Tencent quotes of explicit codes and publishes the same snapshot dataset shape (NOT scheduled).
+def __getattr__(name: str):
+    """``IntradayRecorder`` lives in ``intraday_recorder`` (it imports this module); resolved lazily to keep the old import path."""
+    if name == "IntradayRecorder":
+        from pulse.application.intraday_recorder import IntradayRecorder
 
-    One request per chunk of 50 codes through a ``RateLimitedClient`` (<= 1 request/s overall, hence per host); the first block
-    (403/429/456/501) stops the run at once after flushing what was captured (circuit OPEN, exit code 2 in the CLI)."""
-
-    def __init__(self, svc: LiveService, client: RateLimitedClient, *, source: str = "sina", chunk: int = 50,
-                 sleep: Callable[[float], None] | None = None):
-        if source not in ("sina", "tencent"):
-            raise ValueError("source must be sina or tencent")
-        self.svc, self.client, self.source, self.chunk = svc, client, source, chunk
-        import time as _t
-
-        self.sleep = sleep or _t.sleep
-        self.adapter = sina.SinaAdapter(client) if source == "sina" else tencent.TencentAdapter(client)
-        self.spec = registry.spec(source, "hq_quote" if source == "sina" else "qt_quote")
-        self._caps: list[Capture] = []
-        self._rows: list[dict] = []
-
-    @staticmethod
-    def in_poll_window(t: time) -> bool:
-        return any(a <= t < b for a, b in POLL_WINDOWS)
-
-    def poll_once(self, codes: list[str], day: date) -> int:
-        n = 0
-        for i in range(0, len(codes), self.chunk):
-            part = codes[i:i + self.chunk]
-            pfx = {"6": "sh", "0": "sz", "3": "sz"}
-            symbols = [pfx[c[0]] + c for c in part if c[:1] in pfx]
-            cap = self.svc.data._fetch(self.spec, f"record:{day}", lambda sy=symbols: self.adapter.quotes(sy))
-            records, _empty = (sina.parse_hq if self.source == "sina" else tencent.parse_qt)(cap.body)
-            self._caps.append(cap)
-            self._rows += native_rows(self.source, records, cap.fetched_at, day)
-            n += len(records)
-        return n
-
-    def flush(self, day: date, s: Summary) -> None:
-        if not self._rows:
-            return
-        svc, now = self.svc, self.svc.clock()
-        df = _native_frame(self._rows, day, "native")
-        stamp = now.strftime("%H%M%S")
-        batch_id = ingest_repo.create_batch(svc.conn, self.spec, f"record:{day}:{stamp}", now)
-        owner = f"job:{batch_id}"
-        try:
-            for cap in self._caps:
-                svc.data.store_capture(batch_id, cap, owner)
-            with svc.conn.transaction():
-                ingest_repo.commit_raw(svc.conn, batch_id, svc.clock())
-            prev = svc.latest_ready(DATASET_QUOTES, day)
-            parts = dict((prev["coverage_document"].get("parts") or {}) if prev else {})
-            old = {}
-            if prev:
-                old = {m["sha256"]: ObjectRef(m["sha256"], m["path"], m["size"], m.get("kind", "data")) for m in svc.lake.read_manifest(prev["content_hash"]).members}
-            ref = svc.lake.put_parquet(df, owner=owner)
-            name = f"native/part-{stamp}.parquet"
-            members = {k: old[v["object_sha256"]] for k, v in parts.items()}
-            members[name] = ref
-            parts[name] = {"stream": "native", "source_sha256": ref.sha256, "object_sha256": ref.sha256, "rows": df.height, "source_size": ref.size}
-            total = sum(v["rows"] for v in parts.values())
-            coverage = {"dataset": DATASET_QUOTES, "session_date": day.isoformat(), "parts": dict(sorted(parts.items())), "imported_at": _z(now),
-                        "recorder": f"pulse_native_{self.source}", "capability": "sampled_snapshots_estimated", "not_tick_data": True,
-                        "book_levels": "level 1 only (single-quote endpoint); levels 2-5 are NULL", "px_zero_is_missing": True,
-                        "limit_up": "from the versioned price-limit rules and the previous close; NULL when unverified"}
-            manifest = svc.lake.commit_manifest(DATASET_QUOTES, [members[k] for k in sorted(members)], owner=owner,
-                                                meta={"row_count": total, "kind": "table", "session_date": day.isoformat(), "parts": sorted(members)})
-            with svc.conn.transaction():
-                ingest_repo.set_batch_state(svc.conn, batch_id, "NORMALIZED")
-            svc.data._stage_and_publish(DATASET_QUOTES, uuid.uuid4(), batch_id, manifest, "pulse.bf_live.quote_snapshot", coverage, owner, total, now, (), ())
-        except Exception:
-            with svc.conn.transaction():
-                ingest_repo.set_batch_state(svc.conn, batch_id, "FAILED", failure_code="record_error")
-            svc.lake.release(owner)
-            raise
-        s.add("rows_published", df.height)
-        s.add("flushes")
-        self._rows, self._caps = [], []
-
-    def run(self, codes: list[str], day: date, until: time, *, cycle_seconds: float = 60.0, flush_every: int = 10) -> Summary:
-        s = Summary(f"intraday-record {day} until {until}")
-        cycles = 0
-        try:
-            while True:
-                cst_now = self.svc.clock().astimezone(CST)
-                if cst_now.time() >= until:
-                    break
-                if not self.in_poll_window(cst_now.time()):
-                    self.sleep(30.0)
-                    s.add("idle_waits")
-                    continue
-                t0 = self.svc.clock()
-                try:
-                    s.add("rows_polled", self.poll_once(codes, day))
-                    s.add("cycles")
-                    cycles += 1
-                except TransportFailure as exc:
-                    s.add("transport_errors")
-                    s.notes.append(str(exc)[:120])
-                if cycles and cycles % flush_every == 0 and self._rows:
-                    self.flush(day, s)
-                self.sleep(max(0.0, cycle_seconds - (self.svc.clock() - t0).total_seconds()))
-        finally:
-            self.flush(day, s)               # also after a block: what was captured before it is kept
-        return s
+        return IntradayRecorder
+    raise AttributeError(name)

@@ -10,19 +10,86 @@ Invariants: every call returns the raw bytes untouched; the caller persists them
 before parsing; no retries inside the client (retry policy belongs to the
 scheduler with backoff recorded in health); the transport is injectable
 (``httpx.MockTransport``) so tests never touch the network.
-Not covered: proxies, cookies/credentials, concurrency (single-threaded use).
+Cross-process pacing (optional): ``RateLimitedClient`` paces per process, but several recorders of one server (quotes, extended intraday,
+news, the daily intel pull) can hit the SAME host. When the environment variable ``PULSE_HOST_PACING_DIR`` names a directory, every request
+first takes an exclusive OS file lock on ``<dir>/<host>.lock``, waits until ``min_interval`` has passed since the last request of ANY process to
+that host (the time is kept in the file), writes its own time and releases the lock, so the processes share one request budget per host.
+Unset (the default) nothing changes. Not covered: proxies, cookies/credentials, concurrency inside one process (single-threaded use).
 """
 from __future__ import annotations
 
+import os
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Callable
+from urllib.parse import urlsplit
 
 import httpx
 
+PACING_ENV = "PULSE_HOST_PACING_DIR"
+_STAMP_AT = 8             # the lock byte is 0; the timestamp lives after it (a Windows byte-range lock also blocks reads of its bytes)
 BLOCK_STATUS = {403, 429, 456, 501}  # 502/503/504 are gateway faults (TransportFailure), not blocks
 USER_AGENT = "Mozilla/5.0 (compatible; pulse3-data-plane/0.1)"
+
+
+def _lock(f) -> None:
+    if os.name == "nt":
+        import msvcrt
+
+        f.seek(0)
+        while True:
+            try:
+                msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, 1)       # gives up with OSError after ~10 s: keep waiting for the holder
+                return
+            except OSError:
+                continue
+    import fcntl
+
+    fcntl.flock(f, fcntl.LOCK_EX)
+
+
+def _unlock(f) -> None:
+    if os.name == "nt":
+        import msvcrt
+
+        f.seek(0)
+        msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(f, fcntl.LOCK_UN)
+
+
+def pace_host_across_processes(url: str, min_interval: float, sleep: Callable[[float], None] = time.sleep,
+                               wall: Callable[[], float] = time.time) -> None:
+    """Block until ``min_interval`` seconds passed since the last request to the host of ``url`` by any process sharing PULSE_HOST_PACING_DIR,
+    then record this request's time. No-op when the variable is unset."""
+    directory = os.environ.get(PACING_ENV)
+    host = urlsplit(url).hostname
+    if not directory or not host:
+        return
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    with open(path / (re.sub(r"[^A-Za-z0-9.-]", "_", host) + ".lock"), "a+b") as f:
+        _lock(f)
+        try:
+            f.seek(_STAMP_AT)
+            try:
+                last = float(f.read(32).decode("ascii").strip() or 0.0)
+            except ValueError:
+                last = 0.0
+            wait = min_interval - (wall() - last)
+            if wait > 0:
+                sleep(min(wait, min_interval))              # a stamp from the future (clock step) never waits longer than one interval
+            f.seek(_STAMP_AT)
+            f.truncate(_STAMP_AT)
+            f.write(f"{wall():.6f}".encode("ascii"))
+            f.flush()
+        finally:
+            _unlock(f)
 
 
 class SourceBlocked(RuntimeError):
@@ -87,6 +154,7 @@ class RateLimitedClient:
             wait = self.min_interval - (self._clock() - self._last)
             if wait > 0:
                 self._sleep(wait)
+        pace_host_across_processes(url, self.min_interval, self._sleep)
         self._last = self._clock()
         self.requests_made += 1
         try:

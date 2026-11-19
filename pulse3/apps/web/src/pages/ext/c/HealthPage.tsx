@@ -6,6 +6,7 @@ import { RUN_STATE_LABEL, fmtAge, fmtInt, fmtTime } from '../../../lib/format';
 import type { Tone } from '../../../lib/version';
 import { LoadMore, Pending, Strip, useNowAnchor, usePaged } from './common';
 import { RunJobForm } from './RunJobForm';
+import { SyncPanel } from './SyncPanel';
 import { windowLastDays } from './time';
 import type { DatasetStatus, DatasetStatusData, JobRunsData } from './types';
 
@@ -94,6 +95,7 @@ export function HealthPage() {
   return (
     <div className="page">
       <Datasets />
+      <SyncPanel />
       <JobRuns />
       <RunJobForm />
     </div>

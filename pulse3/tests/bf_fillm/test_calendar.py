@@ -163,3 +163,23 @@ def test_the_import_reads_back_exactly_what_the_forward_log_reads_from_the_old_f
     new, new_info = CAL.read_calendar_events(acon, flake, datetime(2026, 11, 19, tzinfo=UTC))
     assert sorted(old, key=lambda e: e.event_id) == sorted(new, key=lambda e: e.event_id)
     assert old_info["sha256"] == new_info["source_sha256"] and len(new) == old_info["events"] > 0
+
+
+@pytest.mark.pg
+def test_the_forward_log_reads_the_m3_catalyst_from_the_pulse3_calendar(acon, flake, store, tmp_path, monkeypatch):
+    """Step 2: without an explicit file the forward log reads pulse3's calendar dataset; before the first import it falls back to the file."""
+    from pulse.application import bf_fwdlog_service as FS
+
+    svc = FS.FwdlogService.__new__(FS.FwdlogService)              # only the event reader is exercised (no recordings needed)
+    svc.conn, svc.lake = acon, flake
+    svc.events_path = None
+    svc.clock = lambda: datetime(2026, 11, 12, 2, tzinfo=UTC)
+    monkeypatch.setenv(FS.IN.ENV_EVENTS, str(tmp_path / "absent.jsonl"))
+    _, before = svc._events()
+    assert before["source"] == "file" and before["path_present"] is False
+    CAL.import_store(acon, flake, store, clock=lambda: datetime(2026, 11, 12, 1, tzinfo=UTC))
+    events, note = svc._events()
+    assert note["source"] == "pulse3_calendar" and note["events"] == 2   # imported 1 h before the clock: not stale and {e.event_id for e in events} == {"A", "B"}
+    assert note["sha256"] == CAL.read_calendar_events(acon, flake)[1]["source_sha256"]
+    svc.clock = lambda: datetime(2026, 11, 13, 3, tzinfo=UTC)
+    assert "STALE" in svc._events()[1]["source"], "a calendar import older than 20 h is flagged in the run notes"

@@ -17,6 +17,7 @@ Not covered: tick data, Level-2, HK/US markets.
 from __future__ import annotations
 
 import json
+import re
 
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
 
@@ -148,6 +149,46 @@ def parse_qt(body: bytes) -> tuple[list[dict], list[str]]:
     return records, empty
 
 
+_QT_LINE = re.compile(r'v_((?:sh|sz|bj)\d{6})="([^"]*)"')
+
+
+def parse_qt_book(body: bytes) -> tuple[list[dict], list[str]]:
+    """Like :func:`parse_qt` but with every field the intraday recorder keeps (five book levels, outer / inner lots, caps, limits, ...).
+
+    Field map (verified on recorded 2026-10-30 / 2026-11-19 lines): 3 last, 4 prev close, 5 open, 6 volume LOTS, 7 outer lots, 8 inner
+    lots, 9..18 bid price / lots x5, 19..28 ask price / lots x5, 30 time yyyymmddhhmmss, 33 high, 34 low, 35 ``last/lots/amount-yuan``,
+    38 turnover %, 44 float cap, 45 total cap (both 100 million yuan), 47 / 48 limit up / down, 49 volume ratio, 51 vwap, 58 after-hours
+    amount (10 thousand yuan), 59 after-hours lots. Lines the vendor answers for unknown codes (``v_pv_none_match="1"``) never match
+    the pattern and are skipped; shorter lines keep the missing tail as None. All values stay text."""
+    text = body.decode("gbk", errors="replace")
+    if "v_" not in text:
+        raise NotData("qt_body_has_no_quote_variables")
+    records, empty = [], []
+    for m in _QT_LINE.finditer(text):
+        symbol, payload = m.group(1), m.group(2)
+        f = payload.split("~")
+        if len(f) < 3 or not f[1].strip():
+            empty.append(symbol)
+            continue
+        if len(f) < 52:
+            raise SchemaChanged(f"qt_field_count_{len(f)}_lt_52")
+
+        def at(i: int) -> str | None:
+            return f[i] if i < len(f) and f[i].strip() != "" else None
+
+        combo = f[35].split("/")
+        rec = {"symbol": symbol, "name": f[1].strip(), "last": at(3), "prev_close": at(4), "open": at(5), "volume_lots": at(6),
+               "outer_lots": at(7), "inner_lots": at(8), "quote_time": at(30), "high": at(33), "low": at(34),
+               "amount_yuan": combo[2] if len(combo) == 3 else None, "turnover_pct": at(38), "float_cap": at(44), "total_cap": at(45),
+               "limit_up": at(47), "limit_down": at(48), "volume_ratio": at(49), "vwap": at(51),
+               "after_amount_wan": at(58), "after_lots": at(59)}
+        for i in range(1, 6):                        # each level adds 2 fields: bid 9 / 10, ask 19 / 20 for level 1
+            rec[f"bid{i}_price"], rec[f"bid{i}_lots"] = at(7 + 2 * i), at(8 + 2 * i)
+            rec[f"ask{i}_price"], rec[f"ask{i}_lots"] = at(17 + 2 * i), at(18 + 2 * i)
+        records.append(rec)
+    return records, empty
+
+
 def parse_kline_day(body: bytes, symbol: str) -> list[dict]:
     doc = _json_after_var(body)
     node = (doc.get("data") or {}).get(symbol)
@@ -209,9 +250,10 @@ class TencentAdapter:
     def __init__(self, client: RateLimitedClient):
         self.client = client
 
-    def quotes(self, symbols: list[str]) -> Capture:
-        if not symbols or len(symbols) > 50:
-            raise ValueError("1..50 symbols per request")
+    def quotes(self, symbols: list[str], *, limit: int = 50) -> Capture:
+        """``limit`` raises the default guard for the intraday recorder (the legacy recorder sent 80 symbols per request)."""
+        if not symbols or len(symbols) > limit:
+            raise ValueError(f"1..{limit} symbols per request")
         joined = ",".join(symbols)
         return self.client.request(source_id=SOURCE_ID, endpoint_id="qt_quote", request_key=f"qt:{joined}",
                                    url=QT_URL.format(symbols=joined))

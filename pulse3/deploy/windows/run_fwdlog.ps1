@@ -15,9 +15,11 @@ function Step($name, [string[]]$argv) {
     if ($LASTEXITCODE -ne 0) { Add-Content $log "!! $name failed exit $LASTEXITCODE"; return $false }
     return $true
 }
-$ok = Step 'legacy-intraday' @('-m', 'pulse.workers.ingest', 'legacy-intraday', '--date', $day)
+$ok = if ($cutover) { $true } else { Step 'legacy-intraday' @('-m', 'pulse.workers.ingest', 'legacy-intraday', '--date', $day) }
 if ($ok) { $null = Step 'seal-facts' @('-m', 'pulse.workers.ingest', 'seal-facts', '--date', $day) }
-$null = Step 'legacy-ext' @('-m', 'pulse.workers.ingest', 'legacy-ext', '--date', $day)
+if (-not $cutover) { $null = Step 'legacy-ext' @('-m', 'pulse.workers.ingest', 'legacy-ext', '--date', $day) }
+# The M3 catalyst reads pulse3's calendar dataset (step 2): import the old store first so events seen since 18:10 yesterday count.
+$null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
 $null = Step 'fwdlog-run' @('-m', 'pulse.workers.fwdlog', 'run', '--date', $day)
 # Batch 6 forward (E095 auction, E096 active flow; pre-registration 2026-11-18): exit 3 = no complete recording yet.
 $null = Step 'batch6-forward' @('-m', 'pulse.workers.batch6', 'forward', '--date', $day)

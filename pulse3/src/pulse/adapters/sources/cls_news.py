@@ -49,3 +49,22 @@ class ClsNewsAdapter:
     def page(self, last_time: int | None = None, page_size: int = 30) -> Capture:
         return self.client.request(source_id=SOURCE_ID, endpoint_id=ENDPOINT_ID, request_key=f"page:{last_time or 'latest'}:{page_size}",
                                    url=f"{URL}?{signed_query(page_size, last_time)}", headers=HEADERS)
+
+
+def recorder_items(body: bytes) -> list[dict]:
+    """Items in the native news recorder's shape (see ``news_items``): the old recorder's mapping, plus CLS' real revision time.
+
+    ``modified_time`` is a revision time of the item (it differs from ``ctime`` after an edit); ``title`` stays empty when the
+    vendor gives none (the document layer derives one from the bracketed lead of the body)."""
+    from .news_items import BadAnswer, epoch_utc, load_json, stock_codes
+
+    j = load_json(body)
+    if not isinstance(j, dict) or str(j.get("errno")) != "0":
+        raise BadAnswer(f"cls errno {j.get('errno') if isinstance(j, dict) else '?'}: {j.get('msg') if isinstance(j, dict) else ''}")
+    rows = (j.get("data") or {}).get("roll_data")
+    if not isinstance(rows, list):
+        raise BadAnswer("cls: no roll_data")
+    return [{"item_id": str(x["id"]), "title": x.get("title") or "", "body": x.get("content") or x.get("brief") or "", "url": x.get("shareurl"),
+             "source_published_at": epoch_utc(x.get("ctime")), "source_modified_at": epoch_utc(x.get("modified_time")),
+             "codes": stock_codes([s.get("StockID", "") if isinstance(s, dict) else s for s in x.get("stock_list") or []]),
+             "comments": x.get("comment_num"), "level": x.get("level")} for x in rows if isinstance(x, dict) and x.get("id")]

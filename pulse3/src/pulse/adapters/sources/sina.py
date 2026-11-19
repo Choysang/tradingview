@@ -119,6 +119,41 @@ def parse_hq(body: bytes) -> tuple[list[dict], list[str]]:
     return records, empty
 
 
+def parse_hq_book(body: bytes) -> tuple[list[dict], list[str]]:
+    """Like :func:`parse_hq` but with all five book levels and the after-hours trailer, for the intraday recorder.
+
+    ``bid{i}_volume`` / ``ask{i}_volume`` are SHARES (hq fields 10, 12..18 / 20, 22..28; the price follows its volume); ``volume`` is
+    shares, ``amount`` CNY yuan. The trailer ``H|<shares>|<yuan>`` (field 33, present after the close) is the after-hours fixed-price
+    session's cumulative volume and amount: checked on the recorded 2026-11-11 lines, shares x close price = yuan (8000 x 11.71 = 93680).
+    Everything stays text (the caller converts units); a level without an order is ``0`` volume and ``0.000`` price."""
+    records, empty = [], []
+    text = _decode(body)
+    if "var hq_str_" not in text:
+        raise NotData("hq_body_has_no_quote_variables")
+    for line in text.splitlines():
+        m = _HQ_LINE.match(line.strip())
+        if not m:
+            continue
+        symbol, payload = m.group(1), m.group(2)
+        if not payload:
+            empty.append(symbol)
+            continue
+        f = payload.split(",")
+        if len(f) < 32:
+            raise SchemaChanged(f"hq_field_count_{len(f)}_lt_32")
+        rec = {"symbol": symbol, "name": f[0], "open": f[1], "prev_close": f[2], "last": f[3], "high": f[4], "low": f[5],
+               "volume": f[8], "amount": f[9], "quote_time": f"{f[30]} {f[31]}", "status": f[32] if len(f) > 32 else None,
+               "after_shares": None, "after_amount_yuan": None}
+        for i in range(1, 6):
+            rec[f"bid{i}_volume"], rec[f"bid{i}_price"] = f[8 + 2 * i], f[9 + 2 * i]
+            rec[f"ask{i}_volume"], rec[f"ask{i}_price"] = f[18 + 2 * i], f[19 + 2 * i]
+        tail = f[33].split("|") if len(f) > 33 else []
+        if len(tail) == 3 and tail[0] == "H":
+            rec["after_shares"], rec["after_amount_yuan"] = tail[1], tail[2]
+        records.append(rec)
+    return records, empty
+
+
 def parse_kline(body: bytes, symbol: str) -> list[dict]:
     text = body.decode("utf-8", errors="replace").strip()
     if not text or text[0] not in "[n":
@@ -143,9 +178,10 @@ class SinaAdapter:
     def __init__(self, client: RateLimitedClient):
         self.client = client
 
-    def quotes(self, symbols: list[str]) -> Capture:
-        if not symbols or len(symbols) > 50:
-            raise ValueError("1..50 symbols per request")
+    def quotes(self, symbols: list[str], *, limit: int = 50) -> Capture:
+        """``limit`` raises the default guard for the intraday recorder (a 200-symbol request was answered in full on 2026-11-19)."""
+        if not symbols or len(symbols) > limit:
+            raise ValueError(f"1..{limit} symbols per request")
         joined = ",".join(symbols)
         return self.client.request(source_id=SOURCE_ID, endpoint_id="hq_quote", request_key=f"hq:{joined}",
                                    url=HQ_URL.format(symbols=joined), headers=REFERER)

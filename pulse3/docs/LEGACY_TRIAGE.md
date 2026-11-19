@@ -114,7 +114,7 @@ Step 1, scheduling (producers that existed but never ran on the server):
 | Rows | Producer | Schedule |
 |---|---|---|
 | 15, 92, 19, 75, 84, 85, 87, 36 | `alerts drain`, `research run`, `screen-run`, `tactic-run`, `lab run-batch` | task Pulse3Jobs, every 5 minutes |
-| 9, 69, 127, 39 | `analysis actionability` + `analysis tape` | task Pulse3Tape, weekdays 09:30-15:05 every 5 minutes |
+| 9, 69, 127, 39 | `analysis actionability` + `analysis tape` | task Pulse3Tape, weekdays 09:30-15:05 every 5 minutes; **disabled 2026-11-19 until the cutover**: actionability fetches live Sina quotes from the server IP while the old recorder polls the same host (its first run got HTTP 403 at 09:30 and the circuit opened; the old recorder kept recording). The cutover script enables it again when the old recorder stops |
 | 12, 94 | `analysis outcomes` | Pulse3Daily, after the build |
 | 114, 115 | `alerts calendar-sync`, `calendar-derive`, `calendar-expiries` (this month and next) | Pulse3Daily |
 | 37, 80, 16, 82 | `research ext-b-run` (52 playbooks + 6 factors) | task Pulse3Weekly, Saturday 09:00 |
@@ -164,3 +164,30 @@ auction, order book and limit queues; #104/#186 extended recorder; #131/#187 new
 | 198 | GitHub publish script inside the app | it stays at repository level (`scripts/publish_github.sh`); it is not an app feature |
 | 184 | Tushare utilities | paid source, not in the declared source list |
 | 65 | MCP server | deferred, not retired: `llms.txt` and the manifest (batch 1) come first; MCP follows when an agent needs write access |
+
+## Step 2 status (2026-11-19): written and tested, not switched on
+
+| Rows | Native producer | Command (not scheduled) | Output |
+|---|---|---|---|
+| 103, 185, 119 | intraday recorder, Tencent primary (the old recorder's host, the only one with every legacy column), Sina fallback per session on a block | `ingest intraday-record --universe` / `run_intraday_record.ps1` | `quote_snapshots_60s`, same frame as the legacy import, lineage `pulse_intraday_recorder` |
+| 104, 186 | extended intraday recorder (ETF, index, CFFEX, A50, CNH ...) | `rec_ext record` / `run_ext_record.ps1` | `ext_quote_snapshots`, lineage `pulse_native_ext` |
+| 131, 187 | 7x24 news recorder (Tonghuashun 10 s, Eastmoney and CLS 30 s, 08:00-22:00) | `rec_news record` / `run_news_record.ps1` | the same document store and claims as `legacy-news`, source `native_news_recorder` |
+| 108, 112, 113 | adjusted bars (Sina raw / Sina factor, the old method), index bars, boards, listing dates | `refdata ...` / `run_refdata.ps1` | NEW datasets `*_native_*` beside the legacy ones; `refdata reconcile` compares them; consumers not switched |
+| 49, 89 | data sync jobs queued from the health page | `sync_jobs run --max 2` (in `run_jobs.ps1`, only after the cutover) | `ops.sync_job_log` |
+| 199, 203 | key and tools under `C:\pulse3` (`set_openai_key.ps1`; deploy copies uv and Python once) | - | `C:\pulse` copies only as a fallback |
+| fwdlog M3 | catalyst events from pulse3's calendar dataset (imported before each forward-log run) | - | old file only until the first import |
+
+Cutover (`deploy/windows/cutover.ps1`, dry run by default, `-Apply` only with the user's approval). Preflight: the four old
+recording tasks exist (PulseIntraday, PulseIntradayExt, PulseNews, PulseNewsAlerts), the native scripts are deployed,
+`C:\pulse3\secrets\push_webhook.url` exists (else `-NoPush`: phone pushes stop with PulseNewsAlerts), and it is not a weekday
+07:30-22:10 Asia/Shanghai. Then: state `switching`, old tasks disabled (not deleted) and their python processes stopped,
+Pulse3IntradayRecord 09:10, Pulse3ExtRecord 08:55, Pulse3NewsRecord 07:55 (weekdays) and Pulse3SyncJobs (every 10 minutes,
+5 h limit) registered, Pulse3Tape enabled, end state verified, state `cutover`; any error rolls back and writes `failed`.
+With `cutover` the import scripts skip the old files (one recorder per session day), daily `intel-news` is skipped (the news
+recorder covers it), sync runs execute, and pulse3 pushes to the phone. The native `run_*_record.ps1` refuse to start before.
+Every pulse3 process paces per host across processes (`PULSE_HOST_PACING_DIR`), so two recorders sharing a host stay at
+1 request/s. `-Rollback -Apply` reverses it.
+
+Known gaps: the intraday recorder at 1 request/s needs about 39 s per full board and cuts hot polls (reported as
+`truncated_hot`); Eastmoney limit pools, minute bars, convertible bonds and guba follow-ups of the old recorders are not
+ported; the news recorder polls weekday holidays; native boards are current membership only (no history).

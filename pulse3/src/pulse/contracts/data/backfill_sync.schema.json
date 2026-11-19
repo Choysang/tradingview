@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:sync:v1",
+  "x-contract-version": "1.0.0",
+  "description": "Legacy-feature backfill lane 'sync' (docs/LEGACY_TRIAGE.md rows #49 #89): queue a bounded data sync (daily bars, legacy import, reconcile) from the web and read the run log. A queued run stays queued until `pulse.workers.sync_jobs run` ran it; the summary is the command's own output, a missing value is null.",
+  "$defs": {
+    "DailyBarsParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "codes": {
+          "type": "array",
+          "maxItems": 300,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          },
+          "minItems": 1
+        },
+        "universe": {
+          "const": true
+        },
+        "source": {
+          "enum": [
+            "sina",
+            "tencent",
+            "both"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 320
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "codes"
+          ]
+        },
+        {
+          "required": [
+            "universe"
+          ]
+        }
+      ],
+      "description": "ingest live-daily: an explicit code list (max 300) or the research universe; source defaults to sina, count to 320."
+    },
+    "LegacyImportParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "since_days"
+      ],
+      "properties": {
+        "since_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400
+        },
+        "boards": {
+          "enum": [
+            "main",
+            "all"
+          ]
+        },
+        "codes": {
+          "type": "array",
+          "maxItems": 300,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          }
+        }
+      }
+    },
+    "ReconcileParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codes"
+      ],
+      "properties": {
+        "codes": {
+          "type": "array",
+          "maxItems": 300,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          },
+          "minItems": 1
+        },
+        "last": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        }
+      }
+    },
+    "SyncJobRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idempotency_key",
+        "kind",
+        "parameters"
+      ],
+      "properties": {
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "kind": {
+          "enum": [
+            "sync_daily_bars",
+            "sync_legacy_import",
+            "sync_reconcile"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "sync_daily_bars"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/$defs/DailyBarsParams"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "sync_legacy_import"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/$defs/LegacyImportParams"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "sync_reconcile"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/$defs/ReconcileParams"
+              }
+            }
+          }
+        }
+      ],
+      "description": "Queue one sync run. Refused with 409 SYNC_ALREADY_QUEUED while a run of the same kind is queued or running."
+    },
+    "SyncJobReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt",
+        "kind",
+        "parameters",
+        "worker_hint"
+      ],
+      "properties": {
+        "receipt": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/JobReceipt"
+        },
+        "kind": {
+          "enum": [
+            "sync_daily_bars",
+            "sync_legacy_import",
+            "sync_reconcile"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "worker_hint": {
+          "type": "string"
+        }
+      }
+    },
+    "SyncJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_run_id",
+        "kind",
+        "run_state",
+        "parameters",
+        "requested_at",
+        "started_at",
+        "finished_at",
+        "exit_status",
+        "error_code",
+        "summary"
+      ],
+      "properties": {
+        "job_run_id": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/UUID"
+        },
+        "kind": {
+          "enum": [
+            "sync_daily_bars",
+            "sync_legacy_import",
+            "sync_reconcile"
+          ]
+        },
+        "run_state": {
+          "enum": [
+            "queued",
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "requested_at": {
+          "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+        },
+        "started_at": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finished_at": {
+          "oneOf": [
+            {
+              "$ref": "urn:pulse:contracts:v3#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exit_status": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_code": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "SyncJobList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "kinds",
+        "defaults",
+        "bounds",
+        "executor_enabled",
+        "worker_hint"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SyncJob"
+          }
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "sync_daily_bars",
+              "sync_legacy_import",
+              "sync_reconcile"
+            ]
+          }
+        },
+        "defaults": {
+          "type": "object"
+        },
+        "bounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_codes",
+            "max_since_days",
+            "max_count",
+            "max_last"
+          ],
+          "properties": {
+            "max_codes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_since_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_last": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "worker_hint": {
+          "type": "string"
+        },
+        "executor_enabled": {
+          "type": "boolean",
+          "description": "True only where a sync worker is scheduled (PULSE_SYNC_EXECUTOR=1); false = a submission is refused with 409 SYNC_EXECUTOR_DISABLED."
+        }
+      }
+    }
+  }
+}

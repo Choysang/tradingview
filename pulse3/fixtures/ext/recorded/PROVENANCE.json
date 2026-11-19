@@ -1,0 +1,12 @@
+{
+ "note": "Copied unchanged from backend/tests/fixtures/intraday_ext (the old recorder's saved answers). No new capture was made for the native ext recorder.",
+ "copied_at": "2026-11-19",
+ "files": {
+  "tencent_etf_index.txt": "qt.gtimg.cn/q=<7 ETF + 10 index symbols>, GBK, session 2026-11-06 (saved 2026-11-08)",
+  "tencent_overseas.txt": "qt.gtimg.cn/q=hf_HSI,hf_GC,hf_CL, GBK, saved 2026-11-09",
+  "cffex_IF.txt": "www.cffex.com.cn/quote_IF.txt with the '#last-modified:' first line the old fetcher added (Mon, 09 Nov 2026 08:16:20 GMT); IH/IC/IM likewise",
+  "eastmoney_trends_CN00Y.txt": "push2his.eastmoney.com trends2 for 104.CN00Y (A50), UTF-8, saved 2026-11-09 (shortened to 10 bars)",
+  "eastmoney_trends_USDCNH.txt": "push2his.eastmoney.com trends2 for 133.USDCNH, UTF-8, saved 2026-11-09 (shortened)",
+  "eastmoney_ulist.txt": "push2delay ulist answer, used only to cross-check the CFFEX previous settlement (f28 of 040120)"
+ }
+}

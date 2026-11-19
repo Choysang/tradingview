@@ -1,0 +1,76 @@
+[
+ {
+  "file": "sina_adj_kline_sz000001.json",
+  "url": "https://quotes.sina.cn/cn/api/json_v2.php/CN_MarketDataService.getKLineData?symbol=sz000001&scale=240&ma=no&datalen=400",
+  "method": "GET",
+  "status": 200,
+  "bytes": 42189,
+  "captured_at": "2026-11-19T01:42:54.688537Z",
+  "purpose": "ratio-adjusted bars: raw kline of 000001 (has dividends)"
+ },
+ {
+  "file": "sina_adj_factor_sz000001.js",
+  "url": "https://finance.sina.com.cn/realstock/company/sz000001/qfq.js",
+  "method": "GET",
+  "status": 200,
+  "bytes": 1812,
+  "captured_at": "2026-11-19T01:42:55.632037Z",
+  "purpose": "ratio-adjusted bars: qfq factor file of 000001"
+ },
+ {
+  "file": "sina_index_kline_sh000001.json",
+  "url": "https://quotes.sina.cn/cn/api/json_v2.php/CN_MarketDataService.getKLineData?symbol=sh000001&scale=240&ma=no&datalen=30",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3481,
+  "captured_at": "2026-11-19T01:42:56.568335Z",
+  "purpose": "index bars via Sina"
+ },
+ {
+  "file": "tencent_index_kline_sh000985.json",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000985,day,,,30,qfq",
+  "method": "GET",
+  "status": 200,
+  "bytes": 3876,
+  "captured_at": "2026-11-19T01:42:58.510642Z",
+  "purpose": "index bars via Tencent (000985)"
+ },
+ {
+  "file": "sina_board_nodes.json",
+  "url": "https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodes",
+  "method": "GET",
+  "status": 200,
+  "bytes": 91431,
+  "captured_at": "2026-11-19T01:42:59.361807Z",
+  "purpose": "board list"
+ },
+ {
+  "file": "sina_board_members_new_blhy_p1.json",
+  "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=100&sort=symbol&asc=1&node=new_blhy&symbol=&_s_r_a=page",
+  "method": "GET",
+  "status": 200,
+  "bytes": 7071,
+  "captured_at": "2026-11-19T01:43:01.196691Z",
+  "purpose": "members page of an industry board"
+ },
+ {
+  "file": "sse_list_trimmed.json",
+  "url": "https://query.sse.com.cn/sseQuery/commonQuery.do?STOCK_TYPE=1&REG_PROVINCE=&CSRC_CODE=&STOCK_CODE=&sqlId=COMMON_SSE_CP_GPJCTPZ_GPLB_GP_L&COMPANY_STATUS=2,4,5,7,8&type=inParams&isPagination=true&pageHelp.cacheSize=1&pageHelp.beginPage=1&pageHelp.pageSize=10000&pageHelp.pageNo=1&pageHelp.endPage=1",
+  "method": "GET",
+  "status": 200,
+  "bytes": 1944409,
+  "captured_at": "2026-11-19T01:43:10.242296Z",
+  "purpose": "SSE main board A list (full, trimmed afterwards)",
+  "note": "body trimmed to the first 25 rows of result and pageHelp.data (full body was 1944409 bytes, 1700 rows)"
+ },
+ {
+  "file": "szse_list_trimmed.xlsx",
+  "url": "https://www.szse.cn/api/report/ShowReport?SHOWTYPE=xlsx&CATALOGID=1110&TABKEY=tab1",
+  "method": "GET",
+  "status": 200,
+  "bytes": 545159,
+  "captured_at": "2026-11-19T01:43:12.649775Z",
+  "purpose": "SZSE A-share list workbook (full)",
+  "note": "worksheet trimmed to the header + 25 rows (full workbook was 545159 bytes, 2905 rows)"
+ }
+]

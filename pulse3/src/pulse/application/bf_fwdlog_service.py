@@ -94,6 +94,22 @@ class FwdlogService:
         self.hist_loader = hist_loader or (lambda c, a, u, since: PA.load_hist_cents(c, a, u, since))
         self.bars_loader = bars_loader or (lambda c, a, u, since: PA.load_bars(c, a, u, since))   # tests / local reconciliation read bars elsewhere
 
+    def _events(self) -> tuple[list, dict]:
+        """M3 catalyst events: pulse3's imported calendar dataset (step 2), else the old store file until that dataset exists.
+
+        An explicit ``events_path`` (tests, local reconciliation) reads that file. The dataset holds the same events as the file
+        (``fillm import-calendar`` runs daily; parity is tested in ``tests/bf_fillm``), and ``sha256`` stays the source file's hash."""
+        if self.events_path is None:
+            from pulse.application import bf_fillm_calendar as CAL
+            events, info = CAL.read_calendar_events(self.conn, self.lake)
+            if info["present"]:
+                ready = CAL.latest_ready(self.conn, None)["ready_at"]
+                stale_h = (self.clock() - ready).total_seconds() / 3600
+                return events, {"source": "pulse3_calendar" + (f", STALE: last import {stale_h:.0f} h ago" if stale_h > 20 else ""), "path_present": True, "events": info["events"], "sha256": info["source_sha256"],
+                                "latest_first_seen_at": info["latest_first_seen_at"], "snapshot_id": str(info["snapshot_id"])}
+        events, note = IN.read_events(self.events_path)
+        return events, {**note, "source": "file"}
+
     # ---- stored rows (append-only datasets) ------------------------------------------------------------------------
     def _manifests(self, dataset: str) -> list[dict]:
         return self.conn.execute("SELECT * FROM market.dataset_manifest WHERE dataset_id=%s AND manifest_state='READY' ORDER BY manifest_version", (dataset,)).fetchall()
@@ -171,8 +187,8 @@ class FwdlogService:
             if spec.key in keys and REG.registered(self.conn, spec) is None:
                 REG.ensure_registered(self.conn, spec, self.frozen, first, now=self.clock())
                 rep.registered.append(spec.key)
-        events, ev_note = IN.read_events(self.events_path)
-        rep.notes.append(f"calendar store: {ev_note['events']} events" + ("" if ev_note["path_present"] else " (file absent: M3 catalyst unknown)"))
+        events, ev_note = self._events()
+        rep.notes.append(f"calendar store ({ev_note['source']}): {ev_note['events']} events" + ("" if ev_note["path_present"] else " (absent: M3 catalyst unknown)"))
         done = {k: self.decided(DS[k]) for k in ("E077", "E078", "E089", "PAPER_DAYS")}
         rows: dict[str, list[dict]] = {k: [] for k in DS}
         deps: dict[str, list[uuid.UUID]] = {k: [] for k in DS}
