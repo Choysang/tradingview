@@ -380,9 +380,14 @@ def _lake_manifest(sha: str) -> list[Path]:
     return [root / m["path"] for m in json.loads(data)["members"] if m["path"].endswith(".parquet")]
 
 
-def _lake_daily_rows(manifest: dict, instrument_id: UUID, d0: date, d1: date) -> list[dict]:
-    """Daily rows of one instrument from the frozen lake manifest of an adjusted snapshot (read-only)."""
+def _lake_daily_rows(manifest: dict, instrument_id: UUID, d0: date, d1: date, as_of: datetime | None = None) -> list[dict]:
+    """Daily rows of one instrument from the frozen lake manifest of an adjusted snapshot (read-only).
+
+    With ``as_of`` one row per day is returned: the latest revision visible at ``as_of`` (the native snapshot keeps every revision,
+    the legacy one a single revision per key; ``bindings.latest_visible_revision`` is the shared rule)."""
     import polars as pl
+
+    from pulse.application.bindings import latest_visible_revision
 
     try:
         paths = _lake_manifest(manifest["content_hash"])
@@ -390,6 +395,8 @@ def _lake_daily_rows(manifest: dict, instrument_id: UUID, d0: date, d1: date) ->
                                                & pl.col("trade_date").is_between(d0, d1)).sort("trade_date").collect())
     except FileNotFoundError as e:
         raise ApiError(503, "LAKE_UNAVAILABLE", "快照对应的数据湖文件不可读", retryable=True) from e
+    if as_of is not None and "revision" in frame.columns:
+        frame = latest_visible_revision(frame, as_of).sort("trade_date")
     return frame.to_dicts()
 
 
@@ -403,7 +410,7 @@ def _read_lake_bars(manifest: dict, instrument_id: UUID, d0: date, d1: date, as_
               "turnover_amount_cny": {"status": "missing", "reason": "absent_in_source", "raw_object_id": None,
                                       "value_origin": "not_available"}}
     out, by_key = [], {}
-    for r in _lake_daily_rows(manifest, instrument_id, d0, d1):
+    for r in _lake_daily_rows(manifest, instrument_id, d0, d1, as_of):
         if r["available_at"] > as_of:
             continue
         bar = Bar(instrument_id=r["instrument_id"], timeframe="1d", session_scope=SESSION_SCOPE_REGULAR, trade_date=r["trade_date"],

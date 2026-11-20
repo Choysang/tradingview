@@ -36,6 +36,7 @@ from pulse.application.data_service import DataService, Summary, ingest_repo_cre
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
 from pulse.domain.instruments import identity as ident
 from pulse.domain.market import builders
+from pulse.domain.market.capability import REGISTRY
 from pulse.domain.market.units import MappingDrift, normalize, sha256_json
 
 MAX_CONSECUTIVE_FAILURES = 10
@@ -245,6 +246,7 @@ class RefDataService:
             "max_revision": int(allrows["revision"].max()), "first_date": latest["trade_date"].min().isoformat(),
             "last_date": latest["trade_date"].max().isoformat(), "partitions": sorted(merged),
             "finality_policy": builders.DAILY_FINAL_POLICY, "schema": "identical to bars_legacy_fwd_adjusted_1d",
+            "capability": REGISTRY[C.ADJ_DATASET].to_doc(),                      # the bars API refuses a snapshot without it
             "provenance": "bars appended from the Tencent closing quote (refresh mode) reference that quote capture; all others the Sina kline",
             "gap_note": "missing sessions are not classified (no suspension feed registered)",
             "window_note": "every fetch re-publishes the requested window (default 3 years) of a code; rows older than the window keep their last "
@@ -706,6 +708,46 @@ class RefDataService:
         except Exception:
             self._fail_batch(batch_id, owner)
             raise
+        return s
+
+    # ---- listed_on fill (cutover helper) ------------------------------------------------------------------------------
+    def fill_listed_on(self, *, dry: bool = False, examples: int = 10) -> Summary:
+        """Fill ``core.instrument.listed_on`` from the newest ``instrument_listing_native`` snapshot, ONLY where it is NULL.
+
+        A value that is already set is never overwritten: a different native date is counted and listed as a conflict. Codes of the
+        listing without a registered instrument and listing rows without a date are counted and ignored. ``dry`` changes nothing."""
+        s = Summary("refdata fill-listed-on" + (" (dry)" if dry else ""))
+        frame = self.read_frame(C.LISTING_DATASET)
+        if frame is None:
+            raise RefDataError("no native listing dataset: run the `listings` command first")
+        have = {str(r["instrument_id"]): r["listed_on"] for r in self.conn.execute(
+            "SELECT instrument_id, listed_on FROM core.instrument WHERE instrument_type='equity' AND instrument_id = ANY(%s::uuid[])",
+            (frame["instrument_id"].to_list(),))}
+        fill: list[tuple[date, str]] = []
+        conflicts: list[dict] = []
+        for r in frame.iter_rows(named=True):
+            iid = r["instrument_id"]
+            if iid not in have:
+                s.add("native_codes_without_instrument")
+            elif r["listed_on"] is None:
+                s.add("native_rows_without_date")
+            elif have[iid] is None:
+                fill.append((r["listed_on"], iid))
+            elif have[iid] != r["listed_on"]:
+                conflicts.append({"code": r["code"], "native": r["listed_on"].isoformat(), "stored": have[iid].isoformat()})
+            else:
+                s.add("already_equal")
+        s.counts["native_rows"] = frame.height
+        s.counts["to_fill"] = len(fill)
+        s.counts["conflicts_not_overwritten"] = len(conflicts)
+        s.counts["instruments_still_null_after"] = sum(1 for v in have.values() if v is None) - (0 if dry else len(fill))
+        if not dry and fill:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    cur.executemany("UPDATE core.instrument SET listed_on=%s WHERE instrument_id=%s AND listed_on IS NULL", fill)
+            s.counts["filled"] = len(fill)
+        for c in conflicts[:examples]:
+            s.notes.append(f"conflict {c['code']}: stored {c['stored']} kept, native says {c['native']}")
         return s
 
     # ---- reconcile (read only) --------------------------------------------------------------------------------------

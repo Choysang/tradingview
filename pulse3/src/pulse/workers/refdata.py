@@ -12,6 +12,7 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.refdata adjusted-bars --universe-listings --max-codes 300   # 2 requests per code, resumable
     uv run python -m pulse.workers.refdata adjusted-bars --mode refresh --universe-listings    # daily: ~len/50 quote requests + ex-right refetches
     uv run python -m pulse.workers.refdata adjusted-bars --codes 000001 600000                 # ad hoc, no cursor
+    uv run python -m pulse.workers.refdata fill-listed-on [--dry]                              # cutover helper: NULL listed_on from the native listing dataset
     uv run python -m pulse.workers.refdata reconcile                                           # read only report vs the legacy datasets
 
 Rate: at most 1 request per second (``--min-interval`` below 1.0 is refused). The first block (HTTP 403/429/456/501, a redirect or an HTML
@@ -64,6 +65,8 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, default=None, help="smoke test: first N boards only, nothing is published")
     p = sub.add_parser("listings", help="listing dates, dataset instrument_listing_native")
     p.add_argument("--min-rows", type=int, default=L.MIN_ROWS)
+    p = sub.add_parser("fill-listed-on", help="fill core.instrument.listed_on from instrument_listing_native where it is NULL; differences are reported, never overwritten")
+    p.add_argument("--dry", action="store_true", help="report only, change nothing")
     p = sub.add_parser("reconcile", help="read only comparison of each native dataset with the legacy-imported one")
     p.add_argument("--only", nargs="+", choices=("adjusted", "index", "boards", "listings"), default=["adjusted", "index", "boards", "listings"])
     p.add_argument("--rel-tol", type=float, default=C.REL_TOL)
@@ -120,6 +123,8 @@ def run(argv: list[str] | None = None) -> int:
             print(rs.boards(M.SinaRefAdapter(client), chunk_boards=a.chunk_boards, limit=a.limit).render())
         elif a.cmd == "listings":
             print(rs.listings(L.ListingAdapter(client), min_rows=a.min_rows).render())
+        elif a.cmd == "fill-listed-on":
+            print(rs.fill_listed_on(dry=a.dry).render())
         else:
             print(rs.reconcile(a.only, rel_tol=a.rel_tol))
         print(f"http_requests: {client.requests_made}")

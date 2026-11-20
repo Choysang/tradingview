@@ -59,7 +59,7 @@ def register(add, spec_cls, sources: dict) -> None:
                   "units": "prices forward-adjusted by ratio, float64 -> decimal(38,12); volume shares; turnover NULL",
                   "revisions": "every row of a code is re-published as a new revision when its values change (new ex-right event); "
                                "available_at is the fetch time; the frame keeps ALL revisions",
-                  "schema": "identical to bars_legacy_fwd_adjusted_1d"}, True, None))
+                  "schema": "identical to bars_legacy_fwd_adjusted_1d"}, True, "bars_native_fwd_adjusted_1d"))
     add(spec_cls(M.SINA_SOURCE, M.OUT_INDEX, M.SCHEMA_VERSION, M.MAPPING_VERSION, "AdjustedBar", "batch", 3 * day, None, None,
                  {**_BASE, "endpoint": M.OUT_INDEX, "dataset": "index_bars_native_1d", "units": "index points; volume unit not verified",
                   "indices": sorted(M.INDEX_TICKERS), "schema": "identical to index_bars_legacy_1d",

@@ -43,7 +43,7 @@ from pulse.domain.fusion import scorer as SC
 LANE = "fusion"
 DS_CURRENT, DS_ASOF, DS_LOG, DS_IC = "fusion_scores_current", "fusion_scores_asof", "fusion_forward_log", "fusion_ic_history"
 CONTRACT = "pulse.analysis_artifact"
-SECTOR_DATASET = "sector_membership_legacy_boards_industry"
+SECTOR_DATASET = "sector_membership_legacy_boards_industry"      # the legacy id; load_inputs resolves the dataset with B.membership_dataset() (PULSE_REFDATA_SOURCE)
 ASOF_START = date(2026, 10, 30)          # first decision date with an as-of score (the book was frozen on 2026-11-01)
 REPRO_DAYS, REPRO_MIN, REPRO_MIN_DAYS = 60, 0.95, 20
 HISTORY_START = date(2023, 11, 1)        # the old panel starts here; the first score is on 2024-08-20
@@ -136,7 +136,7 @@ def load_inputs(conn: psycopg.Connection, lake: LakeStore, cutoff: datetime | No
             .with_columns(pl.col("has_total_cap").fill_null(False), pl.col("trade_date").alias("date"))
             .select(PN.BAR_COLUMNS))
     long = PN.build_long(bars)
-    sec = _latest_manifest(conn, SECTOR_DATASET, cutoff)
+    sec = _latest_manifest(conn, B.membership_dataset(), cutoff)
     notes = list(ri.notes)
     if sec is None:
         long = long.with_columns(pl.lit(None, dtype=pl.String).alias("industry"))

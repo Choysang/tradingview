@@ -103,8 +103,8 @@ class World:
                 return httpx.Response(self.member_status[node], content=b"boom")
             if page > 1:
                 return httpx.Response(200, content=b"[]")
-            n = sum(map(ord, node)) % 1000
-            rows = [{"symbol": f"sh60{(n * 7 + k) % 9000:04d}", "code": f"60{(n * 7 + k) % 9000:04d}", "name": "x"} for k in range(self.member_count)]
+            n = sum(map(ord, node)) % 250                                   # codes 600000..600752; boards share codes, so some stocks sit in two boards
+            rows = [{"symbol": f"sh60{n * 3 + k:04d}", "code": f"60{n * 3 + k:04d}", "name": "x"} for k in range(self.member_count)]
             return httpx.Response(200, content=json.dumps(rows).encode())
         if host == "query.sse.com.cn":
             return httpx.Response(200, content=fixture("sse_list_trimmed.json"))

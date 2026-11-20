@@ -23,6 +23,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
 import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -54,8 +55,49 @@ AVAILABILITY_POLICY = "observed-actual-available-at-v1"
 RECONSTRUCTED_POLICY = "reconstructed-session-close-plus-1h-v1"      # policy_usable_at = 15:00 CST close + 1 hour, per bar
 RECONSTRUCTED_DELAY = timedelta(hours=1)
 SESSION_POLICY = "regular_continuous_v1"
-RESEARCH_DATASET = "bars_legacy_fwd_adjusted_1d"
-INDEX_DATASET = "index_bars_legacy_1d"
+# Reference-data source switch (step 2 cutover): ``PULSE_REFDATA_SOURCE`` = ``legacy`` (default, the imported old warehouse) | ``native``
+# (the producers of ``workers/refdata.py``). ``RESEARCH_DATASET`` / ``INDEX_DATASET`` / ``MEMBERSHIP_DATASET`` are resolved at ACCESS
+# time (module ``__getattr__``, PEP 562), so ``B.RESEARCH_DATASET`` in every consumer follows the switch without being edited and nothing
+# changes while the variable is unset. Inside this module call the functions below.
+REFDATA_SOURCE_ENV = "PULSE_REFDATA_SOURCE"
+_REFDATA_DATASETS = {
+    "legacy": {"research": "bars_legacy_fwd_adjusted_1d", "index": "index_bars_legacy_1d",
+               "membership": "sector_membership_legacy_boards_industry"},
+    "native": {"research": "bars_native_fwd_adjusted_1d", "index": "index_bars_native_1d",
+               "membership": "sector_membership_native_boards_industry"},
+}
+
+
+def refdata_source() -> str:
+    """``legacy`` or ``native`` from the environment; any other value is an error (never a silent fallback)."""
+    value = (os.environ.get(REFDATA_SOURCE_ENV) or "legacy").strip().lower()
+    if value not in _REFDATA_DATASETS:
+        raise ValueError(f"{REFDATA_SOURCE_ENV}={value!r}: expected 'legacy' or 'native'")
+    return value
+
+
+def research_dataset() -> str:
+    return _REFDATA_DATASETS[refdata_source()]["research"]
+
+
+def index_dataset() -> str:
+    return _REFDATA_DATASETS[refdata_source()]["index"]
+
+
+def membership_dataset() -> str:
+    return _REFDATA_DATASETS[refdata_source()]["membership"]
+
+
+def __getattr__(name: str) -> str:
+    if name == "RESEARCH_DATASET":
+        return research_dataset()
+    if name == "INDEX_DATASET":
+        return index_dataset()
+    if name == "MEMBERSHIP_DATASET":
+        return membership_dataset()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 RAW_DATASETS = ("bars_raw_1d", "bars_raw_1d_tencent")
 BENCHMARK_SYMBOL = "000300"                       # CSI 300 as the relative-strength benchmark (index points)
 DERIVED_SOURCE = "pulse_analysis"
@@ -127,6 +169,23 @@ def ready_manifests(conn: psycopg.Connection, dataset_ids: Sequence[str], as_of:
     return conn.execute(sql + " ORDER BY dataset_id, manifest_version", args).fetchall()
 
 
+def latest_visible_revision(df: pl.DataFrame, cutoff: datetime, *, recon: bool = False) -> pl.DataFrame:
+    """One row per (instrument_id, trade_date): the latest revision visible at ``cutoff``. THE shared place for adjusted bar frames.
+
+    Works the same on the legacy frame (one stored revision per key) and on the native frame (every revision kept, so a later
+    ex-right re-publication never hides the earlier value from a reader whose cutoff precedes it).
+    Observed policy: ``available_at <= cutoff``. Reconstructed policy (history rebuild): revision 1 is usable once
+    ``policy_usable_at(trade_date) <= cutoff`` (its stored ``available_at`` is the back-fill ingest time and is left as it is); a
+    later revision only if it was recorded by then (``available_at <= cutoff``)."""
+    if recon:
+        usable = pl.col("trade_date").map_elements(lambda d: policy_usable_at(d) <= cutoff, return_dtype=pl.Boolean)
+        first = pl.col("revision") == 1       # a legacy frame keeps the latest revision per key: a later one not yet recorded leaves the bar missing
+        df = df.filter(usable & (first | (pl.col("available_at") <= cutoff)))
+    else:
+        df = df.filter(pl.col("available_at") <= cutoff)                   # point-in-time visibility
+    return df.sort("revision").unique(["instrument_id", "trade_date"], keep="last")
+
+
 def load_research_inputs(conn: psycopg.Connection, lake: LakeStore, decision_as_of: datetime | None,
                          availability_policy: str = AVAILABILITY_POLICY) -> ResearchInputs:
     """Visible adjusted bars, latest revision per key, plus the benchmark index series.
@@ -138,20 +197,15 @@ def load_research_inputs(conn: psycopg.Connection, lake: LakeStore, decision_as_
     recon = reconstructed(availability_policy)
     if recon and decision_as_of is None:
         raise ValueError("a reconstructed availability policy needs an explicit decision_as_of")
-    man = _ready_manifest(conn, RESEARCH_DATASET, None if recon else decision_as_of)
+    research_id = research_dataset()
+    man = _ready_manifest(conn, research_id, None if recon else decision_as_of)
     if man is None:
-        raise LookupError(f"no READY {RESEARCH_DATASET} snapshot visible at {decision_as_of}")
+        raise LookupError(f"no READY {research_id} snapshot visible at {decision_as_of}")
     df = lake.read_snapshot_frames(man["content_hash"])
     if df is None or df.height == 0:
         raise LookupError("research snapshot is empty")
     cutoff = decision_as_of or datetime.now(timezone.utc)
-    if recon:
-        usable = pl.col("trade_date").map_elements(lambda d: policy_usable_at(d) <= cutoff, return_dtype=pl.Boolean)
-        first = pl.col("revision") == 1       # the lake keeps the latest revision per key: a later one not yet recorded leaves the bar missing
-        df = df.filter(usable & (first | (pl.col("available_at") <= cutoff)))
-    else:
-        df = df.filter(pl.col("available_at") <= cutoff)                   # point-in-time visibility
-    df = df.sort("revision").unique(["instrument_id", "trade_date"], keep="last")   # latest visible revision
+    df = latest_visible_revision(df, cutoff, recon=recon)
     df = df.select(
         "instrument_id", "trade_date", "available_at",
         *[pl.col(c).cast(pl.Float64).alias(c.split("_")[0]) for c in ("open_price", "high_price", "low_price", "close_price")],
@@ -166,7 +220,7 @@ def load_research_inputs(conn: psycopg.Connection, lake: LakeStore, decision_as_
     sessions = sorted(full_days)
     notes: list[str] = []
     bench: dict[date, float] = {}
-    bman = _ready_manifest(conn, INDEX_DATASET, None if recon else decision_as_of)
+    bman = _ready_manifest(conn, index_dataset(), None if recon else decision_as_of)
     if bman is not None:
         idx = lake.read_snapshot_frames(bman["content_hash"])
         if idx is not None:
@@ -586,7 +640,7 @@ class PitFeatureMatrix:
 # --------------------------------------------------------------------------------------------------------
 TAXONOMY_ID = "legacy_boards_industry"
 TAXONOMY_VERSION = 1
-MEMBERSHIP_DATASET = "sector_membership_legacy_boards_industry"
+LEGACY_MEMBERSHIP_DATASET = "sector_membership_legacy_boards_industry"
 
 
 @dataclass
@@ -621,7 +675,11 @@ def _boards_frame(conn: psycopg.Connection, lake: LakeStore, as_of: datetime) ->
 
 
 def ensure_membership(svc: DataService, lake: LakeStore, as_of: datetime) -> Membership | None:
-    """Taxonomy + instrument_tag rows + membership dataset snapshot from the legacy boards evidence (idempotent)."""
+    """Taxonomy + instrument_tag rows + membership dataset snapshot from the legacy boards evidence (idempotent).
+
+    With ``PULSE_REFDATA_SOURCE=native`` the NATIVE industry snapshot is used instead (:func:`ensure_membership_native`)."""
+    if refdata_source() == "native":
+        return ensure_membership_native(svc, lake, as_of)
     conn = svc.conn
     got = _boards_frame(conn, lake, as_of)
     if got is None:
@@ -655,18 +713,83 @@ def ensure_membership(svc: DataService, lake: LakeStore, as_of: datetime) -> Mem
     tags = pl.DataFrame({"instrument_id": [str(ids[c]) for c in df["code"].to_list()],
                          "node_id": df["board_id"].to_list()}).sort(["node_id", "instrument_id"])
     digest = hashlib.sha256(tags.write_csv().encode()).hexdigest()
-    man = find_derived(conn, MEMBERSHIP_DATASET, "members_sha256", digest)
+    man = find_derived(conn, LEGACY_MEMBERSHIP_DATASET, "members_sha256", digest)
     if man is None:
         frame = tags.with_columns(pl.lit(eff_from).alias("effective_from").cast(pl.Datetime("us", "UTC")),
                                   pl.lit(available_at).alias("available_at").cast(pl.Datetime("us", "UTC")))
-        cov = {"dataset": MEMBERSHIP_DATASET, "members_sha256": digest, "taxonomy_id": TAXONOMY_ID, "taxonomy_version": TAXONOMY_VERSION,
+        cov = {"dataset": LEGACY_MEMBERSHIP_DATASET, "members_sha256": digest, "taxonomy_id": TAXONOMY_ID, "taxonomy_version": TAXONOMY_VERSION,
                "nodes": len(nodes), "rows": frame.height, "evidence": evidence, "membership_as_of": board_asof.isoformat(),
                "note": "membership is a point-in-time observation of the legacy boards file; it is not back-filled to earlier dates"}
-        man = publish_derived(svc, MEMBERSHIP_DATASET, frame, cov, contract_id="pulse.sector_membership", watermark=available_at)
+        man = publish_derived(svc, LEGACY_MEMBERSHIP_DATASET, frame, cov, contract_id="pulse.sector_membership", watermark=available_at)
     members: dict[str, list[uuid.UUID]] = {}
     for iid, b in zip(tags["instrument_id"].to_list(), tags["node_id"].to_list()):
         members.setdefault(b, []).append(uuid.UUID(iid))
     return Membership(TAXONOMY_ID, TAXONOMY_VERSION, man, nodes, {k: tuple(v) for k, v in members.items()}, available_at, board_asof, evidence)
+
+
+NATIVE_TAG_EVIDENCE = "native_boards_industry"
+
+
+def ensure_membership_native(svc: DataService, lake: LakeStore, as_of: datetime) -> Membership | None:
+    """The native counterpart of :func:`ensure_membership`: taxonomy nodes + ``core.instrument_tag`` rows from the newest READY
+    ``sector_membership_native_boards_industry`` snapshot visible at ``as_of``.
+
+    The dataset is already published in the legacy schema by ``workers/refdata.py boards`` (fusion / OS20 read it directly, see
+    :func:`membership_dataset`), so nothing is re-published here. The Sina industry taxonomy keeps its id/version
+    (``legacy_boards_industry`` v1: the alert, calendar and market-today consumers read that id; the node ids are the same Sina board ids).
+    Tags follow the snapshots: a pair present in the snapshot and already open is left alone (also one written from the legacy file),
+    a missing pair is inserted with the snapshot's effective_from / available_at, and an open pair that disappeared from the snapshot
+    is closed at the snapshot's effective_from (a reader before that time still sees it open: point in time is kept; a pair that
+    began the same day cannot be closed and is left, counted in the evidence note). Idempotent. Stocks that are not registered
+    instruments are skipped (the tag table references ``core.instrument``)."""
+    conn = svc.conn
+    man = _ready_manifest(conn, _REFDATA_DATASETS["native"]["membership"], as_of)
+    if man is None:
+        return None
+    df = lake.read_snapshot_frames(man["content_hash"])
+    if df is None or df.height == 0:
+        return None
+    cov = man["coverage_document"] or {}
+    registered = {str(r["instrument_id"]) for r in conn.execute(
+        "SELECT instrument_id FROM core.instrument WHERE instrument_type='equity' AND instrument_id = ANY(%s::uuid[])",
+        (df["instrument_id"].unique().to_list(),))}
+    df = df.filter(pl.col("instrument_id").is_in(list(registered)))
+    if df.height == 0:
+        return None
+    eff_from, available_at = df["effective_from"].max(), df["available_at"].max()
+    names = {str(k): str(v) for k, v in (cov.get("nodes") or {}).items()}
+    nodes = {b: names.get(b, b) for b in sorted(df["node_id"].unique().to_list())}
+    evidence = f"{NATIVE_TAG_EVIDENCE}:{man['dataset_id']}@{man['content_hash'][:16]}"
+    wanted = set(zip(df["instrument_id"].to_list(), df["node_id"].to_list()))
+    with conn.transaction():
+        conn.execute("INSERT INTO core.taxonomy(taxonomy_id, taxonomy_version, taxonomy_kind, owner_source_id, definition, available_at)"
+                     " VALUES (%s,%s,'industry','sina_ref',%s,%s) ON CONFLICT DO NOTHING",
+                     (TAXONOMY_ID, TAXONOMY_VERSION, Jsonb({"origin": "Sina industry boards (sector_membership_native_boards_industry)",
+                                                            "taxonomies_not_merged": True, "display_names_are_not_identifiers": True}), available_at))
+        with conn.cursor() as cur:
+            cur.executemany(
+                "INSERT INTO core.taxonomy_node(taxonomy_id, taxonomy_version, node_id, parent_node_id, display_name, definition)"
+                " VALUES (%s,%s,%s,NULL,%s,%s) ON CONFLICT DO NOTHING",
+                [(TAXONOMY_ID, TAXONOMY_VERSION, b, n, Jsonb({"board_id": b})) for b, n in sorted(nodes.items())])
+        open_rows = conn.execute(
+            "SELECT assignment_id, instrument_id, node_id, effective_from FROM core.instrument_tag WHERE taxonomy_id=%s AND taxonomy_version=%s"
+            " AND effective_to IS NULL AND effective_from <= %s", (TAXONOMY_ID, TAXONOMY_VERSION, eff_from)).fetchall()
+        have = {(str(r["instrument_id"]), r["node_id"]) for r in open_rows}
+        closable = [r["assignment_id"] for r in open_rows if (str(r["instrument_id"]), r["node_id"]) not in wanted and r["effective_from"] < eff_from]
+        if closable:
+            conn.execute("UPDATE core.instrument_tag SET effective_to=%s WHERE assignment_id = ANY(%s::uuid[]) AND effective_to IS NULL", (eff_from, closable))
+        with conn.cursor() as cur:
+            cur.executemany(
+                "INSERT INTO core.instrument_tag(assignment_id, instrument_id, taxonomy_id, taxonomy_version, node_id, effective_from,"
+                " effective_to, available_at, assertion_kind, evidence_ref, weight) VALUES (%s,%s,%s,%s,%s,%s,NULL,%s,'observed',%s,NULL)"
+                " ON CONFLICT DO NOTHING",
+                [(aid("tag", i, b, eff_from.isoformat()), uuid.UUID(i), TAXONOMY_ID, TAXONOMY_VERSION, b, eff_from, available_at, evidence)
+                 for i, b in sorted(wanted - have)])
+    members: dict[str, list[uuid.UUID]] = {}
+    for i, b in sorted(wanted):
+        members.setdefault(b, []).append(uuid.UUID(i))
+    as_of_day = date.fromisoformat(cov["membership_as_of"]) if cov.get("membership_as_of") else eff_from.astimezone(CST).date()
+    return Membership(TAXONOMY_ID, TAXONOMY_VERSION, man, nodes, {k: tuple(v) for k, v in members.items()}, available_at, as_of_day, evidence)
 
 
 def sector_snapshots(m: Membership) -> list[SectorSnapshot]:
