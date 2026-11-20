@@ -14,8 +14,9 @@ function Step($name, [string[]]$argv) {
 }
 # The research snapshot is exactly the imported window (not merged with earlier ones): keep it long enough for
 # listing age, 250-session features and the chart window.
-# 600 calendar days (about 400 sessions): the fusion scorer's longest expression window needs it (BF_FUSION.md).
-$since = (Get-Date).AddDays(-600).ToString('yyyy-MM-dd')
+# 800 calendar days (about 540 sessions): the fusion scorer needs 400 sessions, and 600 days gave only 399 on 2026-11-19
+# (holidays), so the daily run refused with history_too_short (BF_FUSION.md).
+$since = (Get-Date).AddDays(-800).ToString('yyyy-MM-dd')
 $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).
