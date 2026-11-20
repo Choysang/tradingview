@@ -198,6 +198,7 @@ ONE_SHOTS = (("auction_final", time(9, 25, 10), time(9, 27)), ("close", time(15,
              ("after_open", time(15, 5, 5), time(15, 7)), ("after_mid", time(15, 15), time(15, 17)),
              ("after_end", time(15, 30, 5), time(15, 33)))
 AFTER_SHOTS = ("after_open", "after_mid", "after_end")
+POOLS_WINDOW = (time(15, 25), time(15, 50))        # the old recorder's one-shot step "pools"
 
 
 @dataclass(frozen=True)
@@ -260,3 +261,8 @@ def missed(previous: datetime | None, current: datetime, every: int) -> int:
         return 0
     gap = (current - previous).total_seconds()
     return int(gap // every) - 1 if gap > every else 0
+
+
+def pools_due(now: datetime, clock: Clock) -> bool:
+    """The vendor limit pools are fetched once per run inside their window (optional step, enabled by the recorder)."""
+    return "pools" not in clock.done and _inside(now.time(), POOLS_WINDOW)

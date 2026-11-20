@@ -8,10 +8,11 @@ Invariants:
 * ``is_open`` answers ``None`` (unknown) for a weekday of a MISSING year; callers that must continue (T+1 tails) use
   ``weekday_tail`` which keeps the Monday-Friday assumption and reports ``assumed`` so the result can say so;
 * weekends are never listed (they are closed anyway); only weekday closures are data.
-Status 2026-11-18: NEITHER year has a citable notice in the old repository or its docs. The old seed
-(``docs/research/seeds/calendar_seed_2026-11-02.json``) only links the SSE notice ``c_20251222_10802507`` (published 2025-12-22) as
-a secondary source and its text is not stored anywhere in the repo, so no date is entered. To fill a year: add a ``YearSchedule``
-with ``status="COMPLETE"`` and the four citation fields; ``tests/bf_fillm/test_calendar.py`` locks the rules.
+Status 2026-11-20: 2026 is COMPLETE from the SSE notice 上证公告〔2025〕45号 (published 2025-12-22); its paragraph is stored verbatim in
+``data/sse_2026_holiday_notice.txt`` and cross-checked against the State Council General Office notice on the 2026 public holidays
+(2025-11-04, read as the Xinhua authorised release; the gov.cn page itself was not fetched). 2027 stays MISSING until the exchanges
+publish it (December 2026). To fill a year: add a ``YearSchedule`` with ``status="COMPLETE"`` and the four citation fields;
+``tests/bf_fillm/test_calendar.py`` locks the rules and checks the 2026 dates against the stored notice text.
 Not covered: special weekend make-up sessions (the exchanges' 调休 Saturday/Sunday are closed for stocks) and half-days.
 """
 from __future__ import annotations
@@ -46,11 +47,25 @@ class YearSchedule:
             raise ValueError(f"unknown status {self.status}")
 
 
-_NOT_IN_REPO = ("no official SSE/SZSE notice text is stored in the old repository or docs; the old calendar seed only links SSE notice "
-                "c_20251222_10802507 (2025-12-22) without its dates, so none is entered (no dates from memory)")
+SSE_2026_NOTICE = YearSchedule(
+    2026, COMPLETE,
+    # the weekday days of every closure range in the notice (weekends inside a range, and the notice's "周末休市" make-up Saturdays/Sundays, are not data)
+    closed=frozenset(date(2026, m, d) for m, d in (
+        (1, 1), (1, 2),                                              # 元旦: 1/1-1/3
+        (2, 16), (2, 17), (2, 18), (2, 19), (2, 20), (2, 23),        # 春节: 2/15-2/23
+        (4, 6),                                                      # 清明节: 4/4-4/6
+        (5, 1), (5, 4), (5, 5),                                      # 劳动节: 5/1-5/5
+        (6, 19),                                                     # 端午节: 6/19-6/21
+        (9, 25),                                                     # 中秋节: 9/25-9/27
+        (10, 1), (10, 2), (10, 5), (10, 6), (10, 7))),               # 国庆节: 10/1-10/7
+    notice_title="关于上海证券交易所2026年部分节假日休市安排的通知",
+    issuer="上海证券交易所 (上证公告〔2025〕45号)",
+    published_on=date(2025, 12, 22),
+    source_ref="https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml",
+)
 OFFICIAL_SCHEDULES: dict[int, YearSchedule] = {
-    2026: YearSchedule(2026, MISSING, missing_reason=_NOT_IN_REPO),
-    2027: YearSchedule(2027, MISSING, missing_reason="not published as of 2026-11-18 in anything the repository holds (exchanges announce the next year in December)"),
+    2026: SSE_2026_NOTICE,
+    2027: YearSchedule(2027, MISSING, missing_reason="not published as of 2026-11-20 (the exchanges announce the next year in December)"),
 }
 
 

@@ -60,6 +60,12 @@ def register(add, spec_cls, sources: dict) -> None:
                   "revisions": "every row of a code is re-published as a new revision when its values change (new ex-right event); "
                                "available_at is the fetch time; the frame keeps ALL revisions",
                   "schema": "identical to bars_legacy_fwd_adjusted_1d"}, True, "bars_native_fwd_adjusted_1d"))
+    add(spec_cls(M.SINA_SOURCE, M.OUT_RAW, M.SCHEMA_VERSION, M.MAPPING_VERSION, "CanonicalBar", "batch", 3 * day, None, None,
+                 {**_BASE, "endpoint": M.OUT_RAW, "datasets": ["bars_native_raw_1d", "adj_factor_native"],
+                  "units": "raw prices CNY (decimal 38,12 from the vendor strings); volume shares; turnover NULL; factor rows as served",
+                  "revisions": "a changed raw value / factor row is appended as revision n+1; available_at is the fetch time",
+                  "modes": "published from the SAME responses as adjusted_bars (no extra request); `adjusted-bars --raw-only` fetches the kline alone "
+                           "(1 request per code, own cursor raw:<scope>) and publishes the raw dataset only"}, True, None))
     add(spec_cls(M.SINA_SOURCE, M.OUT_INDEX, M.SCHEMA_VERSION, M.MAPPING_VERSION, "AdjustedBar", "batch", 3 * day, None, None,
                  {**_BASE, "endpoint": M.OUT_INDEX, "dataset": "index_bars_native_1d", "units": "index points; volume unit not verified",
                   "indices": sorted(M.INDEX_TICKERS), "schema": "identical to index_bars_legacy_1d",

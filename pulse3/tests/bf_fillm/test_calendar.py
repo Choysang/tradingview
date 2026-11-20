@@ -3,6 +3,7 @@ The store lines are SYNTHETIC; the equivalence test with the real old store runs
 from __future__ import annotations
 
 import json
+import re
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -18,13 +19,56 @@ UTC = timezone.utc
 
 
 # ---- schedule rules (pure) ---------------------------------------------------------------------------------------------------
-def test_shipped_years_are_missing_with_a_reason_and_no_dates():
-    for year in (2026, 2027):
-        s = H.OFFICIAL_SCHEDULES[year]
-        assert s.status == H.MISSING and not s.closed and s.missing_reason
-    assert "c_20251222_10802507" in H.OFFICIAL_SCHEDULES[2026].missing_reason
-    assert H.is_open(date(2026, 12, 24)) is None, "a weekday of a year without a complete schedule is unknown, not open"
-    assert H.is_open(date(2026, 12, 26)) is False, "a Saturday is closed whatever the schedule says"
+EVIDENCE = Path(H.__file__).parent / "data" / "sse_2026_holiday_notice.txt"
+_RANGE = re.compile(r"(\d+)月(\d+)日（星期(.)）(?:至(\d+)月(\d+)日（星期(.)）)?休市")
+_WEEKDAY_NAME = "一二三四五六日"
+
+
+def notice_weekday_closures() -> set[date]:
+    """The weekday closures stated by the stored notice text: every "A至B休市" range; "为周末休市" lines are weekend days, not ranges."""
+    out: set[date] = set()
+    ranges = 0
+    for line in EVIDENCE.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#"):
+            continue
+        for m1, d1, w1, m2, d2, w2 in _RANGE.findall(line):
+            first = date(2026, int(m1), int(d1))
+            last = date(2026, int(m2 or m1), int(d2 or d1))
+            assert _WEEKDAY_NAME[first.weekday()] == w1 and _WEEKDAY_NAME[last.weekday()] == (w2 or w1), f"the notice's weekday names disagree with the calendar: {line}"
+            ranges += 1
+            out |= {first + timedelta(days=k) for k in range((last - first).days + 1) if (first + timedelta(days=k)).weekday() < 5}
+    assert ranges == 7, "the notice lists seven holidays (元旦, 春节, 清明节, 劳动节, 端午节, 中秋节, 国庆节)"
+    return out
+
+
+def test_2026_is_complete_with_the_sse_citation_and_2027_is_still_missing():
+    s = H.OFFICIAL_SCHEDULES[2026]
+    assert s.status == H.COMPLETE and s.issuer.startswith("上海证券交易所") and s.published_on == date(2025, 12, 22)
+    assert s.notice_title == "关于上海证券交易所2026年部分节假日休市安排的通知"
+    assert s.source_ref == "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml"
+    assert "c_20251222_10802507" in EVIDENCE.read_text(encoding="utf-8") and s.notice_title in EVIDENCE.read_text(encoding="utf-8")
+    assert EVIDENCE.stat().st_size < 2048
+    y = H.OFFICIAL_SCHEDULES[2027]
+    assert y.status == H.MISSING and not y.closed and "2026-11-20" in y.missing_reason
+    assert H.is_open(date(2027, 1, 4)) is None, "a weekday of a year without a complete schedule is unknown, not open"
+    assert H.is_open(date(2027, 1, 2)) is False, "a Saturday is closed whatever the schedule says"
+
+
+def test_the_2026_closures_equal_the_weekdays_of_the_notice_ranges():
+    s = H.OFFICIAL_SCHEDULES[2026]
+    assert s.closed == notice_weekday_closures() and len(s.closed) == 19
+    assert all(d.year == 2026 and d.weekday() < 5 for d in s.closed)
+    assert sorted(s.closed)[:2] == [date(2026, 1, 1), date(2026, 1, 2)] and max(s.closed) == date(2026, 10, 7)
+
+
+def test_notice_make_up_weekends_are_not_trading_days_and_boundary_days_are_open():
+    # the notice says "周末休市" (not 补班) for these: 1/4 2/14 2/28 5/9 9/20 10/10, so the exchanges stay closed
+    for d in (date(2026, 1, 4), date(2026, 2, 14), date(2026, 2, 28), date(2026, 5, 9), date(2026, 9, 20), date(2026, 10, 10)):
+        assert d.weekday() >= 5 and H.is_open(d) is False
+    for d in (date(2026, 1, 5), date(2026, 2, 24), date(2026, 4, 7), date(2026, 5, 6), date(2026, 6, 22), date(2026, 9, 28), date(2026, 10, 8), date(2026, 12, 24)):
+        assert H.is_open(d) is True, f"{d} is a normal session in the notice"
+    for d in (date(2026, 2, 16), date(2026, 4, 6), date(2026, 5, 4), date(2026, 6, 19), date(2026, 9, 25), date(2026, 10, 7)):
+        assert H.is_open(d) is False
 
 
 def test_a_complete_schedule_needs_its_citation_and_weekday_dates_of_its_year():
@@ -53,9 +97,17 @@ def test_tail_skips_complete_closures_and_reports_assumed_for_unknown_years():
     assert date(2027, 1, 1) in tail2 and assumed2 is True
 
 
-def test_forward_days_keeps_the_weekday_rule_and_says_it_assumed_while_the_data_are_missing():
+def test_forward_days_is_not_assumed_inside_2026_and_skips_the_spring_festival_closure():
     tail, assumed = forward_days(date(2026, 11, 17), 7)
-    assert tail == [date(2026, 11, 18), date(2026, 11, 19), date(2026, 11, 20), date(2026, 11, 23), date(2026, 11, 24)] and assumed is True
+    assert tail == [date(2026, 11, 18), date(2026, 11, 19), date(2026, 11, 20), date(2026, 11, 23), date(2026, 11, 24)] and assumed is False
+    spring, spring_assumed = forward_days(date(2026, 2, 13), 14)                # Fri 2/13 .. Fri 2/27
+    assert spring == [date(2026, 2, 24), date(2026, 2, 25), date(2026, 2, 26), date(2026, 2, 27)] and spring_assumed is False
+    assert date(2026, 2, 16) not in spring and date(2026, 2, 23) not in spring
+
+
+def test_forward_days_into_2027_keeps_the_weekday_rule_and_says_it_assumed():
+    tail, assumed = forward_days(date(2026, 12, 29), 5)                         # Wed 12/30, Thu 12/31, then weekdays of the unknown 2027
+    assert tail == [date(2026, 12, 30), date(2026, 12, 31), date(2027, 1, 1)] and assumed is True
 
 
 def test_hybrid_calendar_uses_the_schedule_after_the_last_observed_day(monkeypatch):

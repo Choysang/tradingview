@@ -20,6 +20,7 @@ import io
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from decimal import Decimal, InvalidOperation
 from typing import Callable, Mapping, Sequence
 
 import polars as pl
@@ -36,6 +37,7 @@ from pulse.application.data_service import DataService, Summary, ingest_repo_cre
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
 from pulse.domain.instruments import identity as ident
 from pulse.domain.market import builders
+from pulse.domain.market.calendar import session_close_utc, session_open_utc
 from pulse.domain.market.capability import REGISTRY
 from pulse.domain.market.units import MappingDrift, normalize, sha256_json
 
@@ -69,10 +71,12 @@ def adj_partition(code: str) -> str:
 class _Pending:
     """One code fetched and adjusted, waiting for its chunk to be normalized and published."""
     code: str
-    rows: list[dict]
+    rows: list[dict]                                   # ratio-adjusted rows ([] in a raw-only fetch)
     raw_object_id: uuid.UUID
     available_at: datetime
     source: str = "sina"
+    raw_rows: list[dict] | None = None                 # the same rows BEFORE adjustment (Sina kline strings in ``text``)
+    factor_rows: list[tuple[date, str]] | None = None  # Sina's qfq.js rows as served (None = no factor file fetched)
 
 
 @dataclass
@@ -195,12 +199,23 @@ class RefDataService:
         return pl.DataFrame(rows, schema=C.ADJ_SCHEMA), recorded
 
     def _finalize_adjusted(self, spec: EndpointSpec, partition: str, batch_id: uuid.UUID, owner: str, pending: Sequence[_Pending],
-                           s: Summary, codes_of: Mapping[str, str]) -> int:
+                           s: Summary, codes_of: Mapping[str, str], *, raw_only: bool = False) -> int:
+        """Commit the chunk's raw captures, then publish what the SAME fetches carry: the adjusted bars (unless ``raw_only``), the RAW
+        bars and Sina's factor rows, each as its own cumulative dataset with its own revisions. Returns the new adjusted rows."""
+        self._end_raw(batch_id, owner, release=False)
+        n = 0 if raw_only else self._publish_adjusted(spec, batch_id, owner, pending, s, codes_of)
+        self._publish_raw(batch_id, owner, pending, s, codes_of)
+        if not raw_only:
+            self._publish_factors(batch_id, owner, pending, s, codes_of)
+        self.lake.release(owner)
+        return n
+
+    def _publish_adjusted(self, spec: EndpointSpec, batch_id: uuid.UUID, owner: str, pending: Sequence[_Pending],
+                          s: Summary, codes_of: Mapping[str, str]) -> int:
         """Normalize, diff against the stored latest revisions, write observations, publish the cumulative snapshot.
 
         ``codes_of``: instrument_id -> code of the codes in this chunk. Returns the number of new revision rows."""
-        self._end_raw(batch_id, owner, release=False)
-        fresh, recorded = self._normalize_pending(spec, pending, s)
+        fresh, recorded = self._normalize_pending(spec, [p for p in pending if p.rows], s)
         man, frames = self.read_dataset(C.ADJ_DATASET)
         touched = {adj_partition(p.code) for p in pending}
         existing = pl.concat([frames[k] for k in touched if k in frames]) if any(k in frames for k in touched) else None
@@ -208,7 +223,6 @@ class RefDataService:
         s.add("bars_fetched", fresh.height)
         s.add("bars_unchanged", fresh.height - new.height)
         if new.is_empty():
-            self.lake.release(owner)
             return 0
         revised = new.filter(pl.col("revision") > 1)
         s.add("bars_new_keys", new.height - revised.height)
@@ -257,9 +271,94 @@ class RefDataService:
         s.counts["lake_rows_adjusted"] = pub["row_count"]
         return new.height
 
+    # ---- raw bars and factor rows from the same fetches -------------------------------------------------------------------------
+    def _publish_cumulative(self, dataset_id: str, fresh: pl.DataFrame, *, schema: dict, key: list[str], values: list[str], promote: str | None,
+                            codes_of: Mapping[str, str], contract: str, batch_id: uuid.UUID, owner: str, coverage: dict, label: str,
+                            s: Summary) -> int:
+        """Diff ``fresh`` against the latest stored revisions, append the new rows to their code-prefix partitions, publish a READY snapshot."""
+        man, frames = self.read_dataset(dataset_id)
+        part_of = {i: adj_partition(c) for i, c in codes_of.items()}
+        touched = {part_of[i] for i in fresh["instrument_id"].unique().to_list() if i in part_of}
+        existing = pl.concat([frames[k] for k in touched if k in frames]) if any(k in frames for k in touched) else None
+        new = C.next_revisions(existing, fresh, schema=schema, key=key, values=values, promote=promote)
+        s.add(f"{label}_rows_fetched", fresh.height)
+        s.add(f"{label}_rows_new", new.height)
+        s.add(f"{label}_rows_new_revisions", new.filter(pl.col("revision") > 1).height)
+        if new.is_empty():
+            return 0
+        merged = dict(frames)
+        grouped = new.with_columns(pl.col("instrument_id").replace_strict(part_of).alias("_p")).group_by("_p")
+        sort_cols = key + ["revision"]
+        for (part,), g in grouped:
+            g = g.drop("_p")
+            merged[part] = (pl.concat([frames[part], g]) if part in frames else g).sort(sort_cols)
+        allrows = pl.concat(list(merged.values()))
+        cov = {"dataset": dataset_id, "rows": allrows.height, "max_revision": int(allrows["revision"].max()), "partitions": sorted(merged),
+               "instruments": allrows["instrument_id"].n_unique(), **coverage}
+        pub = self._publish(dataset_id, merged, contract=contract, coverage=cov, batch_id=batch_id, owner=owner,
+                            watermark=allrows["available_at"].max())
+        s.counts[f"manifest_version_{label}"] = pub["manifest_version"]
+        return new.height
+
+    def _raw_frame(self, pending: Sequence[_Pending], s: Summary) -> pl.DataFrame:
+        """Raw rows as the kline gives them: exact decimals from the vendor strings, shares, no turnover (NULL, never 0)."""
+        rows: list[dict] = []
+        for p in pending:
+            if not p.raw_rows:
+                continue
+            iid = instrument_id_of(p.code)
+            for r in p.raw_rows:
+                text = r.get("text") or {k: repr(r[k]) for k in ("open", "high", "low", "close", "volume")}
+                try:
+                    o, h, lo, c = (Decimal(text[k]) for k in ("open", "high", "low", "close"))
+                    vol = Decimal(text["volume"])
+                except (InvalidOperation, KeyError):
+                    s.add("raw_rows_rejected")
+                    continue
+                if not (o > 0 and h > 0 and lo > 0 and c > 0) or vol < 0 or vol != vol.to_integral_value():
+                    s.add("raw_rows_rejected")
+                    continue
+                d = r["date"]
+                rows.append({"instrument_id": iid, "trade_date": d, "timeframe": "1d", "bar_open_time": session_open_utc(d),
+                             "bar_close_time": session_close_utc(d), "open_price_raw": o, "high_price_raw": h, "low_price_raw": lo,
+                             "close_price_raw": c, "volume_shares": int(vol), "turnover_amount_cny": None,
+                             "is_final": builders.daily_is_final(d, p.available_at), "available_at": p.available_at,
+                             "quality_status": "partial", "revision": 1})
+        return pl.DataFrame(rows, schema=C.RAW_SCHEMA)
+
+    def _publish_raw(self, batch_id: uuid.UUID, owner: str, pending: Sequence[_Pending], s: Summary, codes_of: Mapping[str, str]) -> int:
+        fresh = self._raw_frame(pending, s)
+        if fresh.is_empty():
+            return 0
+        cov = {"price_basis": "raw", "adjustment_mode": "raw", "source": "Sina raw daily kline (the request the adjusted bars are built from); "
+                                                                       "bars from the Tencent closing quote in refresh mode",
+               "units": "prices CNY exactly as the vendor strings (decimal 38,12); volume shares; turnover_amount_cny NULL (the kline has no amount)",
+               "revisions": "a changed raw value of an existing (instrument, date) is appended as revision n+1; a bar becoming final too; nothing is overwritten",
+               "finality_policy": builders.DAILY_FINAL_POLICY, "schema": "frame of bars_raw_1d plus revision",
+               "purpose": "exact limit-up / limit-down flags (``refdata_core.limit_flags_raw``) over about 3 years",
+               "first_date": fresh["trade_date"].min().isoformat(), "last_date_fetched": fresh["trade_date"].max().isoformat(),
+               "exchange_reference_price": "not provided by the kline; derived from adj_factor_native on ex-right days",
+               "window_note": "rows older than the fetch window keep their last published revision"}
+        return self._publish_cumulative(C.RAW_DATASET, fresh, schema=C.RAW_SCHEMA, key=C.BAR_KEY, values=C.RAW_VALUES, promote="is_final",
+                                        codes_of=codes_of, contract="CanonicalBar", batch_id=batch_id, owner=owner, coverage=cov, label="raw", s=s)
+
+    def _publish_factors(self, batch_id: uuid.UUID, owner: str, pending: Sequence[_Pending], s: Summary, codes_of: Mapping[str, str]) -> int:
+        rows = [{"instrument_id": instrument_id_of(p.code), "effective_from": d, "factor": Decimal(f), "available_at": p.available_at, "revision": 1}
+                for p in pending if p.factor_rows for d, f in p.factor_rows]
+        if not rows:
+            return 0
+        fresh = pl.DataFrame(rows, schema=C.FACTOR_SCHEMA)
+        cov = {"source": "Sina qfq.js, every row exactly as served (factor string with 16 decimals)",
+               "semantics": "from effective_from on (until the next row) adjusted price = raw price / factor; the latest factor is 1.0; "
+                            "a new ex-right event changes every older factor of the code, which is stored as revision n+1 of each row",
+               "ex_right_reference": "ref(t) = raw close(t-1) * f(t) / f(t-1), rounded half up to the tick (see refdata_core.limit_flags_raw)",
+               "adjustment_version": M.ADJUSTMENT_VERSION, "codes_without_factor_file": "have no rows here (an unadjusted series)"}
+        return self._publish_cumulative(C.FACTOR_DATASET, fresh, schema=C.FACTOR_SCHEMA, key=C.FACTOR_KEY, values=["factor"], promote=None,
+                                        codes_of=codes_of, contract="EvidenceDocument", batch_id=batch_id, owner=owner, coverage=cov, label="factor", s=s)
+
     def _adjusted_chunk(self, adapter: M.SinaRefAdapter, codes: Sequence[str], *, start: date, today: date, cut: date | None,
-                        partition: str, s: Summary, failures: int) -> _ChunkResult:
-        out_spec = self._spec(M.SINA_SOURCE, M.OUT_ADJUSTED)
+                        partition: str, s: Summary, failures: int, raw_only: bool = False) -> _ChunkResult:
+        out_spec = self._spec(M.SINA_SOURCE, M.OUT_RAW if raw_only else M.OUT_ADJUSTED)
         k_spec, f_spec = self._spec(M.SINA_SOURCE, M.EP_KLINE), self._spec(M.SINA_SOURCE, M.EP_FACTOR)
         batch_id, owner = self._begin(out_spec, partition)
         res = _ChunkResult(batch_id=batch_id)
@@ -278,8 +377,11 @@ class RefDataService:
                         res.done.append(code)
                         consecutive = 0
                         continue
-                    fc = self._call(f_spec, partition, lambda: adapter.factors(symbol))
-                    factors = M.parse_factors(fc.body)
+                    fc = factors = factor_rows = None
+                    if not raw_only:
+                        fc = self._call(f_spec, partition, lambda: adapter.factors(symbol))
+                        factor_rows = M.parse_factor_rows(fc.body)
+                        factors = [(d, float(f)) for d, f in factor_rows]
                 except (NotData, SchemaChanged) as exc:
                     s.add("codes_failed")
                     if len(s.notes) < 20:
@@ -303,18 +405,20 @@ class RefDataService:
                     break
                 consecutive = 0
                 raw_k, _ = self.svc.store_capture(batch_id, kc, owner)
-                self.svc.store_capture(batch_id, fc, owner)
-                if not factors:
-                    s.add("codes_without_factor_file")
-                pending.append(_Pending(code, M.adjust_rows(rows, factors), raw_k, max(self._now(), fc.fetched_at)))
+                if fc is not None:
+                    self.svc.store_capture(batch_id, fc, owner)
+                    if not factors:
+                        s.add("codes_without_factor_file")
+                pending.append(_Pending(code, [] if raw_only else M.adjust_rows(rows, factors), raw_k,
+                                        max(self._now(), fc.fetched_at if fc is not None else kc.fetched_at), raw_rows=rows, factor_rows=factor_rows))
                 res.done.append(code)
                 s.add("codes_fetched")
             if pending:
-                self._finalize_adjusted(out_spec, partition, batch_id, owner, pending, s, codes_of)
+                self._finalize_adjusted(out_spec, partition, batch_id, owner, pending, s, codes_of, raw_only=raw_only)
             else:
                 self._end_raw(batch_id, owner, release=True)
             if res.done and res.stop is None:
-                for spec in (k_spec, f_spec):
+                for spec in ((k_spec,) if raw_only else (k_spec, f_spec)):
                     self._success(spec, partition, new_records=len(pending), newest=None, ready=bool(pending))
         except Exception:
             self._fail_batch(batch_id, owner)
@@ -322,18 +426,21 @@ class RefDataService:
         return res
 
     def adjusted_bars(self, adapter: M.SinaRefAdapter, codes: Sequence[str], *, start: date, today: date | None = None, chunk: int = 300,
-                      scope: str | None = "universe", restart: bool = False, max_codes: int | None = None) -> Summary:
-        """Fetch ratio-adjusted bars for ``codes`` in chunks of ``chunk`` codes (2 requests per code).
+                      scope: str | None = "universe", restart: bool = False, max_codes: int | None = None, raw_only: bool = False) -> Summary:
+        """Fetch ratio-adjusted bars for ``codes`` in chunks of ``chunk`` codes (2 requests per code), and publish the RAW bars and Sina's
+        factor rows from the same two responses. ``raw_only``: 1 request per code (the kline, no factor file), only the raw dataset is
+        published, with its own cursor (partition ``raw:<scope>``) so a raw backfill never disturbs the adjusted one.
 
         With a ``scope`` the run has a resumable cursor in PG: ``last_code`` (every sorted code up to it was fetched or
         failed) and the ``failed`` codes to retry first. ``max_codes`` splits one universe over several runs. The first
         block stops the run: the finished codes of the current chunk are published, the cursor moves over them only, and
         ``SourceBlocked`` propagates (exit code 2 in the CLI). Without a scope (ad hoc codes) no cursor is kept."""
         today = today or self._now().astimezone(C.CST).date()
-        s = Summary(f"refdata adjusted-bars {start}..{today}")
-        out_spec = self._spec(M.SINA_SOURCE, M.OUT_ADJUSTED)
-        partition = f"adjusted:{scope}" if scope else "adjusted:adhoc"
-        self.gate([self._spec(M.SINA_SOURCE, M.EP_KLINE), self._spec(M.SINA_SOURCE, M.EP_FACTOR)], partition)
+        s = Summary(f"refdata adjusted-bars {start}..{today}" + (" (raw only)" if raw_only else ""))
+        out_spec = self._spec(M.SINA_SOURCE, M.OUT_RAW if raw_only else M.OUT_ADJUSTED)
+        kind = "raw" if raw_only else "adjusted"
+        partition = f"{kind}:{scope}" if scope else f"{kind}:adhoc"
+        self.gate([self._spec(M.SINA_SOURCE, M.EP_KLINE)] + ([] if raw_only else [self._spec(M.SINA_SOURCE, M.EP_FACTOR)]), partition)
         want = sorted(set(codes))
         cursor, _ = self._read_cursor(out_spec, partition) if scope else (None, 0)
         resumed = bool(cursor and cursor.get("state") == "running" and not restart)
@@ -352,7 +459,7 @@ class RefDataService:
         consecutive = 0
         stop: Exception | None = None
         for part in C.chunked(todo, chunk):
-            res = self._adjusted_chunk(adapter, part, start=start, today=today, cut=cut, partition=partition, s=s, failures=consecutive)
+            res = self._adjusted_chunk(adapter, part, start=start, today=today, cut=cut, partition=partition, s=s, failures=consecutive, raw_only=raw_only)
             consecutive = 0 if res.done else consecutive + len(res.failed)
             failed_all = sorted((set(failed_all) | set(res.failed)) - set(res.done))
             processed = sorted(set(res.done) | set(res.failed))
@@ -429,8 +536,8 @@ class RefDataService:
                              "to_refetch": len(plan.refetch), "suspended": plan.skipped_suspended, "already_current": plan.up_to_date})
             for reason in ("gap", "readjusted", "new"):
                 s.counts[f"refetch_{reason}"] = sum(1 for v in plan.refetch.values() if v == reason)
-            appended = [_Pending(c, [{k: q[k] for k in ("date", "open", "high", "low", "close", "volume")}], qraw[c], self._now(), source="tencent_quote")
-                        for c, q in sorted(plan.append.items())]
+            quote_rows = {c: [{k: q[k] for k in ("date", "open", "high", "low", "close", "volume")}] for c, q in plan.append.items()}
+            appended = [_Pending(c, quote_rows[c], qraw[c], self._now(), source="tencent_quote", raw_rows=quote_rows[c]) for c in sorted(plan.append)]
             if appended:
                 self._finalize_adjusted(out_spec, partition, batch_id, owner, appended, s, {instrument_id_of(c): c for c in plan.append})
             else:

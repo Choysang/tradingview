@@ -1,0 +1,62 @@
+[
+ {
+  "file": "live_zt_20261120.json",
+  "url": "https://push2ex.eastmoney.com/getTopicZTPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fbt:asc&date=20261120",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-20T09:58:40Z",
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (compatible; pulse3-data-plane/0.1)"
+  },
+  "purpose": "limit pools lane: confirm the Eastmoney pool endpoints the old recorder used still answer, with the same JSON shape (tc / qdate / pool), after the close of 2026-11-20"
+ },
+ {
+  "file": "live_zb_20261120.json",
+  "url": "https://push2ex.eastmoney.com/getTopicZBPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fbt:asc&date=20261120",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-20T09:58:40Z",
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (compatible; pulse3-data-plane/0.1)"
+  },
+  "purpose": "limit pools lane: confirm the Eastmoney pool endpoints the old recorder used still answer, with the same JSON shape (tc / qdate / pool), after the close of 2026-11-20"
+ },
+ {
+  "file": "live_dt_20261120.json",
+  "url": "https://push2ex.eastmoney.com/getTopicDTPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fund:asc&date=20261120",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-20T09:58:40Z",
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (compatible; pulse3-data-plane/0.1)"
+  },
+  "purpose": "limit pools lane: confirm the Eastmoney pool endpoints the old recorder used still answer, with the same JSON shape (tc / qdate / pool), after the close of 2026-11-20"
+ },
+ {
+  "file": "old_zt_20261102.json",
+  "url": "https://push2ex.eastmoney.com/getTopicZTPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fbt:asc&date=20261102",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-02T07:25:00Z (approx., 15:25 CST)",
+  "origin": "copied from .work/intraday/2026-11-02/raw/pools.txt.gz, the response bodies the OLD recorder stored (not requested again)",
+  "purpose": "fixtures of the pool parser: a full session (125 limit-up, 28 broken-board, 7 limit-down names)"
+ },
+ {
+  "file": "old_zb_20261102.json",
+  "url": "https://push2ex.eastmoney.com/getTopicZBPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fbt:asc&date=20261102",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-02T07:25:00Z (approx., 15:25 CST)",
+  "origin": "copied from .work/intraday/2026-11-02/raw/pools.txt.gz, the response bodies the OLD recorder stored (not requested again)",
+  "purpose": "fixtures of the pool parser: a full session (125 limit-up, 28 broken-board, 7 limit-down names)"
+ },
+ {
+  "file": "old_dt_20261102.json",
+  "url": "https://push2ex.eastmoney.com/getTopicDTPool?ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wz.ztzt&Pageindex=0&pagesize=10000&sort=fund:asc&date=20261102",
+  "method": "GET",
+  "status": 200,
+  "captured_at": "2026-11-02T07:25:00Z (approx., 15:25 CST)",
+  "origin": "copied from .work/intraday/2026-11-02/raw/pools.txt.gz, the response bodies the OLD recorder stored (not requested again)",
+  "purpose": "fixtures of the pool parser: a full session (125 limit-up, 28 broken-board, 7 limit-down names)"
+ }
+]

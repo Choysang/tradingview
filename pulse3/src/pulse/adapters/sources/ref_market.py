@@ -38,7 +38,7 @@ ADJUSTMENT_VERSION = "sina-ratio-qfq-v1"
 
 EP_KLINE, EP_FACTOR, EP_INDEX = "adj_kline", "adj_factor", "index_kline"
 EP_NODES, EP_MEMBERS = "board_nodes", "board_members"
-OUT_ADJUSTED, OUT_INDEX, OUT_BOARDS = "adjusted_bars", "index_bars", "boards"
+OUT_ADJUSTED, OUT_INDEX, OUT_BOARDS, OUT_RAW = "adjusted_bars", "index_bars", "boards", "raw_bars"
 
 KLINE_URL = "https://quotes.sina.cn/cn/api/json_v2.php/CN_MarketDataService.getKLineData?symbol={symbol}&scale=240&ma=no&datalen={datalen}"
 FACTOR_URL = "https://finance.sina.com.cn/realstock/company/{symbol}/qfq.js"
@@ -122,12 +122,19 @@ def parse_kline(body: bytes) -> list[dict]:
         if not _finite_positive(o, h, lo, c) or not math.isfinite(v) or v < 0:
             continue
         day = str(r["day"])[:10]
-        out[day] = {"date": date.fromisoformat(day), "open": o, "high": h, "low": lo, "close": c, "volume": v}
+        # ``text`` keeps the vendor strings: exact decimals for the RAW dataset (a float would not round-trip every price)
+        out[day] = {"date": date.fromisoformat(day), "open": o, "high": h, "low": lo, "close": c, "volume": v,
+                    "text": {k: str(r[k]).strip() for k in ("open", "high", "low", "close", "volume")}}
     return [out[k] for k in sorted(out)]
 
 
 def parse_factors(body: bytes) -> list[tuple[date, float]]:
     """Sina ``qfq.js`` -> ``[(d, f)]`` sorted by date; from ``d`` on, adjusted price = raw / f. No object -> no factors."""
+    return [(d, float(f)) for d, f in parse_factor_rows(body)]
+
+
+def parse_factor_rows(body: bytes) -> list[tuple[date, str]]:
+    """The same rows with the vendor's factor STRING (16 decimals) for the exact ``adj_factor_native`` dataset."""
     text = body.decode("utf-8", errors="replace")
     if "{" not in text:
         return []
@@ -142,7 +149,7 @@ def parse_factors(body: bytes) -> list[tuple[date, float]]:
         f = float(x["f"])
         if not _finite_positive(f):
             raise SchemaChanged("sina_factor_not_positive")
-        out.append((date.fromisoformat(str(x["d"])[:10]), f))
+        out.append((date.fromisoformat(str(x["d"])[:10]), str(x["f"]).strip()))
     return sorted(out)
 
 

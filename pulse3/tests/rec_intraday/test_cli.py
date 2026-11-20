@@ -35,3 +35,11 @@ def test_the_run_script_refuses_before_the_cutover_and_has_no_fallback_by_defaul
     assert code[0].endswith("pulse3_env.ps1")
     assert code[1].startswith("if (-not $cutover)") and "exit 4" in code[1]          # right after the environment, before anything runs
     assert not any("--fallback" in ln for ln in code)                                  # opt-in: documented in the header, not enabled
+
+
+def test_limit_pools_are_off_by_default_and_not_enabled_by_the_run_script():
+    from pathlib import Path
+
+    assert parse().limit_pools is False and parse("--limit-pools").limit_pools is True
+    path = Path(__file__).resolve().parents[2] / "deploy" / "windows" / "run_intraday_record.ps1"
+    assert not any("--limit-pools" in ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.lstrip().startswith("#"))

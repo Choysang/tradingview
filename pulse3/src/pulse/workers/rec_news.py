@@ -6,12 +6,14 @@ Tonghuashun (10 s), Eastmoney (30 s) and CLS (30 s) 7x24, records message versio
 
 Usage (from pulse3/)::
 
-    uv run python -m pulse.workers.rec_news record --until 22:00          # the old recorder's day: start 08:00, stop 22:00, weekdays
+    uv run python -m pulse.workers.rec_news record --until 22:00          # the old recorder's day: start 08:00, stop 22:00, trading weekdays
     uv run python -m pulse.workers.rec_news once                           # every feed once, any time (smoke run)
 
 Files of the day (raw answers of polls that produced new versions, ``summary.json``, ``blocked.json``) go to
 ``PULSE_NATIVE_NEWS_DIR`` (default ``<lake>/../native_news/<YYYY-MM-DD>``), never into the old system's data tree.
 Exit codes: 0 ok, 1 failure, 2 a host blocked us (that host is stopped for the day, the others continue; nothing is retried).
+``record`` skips weekends and the exchange closures of a COMPLETE schedule (``market_rules.holidays``); a weekday whose year has no
+complete schedule is unknown and is still polled. ``--any-day`` overrides both.
 Not covered: scheduling, guba follow-ups, alert scan and delivery.
 """
 from __future__ import annotations
@@ -20,7 +22,7 @@ import argparse
 import logging
 import os
 import sys
-from datetime import datetime, time, timezone
+from datetime import date, datetime, time, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -31,6 +33,7 @@ from pulse.adapters.sources import native_news
 from pulse.adapters.sources.http import RateLimitedClient
 from pulse.application.native_news_recorder import NewsRecorder, day_dir_for, default_feeds
 from pulse.application.native_news_service import NativeNewsWriter
+from pulse.domain.market_rules import holidays
 
 CST = ZoneInfo("Asia/Shanghai")
 ENV_DIR = "PULSE_NATIVE_NEWS_DIR"
@@ -48,9 +51,18 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--from", dest="start", type=time.fromisoformat, default=time.fromisoformat(native_news.START_AT),
                    help="do not poll before this Asia/Shanghai time (default 08:00)")
     p.add_argument("--until", type=time.fromisoformat, default=time.fromisoformat(native_news.STOP_AT), help="stop at this Asia/Shanghai time (default 22:00)")
-    p.add_argument("--any-day", action="store_true", help="also record on Saturdays and Sundays (the old recorder skipped non-trading days)")
+    p.add_argument("--any-day", action="store_true", help="also record on weekends and exchange holidays (the old recorder skipped non-trading days)")
     sub.add_parser("once", help="poll every feed once")
     return ap
+
+
+def skip_reason(day: date) -> str | None:
+    """Why ``record`` does nothing on ``day`` (weekend or an official exchange closure), or None when it should poll (open or unknown)."""
+    if day.weekday() >= 5:
+        return f"{day} is a weekend"
+    if holidays.is_open(day) is False:
+        return f"{day} is an exchange holiday"
+    return None
 
 
 def news_root(a, lake_root: Path) -> Path:
@@ -61,8 +73,9 @@ def run(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     a = _parser().parse_args(argv)
     today = datetime.now(timezone.utc).astimezone(CST).date()
-    if a.cmd == "record" and not a.any_day and today.weekday() >= 5:
-        print(f"{today} is a weekend: nothing to record (--any-day overrides)")
+    why = skip_reason(today) if a.cmd == "record" and not a.any_day else None
+    if why:
+        print(f"{why}: nothing to record (--any-day overrides)")
         return 0
     cfg = config.load()
     conn = db.connect(a.dsn or cfg.dsn, autocommit=True)

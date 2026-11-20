@@ -12,11 +12,16 @@ Not covered: persistence, HTTP, scheduling.
 """
 from __future__ import annotations
 
+from bisect import bisect_right
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Iterable, Mapping, Sequence
 
 import polars as pl
+
+from pulse.domain.instruments import identity as ident
+from pulse.domain.market_rules import Board, Exchange, InstrumentSpec, PriceLimitRegistry, RuleNotVerified
 
 CST = timezone(timedelta(hours=8))
 UTC = timezone.utc
@@ -45,6 +50,19 @@ MEMBERSHIP_SCHEMA = {"instrument_id": pl.String, "node_id": pl.String, "effectiv
                      "available_at": pl.Datetime("us", "UTC")}
 LISTING_SCHEMA = {"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String,
                   "available_at": pl.Datetime("us", "UTC")}
+_DEC16 = pl.Decimal(38, 16)
+#: ``bars_native_raw_1d``: the frame schema of ``bars_raw_1d`` (``DataService._bars_frame``) plus ``revision``; one row per revision.
+RAW_SCHEMA = {"instrument_id": pl.String, "trade_date": pl.Date, "timeframe": pl.String, "bar_open_time": pl.Datetime("us", "UTC"),
+              "bar_close_time": pl.Datetime("us", "UTC"), "open_price_raw": _DEC, "high_price_raw": _DEC, "low_price_raw": _DEC,
+              "close_price_raw": _DEC, "volume_shares": pl.Int64, "turnover_amount_cny": _DEC, "is_final": pl.Boolean,
+              "available_at": pl.Datetime("us", "UTC"), "quality_status": pl.String, "revision": pl.Int32}
+#: ``adj_factor_native``: Sina's qfq factor rows exactly as served (adjusted = raw / factor from ``effective_from`` on).
+FACTOR_SCHEMA = {"instrument_id": pl.String, "effective_from": pl.Date, "factor": _DEC16, "available_at": pl.Datetime("us", "UTC"),
+                 "revision": pl.Int32}
+RAW_DATASET = "bars_native_raw_1d"
+FACTOR_DATASET = "adj_factor_native"
+RAW_VALUES = ["open_price_raw", "high_price_raw", "low_price_raw", "close_price_raw", "volume_shares", "turnover_amount_cny"]
+FACTOR_KEY = ["instrument_id", "effective_from"]
 BAR_KEY = ["instrument_id", "trade_date"]
 BAR_VALUES = ["open_price", "high_price", "low_price", "close_price", "volume_shares", "turnover_amount_cny"]
 INDEX_VALUES = ["open", "high", "low", "close", "volume"]
@@ -70,26 +88,29 @@ def empty_bars() -> pl.DataFrame:
     return pl.DataFrame(schema=ADJ_SCHEMA)
 
 
-def next_revisions(existing: pl.DataFrame | None, fresh: pl.DataFrame) -> pl.DataFrame:
+def next_revisions(existing: pl.DataFrame | None, fresh: pl.DataFrame, *, schema: dict | None = None, key: list[str] | None = None,
+                   values: list[str] | None = None, promote: str | None = "is_final") -> pl.DataFrame:
     """Rows of ``fresh`` (revision column ignored) that are new facts against the latest stored revision per key.
 
-    A key never seen -> revision 1. A key whose OHLC / volume / turnover differ (a new ex-right event rewrote the past)
-    -> stored latest revision + 1. A bar that was not final and now is -> revision + 1 with unchanged values (the
-    finality evidence is part of the fact). Identical re-fetches produce nothing."""
+    A key never seen -> revision 1. A key whose values differ (a new ex-right event rewrote the past: OHLC / volume / turnover of the
+    adjusted bars, the factors, the raw rows when the vendor corrects one) -> stored latest revision + 1. A bar that was not final and
+    now is (``promote`` column) -> revision + 1 with unchanged values (the finality evidence is part of the fact). Identical
+    re-fetches produce nothing. Defaults are the adjusted-bar dataset; the raw and factor datasets pass their own schema/key/values."""
+    schema, key, values = schema or ADJ_SCHEMA, key or BAR_KEY, values or BAR_VALUES
     if fresh.is_empty():
-        return empty_bars()
-    fresh = fresh.select(list(ADJ_SCHEMA)).with_columns(pl.col("revision").cast(pl.Int32))
+        return pl.DataFrame(schema=schema)
+    fresh = fresh.select(list(schema)).with_columns(pl.col("revision").cast(pl.Int32))
     if existing is None or existing.is_empty():
         return fresh.with_columns(pl.lit(1, dtype=pl.Int32).alias("revision"))
-    latest = (existing.sort("revision").unique(BAR_KEY, keep="last")
-              .select(BAR_KEY + BAR_VALUES + ["is_final", "revision"])
-              .rename({c: f"{c}_old" for c in BAR_VALUES + ["is_final", "revision"]}))
-    joined = fresh.join(latest, on=BAR_KEY, how="left")
-    differs = pl.any_horizontal(*[pl.col(c).ne_missing(pl.col(f"{c}_old")) for c in BAR_VALUES])
-    promoted = pl.col("is_final") & ~pl.col("is_final_old")
-    out = joined.filter(pl.col("revision_old").is_null() | differs | promoted)
-    return (out.with_columns((pl.col("revision_old").fill_null(0) + 1).cast(pl.Int32).alias("revision"))
-            .select(list(ADJ_SCHEMA)))
+    carried = values + ([promote] if promote else []) + ["revision"]
+    latest = (existing.sort("revision").unique(key, keep="last").select(key + carried).rename({c: f"{c}_old" for c in carried}))
+    joined = fresh.join(latest, on=key, how="left")
+    differs = pl.any_horizontal(*[pl.col(c).ne_missing(pl.col(f"{c}_old")) for c in values])
+    changed = pl.col("revision_old").is_null() | differs
+    if promote:
+        changed = changed | (pl.col(promote) & ~pl.col(f"{promote}_old"))
+    out = joined.filter(changed)
+    return (out.with_columns((pl.col("revision_old").fill_null(0) + 1).cast(pl.Int32).alias("revision")).select(list(schema)))
 
 
 def next_index_versions(existing: pl.DataFrame | None, fresh: pl.DataFrame) -> pl.DataFrame:
@@ -285,6 +306,147 @@ def render_report(sections: Mapping[str, dict]) -> str:
         lines.append(f"== reconcile {name} ==")
         put(body, 1)
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# exact limit flags from RAW prices
+# ---------------------------------------------------------------------------------------------------------------
+LIMIT_FLAG_COLUMNS = ["prev_close_raw", "ref_price", "ref_method", "ref_uncertain", "limit_ratio", "limit_up_price", "limit_down_price",
+                      "rule_status", "is_limit_up_close", "open_at_limit_up", "touched_limit_up", "is_limit_down", "limit_up_streak"]
+_TIE_BAND = Decimal("0.01")          # a derived reference within this fraction of a half tick may round either way: ``ref_uncertain``
+_EXCHANGE = {"XSHG": Exchange.SSE, "XSHE": Exchange.SZSE, "XBSE": Exchange.BSE, "SSE": Exchange.SSE, "SZSE": Exchange.SZSE, "BSE": Exchange.BSE}
+_BOARD = {"main": Board.MAIN, "chinext": Board.CHINEXT, "star": Board.STAR, "bse": Board.BSE}
+
+
+def _dec(value: object) -> Decimal | None:
+    if value is None:
+        return None
+    return value if isinstance(value, Decimal) else Decimal(str(value))
+
+
+def _pick(frame: pl.DataFrame, *names: str) -> str:
+    for n in names:
+        if n in frame.columns:
+            return n
+    raise ValueError(f"limit_flags_raw needs one of the columns {names}")
+
+
+def factor_in_force(factors: pl.DataFrame | None) -> dict[str, tuple[list[date], list[Decimal]]]:
+    """{instrument_id: (effective dates ascending, factors)} from the latest revision of each factor row."""
+    out: dict[str, tuple[list[date], list[Decimal]]] = {}
+    if factors is None or factors.is_empty():
+        return out
+    latest = factors.sort("revision").unique(FACTOR_KEY, keep="last").sort(FACTOR_KEY)
+    for iid, d, f in latest.select("instrument_id", "effective_from", "factor").iter_rows():
+        ds, fs = out.setdefault(iid, ([], []))
+        ds.append(d)
+        fs.append(_dec(f))
+    return out
+
+
+def _factor_at(table: tuple[list[date], list[Decimal]] | None, day: date) -> Decimal | None:
+    """The factor in force on ``day`` (backward as-of; a day before the first row uses the earliest factor, as the adjustment does)."""
+    if table is None:
+        return None
+    i = bisect_right(table[0], day) - 1
+    return table[1][max(i, 0)]
+
+
+def limit_flags_raw(frame: pl.DataFrame, factors: pl.DataFrame | None = None, *, registry: PriceLimitRegistry | None = None) -> pl.DataFrame:
+    """Exact limit-up / limit-down flags from RAW daily prices (never from adjusted ones). Returns ``frame`` plus ``LIMIT_FLAG_COLUMNS``.
+
+    Input columns: ``instrument_id``, ``trade_date``, raw ``open/high/low/close`` (or ``*_price_raw``), ``is_st`` (Boolean; NULL = unknown),
+    ``exchange`` + ``board`` (or a 6-digit ``code`` they are derived from), optional ``exchange_ref_price`` (the exchange's reference price
+    of the day when a source gives it), optional ``in_ipo_window`` (True = the no-limit listing window is not modelled). A ``revision`` column
+    means the latest revision per (instrument, date) is used. ``factors`` is the ``adj_factor_native`` frame (latest revision per row);
+    without it an ex-right day cannot be detected.
+
+    Reference price of day t: the exchange reference if given (``exchange_reference``); else, when the factor in force changed between
+    the previous session and t (an ex-right day), ``prev_close_raw * f(t) / f(t-1)`` rounded half up to the tick (``factor_derived``:
+    ratio adjustment makes adjusted(t-1) == ref(t) / f(t), so ref(t) = raw(t-1) * f(t)/f(t-1); on 000001 2026-06-12 this gives 10.94,
+    two decimals exactly, while the opposite ratio would RAISE the reference on a dividend day); else the raw previous close
+    (``prev_close_raw``, or ``prev_close_raw_no_factor_file`` when the code has no factor rows, where an ex-right day cannot be seen).
+    The band is the registry's (``PriceLimitRegistry.band``: previous close x (1 +/- ratio), rounded half up to the tick), so ST and
+    board ratios and their effective dates come from ONE rule source; an unverified rule (e.g. SZSE main-board ST) or an unknown ST
+    state gives NULL flags and says why in ``rule_status``. ``ref_uncertain`` marks a derived reference within 0.01 of a half tick.
+    The previous close is the previous ROW of the same instrument (suspensions keep the chain; a missing session is not detected).
+    Flags: ``is_limit_up_close`` (close == limit up), ``open_at_limit_up``, ``touched_limit_up`` (high == limit up), ``is_limit_down``
+    (close == limit down); ``limit_up_streak`` counts consecutive ``is_limit_up_close`` rows (NULL on an unknown row, which restarts the count)."""
+    registry = registry or PriceLimitRegistry()
+    cols = {k: _pick(frame, f"{k}_price_raw", k) for k in ("open", "high", "low", "close")}
+    if "is_st" not in frame.columns:
+        raise ValueError("limit_flags_raw needs an is_st column (NULL where unknown): the band of a risk-warning share is not the board's")
+    have_ex, have_bd, have_code = "exchange" in frame.columns, "board" in frame.columns, "code" in frame.columns
+    if not ((have_ex and have_bd) or have_code):
+        raise ValueError("limit_flags_raw needs exchange + board columns or a 6-digit code column")
+    work = frame
+    if "revision" in work.columns:
+        work = work.sort("revision").unique(["instrument_id", "trade_date"], keep="last")
+    work = work.sort(["instrument_id", "trade_date"], maintain_order=True)
+    n = work.height
+    table = factor_in_force(factors)
+    ref_given = work["exchange_ref_price"].to_list() if "exchange_ref_price" in work.columns else [None] * n
+    ipo = work["in_ipo_window"].to_list() if "in_ipo_window" in work.columns else [False] * n
+    rows = zip(work["instrument_id"].to_list(), work["trade_date"].to_list(), work[cols["open"]].to_list(), work[cols["high"]].to_list(),
+               work[cols["close"]].to_list(), work["is_st"].to_list(), work["exchange"].to_list() if have_ex else [None] * n,
+               work["board"].to_list() if have_bd else [None] * n, work["code"].to_list() if have_code else [None] * n)
+    out: dict[str, list] = {c: [] for c in LIMIT_FLAG_COLUMNS}
+    prev_iid, prev_close, prev_day, streak = None, None, None, 0
+    specs: dict[tuple, InstrumentSpec] = {}
+    tick = Decimal("0.01")
+    for idx, (iid, day, o, h, c, st, ex, bd, code) in enumerate(rows):
+        if iid != prev_iid:
+            prev_iid, prev_close, prev_day, streak = iid, None, None, 0
+        o, h, c = _dec(o), _dec(h), _dec(c)
+        row = dict.fromkeys(LIMIT_FLAG_COLUMNS)
+        row["prev_close_raw"], row["ref_uncertain"] = prev_close, False
+        status, ref, method = None, None, None
+        if ipo[idx]:
+            status = "ipo_no_limit_window_not_modelled"
+        elif st is None:
+            status = "st_unknown"
+        elif ref_given[idx] is not None:
+            ref, method = _dec(ref_given[idx]), "exchange_reference"
+        elif prev_close is None:
+            status = "no_previous_close"
+        else:
+            f_t, f_p = _factor_at(table.get(iid), day), _factor_at(table.get(iid), prev_day)
+            if f_t is not None and f_p is not None and f_t != f_p:
+                raw_ref = prev_close * f_t / f_p
+                ref, method = (raw_ref / tick).to_integral_value(ROUND_HALF_UP) * tick, "factor_derived"
+                row["ref_uncertain"] = abs((raw_ref / tick) % 1 - Decimal("0.5")) <= _TIE_BAND
+            else:
+                ref, method = prev_close, ("prev_close_raw" if f_t is not None else "prev_close_raw_no_factor_file")
+        if status is None:
+            try:
+                key = (ex, bd, code, bool(st))
+                if key not in specs:
+                    e = _EXCHANGE[ex] if ex is not None else (Exchange.SSE if code[0] == "6" else Exchange.BSE if code[0] in "489" else Exchange.SZSE)
+                    b = _BOARD[bd] if bd is not None else _BOARD[ident.board_for(ident.venue_for_code(code), code)]
+                    specs[key] = InstrumentSpec(iid, e, b, bool(st))
+                band = registry.band(specs[key], day, ref)
+                row.update(ref_price=ref, ref_method=method, limit_ratio=band.ratio, limit_up_price=band.limit_up, limit_down_price=band.limit_down)
+                status = "verified"
+                row["is_limit_up_close"], row["open_at_limit_up"] = c == band.limit_up, o == band.limit_up
+                row["touched_limit_up"], row["is_limit_down"] = h == band.limit_up, c == band.limit_down
+            except RuleNotVerified as exc:
+                status = f"unverified:{exc}"
+                row.update(ref_price=ref, ref_method=method)
+        row["rule_status"] = status
+        if row["is_limit_up_close"] is None:
+            streak = 0
+        else:
+            streak = streak + 1 if row["is_limit_up_close"] else 0
+            row["limit_up_streak"] = streak
+        for k in LIMIT_FLAG_COLUMNS:
+            out[k].append(row[k])
+        prev_close, prev_day = c, day
+    dec_t = pl.Decimal(38, 12)
+    typed = {"prev_close_raw": dec_t, "ref_price": dec_t, "ref_method": pl.String, "ref_uncertain": pl.Boolean, "limit_ratio": pl.Decimal(10, 4),
+             "limit_up_price": dec_t, "limit_down_price": dec_t, "rule_status": pl.String, "is_limit_up_close": pl.Boolean,
+             "open_at_limit_up": pl.Boolean, "touched_limit_up": pl.Boolean, "is_limit_down": pl.Boolean, "limit_up_streak": pl.Int32}
+    flags = pl.DataFrame({k: pl.Series(k, out[k], dtype=typed[k]) for k in LIMIT_FLAG_COLUMNS})
+    return pl.concat([work, flags], how="horizontal")
 
 
 def chunked(items: Sequence, size: int) -> Iterable[Sequence]:

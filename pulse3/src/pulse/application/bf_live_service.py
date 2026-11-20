@@ -51,12 +51,14 @@ DATASET_EXT = "ext_quote_snapshots"
 DATASET_GUBA = "legacy_guba_samples"
 DATASET_ALERTS = "legacy_alerts_comparison"
 DATASET_SEAL = "intraday_seal_facts"
+DATASET_POOLS = "limit_pools_eastmoney"           # optional native recorder step; never mixed into the quote snapshots
 CONTRACT_VERSION = "3.0.0"                       # DataService stamps every manifest with it
 CONTRACTS = {
     "pulse.bf_live.quote_snapshot": "One recorded quote snapshot of one instrument (price columns decimal, lots float, times UTC).",
     "pulse.bf_live.ext_quote_snapshot": "One recorded quote of an extended-hours instrument (ETF, index future, A50, CNH).",
     "pulse.bf_live.legacy_table": "A legacy recorder table passed through unchanged (guba samples, alert log lines).",
     "pulse.bf_live.seal_facts": "Per-instrument seal facts of one session, estimated from 60 s snapshots.",
+    "pulse.bf_live.limit_pool": "One name of the vendor's limit-up / broken-board / limit-down pool at one fetch (comparison data, not a fact).",
 }
 SEAL_ROLE = "quote_snapshots"
 STREAM_ENDPOINT = {"quotes": LR.EP_QUOTES, "hot": LR.EP_HOT, "ext": LR.EP_EXT, "guba": LR.EP_GUBA, "alerts": LR.EP_ALERTS}

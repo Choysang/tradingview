@@ -29,6 +29,9 @@ Invariants:
   stale session is never filed under today's date; nothing is published before the day is verified;
 * values a vendor does not carry stay NULL (see ``intraday_rows``); nothing is filled from the other vendor or derived;
 * unpublished rows survive a failed flush and are retried; a flush that fails at the end raises.
+Optional step ``limit_pools`` (``--limit-pools``, off by default): the vendor's limit-up / broken-board / limit-down pools once after the close
+(15:25-15:50, like the old recorder) into the separate dataset ``limit_pools_eastmoney`` (see ``intraday_pools``); its own client, a block stops
+only that host and never the quote recording.
 Not covered: scheduling, restart state (a restarted run repeats the one-shot steps whose window is still open), Eastmoney pools, minute bars,
 convertible bonds, news-linked names; the static pool comes from the earlier sessions this recorder (or the import) published, so it is empty on
 the first day after the cutover and the hot subset then grows from the 09:30 polls.
@@ -49,6 +52,7 @@ from pulse.adapters.sources.http import Capture, RateLimitedClient, SourceBlocke
 from pulse.application import intraday_rows as R
 from pulse.application.bf_live_service import CST, DATASET_QUOTES, LiveService, _z
 from pulse.application.data_service import Summary
+from pulse.application.intraday_pools import LimitPoolRecorder
 from pulse.domain.evidence.announcements import NotData, SchemaChanged
 
 SYMBOL_PREFIX = {"6": "sh", "0": "sz", "3": "sz"}
@@ -111,7 +115,7 @@ class IntradayRecorder:
 
     def __init__(self, svc: LiveService, client: RateLimitedClient, *, source: str = "tencent", fallback_client: RateLimitedClient | None = None,
                  chunk: int | None = None, sleep: Callable[[float], None] | None = None, static: set[str] | None = None,
-                 tick: float = 0.5, max_fails: int = MAX_FAILS_IN_ROW, flush_seconds: float = 600.0):
+                 limit_pools: LimitPoolRecorder | None = None, tick: float = 0.5, max_fails: int = MAX_FAILS_IN_ROW, flush_seconds: float = 600.0):
         if source not in ("sina", "tencent"):
             raise ValueError("source must be sina or tencent")
         other = "tencent" if source == "sina" else "sina"
@@ -120,6 +124,7 @@ class IntradayRecorder:
         self.active = self.vendors[0]
         self.source = source
         self.static = set(static or ())
+        self.pools = limit_pools
         self.codes: list[str] = []
         self.spec = {R.STREAM_FULL: registry.spec(N.SOURCE_ID, N.EP_QUOTES), R.STREAM_HOT: registry.spec(N.SOURCE_ID, N.EP_HOT)}
         self.hot: set[str] = set(self.static)
@@ -266,6 +271,8 @@ class IntradayRecorder:
             self._full("auction" if action == "full" and self._cst().time() < R.SESSIONS[0][0] else action)
         elif action in R.AFTER_SHOTS:
             self._full("after")
+        elif action == "pools":
+            self.pools.fetch_and_publish(self.day, self.s)
         else:
             self._hot(action)
 
@@ -370,6 +377,8 @@ class IntradayRecorder:
                 if now.time() >= until:
                     break
                 steps = R.due(now, self.state, self.cfg)
+                if self.pools is not None and R.pools_due(now, self.state):
+                    steps.append("pools")
                 for action in steps:
                     self._advance(action, now)
                     try:

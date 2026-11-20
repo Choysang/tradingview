@@ -16,6 +16,8 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.ingest legacy-news --date 2026-11-12       # 7x24 messages -> documents -> claims (then alerts scan)
     uv run python -m pulse.workers.ingest legacy-ext|legacy-guba|legacy-alerts --date 2026-11-12
     uv run python -m pulse.workers.ingest intraday-record --until 15:33 --universe   # native recorder, NOT scheduled before the M6 cutover
+    ... intraday-record ... --limit-pools                                      # OPTIONAL vendor limit pools after the close (off by default)
+    uv run python -m pulse.workers.pool_compare --date 2026-11-13               # vendor pools vs seal facts (read only)
 
 Exit codes: 0 ok, 1 failure, 2 source blocked us (circuit OPEN, nothing half-published).
 Not covered: scheduling; there is deliberately no full-market live crawl command (pass explicit codes).
@@ -95,6 +97,9 @@ def _parser() -> argparse.ArgumentParser:
                         "hq.sinajs.cn already answered 403 to the server IP); must differ from --source")
     p.add_argument("--cycle-seconds", type=float, default=60.0, help="period of the full-board snapshots")
     p.add_argument("--flush-every", type=int, default=10, help="full cycles between published parts")
+    p.add_argument("--limit-pools", action="store_true",
+                   help="OPTIONAL: also fetch the Eastmoney limit-up / broken-board / limit-down pools once after the close (15:25-15:50) into the "
+                        "dataset limit_pools_eastmoney, to reconcile the seal facts (default off; compare with: python -m pulse.workers.pool_compare)")
     p.add_argument("--static-sessions", type=int, default=3, help="earlier sessions whose limit touches form the static pool (0 = none)")
     return ap
 
@@ -137,12 +142,15 @@ def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
     if not codes:
         raise SystemExit("no codes: pass --codes or import the research snapshot first")
     from pulse.application.intraday_recorder import AllSourcesDown, IntradayRecorder, static_pool
+    from pulse.application.intraday_pools import LimitPoolRecorder
 
     today = _today_cst()
     static = static_pool(svc, today, a.static_sessions) if a.static_sessions > 0 else set()
     fallback = RateLimitedClient(min_interval_seconds=client.min_interval) if a.fallback else None   # its own circuit and pacing
+    pool_client = RateLimitedClient(min_interval_seconds=client.min_interval) if a.limit_pools else None      # its own circuit and pacing
     try:
-        rec = IntradayRecorder(svc, client, source=a.source, fallback_client=fallback, static=static)
+        pools = LimitPoolRecorder(svc, pool_client) if pool_client is not None else None
+        rec = IntradayRecorder(svc, client, source=a.source, fallback_client=fallback, static=static, limit_pools=pools)
         try:
             return [rec.run(codes, today, a.until, cycle_seconds=a.cycle_seconds, flush_every=a.flush_every)]
         except AllSourcesDown as exc:
@@ -150,8 +158,9 @@ def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
                 print(exc.summary.render())
             raise
     finally:
-        if fallback is not None:
-            fallback.close()
+        for extra in (fallback, pool_client):
+            if extra is not None:
+                extra.close()
 
 
 def universe_codes(conn, lake: LakeStore, recent_sessions: int = 5) -> list[str]:

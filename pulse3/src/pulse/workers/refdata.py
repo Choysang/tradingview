@@ -12,6 +12,8 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.refdata adjusted-bars --universe-listings --max-codes 300   # 2 requests per code, resumable
     uv run python -m pulse.workers.refdata adjusted-bars --mode refresh --universe-listings    # daily: ~len/50 quote requests + ex-right refetches
     uv run python -m pulse.workers.refdata adjusted-bars --codes 000001 600000                 # ad hoc, no cursor
+    uv run python -m pulse.workers.refdata adjusted-bars --universe-listings --raw-only --max-codes 600   # raw kline only, 1 request per code, cursor raw:listings
+    # every full (non raw-only) fetch also publishes bars_native_raw_1d and adj_factor_native from the SAME two responses
     uv run python -m pulse.workers.refdata fill-listed-on [--dry]                              # cutover helper: NULL listed_on from the native listing dataset
     uv run python -m pulse.workers.refdata reconcile                                           # read only report vs the legacy datasets
 
@@ -58,6 +60,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--max-codes", type=int, default=None, help="process at most this many codes in this run (resume later)")
     p.add_argument("--max-refetch", type=int, default=None, help="refresh mode: cap on whole-history refetches")
     p.add_argument("--restart", action="store_true", help="ignore a running cursor and start a new pass")
+    p.add_argument("--raw-only", action="store_true", help="fetch the raw kline only (1 request per code, no factor file) and publish bars_native_raw_1d; own cursor")
     p = sub.add_parser("index-bars", help="six index series, dataset index_bars_native_1d")
     p.add_argument("--years", type=int, default=3)
     p = sub.add_parser("boards", help="industry + concept membership snapshot, datasets sector_membership_native_boards_*")
@@ -111,11 +114,13 @@ def run(argv: list[str] | None = None) -> int:
                 raise SystemExit("no codes")
             start = _start(a.years, today)
             sina = M.SinaRefAdapter(client)
+            if a.raw_only and a.mode == "refresh":
+                raise SystemExit("--raw-only is a fetch mode of the full pass; the daily refresh publishes raw bars from the same quote anyway")
             if a.mode == "refresh":
                 out = rs.adjusted_refresh(sina, TencentAdapter(client), codes, start=start, today=today, chunk=a.chunk, max_refetch=a.max_refetch)
             else:
                 out = rs.adjusted_bars(sina, codes, start=start, today=today, chunk=a.chunk, scope=None if a.codes else ("universe" if a.universe else "listings"),
-                                       restart=a.restart, max_codes=a.max_codes)
+                                       restart=a.restart, max_codes=a.max_codes, raw_only=a.raw_only)
             print(out.render())
         elif a.cmd == "index-bars":
             print(rs.index_bars(M.SinaRefAdapter(client), M.TencentRefAdapter(client), start=_start(a.years, today), today=today).render())

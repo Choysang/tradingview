@@ -5,12 +5,17 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+import json
+
 import httpx
 
 DAY = date(2026, 11, 12)
 UTC = timezone.utc
 CST = timezone(timedelta(hours=8))
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "rec_intraday"
+POOL_FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "rec_pools"
+POOL_HOST = "push2ex.eastmoney.com"
+POOL_FILES = {"getTopicZTPool": "old_zt_20261102.json", "getTopicZBPool": "old_zb_20261102.json", "getTopicDTPool": "old_dt_20261102.json"}
 Level = tuple[float, int]      # (price, LOTS); a level without an order is (0, 0)
 
 
@@ -100,7 +105,9 @@ class World:
 
     def __init__(self, start_utc: datetime, stocks: list[Stock]):
         self.t, self.mono, self.stocks = start_utc, 0.0, stocks
-        self.requests: dict[str, list[tuple[float, int]]] = {"hq.sinajs.cn": [], "qt.gtimg.cn": []}
+        self.requests: dict[str, list[tuple[float, int]]] = {"hq.sinajs.cn": [], "qt.gtimg.cn": [], POOL_HOST: []}
+        self.pool_fail_first = 0                                   # the first N pool requests answer 500
+        self.pool_mode = "ok"                                      # ok | html (a block page with status 200) | stale (the last session's qdate)
         self.block: dict[str, int] = {}
         self.fail: dict[str, int] = {}
         self.stale = False
@@ -120,12 +127,30 @@ class World:
     def count(self, host: str) -> int:
         return len(self.requests[host])
 
+    def pool_handler(self, req: httpx.Request) -> httpx.Response:
+        """The old recorder's real 2026-11-02 pool bodies, with qdate set to the requested date (what the vendor does on a session)."""
+        self.log.append((self.t, POOL_HOST, [req.url.path.strip("/")]))
+        self.requests[POOL_HOST].append((self.mono, 0))
+        n = len(self.requests[POOL_HOST])
+        if POOL_HOST in self.block and n >= self.block[POOL_HOST]:
+            return httpx.Response(403, content=b"forbidden")
+        if n <= self.pool_fail_first:
+            return httpx.Response(500, content=b"oops")
+        if self.pool_mode == "html":
+            return httpx.Response(200, content=b"<html>captcha</html>", headers={"content-type": "text/html"})
+        doc = json.loads((POOL_FIXTURES / POOL_FILES[req.url.path.strip("/")]).read_text(encoding="utf-8"))
+        if self.pool_mode != "stale":
+            doc["data"]["qdate"] = int(req.url.params["date"])
+        return httpx.Response(200, content=json.dumps(doc, ensure_ascii=False).encode("utf-8"), headers={"content-type": "application/json"})
+
     def gaps(self, host: str) -> list[float]:
         times = [t for t, _ in self.requests[host]]
         return [b - a for a, b in zip(times, times[1:])]
 
     def handler(self, req: httpx.Request) -> httpx.Response:
         host = req.url.host
+        if host == POOL_HOST:
+            return self.pool_handler(req)
         want = str(req.url).split("list=" if host == "hq.sinajs.cn" else "q=")[1].split(",")
         self.log.append((self.t, host, want))
         self.requests[host].append((self.mono, 0))

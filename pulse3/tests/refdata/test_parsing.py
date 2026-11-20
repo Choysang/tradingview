@@ -29,7 +29,8 @@ def test_kline_parse_units_and_order():
     rows = M.parse_kline(fixture("sina_adj_kline_sz000001.json"))
     assert len(rows) == 400 and rows[0]["date"] == date(2025, 3, 27) and rows[-1]["date"] == date(2026, 11, 18)
     assert [r["date"] for r in rows] == sorted(r["date"] for r in rows)
-    assert rows[0] == {"date": date(2025, 3, 27), "open": 11.37, "high": 11.41, "low": 11.35, "close": 11.39, "volume": 55334940.0}  # shares, raw prices
+    assert rows[0] == {"date": date(2025, 3, 27), "open": 11.37, "high": 11.41, "low": 11.35, "close": 11.39, "volume": 55334940.0,   # shares, raw prices
+                       "text": {"open": "11.370", "high": "11.410", "low": "11.350", "close": "11.390", "volume": "55334940"}}      # exact vendor strings
 
 
 def test_factor_file_is_sorted_ascending_and_ends_at_one():
