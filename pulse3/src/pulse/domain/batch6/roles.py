@@ -71,12 +71,17 @@ def event_of(prev_leader: Member | None, today: Sequence[Member]) -> Event | Non
     return Event("promotion" if me.limit_up else "break", prev_leader.code, prev_leader.streak)
 
 
-def targets(event: Event, today: Sequence[Member]) -> list[str]:
-    """Codes bought after the event: break -> core + followers (H1); promotion -> core only (H2). Duplicates removed."""
+def targets_with_roles(event: Event, today: Sequence[Member]) -> list[tuple[str, str]]:
+    """(code, role) bought after the event: role ``core`` (one at most) then ``follower`` (break events only)."""
     lead_today = leader_of(today)
     exclude = frozenset({event.leader} | ({lead_today.code} if lead_today else set()))
     core = core_of(today, exclude)
-    out: list[str] = [core.code] if core else []
+    out: list[tuple[str, str]] = [(core.code, "core")] if core else []
     if event.kind == "break":
-        out += [m.code for m in followers_of(today, exclude) if m.code not in out]
+        out += [(m.code, "follower") for m in followers_of(today, exclude) if m.code != (core.code if core else None)]
     return out
+
+
+def targets(event: Event, today: Sequence[Member]) -> list[str]:
+    """Codes bought after the event: break -> core + followers (H1); promotion -> core only (H2). Duplicates removed."""
+    return [c for c, _ in targets_with_roles(event, today)]

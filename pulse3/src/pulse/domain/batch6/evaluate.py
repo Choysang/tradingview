@@ -97,12 +97,12 @@ def _excess_from_means(signals_by_day, pool_by_day, means_by_day) -> BL.MatchedE
 
 def evaluate_segment(*, hypothesis: str, segment: str, sign: int, hold: int, all_days: Sequence[str], signals_by_day: Mapping[str, Sequence[str]],
                      pool_by_day: Mapping[str, Sequence[BL.PoolName]], status_counts: Mapping[str, int], n_signals: int,
-                     means_by_day: Mapping[str, Mapping[str, Mapping[str, Decimal]]] | None = None) -> SegmentResult:
+                     means_by_day: Mapping[str, Mapping[str, Mapping[str, Decimal]]] | None = None, seed: int | None = None) -> SegmentResult:
     """``signals_by_day``: only FILLED signals with an observed exit. ``status_counts``: counts of the other signal statuses."""
     if means_by_day is None:
         means_by_day = {d: BL.matched_means(pool_by_day.get(d, ())) for d in signals_by_day}
     me = excess_from_means(signals_by_day, pool_by_day, means_by_day)
-    attempted = sum(status_counts.get(k, 0) for k in ("filled", "blocked_buy", "no_bar", "pending_exit"))
+    attempted = sum(status_counts.get(k, 0) for k in ("filled", "blocked_buy", "no_bar", "pending_exit", "flag_unknown"))
     filled = status_counts.get("filled", 0)
     rate = filled / attempted if attempted else None
     unf = {k: v for k, v in status_counts.items() if k != "filled" and v}
@@ -122,7 +122,7 @@ def evaluate_segment(*, hypothesis: str, segment: str, sign: int, hold: int, all
     mean_base = sum(bases, D(0)) / len(bases)
     days = [d.day for d in me.by_day]
     series = [sign * d.ex_sv for d in me.by_day]
-    bs = BS.block_bootstrap_p(list(all_days), days, series, [d.k for d in me.by_day], block=hold, seed=R.SEED, n_boot=R.N_BOOT)
+    bs = BS.block_bootstrap_p(list(all_days), days, series, [d.k for d in me.by_day], block=hold, seed=R.SEED if seed is None else seed, n_boot=R.N_BOOT)
     return SegmentResult(hypothesis, segment, sign, hold, n_signals, attempted, filled, rate, unf, me.n, len(days), float(mean_ret), float(mean_ret - R.COST),
                          float(mean_base), float(me.ex_sv), float(me.ex_all), float(me.ex_svi), bs.p_value, bs.blocks, bs.reliable, bs.reason)
 

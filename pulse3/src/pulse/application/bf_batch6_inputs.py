@@ -141,6 +141,34 @@ def load_adjusted_frame(conn: psycopg.Connection, lake: LakeStore, as_of: dateti
     return bars, sessions, {"research_snapshot": str(ri.manifest["snapshot_id"]), "research_manifest_version": ri.manifest["manifest_version"], "policy": ri.availability_policy}
 
 
+def attach_scope(panel: pl.DataFrame, sessions: list[date], listed_on: Mapping[str, date | None], st: frozenset[str], conn: psycopg.Connection, lake: LakeStore,
+                 as_of: datetime, iid_of: Mapping[str, str], *, require: str | None = None) -> tuple[pl.DataFrame, list[str], dict, pl.DataFrame]:
+    """Add ``in_scope`` (main board, not ST, listed >= 60 sessions, plus the boolean column ``require`` when given), ``cap`` (estimated) and ``sw2`` (as of the row's date) to a panel
+    with columns code, date, c (price in any unit): the scope of every batch 6 / batch 7 run."""
+    notes: list[str] = []
+    ok_from = {c: v for c, lo in listed_on.items() if (v := R.listed_ok_from(lo, sessions)) is not None}
+    unknown = sum(1 for lo in listed_on.values() if lo is None)
+    if unknown:
+        notes.append(f"{unknown} instruments without listing date are out of scope")
+    caps, cap_note = load_caps_frame(conn, lake, as_of, iid_of)
+    ref_close = (panel.join(caps.select("code", "ref_date"), on="code").filter(pl.col("date") <= pl.col("ref_date")).sort("date").group_by("code").agg(pl.col("c").last().alias("c_ref")))
+    caps = caps.join(ref_close, on="code", how="left")
+    sw = FI.load_frozen().sw
+    sw_map = dict(sw.select("code", "sw2").iter_rows())
+    joined = dict(sw.select("code", "joined").iter_rows())
+    okf = pl.DataFrame({"code": list(ok_from), "ok_from": list(ok_from.values())}, schema={"code": pl.String, "ok_from": pl.Date})
+    scope = pl.col("ok_from").is_not_null() & (pl.col("date") >= pl.col("ok_from")) & ~pl.col("code").is_in(list(st))
+    if require:
+        scope = scope & pl.col(require)
+    panel = (panel.join(okf, on="code", how="left").join(caps.select("code", "cap_ref", "c_ref"), on="code", how="left")
+             .with_columns((pl.col("cap_ref") * pl.col("c") / pl.col("c_ref")).alias("cap"), scope.alias("in_scope"))
+             .with_columns(pl.col("code").replace_strict(sw_map, default=None, return_dtype=pl.String).alias("sw2"),
+                           pl.col("code").replace_strict(joined, default=None, return_dtype=pl.String).alias("sw_joined"))
+             .with_columns(pl.when(pl.col("sw_joined").is_null() | (pl.col("sw_joined") <= pl.col("date").dt.strftime("%Y-%m-%d"))).then(pl.col("sw2")).otherwise(None).alias("sw2"))
+             .drop("sw_joined", "ok_from", "c_ref", "cap_ref"))
+    return panel, notes, cap_note, sw
+
+
 def prepare_history(conn: psycopg.Connection, lake: LakeStore, *, as_of: datetime, since: date | None = None, source: str = "adjusted") -> HistoryInputs:
     if source not in ("adjusted", "raw"):
         raise ValueError("source must be 'adjusted' or 'raw'")
@@ -156,25 +184,8 @@ def prepare_history(conn: psycopg.Connection, lake: LakeStore, *, as_of: datetim
         panel = PN.build_panel_adjusted(bars, sessions)
     notes: list[str] = [f"bars source {source}: {bars.height} rows, {len(sessions)} sessions {sessions[0] if sessions else None}..{sessions[-1] if sessions else None}"
                         + (f" (research snapshot v{ref['research_manifest_version']})" if ref else "")]
-    ok_from = {c: v for c, lo in listed_on.items() if (v := R.listed_ok_from(lo, sessions)) is not None}
-    unknown = sum(1 for lo in listed_on.values() if lo is None)
-    if unknown:
-        notes.append(f"{unknown} instruments without listing date are out of scope")
-    st = scope0.st
-    caps, cap_note = load_caps_frame(conn, lake, as_of, iid_of)
-    ref_close = (panel.join(caps.select("code", "ref_date"), on="code").filter(pl.col("date") <= pl.col("ref_date")).sort("date").group_by("code").agg(pl.col("c").last().alias("c_ref")))
-    caps = caps.join(ref_close, on="code", how="left")
-    sw = FI.load_frozen().sw
-    sw_map = dict(sw.select("code", "sw2").iter_rows())
-    joined = dict(sw.select("code", "joined").iter_rows())
-    okf = pl.DataFrame({"code": list(ok_from), "ok_from": list(ok_from.values())}, schema={"code": pl.String, "ok_from": pl.Date})
-    panel = (panel.join(okf, on="code", how="left").join(caps.select("code", "cap_ref", "c_ref"), on="code", how="left")
-             .with_columns((pl.col("cap_ref") * pl.col("c") / pl.col("c_ref")).alias("cap"),
-                           (pl.col("ok_from").is_not_null() & (pl.col("date") >= pl.col("ok_from")) & ~pl.col("code").is_in(list(st))).alias("in_scope"))
-             .with_columns(pl.col("code").replace_strict(sw_map, default=None, return_dtype=pl.String).alias("sw2"),
-                           pl.col("code").replace_strict(joined, default=None, return_dtype=pl.String).alias("sw_joined"))
-             .with_columns(pl.when(pl.col("sw_joined").is_null() | (pl.col("sw_joined") <= pl.col("date").dt.strftime("%Y-%m-%d"))).then(pl.col("sw2")).otherwise(None).alias("sw2"))
-             .drop("sw_joined", "ok_from", "c_ref", "cap_ref"))
+    panel, scope_notes, cap_note, sw = attach_scope(panel, sessions, listed_on, scope0.st, conn, lake, as_of, iid_of)
+    notes += scope_notes
     seats_since = sessions[0] if sessions else date(2023, 1, 1)
     seats, lhb = load_seats(conn, code_of, seats_since)
     return HistoryInputs(as_of, sessions, panel, seats, lhb, sw, cap_note, notes, source)

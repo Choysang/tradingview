@@ -83,8 +83,13 @@ def forward(panel: pl.DataFrame, hold: int, n_sessions: int, *, max_defer: int =
     """Forward legs of every (code, D): buy D+1 open, sell D+hold close, with fill rules and sell deferral (section 1). Columnar: three years of bars stay within a few hundred MB."""
     last = n_sessions - 1
     base = panel.select("code", "date", "si")
-    e = base.join(_shift_cols(panel, 1), on=["code", "si"], how="left").join(_shift_cols(panel, hold).select("code", "si", f"c{hold}", f"dn{hold}"), on=["code", "si"], how="left")
+    has_ok = "flag_ok" in panel.columns                           # batch 7 exact panel: a row whose limit flags are unknown / uncertain cannot be classified as buyable or not
+    first = _shift_cols(panel, 1)
+    if has_ok:
+        first = first.join(panel.select("code", (pl.col("si") - 1).alias("si"), pl.col("flag_ok").alias("fok1")), on=["code", "si"], how="left")
+    e = base.join(first, on=["code", "si"], how="left").join(_shift_cols(panel, hold).select("code", "si", f"c{hold}", f"dn{hold}"), on=["code", "si"], how="left")
     code, date_, si = e["code"].to_list(), e["date"].to_list(), e["si"].to_list()
+    fok1 = e["fok1"].to_list() if has_ok else None
     o1, up1, ch, dh = e["o1"].to_list(), e["up1"].to_list(), e[f"c{hold}"].to_list(), e[f"dn{hold}"].to_list()
     status = [""] * len(si)
     entry: list = [None] * len(si)
@@ -97,6 +102,8 @@ def forward(panel: pl.DataFrame, hold: int, n_sessions: int, *, max_defer: int =
             status[i] = "pending_entry"
         elif o1[i] is None:
             status[i] = "no_bar"
+        elif fok1 is not None and not fok1[i]:
+            status[i] = "flag_unknown"
         elif not R.buy_filled(o1[i], up1[i]):
             status[i] = "blocked_buy"
         else:

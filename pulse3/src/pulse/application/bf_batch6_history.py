@@ -119,12 +119,13 @@ def day_tables(panel: pl.DataFrame, fwd: pl.DataFrame, days: set[date]) -> dict[
 
 
 def run_hypothesis(hyp: str, signals: list[tuple[date, str]], fwd: pl.DataFrame, inp: HistoryInputs, cache: dict | None = None,
-                   needed: Mapping[tuple[int, str], set[str]] | None = None) -> dict[str, Any]:
+                   needed: Mapping[tuple[int, str], set[str]] | None = None, seed: int | None = None,
+                   last_day: date | None = None) -> dict[str, Any]:
     """One hypothesis in both segments. Memory: the matching pool of a day is built and its baseline means computed ONCE per (hold, day) (``cache``), then reduced to the names that are
     signals of some hypothesis with that hold (``needed``); the full pool of the day is dropped (a three-year panel would not fit the server's budget otherwise)."""
     exp, sign, hold = R.HYPOTHESES[hyp]
     sess = inp.sessions
-    valid_days = sess[WARMUP_SESSIONS:]
+    valid_days = [d for d in sess[WARMUP_SESSIONS:] if last_day is None or d <= last_day]
     sdf = pl.DataFrame({"date": [d for d, _ in signals], "code": [c for _, c in signals]}, schema={"date": pl.Date, "code": pl.String}).join(
         fwd.select("code", "date", "status", "ret"), on=["code", "date"], how="left").with_columns(pl.col("status").fill_null("not_in_panel"))
     out: dict[str, Any] = {"hypothesis": hyp, "experiment": exp, "sign": sign, "hold": hold, "segments": {}, "days": []}
@@ -154,7 +155,7 @@ def run_hypothesis(hyp: str, signals: list[tuple[date, str]], fwd: pl.DataFrame,
         pool_by_day = {k: cache[(hold, k)][0] for k in filled_by_day}
         means_by_day = {k: cache[(hold, k)][1] for k in filled_by_day}
         res = EV.evaluate_segment(hypothesis=hyp, segment=seg, sign=sign, hold=hold, all_days=[d.isoformat() for d in seg_days], signals_by_day=filled_by_day,
-                                  pool_by_day=pool_by_day, status_counts=counts, n_signals=ss.height, means_by_day=means_by_day)
+                                  pool_by_day=pool_by_day, status_counts=counts, n_signals=ss.height, means_by_day=means_by_day, seed=seed)
         out["segments"][seg] = res
     return out
 
