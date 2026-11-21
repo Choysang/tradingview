@@ -214,7 +214,13 @@ def require_research_window(research, min_sessions: int) -> None:
 def resolve_inputs(svc: DataService, lake: LakeStore, cfg: BuildConfig, as_of: datetime | None) -> BuildInputs:
     conn = svc.conn
     cap_manifest = None
-    if cfg.legacy_warehouse and as_of is None:
+    if B.refdata_source() == "native" and as_of is None:
+        # native reference data: register new listings, version short name / risk-warning state, publish the cap snapshot (all from pulse3's own
+        # datasets, before the cutoff is fixed); the old warehouse is not read
+        from pulse.application.native_register import refresh as native_refresh
+
+        cap_manifest = native_refresh(svc, lake)[1]
+    elif cfg.legacy_warehouse and as_of is None:
         cap_manifest = B.publish_cap_snapshot(svc, cfg.legacy_warehouse)       # source-side fact, published before the cutoff is fixed
     pol = cfg.availability
     if B.reconstructed(pol) and as_of is None:

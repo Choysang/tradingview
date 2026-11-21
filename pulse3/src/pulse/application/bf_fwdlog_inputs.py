@@ -98,6 +98,38 @@ def read_json(path: Path) -> dict:
         return {"unreadable": True}
 
 
+NATIVE_EXT_MARKER = "recorder_summary"             # key of the native extended recorder's coverage document (``bf_ext_record``): its health lives there, not in summary.json
+
+
+def recorder_health(ext: "DayFrames | None", ext_dir: Path) -> tuple[dict, bool, dict]:
+    """(summary, merged, provenance) of the extended recorder of one session for ``domain.fwdlog.state.health_state``.
+
+    Native recorder (the ``ext_quote_snapshots`` version carries ``recorder_summary``): ``end`` = its end reason (``done`` when it finished),
+    ``missed`` / ``failed_requests`` / ``error_count`` from the summary, ``blocked`` from ``blocked_hosts``; ``merged`` = the final version was
+    published. It records no ``never_returned`` list: that key is absent, so the row says None, not 0. Legacy recorder: ``summary.json`` and
+    ``quotes_ext.parquet`` of the old directory. Neither: an explicit ``note`` (never an all-empty health that looks like a healthy day).
+    ``source`` says which one was read."""
+    cov = (ext.manifest.get("coverage_document") or {}) if ext is not None else {}
+    if NATIVE_EXT_MARKER in cov:
+        rs = cov[NATIVE_EXT_MARKER] or {}
+        end = cov.get("end_reason") or ("done" if cov.get("source_complete") else None)
+        summary = {"end": end, "missed": rs.get("missed"), "failed_requests": rs.get("failed_requests"), "error_count": rs.get("error_count"),
+                   "blocked": dict(cov.get("blocked_hosts") or {}), "source": "native_coverage"}
+        if end is None:
+            summary["note"] = "native recorder version is not final yet (no end reason)"
+        body = json.dumps({k: cov.get(k) for k in ("recorder", NATIVE_EXT_MARKER, "blocked_hosts", "end_reason", "source_complete", "steps_done")}, sort_keys=True, default=str)
+        return summary, bool(cov.get("source_complete")), {"health_source": "native_coverage", "ext_summary_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest()}
+    path = ext_dir / "summary.json"
+    legacy = read_json(path)
+    merged = (ext_dir / "quotes_ext.parquet").exists()
+    if legacy and not legacy.get("unreadable"):
+        return {**legacy, "source": "legacy_summary"}, merged, {"health_source": "legacy_summary", "ext_summary_sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    if legacy.get("unreadable"):
+        return {"unreadable": True, "source": "unreadable", "note": "legacy summary.json could not be read"}, merged, {"health_source": "unreadable", "ext_summary_sha256": None}
+    return ({"source": "none", "note": "no recorder health record: no native coverage and no legacy summary.json for this session"}, merged,
+            {"health_source": "none", "ext_summary_sha256": None})
+
+
 def events_path() -> Path:
     return Path(os.environ.get(ENV_EVENTS) or DEFAULT_EVENTS)
 

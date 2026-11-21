@@ -23,7 +23,7 @@ def test_registry_has_52_playbooks_in_8_families():
 def test_unavailable_playbooks_declare_why_and_return_nothing():
     days, raws, views = panel(30, 300)
     prepare(views, days)
-    for pid in ("value_pe_pb", "industry_follower", "industry_first_board", "name_cluster_follower", "smart_seat_follow", "institution_net_buy"):
+    for pid in ("value_pe_pb", "industry_follower", "industry_first_board", "name_cluster_follower"):
         pb = L.REGISTRY[pid]
         assert pb.requires and pb.unavailable_reason
         assert all(x is None for x in run_signal(pb, views[0]))
@@ -41,7 +41,7 @@ def test_signals_fire_somewhere_and_scores_are_positive():
                     assert s > 0
                     n += 1
         fired[pid] = n
-    silent = sorted(k for k, n in fired.items() if n == 0 and not L.REGISTRY[k].unavailable_reason)
+    silent = sorted(k for k, n in fired.items() if n == 0 and not L.REGISTRY[k].unavailable_reason and "lhb_seats" not in L.REGISTRY[k].requires)     # seat playbooks need attached lists (tests/ext_b/test_seat_playbooks.py)
     # rare rules may stay silent on random data, but most of the library must fire
     assert len(silent) <= 12, silent
 

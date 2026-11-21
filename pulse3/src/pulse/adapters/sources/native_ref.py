@@ -30,6 +30,7 @@ def register(add, spec_cls, sources: dict) -> None:
                               "https://finance.sina.com.cn")
     sources[M.TENCENT_SOURCE] = ("Tencent index kline (native producer, 000985 only)", "https://web.ifzq.gtimg.cn")
     sources[L.SOURCE_ID] = ("SSE / SZSE stock lists (native producer): listing dates", "https://query.sse.com.cn")
+    sources["native"] = ("Pulse native instrument register: stock codes of instruments first seen after the reference-data switch", "internal://native_register")
     sources[L.EM_SOURCE_ID] = ("Eastmoney stock list (native producer): listing dates when the exchange lists are unreachable", "https://82.push2.eastmoney.com")
 
     def raw(source: str, endpoint: str, schema: str, mapping: str, stale: int, extra: dict) -> None:

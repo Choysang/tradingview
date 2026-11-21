@@ -71,8 +71,13 @@ def parse_date(value: object) -> date | None:
     return None
 
 
+def _name(value: object) -> str | None:
+    text = "" if value is None else str(value).strip()
+    return text or None
+
+
 def parse_sse(body: bytes) -> list[dict]:
-    """SSE JSON -> ``[{code, list_date}]``."""
+    """SSE JSON -> ``[{code, list_date, name}]`` (name: the short name as listed, risk-warning prefix included)."""
     try:
         doc = json.loads(body)
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
@@ -86,7 +91,7 @@ def parse_sse(body: bytes) -> list[dict]:
             raise SchemaChanged("sse_list_row_shape")
         code = str(r["A_STOCK_CODE"]).strip().zfill(6)
         if re.fullmatch(r"\d{6}", code):
-            out[code] = {"code": code, "list_date": parse_date(r["LIST_DATE"])}
+            out[code] = {"code": code, "list_date": parse_date(r["LIST_DATE"]), "name": _name(r.get("SEC_NAME_CN"))}
     return list(out.values())
 
 
@@ -127,7 +132,7 @@ def read_xlsx_rows(body: bytes) -> list[list[str | None]]:
 
 
 def parse_szse(body: bytes) -> list[dict]:
-    """SZSE A-share workbook -> ``[{code, list_date}]`` (columns ``A股代码`` and ``A股上市日期`` by header name)."""
+    """SZSE A-share workbook -> ``[{code, list_date, name}]`` (columns ``A股代码``, ``A股上市日期``, ``A股简称`` by header name)."""
     rows = read_xlsx_rows(body)
     if not rows:
         raise SchemaChanged("szse_list_empty_sheet")
@@ -136,6 +141,7 @@ def parse_szse(body: bytes) -> list[dict]:
         ci, di = header.index("A股代码"), header.index("A股上市日期")
     except ValueError as exc:
         raise SchemaChanged("szse_list_header_changed") from exc
+    ni = header.index("A股简称") if "A股简称" in header else None
     out: dict[str, dict] = {}
     for r in rows[1:]:
         raw = r[ci] if ci < len(r) else None
@@ -143,12 +149,13 @@ def parse_szse(body: bytes) -> list[dict]:
             continue
         code = str(raw).split(".")[0].strip().zfill(6)
         if re.fullmatch(r"\d{6}", code):
-            out[code] = {"code": code, "list_date": parse_date(r[di] if di < len(r) else None)}
+            out[code] = {"code": code, "list_date": parse_date(r[di] if di < len(r) else None),
+                         "name": _name(r[ni]) if ni is not None and ni < len(r) else None}
     return list(out.values())
 
 
 def parse_eastmoney(body: bytes) -> tuple[list[dict], int | None]:
-    """One Eastmoney ``clist`` page -> (``[{code, list_date}]``, the declared ``total``). ``data: null`` is an empty page past the end;
+    """One Eastmoney ``clist`` page -> (``[{code, list_date, name}]``, the declared ``total``). ``data: null`` is an empty page past the end;
     ``f26`` is the listing date as an integer ``yyyymmdd`` (``"-"`` / 0 when unknown -> NULL, never a guess)."""
     try:
         doc = json.loads(body)
@@ -170,7 +177,7 @@ def parse_eastmoney(body: bytes) -> tuple[list[dict], int | None]:
             raise SchemaChanged("eastmoney_list_row_shape")
         code = str(r["f12"]).strip().zfill(6)
         if re.fullmatch(r"\d{6}", code):
-            rows[code] = {"code": code, "list_date": parse_date(r["f26"])}
+            rows[code] = {"code": code, "list_date": parse_date(r["f26"]), "name": _name(r.get("f14"))}
     total = data.get("total")
     return list(rows.values()), (int(total) if isinstance(total, (int, float)) else None)
 

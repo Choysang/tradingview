@@ -18,6 +18,7 @@ from typing import Any, Mapping, Sequence
 import psycopg
 
 from pulse.adapters.lake import LakeStore
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.application import market_today_service as MT
 from pulse.domain.market_state.daily import Bar
 
@@ -148,7 +149,7 @@ def search_instruments(conn: psycopg.Connection, q: str, limit: int = 12) -> dic
     esc = term.replace(_LIKE_ESCAPE, _LIKE_ESCAPE * 2).replace("%", _LIKE_ESCAPE + "%").replace("_", _LIKE_ESCAPE + "_")
     rows = conn.execute(
         "SELECT i.instrument_id, a.source_symbol AS code, s.display_name AS name, s.is_risk_warning AS st"
-        " FROM core.instrument i JOIN core.instrument_alias a ON a.instrument_id=i.instrument_id AND a.source_id='legacy_warehouse'"
+        " FROM core.instrument i JOIN core.instrument_alias a ON a.instrument_id=i.instrument_id AND a.source_id " + CODE_SOURCES_SQL +
         " LEFT JOIN LATERAL (SELECT st.display_name, st.is_risk_warning FROM core.instrument_state st WHERE st.instrument_id=i.instrument_id"
         "  ORDER BY st.effective_from DESC, st.state_version DESC LIMIT 1) s ON true"
         " WHERE i.instrument_type='equity' AND (a.source_symbol LIKE %(pre)s OR s.display_name ILIKE %(sub)s)"

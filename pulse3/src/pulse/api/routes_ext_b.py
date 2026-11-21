@@ -23,6 +23,7 @@ from fastapi.responses import Response
 from pulse import config, contracts
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres.commands import PgCommandStore
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.api import deps
 from pulse.api.auth import principal
 from pulse.api.deps import conn_dep
@@ -247,7 +248,7 @@ def instrument_labels(request: Request, ids: str = "", codes: str = "", conn=Dep
         "SELECT i.instrument_id, a.source_symbol AS code,"
         " (SELECT s.display_name FROM core.instrument_state s WHERE s.instrument_id=i.instrument_id ORDER BY s.effective_from DESC, s.state_version DESC LIMIT 1) AS name,"
         " (SELECT s.is_risk_warning FROM core.instrument_state s WHERE s.instrument_id=i.instrument_id ORDER BY s.effective_from DESC, s.state_version DESC LIMIT 1) AS st"
-        " FROM core.instrument i JOIN core.instrument_alias a ON a.instrument_id=i.instrument_id AND a.source_id='legacy_warehouse'"
+        " FROM core.instrument i JOIN core.instrument_alias a ON a.instrument_id=i.instrument_id AND a.source_id " + CODE_SOURCES_SQL +
         " WHERE i.instrument_id = ANY(%s::uuid[]) OR a.source_symbol = ANY(%s)", (idl, codel)).fetchall()
     return {"data": [{"instrument_id": str(r["instrument_id"]), "code": r["code"], "name": r["name"], "is_risk_warning": r["st"]} for r in rows]}
 

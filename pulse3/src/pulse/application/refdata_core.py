@@ -49,7 +49,8 @@ INDEX_SCHEMA = {"instrument_id": pl.String, "symbol": pl.String, "date": pl.Date
 MEMBERSHIP_SCHEMA = {"instrument_id": pl.String, "node_id": pl.String, "effective_from": pl.Datetime("us", "UTC"),
                      "available_at": pl.Datetime("us", "UTC")}
 LISTING_SCHEMA = {"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String,
-                  "available_at": pl.Datetime("us", "UTC"), "source": pl.String}      # source: sse | szse | eastmoney (which list gave the date)
+                  "available_at": pl.Datetime("us", "UTC"), "source": pl.String,     # source: sse | szse | eastmoney (which list gave the date)
+                  "name": pl.String}                                    # the short name as that list gave it (risk-warning prefix included)
 _DEC16 = pl.Decimal(38, 16)
 #: ``bars_native_raw_1d``: the frame schema of ``bars_raw_1d`` (``DataService._bars_frame``) plus ``revision``; one row per revision.
 RAW_SCHEMA = {"instrument_id": pl.String, "trade_date": pl.Date, "timeframe": pl.String, "bar_open_time": pl.Datetime("us", "UTC"),

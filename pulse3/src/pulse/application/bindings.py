@@ -38,6 +38,7 @@ from psycopg.types.json import Jsonb
 from pulse import contracts
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import ingest_repo, market_repo
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES
 from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.postgres.ledger_repo import LedgerRepo
 from pulse.adapters.postgres.release import PgAnalysisRelease
@@ -56,15 +57,15 @@ RECONSTRUCTED_POLICY = "reconstructed-session-close-plus-1h-v1"      # policy_us
 RECONSTRUCTED_DELAY = timedelta(hours=1)
 SESSION_POLICY = "regular_continuous_v1"
 # Reference-data source switch (step 2 cutover): ``PULSE_REFDATA_SOURCE`` = ``legacy`` (default, the imported old warehouse) | ``native``
-# (the producers of ``workers/refdata.py``). ``RESEARCH_DATASET`` / ``INDEX_DATASET`` / ``MEMBERSHIP_DATASET`` are resolved at ACCESS
+# (the producers of ``workers/refdata.py``). ``RESEARCH_DATASET`` / ``INDEX_DATASET`` / ``MEMBERSHIP_DATASET`` / ``CAP_DATASET`` are resolved at ACCESS
 # time (module ``__getattr__``, PEP 562), so ``B.RESEARCH_DATASET`` in every consumer follows the switch without being edited and nothing
 # changes while the variable is unset. Inside this module call the functions below.
 REFDATA_SOURCE_ENV = "PULSE_REFDATA_SOURCE"
 _REFDATA_DATASETS = {
     "legacy": {"research": "bars_legacy_fwd_adjusted_1d", "index": "index_bars_legacy_1d",
-               "membership": "sector_membership_legacy_boards_industry"},
+               "membership": "sector_membership_legacy_boards_industry", "cap": "instrument_circulating_cap_legacy"},
     "native": {"research": "bars_native_fwd_adjusted_1d", "index": "index_bars_native_1d",
-               "membership": "sector_membership_native_boards_industry"},
+               "membership": "sector_membership_native_boards_industry", "cap": "instrument_circulating_cap_native"},
 }
 
 
@@ -88,6 +89,10 @@ def membership_dataset() -> str:
     return _REFDATA_DATASETS[refdata_source()]["membership"]
 
 
+def cap_dataset() -> str:
+    return _REFDATA_DATASETS[refdata_source()]["cap"]
+
+
 def __getattr__(name: str) -> str:
     if name == "RESEARCH_DATASET":
         return research_dataset()
@@ -95,6 +100,8 @@ def __getattr__(name: str) -> str:
         return index_dataset()
     if name == "MEMBERSHIP_DATASET":
         return membership_dataset()
+    if name == "CAP_DATASET":
+        return cap_dataset()
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -338,7 +345,7 @@ def load_instrument_meta(conn: psycopg.Connection, as_of: datetime, availability
     metas, listed = {}, {}
     for r in rows:
         syms = tuple(aliases.get(r["instrument_id"], ()))
-        code = next((s for src, s in syms if src == "legacy_warehouse"), None)
+        code = next((s for src, s in syms if src in CODE_SOURCES), None)          # legacy alias first (sorted), else the native one
         metas[r["instrument_id"]] = InstrumentMeta(
             r["instrument_id"], code, r["venue_code"], r["instrument_type"], r["currency"], r["exchange_timezone"],
             r["display_name"], r["state_version"], r["trading_status"], r["is_risk_warning"], r["board_code"], syms)
@@ -414,7 +421,8 @@ def publish_derived(svc: DataService, dataset_id: str, frame: pl.DataFrame, cove
 # --------------------------------------------------------------------------------------------------------
 # circulating market cap facts (legacy securities snapshot, read through the legacy adapter)
 # --------------------------------------------------------------------------------------------------------
-CAP_DATASET = "instrument_circulating_cap_legacy"
+LEGACY_CAP_DATASET = "instrument_circulating_cap_legacy"
+NATIVE_CAP_DATASET = "instrument_circulating_cap_native"
 CAP_UNIT_NOTE = ("legacy securities.float_cap interpreted as 100 million CNY (亿元): magnitude check 000001 total_cap=2301.54; "
                  "the unit is not stated by the source and is unverified")
 
@@ -446,19 +454,19 @@ def publish_cap_snapshot(svc: DataService, warehouse_root: str) -> dict | None:
     frame = pl.DataFrame(rows, schema={"instrument_id": pl.String, "as_of": pl.String, "float_cap_cny": pl.Decimal(38, 2),
                                        "total_cap_cny": pl.Decimal(38, 2), "available_at": pl.Datetime("us", "UTC")}).sort(["instrument_id", "as_of"])
     digest = hashlib.sha256(frame.write_csv().encode()).hexdigest()
-    hit = find_derived(svc.conn, CAP_DATASET, "frame_sha256", digest)
+    hit = find_derived(svc.conn, LEGACY_CAP_DATASET, "frame_sha256", digest)
     if hit is not None:
         return hit
-    cov = {"dataset": CAP_DATASET, "frame_sha256": digest, "rows": frame.height, "unit": CAP_UNIT_NOTE,
+    cov = {"dataset": LEGACY_CAP_DATASET, "frame_sha256": digest, "rows": frame.height, "unit": CAP_UNIT_NOTE,
            "source": "legacy_warehouse/securities (read-only legacy adapter)", "as_of": max(frame["as_of"].to_list()),
            "missing": "instruments absent from the legacy securities snapshot have no cap (unknown, never 0)"}
-    return publish_derived(svc, CAP_DATASET, frame, cov, contract_id="pulse.instrument_cap_fact",
+    return publish_derived(svc, LEGACY_CAP_DATASET, frame, cov, contract_id="pulse.instrument_cap_fact",
                            watermark=max(frame["available_at"].to_list()))
 
 
 def load_caps(conn: psycopg.Connection, lake: LakeStore, as_of: datetime,
               availability_policy: str = AVAILABILITY_POLICY) -> tuple[dict[uuid.UUID, Decimal], dict | None]:
-    man = _ready_manifest(conn, CAP_DATASET, None if reconstructed(availability_policy) else as_of)
+    man = _ready_manifest(conn, cap_dataset(), None if reconstructed(availability_policy) else as_of)
     if man is None:
         return {}, None
     return visible_caps(lake.read_snapshot_frames(man["content_hash"]), as_of, availability_policy), man

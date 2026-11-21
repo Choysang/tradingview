@@ -191,3 +191,24 @@ Every pulse3 process paces per host across processes (`PULSE_HOST_PACING_DIR`), 
 Known gaps: the intraday recorder at 1 request/s needs about 39 s per full board and cuts hot polls (reported as
 `truncated_hot`); Eastmoney limit pools, minute bars, convertible bonds and guba follow-ups of the old recorders are not
 ported; the news recorder polls weekday holidays; native boards are current membership only (no history).
+
+## Re-audit 2026-11-21 (independent, read-only, against the code at f050170)
+
+Of the 77 rows that were not ported on 2026-11-18: 37 are now ported, 16 retired with a written reason, 0 missing;
+14 partial, 6 wait for the refdata switch, 4 deferred. Totals over 206 rows: ported 153, partial 14, retired 29,
+deferred 4, waits-for-switch 6. The per-row table is kept privately (`.work/audit/`).
+
+Dispositions added now:
+
+| Rows | Feature | Disposition |
+|---|---|---|
+| 32, 90, 155 (name part), 145 (three name/sector playbooks) | linkage by shared characters of short names ("名称同字联动") | retired: it needs point-in-time short-name history, and the industry/seat linkage (E093/E094, batch 6) is the tested form of the same idea; the two seat playbooks of #145 move to `intelligence.seat_report` |
+| 171 | gate_grid (grid search of curve-gate parameters) | retired: the curve gate (E036/E040) is frozen in the fusion books; a parameter grid on the same data is a new multiple look and would need its own pre-registration |
+| 84 | exit summary across all playbooks | partial by design: per playbook only; a cross-playbook summary adds no decision (exits are compared within a playbook) |
+| 103 (limit pools) | Eastmoney limit pools in the native recorder | written, off by default (`--limit-pools`); switched on by the user after the first native week |
+
+Work started from the re-audit (code only, no user decision, no new live requests): native instrument register, ST and
+caps plus alias-independent code lookup (rows 108/113, prerequisite of the refdata switch); market tape from the native
+snapshots (9/69/127/39); E089 health from the native ext coverage (173); M3 catalyst from pulse3's own calendar behind
+`PULSE_CATALYST_SOURCE` (174); the two seat playbooks (145); `sync_refdata` job kind (49/89); guba sampling after the
+cutover (136, run_daily); a failed legacy import no longer stops the build when the native reference data is on.

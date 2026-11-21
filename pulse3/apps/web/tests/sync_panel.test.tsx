@@ -12,8 +12,8 @@ const META = {
   availability_policy_version: 'p', input_snapshot_refs: [], quality_status: 'valid', freshness_state: 'current',
   coverage: { policy_version: 'c', expected_count: null, observed_count: 1, missing_count: null, unverifiable_reasons: [] }, warnings: [], next_cursor: null, actionability_id: null,
 };
-const BOUNDS = { max_codes: 300, max_since_days: 400, max_count: 320, max_last: 30 };
-const KINDS = ['sync_daily_bars', 'sync_legacy_import', 'sync_reconcile'];
+const BOUNDS = { max_codes: 300, max_since_days: 400, max_count: 320, max_last: 30, max_refdata_codes: 5000 };
+const KINDS = ['sync_daily_bars', 'sync_legacy_import', 'sync_reconcile', 'sync_refdata'];
 const job = (over: Record<string, unknown> = {}) => ({
   job_run_id: 'aaaaaaaa-0000-4000-8000-000000000000', kind: 'sync_reconcile', run_state: 'failed', parameters: { codes: ['000001'], last: 5 }, requested_at: '2026-11-19T00:00:00Z',
   started_at: '2026-11-19T00:05:00Z', finished_at: '2026-11-19T00:06:00Z', exit_status: 2, error_code: 'SOURCE_BLOCKED', summary: 'BLOCKED: circuit open', ...over,
@@ -56,6 +56,14 @@ describe('buildSyncParameters', () => {
     expect(buildSyncParameters({ ...EMPTY_SYNC_FORM, codes: '000001', count: '321' }, BOUNDS)).toMatchObject({ ok: false, errors: { count: expect.any(String) } });
     expect(buildSyncParameters({ ...EMPTY_SYNC_FORM, kind: 'sync_legacy_import', sinceDays: '0' }, BOUNDS)).toMatchObject({ ok: false, errors: { sinceDays: expect.any(String) } });
     expect(buildSyncParameters({ ...EMPTY_SYNC_FORM, kind: 'sync_reconcile', codes: '000001', last: '31' }, BOUNDS)).toMatchObject({ ok: false, errors: { last: expect.any(String) } });
+  });
+  it('refdata: backfills carry a bounded max_codes, daily and weekly carry none', () => {
+    const f = { ...EMPTY_SYNC_FORM, kind: 'sync_refdata' as const };
+    expect(buildSyncParameters(f, BOUNDS)).toEqual({ ok: true, parameters: { mode: 'daily' } });
+    expect(buildSyncParameters({ ...f, refdataMode: 'weekly', maxCodes: '99999' }, BOUNDS)).toEqual({ ok: true, parameters: { mode: 'weekly' } });
+    expect(buildSyncParameters({ ...f, refdataMode: 'adjusted_backfill', maxCodes: '5000' }, BOUNDS)).toEqual({ ok: true, parameters: { mode: 'adjusted_backfill', max_codes: 5000 } });
+    expect(buildSyncParameters({ ...f, refdataMode: 'raw_backfill', maxCodes: '5001' }, BOUNDS)).toMatchObject({ ok: false, errors: { maxCodes: expect.any(String) } });
+    expect(describeSyncParameters('sync_refdata', { mode: 'raw_backfill', max_codes: 600 })).toBe('原始日线回填（每只 1 次请求） · 最多 600 只');
   });
   it('legacy import allows an empty code list and describes parameters', () => {
     const r = buildSyncParameters({ ...EMPTY_SYNC_FORM, kind: 'sync_legacy_import' }, BOUNDS);
@@ -114,6 +122,29 @@ describe('SyncPanel', () => {
     expect(screen.getByRole('button', { name: '提交同步' })).toBeDisabled();
     expect(screen.getByText('数据源封禁，已立即停止')).toBeInTheDocument(); // the history stays readable
     expect(posts).toHaveLength(0);
+  });
+
+  it('offers sync_refdata with its live-fetch note, queues a bounded backfill and marks the legacy import', async () => {
+    const receipt = { receipt: { job_run_id: 'dddddddd-0000-4000-8000-000000000000', resource_id: 'r', run_state: 'queued', poll_operation_id: 'getJobRun' }, kind: 'sync_refdata', parameters: {}, worker_hint: 'h' };
+    const posts = stub(() => ok(list([])), () => ok(receipt, 202));
+    renderPanel();
+    const form = await screen.findByRole('form', { name: '数据同步表单' });
+    expect(within(form).getByRole('option', { name: /旧系统遗留，随旧站下线/ })).toBeInTheDocument();
+    await userEvent.selectOptions(within(form).getByLabelText('同步类型'), 'sync_refdata');
+    expect(screen.getByRole('note')).toHaveTextContent('只在切换到新系统后才会执行');
+    await userEvent.selectOptions(within(form).getByLabelText('模式'), 'adjusted_backfill');
+    const max = within(form).getByLabelText(/本次最多处理的代码数/);
+    await userEvent.clear(max);
+    await userEvent.type(max, '5001');
+    await userEvent.click(within(form).getByRole('button', { name: '提交同步' }));
+    expect(await screen.findByText(/代码数需在 1\.\.5000/)).toBeInTheDocument();
+    expect(posts).toHaveLength(0);
+    await userEvent.clear(max);
+    await userEvent.type(max, '700');
+    await userEvent.click(within(form).getByRole('button', { name: '提交同步' }));
+    await userEvent.click(within(await screen.findByRole('alertdialog')).getByRole('button', { name: '确认排队' }));
+    expect(await screen.findByText(/已排队：运行编号/)).toBeInTheDocument();
+    expect(posts[0]?.body).toEqual({ kind: 'sync_refdata', parameters: { mode: 'adjusted_backfill', max_codes: 700 } });
   });
 
   it('says 无同步权限 when the caller has no ops permission', async () => {

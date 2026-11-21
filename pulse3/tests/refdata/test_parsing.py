@@ -108,9 +108,9 @@ def test_board_list_and_member_pages():
 
 def test_listing_sse_json_and_szse_xlsx():
     sse = L.parse_sse(fixture("sse_list_trimmed.json"))
-    assert len(sse) == 25 and sse[0] == {"code": "600000", "list_date": date(1999, 11, 10)}
+    assert len(sse) == 25 and sse[0] == {"code": "600000", "list_date": date(1999, 11, 10), "name": "浦发银行"}
     szse = L.parse_szse(fixture("szse_list_trimmed.xlsx"))
-    assert len(szse) == 25 and szse[0] == {"code": "000001", "list_date": date(1991, 4, 3)}
+    assert len(szse) == 25 and szse[0] == {"code": "000001", "list_date": date(1991, 4, 3), "name": "平安银行"}
     assert L.parse_date("19901219") == date(1990, 12, 19) and L.parse_date("2000-01-04 00:00:00") == date(2000, 1, 4)
     assert L.parse_date("36526") == date(2000, 1, 1) and L.parse_date("-") is None and L.parse_date("") is None   # unreadable -> NULL, never today
     with pytest.raises(NotData):

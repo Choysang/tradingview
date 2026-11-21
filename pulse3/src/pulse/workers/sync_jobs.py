@@ -5,7 +5,7 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.sync_jobs run [--max N]    # claim and run queued sync jobs (default 1)
     uv run python -m pulse.workers.sync_jobs show             # run counts by kind and state
 
-Only the three sync job ids are ever claimed; other queued jobs are left to their own workers. Each run goes through the same code as
+Only the four sync job ids are ever claimed; other queued jobs are left to their own workers. Each run goes through the same code as
 ``python -m pulse.workers.ingest`` (rate-limited client, 1 request per second per host, stop at the first block, never retried).
 Each finished run is printed as one JSON line ``{"job_run_id", "kind", "state"}``. Exit code 0 = done (a failed run is recorded on the
 run with its exit status and summary and does not fail the command). The integrator schedules ``run --max 1`` as its own

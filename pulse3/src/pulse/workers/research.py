@@ -32,6 +32,7 @@ from pulse import config
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db, research_repo, strategy_repo
 from pulse.adapters.postgres._canon import sha256_of
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.adapters.postgres.jobs import PgJobStore
 from pulse.application import bindings as B
 from pulse.application.bootstrap import RESEARCH_EXPERIMENT_JOB, seed_jobs
@@ -273,7 +274,7 @@ def run(argv: list[str] | None = None) -> int:
                     print(json.dumps(res, default=str), flush=True)
             else:
                 from pulse.application.data_service import DataService
-                row = conn.execute("SELECT a.instrument_id FROM core.instrument_alias a WHERE a.source_symbol=%s AND a.source_id='legacy_warehouse'", (a.code,)).fetchone()
+                row = conn.execute("SELECT a.instrument_id FROM core.instrument_alias a WHERE a.source_symbol=%s AND a.source_id " + CODE_SOURCES_SQL, (a.code,)).fetchone()
                 rel = a.release_id or conn.execute("SELECT release_id FROM decision.release WHERE release_state IN ('READY','SUPERSEDED') ORDER BY published_at DESC LIMIT 1").fetchone()["release_id"]
                 man = PS.build_analog_study(DataService(conn, lake), row["instrument_id"], uuid.UUID(str(rel)), a.policy)
                 print(json.dumps({"snapshot_id": str(man["snapshot_id"]), "content_hash": man["content_hash"]}))

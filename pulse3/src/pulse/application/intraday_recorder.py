@@ -29,6 +29,9 @@ Invariants:
   stale session is never filed under today's date; nothing is published before the day is verified;
 * values a vendor does not carry stay NULL (see ``intraday_rows``); nothing is filled from the other vendor or derived;
 * unpublished rows survive a failed flush and are retried; a flush that fails at the end raises.
+Flush cadence: the CLI publishes a part every 2 full cycles (2 minutes) because ``native_quotes`` (tape / actionability) reads the newest part and refuses
+quotes older than 3 minutes. Every publish re-validates the whole day's members (``DataService._validate_lake_rows``), so a flush late in the day costs a
+few seconds of reading; the poll loop pauses for that time.
 Optional step ``limit_pools`` (``--limit-pools``, off by default): the vendor's limit-up / broken-board / limit-down pools once after the close
 (15:25-15:50, like the old recorder) into the separate dataset ``limit_pools_eastmoney`` (see ``intraday_pools``); its own client, a block stops
 only that host and never the quote recording.

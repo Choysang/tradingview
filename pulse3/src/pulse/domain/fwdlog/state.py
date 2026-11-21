@@ -161,12 +161,18 @@ def cffex_gap(rows: Sequence[ExtRow], day: date) -> Decimal | None:
 
 
 def health_state(summary: Mapping, rows: Sequence[ExtRow] | None, day: date, *, merged: bool) -> dict:
-    """Recorder health from the ext recorder's own summary (``{"unreadable": True}`` when it could not be read) and the rows."""
+    """Recorder health from the ext recorder's own summary (native coverage or legacy ``summary.json``; ``{"unreadable": True}`` when it could not be read; ``{}`` when none exists) and the rows.
+
+    A field the summary does not carry is None (never 0); ``source`` says where the figures came from and ``note`` says why they are missing when there is no record."""
+    unreadable = bool(summary.get("unreadable"))
+    present = bool(summary) and not unreadable
+    source = summary.get("source") or ("legacy_summary" if present else "unreadable" if unreadable else "none")
+    note = summary.get("note") or (None if present else "recorder summary unreadable" if unreadable else "no recorder health record for this session")
     minutes = {s: sum(1 for r in rows if r.symbol == s and r.kind == "minute") if rows is not None else 0 for s in MINUTE_SYMBOLS}
     return {"end": summary.get("end"), "missed": summary.get("missed"), "failed_requests": summary.get("failed_requests"),
-            "never_returned": len(summary.get("never_returned", [])), "blocked": sorted(summary.get("blocked", {})), "merged": merged,
+            "never_returned": len(summary["never_returned"]) if "never_returned" in summary else None, "blocked": sorted(summary.get("blocked", {})), "merged": merged,
             "a50_bars": minutes["em_CN00Y"], "cnh_bars": minutes["em_USDCNH"],
-            "cffex_gap_min": cffex_gap(rows, day) if rows is not None else None}
+            "cffex_gap_min": cffex_gap(rows, day) if rows is not None else None, "source": source, "note": note}
 
 
 def baseline(sums: Mapping[str, Decimal], day: date) -> list[Decimal]:

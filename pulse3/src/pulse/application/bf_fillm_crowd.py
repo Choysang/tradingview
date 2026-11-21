@@ -27,6 +27,7 @@ from typing import Any, Mapping
 import psycopg
 
 from pulse.adapters.lake import LakeStore
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.application import market_today_service as MT
 from pulse.domain.market_rules import PriceLimitRegistry
 from pulse.domain.market_state import daily
@@ -168,7 +169,7 @@ def institution_net(conn: psycopg.Connection, session: date | None, cutoff) -> d
         "SELECT a.instrument_id, a.source_symbol AS code, s.display_name AS name FROM core.instrument_alias a"
         " LEFT JOIN LATERAL (SELECT st.display_name FROM core.instrument_state st WHERE st.instrument_id=a.instrument_id"
         "  ORDER BY st.effective_from DESC, st.state_version DESC LIMIT 1) s ON true"
-        " WHERE a.source_id='legacy_warehouse' AND a.instrument_id = ANY(%s)", (ids,))}
+        " WHERE a.source_id " + CODE_SOURCES_SQL + " AND a.instrument_id = ANY(%s)", (ids,))}
     out = []
     for iid, pairs in per.items():
         buys = [p["buy"] for p in pairs.values()]

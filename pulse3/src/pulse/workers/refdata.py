@@ -14,6 +14,7 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.refdata adjusted-bars --codes 000001 600000                 # ad hoc, no cursor
     uv run python -m pulse.workers.refdata adjusted-bars --universe-listings --raw-only --max-codes 600   # raw kline only, 1 request per code, cursor raw:listings
     # every full (non raw-only) fetch also publishes bars_native_raw_1d and adj_factor_native from the SAME two responses
+    uv run python -m pulse.workers.refdata register-native                                     # native switch: new listings, name / ST versions, cap snapshot (no HTTP)
     uv run python -m pulse.workers.refdata fill-listed-on [--dry]                              # cutover helper: NULL listed_on from the native listing dataset
     uv run python -m pulse.workers.refdata reconcile                                           # read only report vs the legacy datasets
 
@@ -68,6 +69,9 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, default=None, help="smoke test: first N boards only, nothing is published")
     p = sub.add_parser("listings", help="listing dates, dataset instrument_listing_native")
     p.add_argument("--min-rows", type=int, default=L.MIN_ROWS)
+    p = sub.add_parser("register-native", help="native instrument register: new listings, short-name / risk-warning versions and the cap snapshot from pulse3's own datasets")
+    p.add_argument("--no-caps", action="store_true", help="register only; do not publish the cap snapshot")
+    p.add_argument("--force", action="store_true", help="run although PULSE_REFDATA_SOURCE is not native (the legacy import registers the instruments then)")
     p = sub.add_parser("fill-listed-on", help="fill core.instrument.listed_on from instrument_listing_native where it is NULL; differences are reported, never overwritten")
     p.add_argument("--dry", action="store_true", help="report only, change nothing")
     p = sub.add_parser("reconcile", help="read only comparison of each native dataset with the legacy-imported one")
@@ -128,6 +132,17 @@ def run(argv: list[str] | None = None) -> int:
             print(rs.boards(M.SinaRefAdapter(client), chunk_boards=a.chunk_boards, limit=a.limit).render())
         elif a.cmd == "listings":
             print(rs.listings(L.ListingAdapter(client), min_rows=a.min_rows).render())
+        elif a.cmd == "register-native":
+            from pulse.application import bindings as B
+            from pulse.application import native_register as NR
+
+            if B.refdata_source() != "native" and not a.force:
+                print("register-native runs only with PULSE_REFDATA_SOURCE=native (the legacy import owns the register otherwise); --force overrides", file=sys.stderr)
+                return 1
+            if a.no_caps:
+                print(NR.register_native(svc, svc.lake).render())
+            else:
+                print(NR.refresh(svc, svc.lake)[0].render())
         elif a.cmd == "fill-listed-on":
             print(rs.fill_listed_on(dry=a.dry).render())
         else:

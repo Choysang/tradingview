@@ -52,6 +52,8 @@ class InstrumentView:
     xs: dict[str, list] = field(default_factory=dict)
     #: optional per-date float-cap estimate in CNY (needs the cap fact dataset); None => cap rules unavailable
     float_cap: list | None = None
+    #: optional per-date Dragon-Tiger features (``playbooks.seats.seat_series``): None per date = list unknown, tuple (lhb_on, smart_buyers, smart_score, trip_buyers, inst_net)
+    seats: list | None = None
     _cache: dict[Any, Any] = field(default_factory=dict, repr=False)
 
     def __post_init__(self) -> None:
@@ -70,7 +72,8 @@ class InstrumentView:
         return InstrumentView(
             self.instrument_id, self.limit_pct, self.dates[:k], self.open[:k], self.high[:k], self.low[:k],
             self.close[:k], self.volume[:k], self.code, self.first_of_month[:k], self.first_of_week[:k],
-            {name: col[:k] for name, col in self.xs.items()}, None if self.float_cap is None else self.float_cap[:k])
+            {name: col[:k] for name, col in self.xs.items()}, None if self.float_cap is None else self.float_cap[:k],
+            None if self.seats is None else self.seats[:k])
 
     def _memo(self, key: Any, build: Callable[[], Any]) -> Any:
         if key not in self._cache:

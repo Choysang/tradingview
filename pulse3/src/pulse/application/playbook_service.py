@@ -33,6 +33,7 @@ from pulse.adapters.postgres import market_repo, research_repo, strategy_repo
 from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.postgres.jobs import PgJobStore
 from pulse.application import bf_fillm_caps as BFC
+from pulse.application import bf_playbook_seats as BPS
 from pulse.application import bf_research_service as BF
 from pulse.application import bindings as B
 from pulse.application import screen_service as S
@@ -369,6 +370,12 @@ def evaluate_playbook(conn: psycopg.Connection, lake: LakeStore, spec, pb: L.Pla
             raise DataUnavailable(f"data_not_available:float_cap:{cap_cov.reason}")
         if capture is not None:
             capture["cap_coverage"] = cap_cov
+    if "lhb_seats" in pb.requires:           # Dragon-Tiger seat lists, single-day, usable from the next open (bf_playbook_seats)
+        panel, seat_cov = BPS.attach_seats(conn, panel)
+        if seat_cov.reason:
+            raise DataUnavailable(f"data_not_available:lhb_seats:{seat_cov.reason}")
+        if capture is not None:
+            capture["seat_coverage"] = seat_cov
     sessions = panel.sessions
     prepare(panel.views, sessions, [pb])
     sigs = {v.instrument_id: run_signal(pb, v, params) for v in panel.views}

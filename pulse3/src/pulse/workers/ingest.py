@@ -34,6 +34,7 @@ from zoneinfo import ZoneInfo
 from pulse import config
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.adapters.sources.cninfo import CninfoAdapter
 from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked, TransportFailure
 from pulse.adapters.sources.legacy import LegacyWarehouse
@@ -96,7 +97,8 @@ def _parser() -> argparse.ArgumentParser:
                    help="OPT-IN second vendor, used for the rest of the session after the primary is blocked (default: none, a block stops the run; "
                         "hq.sinajs.cn already answered 403 to the server IP); must differ from --source")
     p.add_argument("--cycle-seconds", type=float, default=60.0, help="period of the full-board snapshots")
-    p.add_argument("--flush-every", type=int, default=10, help="full cycles between published parts")
+    p.add_argument("--flush-every", type=int, default=2,
+                   help="full cycles between published parts (default 2 = every 2 minutes: the tape / actionability read the newest part and accept quotes <= 3 minutes old)")
     p.add_argument("--limit-pools", action="store_true",
                    help="OPTIONAL: also fetch the Eastmoney limit-up / broken-board / limit-down pools once after the close (15:25-15:50) into the "
                         "dataset limit_pools_eastmoney, to reconcile the seal facts (default off; compare with: python -m pulse.workers.pool_compare)")
@@ -176,7 +178,7 @@ def universe_codes(conn, lake: LakeStore, recent_sessions: int = 5) -> list[str]
         return []
     days = sorted(df["trade_date"].unique().to_list())[-recent_sessions:]
     ids = df.filter(df["trade_date"].is_in(days))["instrument_id"].unique().to_list()
-    rows = conn.execute("SELECT DISTINCT source_symbol FROM core.instrument_alias WHERE source_id='legacy_warehouse'"
+    rows = conn.execute("SELECT DISTINCT source_symbol FROM core.instrument_alias WHERE source_id " + CODE_SOURCES_SQL +
                         " AND instrument_id = ANY(%s::uuid[]) ORDER BY 1", ([str(i) for i in ids],)).fetchall()
     return [r["source_symbol"] for r in rows]
 

@@ -26,6 +26,36 @@ ALIAS_NS = uuid.UUID("3d9c1b77-2e4a-4f68-a1c5-9b0e6d7f8a21")
 EPOCH = datetime(1990, 12, 19, tzinfo=timezone.utc)  # SSE opening day: earliest possible A-share validity start
 
 
+#: Alias sources that carry the exchange code of a stock: ``legacy_warehouse`` (registered from the old warehouse) and ``native`` (registered by
+#: ``application/native_register.py`` for stocks first seen after the reference-data switch). An instrument has ONE of them (the native
+#: register never adds ``native`` to an instrument that already has a legacy alias), so ``a.source_id IN (...)`` joins stay one row per stock.
+CODE_SOURCES = ("legacy_warehouse", "native")
+CODE_SOURCES_SQL = "IN ('legacy_warehouse', 'native')"
+
+
+def code_of(conn: psycopg.Connection, instrument_ids: Iterable[uuid.UUID | str]) -> dict[uuid.UUID, str]:
+    """{instrument_id: six-digit code}; the legacy alias wins when both exist, then the newest effective alias. Unknown ids are absent."""
+    ids = [str(i) for i in instrument_ids]
+    if not ids:
+        return {}
+    rows = conn.execute(
+        "SELECT DISTINCT ON (instrument_id) instrument_id, source_symbol FROM core.instrument_alias"
+        " WHERE instrument_id = ANY(%s::uuid[]) AND source_id = ANY(%s)"
+        " ORDER BY instrument_id, (source_id = 'legacy_warehouse') DESC, effective_from DESC, revision DESC", (ids, list(CODE_SOURCES))).fetchall()
+    return {r["instrument_id"]: r["source_symbol"] for r in rows}
+
+
+def instrument_ids_of_codes(conn: psycopg.Connection, codes: Iterable[str]) -> dict[str, uuid.UUID]:
+    """{six-digit code: instrument_id} through the code aliases (the reverse of :func:`code_of`)."""
+    cl = list(codes)
+    if not cl:
+        return {}
+    rows = conn.execute("SELECT DISTINCT ON (source_symbol) source_symbol, instrument_id FROM core.instrument_alias"
+                        " WHERE source_symbol = ANY(%s) AND source_id = ANY(%s)"
+                        " ORDER BY source_symbol, (source_id = 'legacy_warehouse') DESC, effective_from DESC, revision DESC", (cl, list(CODE_SOURCES))).fetchall()
+    return {r["source_symbol"]: r["instrument_id"] for r in rows}
+
+
 @dataclass(frozen=True)
 class StateObservation:
     code: str

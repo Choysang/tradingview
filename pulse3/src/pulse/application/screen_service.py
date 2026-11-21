@@ -44,7 +44,6 @@ from pulse.domain.screening import catalog as K
 from pulse.domain.screening import parser
 
 SCREEN_JOB = UUID("5c3d8e2a-91b4-4f67-a0e5-3b7d2c9f1a48")
-CAP_DATASET = B.CAP_DATASET
 UNIVERSES = {"screen-universe-v1": None, "screen-universe-main-v1": "main"}
 PRICE_BASIS_NOTE = "前复权研究序列：相对指标精确，价位仅最新一根等于不复权价"
 PANEL_VERSION = "screen-panel-v1"
@@ -98,7 +97,7 @@ def load_panel(conn: psycopg.Connection, lake: LakeStore, decision_as_of: dateti
     cap_latest: dict[str, float] = {}
     cap_man = None
     if with_caps:
-        cap_man = B._ready_manifest(conn, CAP_DATASET, decision_as_of)
+        cap_man = B._ready_manifest(conn, B.CAP_DATASET, decision_as_of)
         if cap_man is not None:
             cf = lake.read_snapshot_frames(cap_man["content_hash"])
             if cf is not None and cf.height:
@@ -394,7 +393,7 @@ def execute_screen_run(conn: psycopg.Connection, lake: LakeStore, *, clock=lambd
         gaps = []
         for fid in used:
             if fid == "float_cap" and panel.cap_manifest is None:
-                gaps.append({"dataset_id": CAP_DATASET, "requirement": "float_cap", "reason_code": "dataset_missing_at_decision_as_of"})
+                gaps.append({"dataset_id": B.CAP_DATASET, "requirement": "float_cap", "reason_code": "dataset_missing_at_decision_as_of"})
             elif panel.views and fid in K.BY_ID and all(field_row(panel, v).get(fid) is None for v in panel.views):
                 gaps.append({"dataset_id": B.RESEARCH_DATASET, "requirement": fid, "reason_code": "field_unknown_for_every_instrument"})
         digest = sha256_of([[p, truth, str(iid)] for p, (iid, truth) in enumerate(ordered, start=1)] + [run["ast_hash"]])

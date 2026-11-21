@@ -118,6 +118,7 @@ class InstrumentRecord:
         pfx = SINA_PREFIX[self.venue_code]
         return {
             "legacy_warehouse": self.code,
+            "native": self.code,
             "sina": f"{pfx}{self.code}",
             "tencent": f"{pfx}{self.code}",
             "cninfo_announcements": self.code,

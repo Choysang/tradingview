@@ -551,11 +551,52 @@ for pid, name, rule, req, why, days, stop in (
     ("industry_follower", "板块跟风", "当日所属行业涨停≥3 只；本股未涨停、涨幅≥涨停幅度的 50%、量≥5 日均量 1.5 倍。持有 2 日，止损 6%。", "sector_membership_history", "没有按时点保存的行业/板块成员关系", 2, 6),
     ("industry_first_board", "板块首板", "当日所属行业涨停≥3 只；本股首板、非一字。持有 2 日，止损 6%。", "sector_membership_history", "没有按时点保存的行业/板块成员关系", 2, 6),
     ("name_cluster_follower", "名称联动", "名称中少见汉字的同字股票当日已有≥2 只涨停；本股未涨停且涨幅≥3%。持有 2 日，止损 6%。", "instrument_name_history", "没有按时点保存的证券简称历史", 2, 6),
-    ("smart_seat_follow", "强势席位合力", "当日上龙虎榜；买方前五席位中强势席位≥2 个且一日游席位为 0。持有 3 日，止损 7%。", "lhb_seat_trades_history", "龙虎榜席位成交未规范化入库", 3, 7),
-    ("institution_net_buy", "机构净买入", "当日上龙虎榜；机构专用席位净买入≥成交额 3%；涨幅低于涨停幅度的 95%。持有 5 日，止损 7%。", "lhb_seat_trades_history", "龙虎榜席位成交未规范化入库", 5, 7),
 ):
     add(Playbook(pid, name, "crowd", "sentiment", "short" if days < 5 else "swing", rule, COMMUNITY, (), ExitSpec(days, stop), 5, 2, _none,
                  requires=(req,), unavailable_reason=why))
+
+# ---- Dragon-Tiger seat playbooks (data: ``intelligence.seat_report``, single-day reports; attached by ``bf_playbook_seats.attach_seats``) ------------------------------
+SEAT_NOTE = ("席位名称取榜单原文；榜单当晚公布，D 日的席位只用于 D+1 开盘的买入（信号在 D 日收盘后产生，回放在下一个开盘成交）。"
+             "成交额代理=收盘×成交量（前复权价，早期偏低几个百分点）；榜单未导入的日期记为未知，不当作“没人上榜”。")
+
+
+def _seat_cell(v, i):
+    return None if v.seats is None else v.seats[i]
+
+
+def _smart_seat(v, p):
+    out = []
+    for i in range(v.n):
+        c = _seat_cell(v, i)
+        out.append(None if c is None or not (c[0] and c[1] >= p["min_smart"] and c[3] == 0 and liquid(v, i, 0.5e8)) else max(c[2], 1e-9))
+    return out
+
+
+def _institution_net(v, p):
+    amt, pct = v.turnover_cny(), v.pct()
+    out = []
+    for i in range(v.n):
+        c = _seat_cell(v, i)
+        net = None if c is None else c[4]
+        a = amt[i]
+        if c is None or not c[0] or not ok(net, a, pct[i]) or a <= 0 or net <= 0:
+            out.append(None)
+        elif net >= p["min_share"] / 100.0 * a and pct[i] < 0.95 * v.limit_pct:
+            out.append(net / a)
+        else:
+            out.append(None)
+    return out
+
+
+add(Playbook("smart_seat_follow", "强势席位合力", "crowd", "sentiment", "short",
+             "当日上龙虎榜；买方前五席位中“强势席位”≥2 个、“一日游席位”为 0，且 20 日均成交额代理≥0.5 亿。强势席位：除机构专用外，已到期的上榜买入≥5 笔、"
+             "次日开盘买入第 3 根 K 线收盘卖出的收缩平均收益(Σ收益/(笔数+5))≥1%；一日游席位：已到期买入≥5 笔、其中≥60% 次日就出现在同一只股票的卖方榜。"
+             "只用当天（含）以前已到期的交易。得分=强势席位收缩平均收益之和。持有 3 日，止损 7%。" + SEAT_NOTE, COMMUNITY,
+             (P("min_smart", "强势席位数下限", 2, 1, 5, 1),), ExitSpec(3, 7), 5, 2, _smart_seat, requires=("lhb_seats",)))
+add(Playbook("institution_net_buy", "机构净买入", "crowd", "sentiment", "swing",
+             "当日上龙虎榜；机构专用席位净额=Σ(买方榜买入额)−Σ(卖方榜卖出额)（单日榜单，同一原因重复出现的相同席位行只算一次）>0 且≥当日成交额代理×3%；"
+             "当日涨幅低于涨停幅度的 95%。得分=净买入/成交额代理。持有 5 日，止损 7%。" + SEAT_NOTE, COMMUNITY,
+             (P("min_share", "净买入占成交额下限(%)", 3, 1, 10, 0.5),), ExitSpec(5, 7), 5, 2, _institution_net, requires=("lhb_seats",)))
 
 # ============================ 7. factor composites (2) ============================================================
 

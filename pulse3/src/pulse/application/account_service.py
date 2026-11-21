@@ -85,6 +85,16 @@ def publish_quote_snapshot(svc: DataService, adapter, instrument_codes: Mapping[
         " FROM ingest.observation o JOIN ingest.raw_object r USING (raw_object_id) WHERE o.contract_id='CanonicalQuote'"
         " AND o.entity_key = ANY(%s) AND r.source_id=%s ORDER BY o.entity_key, o.event_time DESC NULLS LAST, o.available_at DESC",
         (ids, source_id)).fetchall()
+    return publish_quote_rows(svc, rows, instrument_codes, source_id)
+
+
+def publish_quote_rows(svc: DataService, rows: Sequence[Mapping], instrument_codes: Mapping[uuid.UUID, str], source_id: str, *,
+                       coverage_extra: Mapping | None = None) -> QuoteSnapshot:
+    """Publish ONE latest observation per instrument (``rows``: observation_id, entity_key, p = canonical payload, event_time, available_at,
+    quality_status, field_quality, mapping_version, source_id, endpoint_id, source_schema_version, first_seen_at) as a READY ``quotes_l1``
+    snapshot plus ``market.quote_projection`` rows. Shared by the fetching path above and the native-recording path (``native_quotes``)."""
+    conn = svc.conn
+    codes = sorted(set(instrument_codes.values()))
     found = {r["entity_key"] for r in rows}
     missing = tuple(sorted(codes_for for iid, codes_for in instrument_codes.items() if str(iid) not in found))
     if not rows:
@@ -131,7 +141,8 @@ def publish_quote_snapshot(svc: DataService, adapter, instrument_codes: Mapping[
         ingest_repo.set_batch_state(conn, batch_id, "NORMALIZED")
     cov = {"dataset": QUOTE_DATASET, "quote_policy_version": QUOTE_POLICY, "instruments": len(rows), "requested": len(codes),
            "missing_instruments": list(missing), "source": source_id,
-           "freshness_note": "freshness is derived at response time from source_event_time; a daily close is never a live quote"}
+           "freshness_note": "freshness is derived at response time from source_event_time; a daily close is never a live quote",
+           **(coverage_extra or {})}
     pub = svc.publish_dataset(dataset_id=QUOTE_DATASET, snapshot_id=snapshot_id, batch_id=batch_id, frames={"all": frame},
                               contract_id="CanonicalQuote", coverage=cov, owner=owner, available_watermark=max(r["available_at"] for r in rows),
                               projector=projector)

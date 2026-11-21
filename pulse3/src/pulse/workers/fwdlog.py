@@ -5,12 +5,13 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.fwdlog run --date 2026-11-17 [--as-of ISO] [--only E077,E078,E089,PAPER]   # decide every session up to the date that has no row yet
     uv run python -m pulse.workers.fwdlog summary                                                         # the old scripts' summaries (pre-registered metrics, "pending until N")
     uv run python -m pulse.workers.fwdlog reconcile --old <folder> [--tolerance 0.0015]                    # compare with the old system's output for every common day
+    uv run python -m pulse.workers.fwdlog catalyst-compare                                                # legacy_calendar_events vs the native calendar (counts by category, one-sided events)
 
 ``run`` reads the imported recordings (lake datasets of the live lane: import the session first with ``pulse.workers.ingest legacy-intraday`` /
 ``legacy-ext``) and appends rows; a decided session is never rewritten, so a repeated run is a no-op. It never writes to the legacy tree and makes no network
 request. ``reconcile`` prints every difference with a reason and exits 1 when one has no reason (an unexplained difference means not done).
-Exit codes: 0 ok; 1 reconcile found an unexplained difference; 2 a session failed (see errors in the JSON); 3 no recordings imported.
-Environment: ``PULSE_DSN``, ``PULSE_LAKE``, ``PULSE_LEGACY_DATA`` (old recorder tree, read only), ``PULSE_FWDLOG_EVENTS`` (old calendar store, read only).
+Exit codes: 0 ok; 1 reconcile found an unexplained difference; 2 a session failed (see errors in the JSON); 3 no recordings imported (``catalyst-compare``: one of the two calendars is absent).
+Environment: ``PULSE_CATALYST_SOURCE`` (``legacy`` default | ``native``: where M3 reads catalyst events), ``PULSE_DSN``, ``PULSE_LAKE``, ``PULSE_LEGACY_DATA`` (old recorder tree, read only), ``PULSE_FWDLOG_EVENTS`` (old calendar store, read only).
 """
 from __future__ import annotations
 
@@ -39,6 +40,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--as-of", default=None, help="point-in-time cut-off (ISO instant with offset); default now")
     p.add_argument("--only", default=None, help="comma list of E077,E078,E089,PAPER")
     sub.add_parser("summary", help="pre-registered metrics of every experiment, provisional until its decision day")
+    sub.add_parser("catalyst-compare", help="compare the legacy calendar dataset with the native calendar (read only)")
     p = sub.add_parser("reconcile", help="compare with the old system's output for every common day")
     p.add_argument("--old", required=True, help="folder with e077_tail.jsonl, e078_halfhour.jsonl, e089_state.jsonl and paper/<day>/{opportunities,sells}.parquet")
     p.add_argument("--tolerance", default="0.0015", help="absolute tolerance of a rounded percent figure (float vs decimal rounding)")
@@ -77,6 +79,11 @@ def run(argv: list[str] | None = None) -> int:
             from pulse.application import bf_fwdlog_reads as R
             print(json.dumps(to_wire(R.summaries(svc)), ensure_ascii=False))
             return 0
+        if a.cmd == "catalyst-compare":
+            from pulse.application import bf_fwdlog_catalyst as CAT
+            out = CAT.compare_stores(conn, svc.lake)
+            print(json.dumps(to_wire(out), ensure_ascii=False))
+            return 0 if out["legacy_present"] and out["native_present"] else 3
         from pulse.application import bf_fwdlog_reconcile as RC
         out = RC.reconcile(svc, Path(a.old), tolerance=a.tolerance, start=a.start, end=a.end)
         print(RC.render(out))

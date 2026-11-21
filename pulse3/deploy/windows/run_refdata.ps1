@@ -33,6 +33,8 @@ switch ($Mode) {
     'daily' {
         Step 'index-bars' @('index-bars', '--years', '3')
         Step 'adjusted-refresh' @('adjusted-bars', '--mode', 'refresh', '--universe-listings')
+        # no HTTP: new listings, short-name / ST versions and the cap snapshot from the datasets above and the day's close recording
+        if ($env:PULSE_REFDATA_SOURCE -eq 'native') { Step 'register-native' @('register-native') }
     }
     'weekly' {
         Step 'listings' @('listings')

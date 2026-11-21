@@ -16,6 +16,8 @@ $env:PYTHONUTF8 = '1'
 # because pulse3's own recorders write the same datasets and one day must come from one recorder only.
 $cutover = $false
 if (Test-Path "$root\cutover_state.json") { $cutover = ((Get-Content "$root\cutover_state.json" -Raw | ConvertFrom-Json).state -eq 'cutover') }
+# Reference-data source (refdata_switch.ps1 writes it): 'native' reads pulse3's own bars/industry, else the legacy warehouse.
+if (Test-Path "$root\refdata_source.txt") { $env:PULSE_REFDATA_SOURCE = (Get-Content "$root\refdata_source.txt" -Raw).Trim() }
 # Cross-process pacing per host (<= 1 request/s even when two recorders share a host): every pulse3 process uses the same dir.
 $env:PULSE_HOST_PACING_DIR = "$root\var\pacing"
 if (-not (Test-Path $env:PULSE_HOST_PACING_DIR)) { New-Item -ItemType Directory -Force $env:PULSE_HOST_PACING_DIR | Out-Null }

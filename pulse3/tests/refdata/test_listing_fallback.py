@@ -20,7 +20,7 @@ from .test_pg_flow import build, manifests
 def test_eastmoney_pages_parse_codes_dates_and_the_declared_total():
     rows, total = L.parse_eastmoney(fixture("eastmoney_list_p1.json"))
     assert total == 4942 and len(rows) == L.EM_PAGE_SIZE
-    assert rows[0] == {"code": "000001", "list_date": date(1991, 4, 3)} and rows[1] == {"code": "000002", "list_date": date(1991, 1, 29)}
+    assert rows[0] == {"code": "000001", "list_date": date(1991, 4, 3), "name": "平安银行"} and rows[1]["list_date"] == date(1991, 1, 29)
     assert all(r["list_date"] is not None for r in rows)
     last, total2 = L.parse_eastmoney(fixture("eastmoney_list_last.json"))
     assert total2 == total and len(last) == 4942 - 49 * L.EM_PAGE_SIZE and last[-1]["code"] == "605599"        # a short page ends the list
@@ -30,7 +30,7 @@ def test_eastmoney_pages_parse_codes_dates_and_the_declared_total():
 def test_eastmoney_unknown_dates_are_null_and_bad_shapes_are_errors():
     body = b'{"data":{"total":3,"diff":[{"f12":"000001","f26":"-"},{"f12":"000002","f26":0},{"f12":"600000","f26":19991110}]}}'
     rows, total = L.parse_eastmoney(body)
-    assert [(r["code"], r["list_date"]) for r in rows] == [("000001", None), ("000002", None), ("600000", date(1999, 11, 10))] and total == 3
+    assert [(r["code"], r["list_date"], r["name"]) for r in rows] == [("000001", None, None), ("000002", None, None), ("600000", date(1999, 11, 10), None)] and total == 3
     assert L.parse_eastmoney(b'{"rc":0,"data":null}') == ([], None)                                              # past the last page
     with pytest.raises(SchemaChanged):
         L.parse_eastmoney(b'{"data":{"total":1,"diff":[{"f12":"000001"}]}}')

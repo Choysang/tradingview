@@ -1273,16 +1273,22 @@
    "id": "smart_seat_follow",
    "max_positions": 5,
    "name": "强势席位合力",
-   "params": [],
-   "requires": [
-    "lhb_seat_trades_history"
+   "params": [
+    {
+     "key": "min_smart",
+     "label": "强势席位数下限",
+     "value": 2
+    }
    ],
-   "rule": "当日上龙虎榜；买方前五席位中强势席位≥2 个且一日游席位为 0。持有 3 日，止损 7%。",
+   "requires": [
+    "lhb_seats"
+   ],
+   "rule": "当日上龙虎榜；买方前五席位中“强势席位”≥2 个、“一日游席位”为 0，且 20 日均成交额代理≥0.5 亿。强势席位：除机构专用外，已到期的上榜买入≥5 笔、次日开盘买入第 3 根 K 线收盘卖出的收缩平均收益(Σ收益/(笔数+5))≥1%；一日游席位：已到期买入≥5 笔、其中≥60% 次日就出现在同一只股票的卖方榜。只用当天（含）以前已到期的交易。得分=强势席位收缩平均收益之和。持有 3 日，止损 7%。席位名称取榜单原文；榜单当晚公布，D 日的席位只用于 D+1 开盘的买入（信号在 D 日收盘后产生，回放在下一个开盘成交）。成交额代理=收盘×成交量（前复权价，早期偏低几个百分点）；榜单未导入的日期记为未知，不当作“没人上榜”。",
    "source": "社区经验（未经学术验证）",
    "stop_loss_pct": 7,
    "style": "sentiment",
    "trailing_stop_pct": null,
-   "unavailable_reason": "龙虎榜席位成交未规范化入库"
+   "unavailable_reason": null
   },
   {
    "family": "crowd",
@@ -1291,16 +1297,22 @@
    "id": "institution_net_buy",
    "max_positions": 5,
    "name": "机构净买入",
-   "params": [],
-   "requires": [
-    "lhb_seat_trades_history"
+   "params": [
+    {
+     "key": "min_share",
+     "label": "净买入占成交额下限(%)",
+     "value": 3
+    }
    ],
-   "rule": "当日上龙虎榜；机构专用席位净买入≥成交额 3%；涨幅低于涨停幅度的 95%。持有 5 日，止损 7%。",
+   "requires": [
+    "lhb_seats"
+   ],
+   "rule": "当日上龙虎榜；机构专用席位净额=Σ(买方榜买入额)−Σ(卖方榜卖出额)（单日榜单，同一原因重复出现的相同席位行只算一次）>0 且≥当日成交额代理×3%；当日涨幅低于涨停幅度的 95%。得分=净买入/成交额代理。持有 5 日，止损 7%。席位名称取榜单原文；榜单当晚公布，D 日的席位只用于 D+1 开盘的买入（信号在 D 日收盘后产生，回放在下一个开盘成交）。成交额代理=收盘×成交量（前复权价，早期偏低几个百分点）；榜单未导入的日期记为未知，不当作“没人上榜”。",
    "source": "社区经验（未经学术验证）",
    "stop_loss_pct": 7,
    "style": "sentiment",
    "trailing_stop_pct": null,
-   "unavailable_reason": "龙虎榜席位成交未规范化入库"
+   "unavailable_reason": null
   },
   {
    "family": "factor_composite",

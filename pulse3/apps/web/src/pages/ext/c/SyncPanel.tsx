@@ -8,8 +8,8 @@ import { RUN_STATE_LABEL, fmtTime } from '../../../lib/format';
 import type { Tone } from '../../../lib/version';
 import { errorCode, explainError, extGet, extPost } from './api';
 import {
-  EMPTY_SYNC_FORM, SYNC_KIND_HINT, SYNC_KIND_LABEL, buildSyncParameters, describeSyncParameters, isActive,
-  type SyncForm, type SyncJob, type SyncJobList, type SyncKind, type SyncReceipt,
+  EMPTY_SYNC_FORM, REFDATA_MODE_LABEL, SYNC_KIND_HINT, SYNC_KIND_LABEL, buildSyncParameters, describeSyncParameters, isActive,
+  type RefdataMode, type SyncForm, type SyncJob, type SyncJobList, type SyncKind, type SyncReceipt,
 } from './syncJobs';
 
 const RUN_TONE: Record<string, Tone> = { succeeded: 'good', running: 'neutral', queued: 'neutral', failed: 'bad', cancelled: 'warn' };
@@ -118,7 +118,22 @@ export function SyncPanel() {
                 {errs.last && <span className="field-error">{errs.last}</span>}
               </label>
             )}
-            {!(form.kind === 'sync_daily_bars' && form.mode === 'universe') && (
+            {form.kind === 'sync_refdata' && (
+              <>
+                <label>模式
+                  <select value={form.refdataMode} onChange={(e) => set({ refdataMode: e.target.value as RefdataMode })}>
+                    {(Object.keys(REFDATA_MODE_LABEL) as RefdataMode[]).map((m) => <option key={m} value={m}>{REFDATA_MODE_LABEL[m]}</option>)}
+                  </select>
+                </label>
+                {(form.refdataMode === 'adjusted_backfill' || form.refdataMode === 'raw_backfill') && (
+                  <label>本次最多处理的代码数（1–{data.bounds.max_refdata_codes}，可分多次续做）
+                    <input inputMode="numeric" value={form.maxCodes} onChange={(e) => set({ maxCodes: e.target.value })} aria-invalid={!!errs.maxCodes} />
+                    {errs.maxCodes && <span className="field-error">{errs.maxCodes}</span>}
+                  </label>
+                )}
+              </>
+            )}
+            {form.kind !== 'sync_refdata' && !(form.kind === 'sync_daily_bars' && form.mode === 'universe') && (
               <label style={{ gridColumn: '1 / -1' }}>股票代码（6 位数字，空格或逗号分隔，最多 {data.bounds.max_codes} 个{form.kind === 'sync_legacy_import' ? '；留空表示全部' : ''}）
                 <textarea value={form.codes} onChange={(e) => set({ codes: e.target.value })} aria-invalid={!!errs.codes} spellCheck={false} />
                 {errs.codes && <span className="field-error">{errs.codes}</span>}

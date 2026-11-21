@@ -18,6 +18,7 @@ import polars as pl
 import psycopg
 
 from pulse.adapters.lake import LakeStore
+from pulse.adapters.postgres.instrument_repo import CODE_SOURCES_SQL
 from pulse.application.bf_fusion_service import (ASOF_SCHEMA, BOOK_FILE, CURRENT_SCHEMA, DS_ASOF, DS_CURRENT, DS_LOG, IMPLEMENTATION,
                                                  LOG_SCHEMA, SCORE_NAME, Store)
 from pulse.application.data_service import DataService
@@ -77,7 +78,7 @@ def _names(conn: psycopg.Connection) -> dict[str, str]:
     rows = conn.execute(
         "SELECT a.source_symbol AS code, s.display_name FROM core.instrument_alias a JOIN LATERAL ("
         "SELECT display_name FROM core.instrument_state st WHERE st.instrument_id=a.instrument_id "
-        "ORDER BY st.effective_from DESC, st.state_version DESC LIMIT 1) s ON true WHERE a.source_id='legacy_warehouse'").fetchall()
+        "ORDER BY st.effective_from DESC, st.state_version DESC LIMIT 1) s ON true WHERE a.source_id " + CODE_SOURCES_SQL).fetchall()
     return {r["code"]: r["display_name"] for r in rows}
 
 

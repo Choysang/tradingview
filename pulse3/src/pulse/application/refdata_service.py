@@ -824,16 +824,16 @@ class RefDataService:
                     except ValueError:
                         s.add("codes_unsupported")
                         continue
-                    rows.append({"instrument_id": instrument_id_of(r["code"]), "code": r["code"], "listed_on": r["list_date"], "exchange": venue, "source": tag})
+                    rows.append({"instrument_id": instrument_id_of(r["code"]), "code": r["code"], "listed_on": r["list_date"], "exchange": venue, "source": tag, "name": r.get("name")})
             if len(rows) < min_rows:
                 raise RefDataError(f"only {len(rows)} listing rows fetched (< {min_rows}); not published")
             now = self._now()
-            frame = (pl.DataFrame(rows, schema={"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String, "source": pl.String})
+            frame = (pl.DataFrame(rows, schema={"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String, "source": pl.String, "name": pl.String})
                      .unique("code", keep="last").sort("code").with_columns(pl.lit(now).cast(pl.Datetime("us", "UTC")).alias("available_at"))
                      .select(list(C.LISTING_SCHEMA)))
             s.counts["listings"] = frame.height
             s.counts["listing_date_null"] = frame["listed_on"].null_count()
-            digest = hashlib.sha256(frame.select("code", "listed_on", "source").write_csv().encode()).hexdigest()
+            digest = hashlib.sha256(frame.select("code", "listed_on", "source", "name").write_csv().encode()).hexdigest()
             prev = market_repo.latest_ready(self.conn, C.LISTING_DATASET)
             if prev is not None and (prev["coverage_document"] or {}).get("listings_sha256") == digest:
                 s.add("snapshots_unchanged")

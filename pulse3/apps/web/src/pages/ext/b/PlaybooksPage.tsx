@@ -25,7 +25,7 @@ type Tab = 'library' | 'custom' | 'tactics';
 const HORIZON_TEXT: Record<string, string> = { short: '短线', swing: '波段', long: '长线' };
 const REQ_TEXT: Record<string, string> = {
   fundamentals_pit: '需要按发布时点保存的财务数据', sector_membership_history: '需要按时点保存的板块成员', instrument_name_history: '需要证券简称历史',
-  lhb_seat_trades_history: '需要龙虎榜席位成交', float_cap: '需要逐日流通市值（当前只有最新快照，历史回测会前视）',
+  lhb_seat_trades_history: '需要龙虎榜席位成交', lhb_seats: '需要已导入的龙虎榜单日榜单', float_cap: '需要逐日流通市值（当前只有最新快照，历史回测会前视）',
 };
 
 export function PlaybooksPage() {

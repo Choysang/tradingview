@@ -1,12 +1,13 @@
 """Data-sync jobs started from the web: queue, validation, worker execution and the run log (legacy backfill lane ``sync``, rows #49 #89).
 
 Why: the old warehouse panel could trigger a data sync / backfill from the screen; pulse3 only had the ``ingest`` command line. A
-user with the ops permission now queues one of three bounded sync commands, a worker (``pulse.workers.sync_jobs run``) executes it
-through the very same ``pulse.workers.ingest`` code path (so the rate-limited client and the stop-at-first-block rule are not
+user with the ops permission now queues one of four bounded sync commands, a worker (``pulse.workers.sync_jobs run``) executes it
+through the very same ``pulse.workers.ingest`` / ``pulse.workers.refdata`` code path (so the rate-limited client and the stop-at-first-block rule are not
 re-implemented), and every run keeps its parameters, start / end, exit status and summary text in ``ops.sync_job_log``.
 Invariants:
-* three job kinds, each its own registered manual job (``sync_daily_bars`` = ingest live-daily, ``sync_legacy_import`` = ingest
-  legacy-import, ``sync_reconcile`` = ingest reconcile); a worker only ever claims these three job ids;
+* four job kinds, each its own registered manual job (``sync_daily_bars`` = ingest live-daily, ``sync_legacy_import`` = ingest
+  legacy-import (legacy: retires with the old site), ``sync_reconcile`` = ingest reconcile, ``sync_refdata`` = the refdata worker in mode
+  daily / weekly / adjusted_backfill / raw_backfill, the same steps as ``run_refdata.ps1``); a worker only ever claims these job ids;
 * at most ONE queued or running run per kind: a second request is refused with 409 ``SYNC_ALREADY_QUEUED`` (checked under an
   advisory lock, so two simultaneous requests cannot both pass);
 * every parameter is bounded (``MAX_CODES``, ``MAX_SINCE_DAYS``, ``MAX_COUNT``, ``MAX_LAST``); unknown keys and unknown kinds are
@@ -49,9 +50,10 @@ from pulse.application.ports.jobs import JobDefinition
 
 LANE = "sync"
 CONTRACT_ID = contracts.backfill_id(LANE)
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"   # 1.1.0: executor_enabled + sync_refdata (2026-11-21); 1.0.0 stays registered
+JOB_VERSION = 2              # v1 (schema 1.0.0) is registered on the server since r17; v2 carries schema 1.1.0
 JOB_NS = uuid.UUID("6c2f8d14-3b7e-4a95-9e01-5d8a7c3b2f60")
-KINDS = ("sync_daily_bars", "sync_legacy_import", "sync_reconcile")
+KINDS = ("sync_daily_bars", "sync_legacy_import", "sync_reconcile", "sync_refdata")
 JOB_IDS = {k: uuid.uuid5(JOB_NS, k) for k in KINDS}
 JOB_OPERATION = "SyncJobService.run_job"
 OPERATION = ("syncQueueJob", "/v1/x/bf/sync/jobs")
@@ -66,11 +68,14 @@ MAX_CODES = 300                  # codes of one request (a full-universe daily s
 MAX_SINCE_DAYS = 400
 MAX_COUNT = 320                  # daily bars per code (the ingest command default)
 MAX_LAST = 30
+MAX_REFDATA_CODES = 5000         # codes of one refdata backfill pass (2 requests per code for adjusted, 1 for raw-only)
+REFDATA_MODES = ("daily", "weekly", "adjusted_backfill", "raw_backfill")
+REFDATA_BACKFILL_DEFAULT = {"adjusted_backfill": 300, "raw_backfill": 600}
 MAX_SUMMARY_CHARS = 8000
 SOURCES = ("sina", "tencent", "both")
 BOARDS = ("main", "all")
-DEFAULTS = {"sync_daily_bars": {"source": "sina", "count": 320}, "sync_legacy_import": {"boards": "main"}, "sync_reconcile": {"last": 5}}
-BOUNDS = {"max_codes": MAX_CODES, "max_since_days": MAX_SINCE_DAYS, "max_count": MAX_COUNT, "max_last": MAX_LAST}
+DEFAULTS = {"sync_daily_bars": {"source": "sina", "count": 320}, "sync_legacy_import": {"boards": "main"}, "sync_reconcile": {"last": 5}, "sync_refdata": {"mode": "daily"}}
+BOUNDS = {"max_codes": MAX_CODES, "max_since_days": MAX_SINCE_DAYS, "max_count": MAX_COUNT, "max_last": MAX_LAST, "max_refdata_codes": MAX_REFDATA_CODES}
 log = logging.getLogger(__name__)
 
 
@@ -103,7 +108,7 @@ def executor_enabled() -> bool:
 # ---- job registration -----------------------------------------------------------------------------------------------------
 def job_definition(kind: str) -> JobDefinition:
     return JobDefinition(
-        job_id=JOB_IDS[kind], job_version=1, application_operation=JOB_OPERATION,
+        job_id=JOB_IDS[kind], job_version=JOB_VERSION, application_operation=JOB_OPERATION,
         schedule_document={"trigger": "manual", "manual_trigger": True, "timezone": "Asia/Shanghai"}, parameter_contract_id=CONTRACT_ID,
         parameter_schema_version=SCHEMA_VERSION, enabled=True, concurrency_key=kind, max_concurrency=1,
         timeout_seconds=LEASE_SECONDS, retry_policy={"max_attempts": 1})
@@ -198,6 +203,16 @@ def validate(kind: str, params: Any) -> dict[str, Any]:
         if codes:
             out["codes"] = codes
         return out
+    if kind == "sync_refdata":
+        _unknown(kind, params, {"mode", "max_codes"})
+        mode = params.get("mode")
+        if mode not in REFDATA_MODES:
+            raise _bad(f"mode 只能是 {', '.join(REFDATA_MODES)}")
+        if mode in REFDATA_BACKFILL_DEFAULT:
+            return {"mode": mode, "max_codes": _int(params, "max_codes", REFDATA_BACKFILL_DEFAULT[mode], 1, MAX_REFDATA_CODES)}
+        if "max_codes" in params:
+            raise _bad(f"mode={mode} 不接受 max_codes（只有回填模式有）")
+        return {"mode": mode}
     _unknown(kind, params, {"codes", "last"})
     return {"codes": _codes(params.get("codes"), required=True), "last": _int(params, "last", 5, 1, MAX_LAST)}
 
@@ -211,6 +226,17 @@ def ingest_argv(kind: str, params: dict[str, Any], today: date) -> list[str]:
         argv = ["legacy-import", "--since", (today - timedelta(days=params["since_days"])).isoformat(), "--boards", params["boards"]]
         return argv + (["--codes", *params["codes"]] if params.get("codes") else [])
     return ["reconcile", "--last", str(params["last"]), "--codes", *params["codes"]]
+
+
+def refdata_steps(params: dict[str, Any]) -> list[tuple[str, list[str]]]:
+    """(step name, ``pulse.workers.refdata`` argv) of a validated run: the same steps as ``deploy/windows/run_refdata.ps1``."""
+    mode = params["mode"]
+    if mode == "daily":
+        return [("index-bars", ["index-bars", "--years", "3"]), ("adjusted-refresh", ["adjusted-bars", "--mode", "refresh", "--universe-listings"])]
+    if mode == "weekly":
+        return [("listings", ["listings"]), ("boards", ["boards"])]
+    argv = ["adjusted-bars", "--universe-listings", "--max-codes", str(params["max_codes"])]
+    return [("adjusted-backfill" if mode == "adjusted_backfill" else "raw-backfill", argv + (["--raw-only"] if mode == "raw_backfill" else []))]
 
 
 # ---- queueing (API side) --------------------------------------------------------------------------------------------------
@@ -235,7 +261,7 @@ def enqueue(conn: psycopg.Connection, pid: UUID, req: dict[str, Any], key: str, 
         raise SyncError(409, "SYNC_ALREADY_QUEUED", f"同类同步正在排队或运行（运行编号 {str(current)[:8]}），请等它结束后再提交")
     run_id = uuid.uuid5(JOB_IDS[kind], f"{pid}:{key}")
     store = PgJobStore(conn)
-    store.enqueue(job_run_id=run_id, job_id=JOB_IDS[kind], job_version=1, idempotency_key=f"{pid}:{key}",
+    store.enqueue(job_run_id=run_id, job_id=JOB_IDS[kind], job_version=JOB_VERSION, idempotency_key=f"{pid}:{key}",
                   parameter_hash=sha256_of(params), scheduled_for=now,
                   resource_type=RESOURCE_TYPE, resource_id=run_id)
     conn.execute("INSERT INTO ops.sync_job_log(job_run_id, kind, parameters, requested_by, requested_at) VALUES (%s,%s,%s,%s,%s)"
@@ -277,20 +303,41 @@ def _clip(text: str) -> str:
     return f"{text[:half]}\n... [{len(text) - MAX_SUMMARY_CHARS} chars cut] ...\n{text[-half:]}"
 
 
-def ingest_runner(kind: str, params: dict[str, Any]) -> Outcome:
-    """Default runner: the ingest command in this process (its own connection, rate-limited client and block handling)."""
-    from pulse.workers import ingest
-
-    argv = ingest_argv(kind, params, datetime.now(timezone.utc).astimezone(SHANGHAI).date())
+def _run_cli(run: Callable[[list[str]], int], argv: list[str]) -> Outcome:
+    """One worker command in this process, its output captured; a ``SystemExit("message")`` becomes exit status 1 with the message."""
     out, err = io.StringIO(), io.StringIO()
     try:
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = ingest.run(argv)
-    except SystemExit as exc:               # ingest raises SystemExit("no codes ...") for an empty universe
+            code = run(argv)
+    except SystemExit as exc:               # the commands raise SystemExit("no codes ...") for an empty universe
         code = exc.code if isinstance(exc.code, int) else 1
         if not isinstance(exc.code, int):
             err.write(str(exc.code))
-    return Outcome(int(code), _clip("\n".join(x for x in (out.getvalue(), err.getvalue()) if x.strip())))
+    return Outcome(int(code), "\n".join(x for x in (out.getvalue(), err.getvalue()) if x.strip()))
+
+
+def ingest_runner(kind: str, params: dict[str, Any]) -> Outcome:
+    """Default runner: the ingest / refdata command in this process (its own connection, rate-limited client and block handling).
+
+    ``sync_refdata`` runs its steps in order like ``run_refdata.ps1``: a block (exit 2) skips the later steps, any other failure lets them
+    run, and the exit status is the first non-zero one."""
+    if kind == "sync_refdata":
+        from pulse.workers import refdata
+
+        final, parts = 0, []
+        for name, argv in refdata_steps(params):
+            if final == 2:
+                parts.append(f"-- {name} skipped: an earlier step was blocked")
+                continue
+            step = _run_cli(refdata.run, argv)
+            parts.append(f"== {name} exit {step.exit_status} ==\n{step.summary}")
+            final = final or step.exit_status
+        return Outcome(final, _clip("\n".join(parts)))
+    from pulse.workers import ingest
+
+    argv = ingest_argv(kind, params, datetime.now(timezone.utc).astimezone(SHANGHAI).date())
+    res = _run_cli(ingest.run, argv)
+    return Outcome(res.exit_status, _clip(res.summary))
 
 
 @contextlib.contextmanager
@@ -323,7 +370,7 @@ def _heartbeat(connect: Callable[[], psycopg.Connection] | None, job_run_id: UUI
 
 def execute_pending(conn: psycopg.Connection, runner: Runner = ingest_runner, *, clock: Callable[[], datetime] = utc_now,
                     connect: Callable[[], psycopg.Connection] | None = None, heartbeat_seconds: float = HEARTBEAT_SECONDS) -> tuple[UUID, str, str] | None:
-    """Claim the next queued sync run (any of the three kinds) and run it. Returns (job_run_id, kind, state) or None when nothing is queued.
+    """Claim the next queued sync run (any of the sync kinds) and run it. Returns (job_run_id, kind, state) or None when nothing is queued.
 
     ``connect`` opens a second connection for the lease heartbeat while the runner works (the worker passes one; tests may omit it)."""
     ensure_jobs(conn)

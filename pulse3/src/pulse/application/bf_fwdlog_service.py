@@ -98,8 +98,12 @@ class FwdlogService:
         """M3 catalyst events: pulse3's imported calendar dataset (step 2), else the old store file until that dataset exists.
 
         An explicit ``events_path`` (tests, local reconciliation) reads that file. The dataset holds the same events as the file
-        (``fillm import-calendar`` runs daily; parity is tested in ``tests/bf_fillm``), and ``sha256`` stays the source file's hash."""
+        (``fillm import-calendar`` runs daily; parity is tested in ``tests/bf_fillm``), and ``sha256`` stays the source file's hash.
+        ``PULSE_CATALYST_SOURCE=native`` reads pulse3's own calendar instead (``bf_fwdlog_catalyst``); an empty native calendar is NOT replaced by the legacy one."""
         if self.events_path is None:
+            from pulse.application import bf_fwdlog_catalyst as CAT
+            if CAT.source_mode() == "native":
+                return CAT.read_native_events(self.conn)
             from pulse.application import bf_fillm_calendar as CAL
             events, info = CAL.read_calendar_events(self.conn, self.lake)
             if info["present"]:
@@ -284,7 +288,7 @@ class FwdlogService:
         if inp is None:
             return why
         res = PP.replay_day(inp)
-        summary = {**res["summary"], "provenance": {**prov, "calendar_events_sha256": ev_note.get("sha256"), "calendar_events": ev_note.get("events"), **notes}}
+        summary = {**res["summary"], "provenance": {**prov, "calendar_events_sha256": ev_note.get("sha256"), "calendar_events": ev_note.get("events"), "calendar_source": ev_note.get("source"), **notes}}
         key = s.isoformat()
         rows["PAPER_DAYS"].append({"session_date": key, "row_key": key, "body": summary})
         for b in res["buys"]:
@@ -343,11 +347,10 @@ class FwdlogService:
             ids.append(q.snapshot_id)
             closing = {c: (v.price, v.prev_close) for c, v in IN.closing_quotes(IN.snapshots(q.frame), day).items()}
         ext_dir = self.rec.day_dir("intraday_ext", day)
-        summary = IN.read_json(ext_dir / "summary.json")
+        summary, merged, health_prov = IN.recorder_health(ext, ext_dir)
         rows = IN.ext_rows(ext.frame) if ext is not None else None
         if ext is not None:
             ids.append(ext.snapshot_id)
-        row = ST.state_row(day, closing=closing, ext=rows, summary=summary, merged=(ext_dir / "quotes_ext.parquet").exists(), sums=sums)
-        row["provenance"] = {"quote_snapshot_id": None if q is None else str(q.snapshot_id), "ext_snapshot_id": None if ext is None else str(ext.snapshot_id),
-                             "ext_summary_sha256": None if not (ext_dir / "summary.json").exists() else hashlib.sha256((ext_dir / "summary.json").read_bytes()).hexdigest()}
+        row = ST.state_row(day, closing=closing, ext=rows, summary=summary, merged=merged, sums=sums)
+        row["provenance"] = {"quote_snapshot_id": None if q is None else str(q.snapshot_id), "ext_snapshot_id": None if ext is None else str(ext.snapshot_id), **health_prov}
         return row, ids, None

@@ -8,10 +8,11 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.analysis build --as-of latest
     uv run python -m pulse.workers.analysis daily            # ingest increments, then build
     uv run python -m pulse.workers.analysis open-account     # paper account, 1,000,000 CNY, user cost profile
-    uv run python -m pulse.workers.analysis actionability    # Sina quotes -> quote snapshot -> ActionabilitySnapshot
+    uv run python -m pulse.workers.analysis actionability    # latest native recording -> quote snapshot -> ActionabilitySnapshot (no request)
     uv run python -m pulse.workers.analysis show
 
-Exit codes: 0 ok, 1 failure (release not published; reasons printed), 2 a source blocked us (nothing built).
+Exit codes: 0 ok, 1 failure (release not published; reasons printed), 2 a source blocked us (nothing built), 5 ``actionability``: no fresh native
+recording (<= 3 minutes old), nothing published, never a fallback fetch.
 ``daily`` fetches increments only for the focus set (plan instruments and holdings) at <= 1 request/s; a full-universe
 raw refresh is the ingest worker's ``live-daily`` over the universe (about 55 minutes at 1 request/s).
 Not covered: scheduling.
@@ -27,12 +28,14 @@ from datetime import date, datetime, timedelta, timezone
 from pulse import config
 from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
+from pulse.adapters.postgres.instrument_repo import code_of
 from pulse.adapters.postgres.release import PgAnalysisRelease
 from pulse.adapters.sources.cninfo import CninfoAdapter
 from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked, TransportFailure
 from pulse.adapters.sources.sina import SinaAdapter
 from pulse.application import account_service as acct
 from pulse.application import bindings as B
+from pulse.application import native_quotes as NQ
 from pulse.application.data_service import DataService
 from pulse.application.release_service import BuildConfig, BuildFailed, BuildInProgress, RawCoverageMissing, build_release
 
@@ -69,6 +72,8 @@ def _parser() -> argparse.ArgumentParser:
     p = sub.add_parser("actionability")
     p.add_argument("--horizon", default="20td")
     p.add_argument("--limit", type=int, default=30)
+    p.add_argument("--scope", choices=("board", "focus"), default="board",
+                   help="board = every name of the fresh recording (default, watchlists included); focus = top --limit entries, holdings and watchlist members only")
     sub.add_parser("show")
     _ext_a_parsers(sub)                                                       # EXT-A: tape / outcomes
     return ap
@@ -97,17 +102,17 @@ def _print_result(r) -> None:
                       "wall_seconds": round(r.wall_seconds, 1), "counts": r.counts}, ensure_ascii=False, indent=2, default=str))
 
 
+def _held_ids(conn) -> set[uuid.UUID]:
+    return {r["instrument_id"] for r in conn.execute("SELECT DISTINCT instrument_id FROM execution.position_projection WHERE quantity>0").fetchall()}
+
+
 def _focus_codes(conn, limit: int) -> list[str]:
     cur = PgAnalysisRelease(conn).current(B.SLOT_KEY)
     codes: list[str] = []
     if cur is not None:
-        rows = conn.execute(
-            "SELECT DISTINCT a.source_symbol FROM decision.trade_plan t JOIN core.instrument_alias a ON a.instrument_id=t.instrument_id"
-            " AND a.source_id='legacy_warehouse' WHERE t.based_on_release_id=%s ORDER BY 1 LIMIT %s", (cur.release_id, limit)).fetchall()
-        codes = [r["source_symbol"] for r in rows]
-    held = conn.execute("SELECT DISTINCT a.source_symbol FROM execution.position_projection p JOIN core.instrument_alias a"
-                        " ON a.instrument_id=p.instrument_id AND a.source_id='legacy_warehouse' WHERE p.quantity>0").fetchall()
-    return sorted(set(codes) | {r["source_symbol"] for r in held})
+        ids = [r["instrument_id"] for r in conn.execute("SELECT DISTINCT instrument_id FROM decision.trade_plan WHERE based_on_release_id=%s", (cur.release_id,)).fetchall()]
+        codes = sorted(code_of(conn, ids).values())[:limit]
+    return sorted(set(codes) | set(code_of(conn, _held_ids(conn)).values()))
 
 
 def run(argv: list[str] | None = None) -> int:
@@ -160,7 +165,8 @@ def run(argv: list[str] | None = None) -> int:
         conn.close()
 
 
-def _actionability(a, conn, lake, client) -> int:
+def _actionability(a, conn, lake, client, clock=None) -> int:
+    """``clock`` only moves the recording's freshness test (tests); the overlay's ``checked_at`` is always the real time."""
     cur = PgAnalysisRelease(conn).current(a.slot)
     if cur is None:
         print("no published release", file=sys.stderr)
@@ -171,12 +177,22 @@ def _actionability(a, conn, lake, client) -> int:
         return 1
     run_row = conn.execute("SELECT ranking_id FROM decision.ranking_run WHERE release_id=%s AND ranking_scope='market' AND horizon_id=%s",
                            (cur.release_id, a.horizon)).fetchone()
-    ent = conn.execute(
-        "SELECT e.instrument_id, al.source_symbol code FROM decision.ranking_entry e JOIN core.instrument_alias al ON al.instrument_id=e.instrument_id"
-        " AND al.source_id='legacy_warehouse' WHERE e.ranking_id=%s AND e.plan_id IS NOT NULL ORDER BY e.alpha_rank LIMIT %s",
-        (run_row["ranking_id"], a.limit)).fetchall()
-    svc = DataService(conn, lake)
-    quote = acct.publish_quote_snapshot(svc, SinaAdapter(client), {r["instrument_id"]: r["code"] for r in ent})
+    ent = conn.execute("SELECT e.instrument_id FROM decision.ranking_entry e WHERE e.ranking_id=%s AND e.plan_id IS NOT NULL ORDER BY e.alpha_rank LIMIT %s",
+                       (run_row["ranking_id"], a.limit)).fetchall()
+    ent_ids = [r["instrument_id"] for r in ent]
+    codes = code_of(conn, ent_ids)
+    ent = [{"instrument_id": i, "code": codes[i]} for i in ent_ids if i in codes]
+    now = clock or (lambda: datetime.now(timezone.utc))
+    svc = DataService(conn, lake, clock=now)
+    wanted = {r["instrument_id"]: r["code"] for r in ent}
+    if a.scope == "focus":
+        members = [r["instrument_id"] for r in conn.execute("SELECT DISTINCT instrument_id FROM ui.watchlist_member").fetchall()]
+        wanted.update(code_of(conn, [*members, *_held_ids(conn)]))
+    try:                                                      # the recording is the only source: no request is made, with or without a recording
+        quote = NQ.publish_native_quote_snapshot(svc, wanted=wanted, only_wanted=a.scope == "focus")
+    except NQ.NoFreshRecording as exc:
+        print(f"no fresh recording: {exc}; nothing published", file=sys.stderr)
+        return 5
     series = B.load_raw_series(conn, [r["instrument_id"] for r in ent], datetime.now(B.CST).date(), cur.published_at)
     payload = acct.build_actionability(conn, release_id=cur.release_id, ranking_id=run_row["ranking_id"], account_id=account_id,
                                        quote=quote, raw_series=series, checked_at=datetime.now(timezone.utc))

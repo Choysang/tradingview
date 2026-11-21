@@ -19,6 +19,9 @@ function Step($name, [string[]]$argv) {
 $since = (Get-Date).AddDays(-800).ToString('yyyy-MM-dd')
 $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
 $imported = $ok   # the fusion scorer needs only the research snapshot, not the release below
+# With the native reference data on (refdata_switch.ps1), the research inputs come from pulse3's own datasets: a failed legacy
+# import is logged but no longer stops the build.
+if ($env:PULSE_REFDATA_SOURCE -eq 'native' -and -not $ok) { Add-Content $log '-- legacy-import failed; native reference data is on, continuing'; $ok = $true; $imported = $true }
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).
 if ($ok) { $ok = Step 'live-daily-universe' @('-m', 'pulse.workers.ingest', 'live-daily', '--universe', '--source', 'sina', '--count', '10') }
@@ -45,6 +48,8 @@ $null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
 $cst = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time')
 foreach ($m in @($cst, $cst.AddMonths(1))) { $null = Step "calendar-expiries-$($m.ToString('yyyy-MM'))" @('-m', 'pulse.workers.alerts', 'calendar-expiries', '--year', "$($m.Year)", '--month', "$($m.Month)") }
 # Fund flow of the focus set (plan instruments + holdings, at most 60 codes; the old system does not crawl it).
+# Guba samples (#136): the old news recorder sampled them; after the cutover pulse3 samples the focus set itself (same volume).
+if ($cutover) { $null = Step 'community' @('-m', 'pulse.workers.intel', 'community', '--focus', '60') }
 if ($imported) { $null = Step 'fundflow' @('-m', 'pulse.workers.intel', 'fundflow', '--focus', '60') }
 # Fusion main book (batch 3, E012/E022 static40_safe + books E036/E040/E065/E068/E081/E085): last, about 13 CPU minutes.
 if ($imported) { $null = Step 'fusion-daily' @('-m', 'pulse.workers.fusion', 'daily') }
