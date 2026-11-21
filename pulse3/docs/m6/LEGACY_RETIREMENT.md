@@ -26,3 +26,9 @@ Pulse3 settings that still point into `C:\pulse` and go with PulseWeb: `PULSE_LE
 - 2026-11-21: PulseWeb died at 02:46 when an RDP logoff ended the session it ran in; the user chose to keep it down and its
   task is Disabled. From now on the legacy warehouse no longer grows (last session 2026-11-20): pulse3 needs
   `PULSE_REFDATA_SOURCE=native` plus a scheduled `run_refdata.ps1 -Mode daily` to keep its research data current.
+- 2026-11-21 14:50: user asked to bring PulseWeb back without its duplicate requests. `C:\pulseun_web.cmd` now sets
+  `PULSE_MODE=SIM` (backup `run_web.cmd.bak-2026-11-21`): the 24/7 live snapshot loop (akshare spot + qt.gtimg.cn enrich,
+  the same hosts as pulse3's intraday recorder) no longer runs; 0 qt.gtimg / Eastmoney requests in the first 90 s after the
+  restart. The site and its scheduler (warehouse sync after 15:35, report) keep running as SYSTEM in session 0, so an RDP
+  logoff no longer stops it. The remaining overlap: its daily Sina kline sync (15:35) and pulse3 `live-daily` (18:22) fetch
+  the same bars at different times; it goes with the refdata switch.
