@@ -29,7 +29,7 @@ from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
 from pulse.adapters.postgres.release import PgAnalysisRelease
 from pulse.adapters.sources.cninfo import CninfoAdapter
-from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked
+from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked, TransportFailure
 from pulse.adapters.sources.sina import SinaAdapter
 from pulse.application import account_service as acct
 from pulse.application import bindings as B
@@ -146,6 +146,9 @@ def run(argv: list[str] | None = None) -> int:
     except SourceBlocked as exc:
         print(f"BLOCKED: {exc}; stopped immediately, nothing built", file=sys.stderr)
         return 2
+    except TransportFailure as exc:                 # network timeout: nothing built, the caller may retry (run_daily.ps1 does once)
+        print(f"SOURCE UNREACHABLE: {exc}; nothing built, rerun to retry", file=sys.stderr)
+        return 3
     except (BuildFailed, RawCoverageMissing) as exc:
         print(f"NOT PUBLISHED: {exc}", file=sys.stderr)
         return 1

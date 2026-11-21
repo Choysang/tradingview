@@ -53,6 +53,9 @@ class World:
         self.member_count = 3
         self.quotes: dict[str, dict] = {}
         self.fail_symbols: set[str] = set()
+        self.unreachable_hosts: set[str] = set()                           # the connection is reset (httpx.ConnectError), not refused
+        self.host_status: dict[str, int] = {}                              # a host answers this HTTP status for every request
+        self.em_sz, self.em_sh = 150, 100                                  # rows of the synthetic Eastmoney list (Shenzhen, Shanghai)
         self.member_status: dict[str, int] = {}
 
     def now(self) -> datetime:
@@ -79,6 +82,12 @@ class World:
             return httpx.Response(403, content=b"forbidden")
         parts, q = urlsplit(url), parse_qs(urlsplit(url).query)
         host = parts.hostname
+        if host in self.unreachable_hosts:
+            raise httpx.ConnectError("[WinError 10054] connection reset", request=req)
+        if host in self.host_status:
+            return httpx.Response(self.host_status[host], content=b"forbidden")
+        if host == "82.push2.eastmoney.com":
+            return httpx.Response(200, content=self.eastmoney_page(int(q["pn"][0]), int(q["pz"][0])))
         if host == "quotes.sina.cn":
             sym = q["symbol"][0]
             if sym in self.fail_symbols:
@@ -113,6 +122,12 @@ class World:
         if host == "qt.gtimg.cn":
             return httpx.Response(200, content=self.quote_body(q, parts))
         return httpx.Response(404, content=b"unknown")
+
+    def eastmoney_page(self, page: int, size: int) -> bytes:
+        codes = [f"{i:06d}" for i in range(1, self.em_sz + 1)] + [f"{600000 + i:06d}" for i in range(self.em_sh)]
+        chunk = codes[(page - 1) * size: page * size]
+        diff = [{"f12": c, "f14": f"n{c}", "f26": (1991 + int(c) % 30) * 10000 + 102} for c in chunk]
+        return json.dumps({"rc": 0, "data": {"total": len(codes), "diff": diff} if chunk else None}).encode()
 
     def index_body(self) -> bytes:
         rows = json.loads(fixture("sina_index_kline_sh000001.json"))

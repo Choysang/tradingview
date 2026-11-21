@@ -49,7 +49,7 @@ INDEX_SCHEMA = {"instrument_id": pl.String, "symbol": pl.String, "date": pl.Date
 MEMBERSHIP_SCHEMA = {"instrument_id": pl.String, "node_id": pl.String, "effective_from": pl.Datetime("us", "UTC"),
                      "available_at": pl.Datetime("us", "UTC")}
 LISTING_SCHEMA = {"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String,
-                  "available_at": pl.Datetime("us", "UTC")}
+                  "available_at": pl.Datetime("us", "UTC"), "source": pl.String}      # source: sse | szse | eastmoney (which list gave the date)
 _DEC16 = pl.Decimal(38, 16)
 #: ``bars_native_raw_1d``: the frame schema of ``bars_raw_1d`` (``DataService._bars_frame``) plus ``revision``; one row per revision.
 RAW_SCHEMA = {"instrument_id": pl.String, "trade_date": pl.Date, "timeframe": pl.String, "bar_open_time": pl.Datetime("us", "UTC"),
@@ -279,7 +279,8 @@ def compare_listings(native: pl.DataFrame, legacy: Mapping[str, date | None], *,
     nat = {r["code"]: r["listed_on"] for r in native.iter_rows(named=True)}
     both = set(nat) & set(legacy)
     differ = sorted(c for c in both if legacy[c] is not None and nat[c] is not None and nat[c] != legacy[c])
-    return {"native_codes": len(nat), "legacy_codes_with_date": sum(1 for v in legacy.values() if v is not None),
+    by_source = dict(native["source"].value_counts().iter_rows()) if "source" in native.columns else {}
+    return {"native_codes": len(nat), "native_sources": by_source, "legacy_codes_with_date": sum(1 for v in legacy.values() if v is not None),
             "native_only": len(set(nat) - set(legacy)), "legacy_only": len([c for c, v in legacy.items() if v is not None and c not in nat]),
             "overlap": len(both), "date_differs": len(differ),
             "native_null_legacy_set": sum(1 for c in both if nat[c] is None and legacy[c] is not None),

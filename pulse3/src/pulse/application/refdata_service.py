@@ -765,53 +765,90 @@ class RefDataService:
             raise
 
     # ---- listing dates --------------------------------------------------------------------------------------------
+    def _eastmoney_rows(self, adapter: L.ListingAdapter, spec: EndpointSpec, partition: str, batch_id: uuid.UUID, owner: str, s: Summary) -> list[dict]:
+        """The whole Eastmoney list (pages of 100, 1 request per second); an incomplete list (fewer rows than the declared total) is an error."""
+        rows: dict[str, dict] = {}
+        total: int | None = None
+        for page in range(1, L.EM_MAX_PAGES + 1):
+            cap = self._call(spec, partition, lambda p=page: adapter.eastmoney(p))
+            got, declared = L.parse_eastmoney(cap.body)
+            self.svc.store_capture(batch_id, cap, owner)
+            s.add("eastmoney_requests")
+            total = declared if declared is not None else total
+            fresh = [r for r in got if r["code"] not in rows]
+            rows.update({r["code"]: r for r in got})
+            if not got or len(got) < L.EM_PAGE_SIZE or not fresh or (total is not None and len(rows) >= total):
+                break
+        if total is not None and len(rows) < total:
+            raise RefDataError(f"the Eastmoney list is incomplete: {len(rows)} of {total} rows; not published")
+        s.counts["eastmoney_rows"] = len(rows)
+        return list(rows.values())
+
     def listings(self, adapter: L.ListingAdapter, *, min_rows: int = L.MIN_ROWS) -> Summary:
-        """Two requests: SSE main-board A list and SZSE A list. A shorter list than ``min_rows`` is rejected (the old guard)."""
+        """Two requests: SSE main-board A list and SZSE A list. A shorter list than ``min_rows`` is rejected (the old guard).
+
+        An exchange list that is UNREACHABLE (connection reset / timeout, ``TransportFailure``) is replaced for that exchange by the Eastmoney
+        list (about 50 requests); a block (``SourceBlocked``) on any source still stops the run and never triggers the fallback. The column
+        ``source`` of every row says which list gave its date (sse | szse | eastmoney)."""
         s = Summary("refdata listings")
         out_spec = self._spec(L.SOURCE_ID, L.OUT_LISTINGS)
         sse_spec, szse_spec = self._spec(L.SOURCE_ID, L.EP_SSE), self._spec(L.SOURCE_ID, L.EP_SZSE)
+        em_spec = self._spec(L.EM_SOURCE_ID, L.EP_EASTMONEY)
         partition = "listings:all"
         self.gate([sse_spec, szse_spec], partition)
         batch_id, owner = self._begin(out_spec, partition)
         try:
-            sse_cap = self._call(sse_spec, partition, adapter.sse)
-            sse = L.parse_sse(sse_cap.body)
-            self.svc.store_capture(batch_id, sse_cap, owner)
-            szse_cap = self._call(szse_spec, partition, adapter.szse)
-            szse = L.parse_szse(szse_cap.body)
-            self.svc.store_capture(batch_id, szse_cap, owner)
+            lists: dict[str, tuple[str, list[dict]]] = {}
+            for exch, spec, fetch, parse, tag in (("XSHG", sse_spec, adapter.sse, L.parse_sse, "sse"), ("XSHE", szse_spec, adapter.szse, L.parse_szse, "szse")):
+                try:
+                    cap = self._call(spec, partition, fetch)
+                except TransportFailure as exc:
+                    s.add("exchange_lists_unreachable")
+                    s.notes.append(f"{tag} list unreachable ({exc}); the Eastmoney list is used for {exch}")
+                    continue
+                lists[exch] = (tag, parse(cap.body))
+                self.svc.store_capture(batch_id, cap, owner)
+            if len(lists) < 2:
+                self.gate([em_spec], partition)
+                em_rows = self._eastmoney_rows(adapter, em_spec, partition, batch_id, owner, s)
+                for exch in ("XSHG", "XSHE"):
+                    if exch not in lists:
+                        lists[exch] = ("eastmoney", [r for r in em_rows if ident.venue_for_code(r["code"]) == exch])
             self._end_raw(batch_id, owner, release=False)
             rows = []
-            for exch, items in (("XSHG", sse), ("XSHE", szse)):
+            for exch, (tag, items) in lists.items():
+                s.counts[f"{tag}_rows"] = len(items)
                 for r in items:
                     try:
                         venue = ident.venue_for_code(r["code"])
                     except ValueError:
                         s.add("codes_unsupported")
                         continue
-                    rows.append({"instrument_id": instrument_id_of(r["code"]), "code": r["code"], "listed_on": r["list_date"], "exchange": venue})
-            s.counts.update({"sse_rows": len(sse), "szse_rows": len(szse)})
+                    rows.append({"instrument_id": instrument_id_of(r["code"]), "code": r["code"], "listed_on": r["list_date"], "exchange": venue, "source": tag})
             if len(rows) < min_rows:
                 raise RefDataError(f"only {len(rows)} listing rows fetched (< {min_rows}); not published")
             now = self._now()
-            frame = (pl.DataFrame(rows, schema={"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String})
+            frame = (pl.DataFrame(rows, schema={"instrument_id": pl.String, "code": pl.String, "listed_on": pl.Date, "exchange": pl.String, "source": pl.String})
                      .unique("code", keep="last").sort("code").with_columns(pl.lit(now).cast(pl.Datetime("us", "UTC")).alias("available_at"))
                      .select(list(C.LISTING_SCHEMA)))
             s.counts["listings"] = frame.height
             s.counts["listing_date_null"] = frame["listed_on"].null_count()
-            digest = hashlib.sha256(frame.select("code", "listed_on").write_csv().encode()).hexdigest()
+            digest = hashlib.sha256(frame.select("code", "listed_on", "source").write_csv().encode()).hexdigest()
             prev = market_repo.latest_ready(self.conn, C.LISTING_DATASET)
             if prev is not None and (prev["coverage_document"] or {}).get("listings_sha256") == digest:
                 s.add("snapshots_unchanged")
                 self.lake.release(owner)
             else:
-                cov = {"dataset": C.LISTING_DATASET, "listings_sha256": digest, "rows": frame.height, "sources": {"XSHG": "SSE main board A list", "XSHE": "SZSE A-share list"},
+                cov = {"dataset": C.LISTING_DATASET, "listings_sha256": digest, "rows": frame.height, "sources": {"sse": "SSE main board A list (XSHG)", "szse": "SZSE A-share list (XSHE)",
+                                                         "eastmoney": "Eastmoney stock list f26, used per exchange only when that exchange list was unreachable"},
+                       "rows_by_source": dict(frame["source"].value_counts().iter_rows()),
                        "scope": "Shanghai main board + all Shenzhen A shares; STAR and BSE are not in the legacy table either",
                        "note": "core.instrument.listed_on is NOT written by this producer (a cutover decision)"}
                 pub = self._publish(C.LISTING_DATASET, {"all": frame}, contract="EvidenceDocument", coverage=cov, batch_id=batch_id, owner=owner, watermark=now)
                 s.counts["manifest_version_listings"] = pub["manifest_version"]
-            for spec in (sse_spec, szse_spec):
-                self._success(spec, partition, new_records=frame.height, newest=None, ready=True)
+            used = {"sse": sse_spec, "szse": szse_spec, "eastmoney": em_spec}
+            for tag in sorted({t for t, _ in lists.values()}):
+                self._success(used[tag], partition, new_records=frame.height, newest=None, ready=True)
         except Exception:
             self._fail_batch(batch_id, owner)
             raise

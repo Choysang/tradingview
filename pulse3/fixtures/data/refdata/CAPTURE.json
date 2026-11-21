@@ -72,5 +72,23 @@
   "captured_at": "2026-11-19T01:43:12.649775Z",
   "purpose": "SZSE A-share list workbook (full)",
   "note": "worksheet trimmed to the header + 25 rows (full workbook was 545159 bytes, 2905 rows)"
+ },
+ {
+  "file": "eastmoney_list_p1.json",
+  "url": "https://82.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m:0+t:6,m:0+t:80,m:1+t:2&fields=f12,f14,f26",
+  "method": "GET",
+  "status": 200,
+  "bytes": 5304,
+  "captured_at": "2026-11-21T06:28:58.744933Z",
+  "purpose": "listing-date fallback: first page of the Eastmoney clist"
+ },
+ {
+  "file": "eastmoney_list_last.json",
+  "url": "https://82.push2.eastmoney.com/api/qt/clist/get?pn=50&pz=100&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m:0+t:6,m:0+t:80,m:1+t:2&fields=f12,f14,f26",
+  "method": "GET",
+  "status": 200,
+  "bytes": 2311,
+  "captured_at": "2026-11-21T06:28:58.909111Z",
+  "purpose": "listing-date fallback: last page (50) of the Eastmoney clist"
  }
 ]

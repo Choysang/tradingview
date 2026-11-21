@@ -10,6 +10,10 @@ Shanghai MAIN board and every Shenzhen A share (main + ChiNext); STAR and BSE ar
 Invariants: raw bytes untouched; an HTML / redirect answer is a block; a list shorter than ``MIN_ROWS`` is not trusted
 (the old guard) and is rejected by the service, never published; codes are zero-padded 6-digit strings; a date that
 cannot be read becomes NULL (never today's date, never a guess).
+Fallback source (added after the first server run, 2026-11-21: the exchange pages reset the connection from the overseas cloud IP): Eastmoney's
+public stock list ``push2 clist`` with the listing-date field ``f26`` (``ListingAdapter.eastmoney``, paged by 100, scope Shenzhen main + ChiNext and
+Shanghai main, i.e. the legacy scope; the old system had no fallback, it fetched the lists elsewhere and copied the file). The service uses it only
+for an exchange whose list was UNREACHABLE (``TransportFailure``), never after a block, and records per row which source gave the date (``source``).
 Not covered: STAR/BSE lists, delisting dates, name changes.
 """
 from __future__ import annotations
@@ -28,6 +32,10 @@ from .ref_market import guard_not_blocked
 
 SOURCE_ID = "exchange_lists"
 EP_SSE, EP_SZSE, OUT_LISTINGS = "sse_stock_list", "szse_stock_list", "listings"
+EM_SOURCE_ID, EP_EASTMONEY = "eastmoney_ref", "stock_list"
+EM_PAGE_SIZE, EM_MAX_PAGES = 100, 80
+EM_URL = ("https://82.push2.eastmoney.com/api/qt/clist/get?pn={page}&pz=%d&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2"
+          "&fid=f12&fs=m:0+t:6,m:0+t:80,m:1+t:2&fields=f12,f14,f26" % EM_PAGE_SIZE)
 SCHEMA_VERSION = "exchange-lists-20261119"
 MAPPING_VERSION = "1.0.0"
 MIN_ROWS = 1000
@@ -139,12 +147,44 @@ def parse_szse(body: bytes) -> list[dict]:
     return list(out.values())
 
 
+def parse_eastmoney(body: bytes) -> tuple[list[dict], int | None]:
+    """One Eastmoney ``clist`` page -> (``[{code, list_date}]``, the declared ``total``). ``data: null`` is an empty page past the end;
+    ``f26`` is the listing date as an integer ``yyyymmdd`` (``"-"`` / 0 when unknown -> NULL, never a guess)."""
+    try:
+        doc = json.loads(body)
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise NotData("eastmoney_list_invalid_json") from exc
+    if not isinstance(doc, dict) or "data" not in doc:
+        raise SchemaChanged("eastmoney_list_no_data_key")
+    data = doc["data"]
+    if data is None:
+        return [], None
+    diff = data.get("diff") if isinstance(data, dict) else None
+    if isinstance(diff, dict):                      # a dict keyed by position when np=2; np=1 gives a list
+        diff = list(diff.values())
+    if not isinstance(diff, list):
+        raise SchemaChanged("eastmoney_list_no_diff_array")
+    rows: dict[str, dict] = {}
+    for r in diff:
+        if not isinstance(r, dict) or "f12" not in r or "f26" not in r:
+            raise SchemaChanged("eastmoney_list_row_shape")
+        code = str(r["f12"]).strip().zfill(6)
+        if re.fullmatch(r"\d{6}", code):
+            rows[code] = {"code": code, "list_date": parse_date(r["f26"])}
+    total = data.get("total")
+    return list(rows.values()), (int(total) if isinstance(total, (int, float)) else None)
+
+
 class ListingAdapter:
     def __init__(self, client: RateLimitedClient):
         self.client = client
 
     def sse(self) -> Capture:
         cap = self.client.request(source_id=SOURCE_ID, endpoint_id=EP_SSE, request_key="sse:main_a", url=SSE_URL, headers=SSE_HEADERS)
+        return guard_not_blocked(self.client, cap)
+
+    def eastmoney(self, page: int) -> Capture:
+        cap = self.client.request(source_id=EM_SOURCE_ID, endpoint_id=EP_EASTMONEY, request_key=f"em:{page}", url=EM_URL.format(page=page))
         return guard_not_blocked(self.client, cap)
 
     def szse(self) -> Capture:
