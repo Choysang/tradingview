@@ -20,3 +20,9 @@ then update `docs/LEGACY_TRIAGE.md` and this table.
 Pulse3 settings that still point into `C:\pulse` and go with PulseWeb: `PULSE_LEGACY_WAREHOUSE` (legacy-import),
 `PULSE_LEGACY_DATA` (old recorder files, already skipped after the cutover), `PULSE_FWDLOG_EVENTS` default
 (`C:\pulse\app\backend\data\calendar\events.jsonl`), and the fallbacks for the OpenAI key and the tools in `pulse3_env.ps1`.
+
+## Log
+
+- 2026-11-21: PulseWeb died at 02:46 when an RDP logoff ended the session it ran in; the user chose to keep it down and its
+  task is Disabled. From now on the legacy warehouse no longer grows (last session 2026-11-20): pulse3 needs
+  `PULSE_REFDATA_SOURCE=native` plus a scheduled `run_refdata.ps1 -Mode daily` to keep its research data current.
