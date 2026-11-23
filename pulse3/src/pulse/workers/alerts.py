@@ -3,13 +3,20 @@
 Usage (from pulse3/)::
 
     uv run python -m pulse.workers.alerts init-rules --principal <uuid>   # P0/P1/P2 rules on the in-app inbox
-    uv run python -m pulse.workers.alerts scan                            # claims -> alert intents (idempotent)
+    uv run python -m pulse.workers.alerts scan                            # claims -> alert intents (idempotent; LLM fallback if a key file is set)
     uv run python -m pulse.workers.alerts deliver                         # webhook attempts; sends nothing unless a URL is configured
     uv run python -m pulse.workers.alerts calendar-sync --days 60         # Eastmoney 财经日历, <= 1 request/s, stops on a block
     uv run python -m pulse.workers.alerts calendar-derive                 # lock-up/suspension/meeting events from announcement titles
     uv run python -m pulse.workers.alerts calendar-expiries --year 2026 --month 12
     uv run python -m pulse.workers.alerts seal-workspace --principal <uuid>
     uv run python -m pulse.workers.alerts drain [--max 20]                # execute queued proposal/export/manual jobs
+
+LLM fallback (legacy #134, approved 2026-11-23): ``scan`` asks a model about claims the rules left undecided that touch a holding or a
+watch-list name, only when the switch file exists (``PULSE_ALERT_LLM_SWITCH``, default ``alert_llm.enabled`` next to the lake dir, i.e.
+``C:/pulse3/var/alert_llm.enabled``) AND ``PULSE_OPENAI_KEY_FILE`` names a readable key file (first line = key). ``PULSE_ALERT_MODEL``
+(default gpt-6-luna), ``PULSE_ALERT_LLM_CAP`` (calls per Asia/Shanghai day, default 300). A 401/403/429 stops it for the day. Without the
+switch or the key ``scan`` is rules-only and its output has no ``llm`` entry. The LLM pass runs after all rule alerts are committed.
+The key is never printed or stored. ``scan --no-llm`` forces rules only.
 
 Webhook push: set ``PULSE_PUSH_WEBHOOK`` (+ ``PULSE_PUSH_KIND`` wecom|feishu|dingtalk|generic) or a secrets file
 (``PULSE_PUSH_WEBHOOK_FILE`` / ``<PULSE_SECRETS_DIR>/push_webhook.url``). Exit codes: 0 ok, 1 failure, 2 source blocked us.
@@ -19,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 from uuid import UUID
 
 from pulse import config
@@ -26,7 +34,7 @@ from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
 from pulse.adapters.sources import calendar_em
 from pulse.adapters.sources.http import RateLimitedClient, SourceBlocked
-from pulse.application import alert_service, calendar_service, ops_service, workspace_service
+from pulse.application import alert_llm_service, alert_service, calendar_service, ops_service, workspace_service
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -36,7 +44,8 @@ def _parser() -> argparse.ArgumentParser:
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("init-rules")
     p.add_argument("--principal", required=True)
-    sub.add_parser("scan")
+    p = sub.add_parser("scan")
+    p.add_argument("--no-llm", action="store_true", help="rules only, even when a key file is configured")
     sub.add_parser("deliver")
     sub.add_parser("daily-report")
     p = sub.add_parser("calendar-sync")
@@ -61,7 +70,7 @@ def run(argv: list[str] | None = None) -> int:
         if a.cmd == "init-rules":
             out = alert_service.init_default_rules(conn, UUID(a.principal))
         elif a.cmd == "scan":
-            out = alert_service.scan(conn)
+            out = alert_service.scan(conn, llm=None if a.no_llm else alert_llm_service.AlertFallback.from_env(lake_root=Path(a.lake or cfg.lake_root)))
         elif a.cmd == "deliver":
             out = alert_service.deliver(conn)
         elif a.cmd == "daily-report":                     # legacy #135: after-close summary of the current release

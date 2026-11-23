@@ -138,7 +138,7 @@ Step 1, retired or deferred with a reason (rows that had none):
 | 164 | closing market state rule (E054) | retired: ledger E054 fails |
 | 165 | board rules M2 and M4 | retired: candidate thresholds never validated (E055 kept M3 only; M3 is ported in the paper replay) |
 | 196, 197 | single command entry and launchers | retired: replaced by `pulse.workers.*` and the scheduled tasks in `deploy/windows/` |
-| 134 | LLM fallback for news alerts | deferred: it spends API money; enabled only with the user's approval, like E092 |
+| 134 | LLM fallback for news alerts | ported 2026-11-23 after the user approved the spend: `alerts scan` asks a model only about claims the rules left undecided that touch a holding or watch-list name; off unless the switch file `var/alert_llm.enabled` (`PULSE_ALERT_LLM_SWITCH`) and `PULSE_OPENAI_KEY_FILE` both exist (`application/alert_llm_service.py`, `domain/alerts/llm_tier.py`, migration 0052) |
 | 175 | holdings book | the PC fusion book's holdings come with the fusion lane; the light daily book is superseded by the forward books |
 | 177 | pre-registrations | kept as documents; each ported forward experiment records its pre-registration's sha256 in the research registry |
 | 178 (family A) | book, official_eval, cap_filter, lhasa_book, rolling_break, score_baskets, cond_reversal | retired: evaluation is the pulse3 reconcile and registry; findings stay in the ledger (E041, E051, E067, E070, E071); the X20 basket (E085) and OS20 (E081) are ported |
@@ -163,7 +163,7 @@ auction, order book and limit queues; #104/#186 extended recorder; #131/#187 new
 | 126, 194 | In-memory ticker refreshing every few seconds | replaced by frozen releases and versioned quotes (package rule: pages read a fixed release) |
 | 198 | GitHub publish script inside the app | it stays at repository level (`scripts/publish_github.sh`); it is not an app feature |
 | 184 | Tushare utilities | paid source, not in the declared source list |
-| 65 | MCP server | deferred, not retired: `llms.txt` and the manifest (batch 1) come first; MCP follows when an agent needs write access |
+| 65 | MCP server | `POST /mcp` (JSON-RPC 2.0, streamable HTTP, stateless), read-only tools generated from the manifest (`agent_access`, `routes_bf_mcp`); no write tools (a later decision) |
 
 ## Step 2 status (2026-11-19): written and tested, not switched on
 
@@ -212,3 +212,26 @@ caps plus alias-independent code lookup (rows 108/113, prerequisite of the refda
 snapshots (9/69/127/39); E089 health from the native ext coverage (173); M3 catalyst from pulse3's own calendar behind
 `PULSE_CATALYST_SOURCE` (174); the two seat playbooks (145); `sync_refdata` job kind (49/89); guba sampling after the
 cutover (136, run_daily); a failed legacy import no longer stops the build when the native reference data is on.
+
+## Deferred LLM tools (2026-11-23)
+
+Family F of the old lab (`scripts/lab/llm*.py`, `pit_news.py`) was deferred until the user approved the API spending (2026-11-23: "暂缓的也可以执行"). Only what feeds a live use is ported; the rest is retired with
+the ledger finding as the reason. Ported: `llm_live.py` + `llm_ask.py` (prepare / call / score) and the rule of `llm_eval.py` become `pulse.workers.llm_live` (`decide`, `track`, `judge`, `status`) with
+`pulse.domain.llm_live` (rules, judge), `pulse.adapters.models.responses_client`, `bf_llm_live_*` (E092, registered as `shadow` with the pre-registration's sha256); `llm.py` becomes the Responses client.
+One difference by design: the old lab prepared the jobs on the PC and called from the server; pulse3 does both on the server from its own fusion scores, so there is no jobs file to transfer. The market line of
+the prompt is the Shanghai composite from pulse3's index dataset (the old lab used its `benchmark_sh`, the same index).
+
+| File | Disposition | Reason |
+|---|---|---|
+| `llm.py` | port | the thin Responses API call is what E092 needs; it is now `adapters/models/responses_client.py` (key from `PULSE_OPENAI_KEY_FILE`, labels instead of error bodies, injectable transport, usage and request ids kept) |
+| `llm_eval.py` | port | the pre-registered E092 rule (section 3: rank correlation per day, 5-day block bootstrap, spread over the round-trip cost) is now `domain/llm_live/judge.py`, unchanged numbers, with tests |
+| `llm_judge.py` | retire | the anonymous-card pilot (E001): inconclusive, the score was a 20-day momentum proxy (+0.39 correlation) in a falling market; it feeds no live use and a rerun would be a new multiple look |
+| `llm_judge_pit.py` | retire | the named card with point-in-time announcements (E025): inconclusive (IC +0.105, t 1.56, 20 days); the live web-search run (E092) is the pre-registered forward test of the same idea, so a backtest variant adds nothing |
+| `llm_judge_topo.py` | retire | the theme-topology variant (E046): inconclusive (paired difference to the anonymous card t 0.49); same reason, and it needs the old `replay.themes_sw` module |
+| `llm_probe.py` | retire | the contamination probe of the 600-card pilot: its result (the models know nothing after mid 2024) is recorded in the ledger; E092 is forward only and needs no masking |
+| `llm_select.py` | retire | picks LLM-proposed factors on TRAIN statistics (the `llm_track.py` / `llm_mine.py` factor-mining line); no live use; mining new factors here needs its own pre-registration |
+| `pit_news.py` | retire | the cninfo / 新闻联播 archive that fed the PIT card backtests (E025); pulse3 records announcements and news itself (`intel`, native news recorder), and E092 reads the live web, so nothing consumes this archive |
+| `llm_reverse.py` (not in the list, same family) | retire | E064 fails: used in reverse the judgement has no skill (reverse IC -0.067, t -0.89); nothing to run live |
+| `llm_track.py`, `llm_mine.py` (same family) | retire | LLM factor proposal loops on the old tensor engine; not the live judgement of E092 despite the name |
+
+Reactivation: a retired tool comes back only with a new pre-registration (ledger rule); E092's own continuation after 20 decision days needs the user's renewed approval.

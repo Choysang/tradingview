@@ -25,4 +25,6 @@ $null = Step 'fwdlog-run' @('-m', 'pulse.workers.fwdlog', 'run', '--date', $day)
 $null = Step 'batch6-forward' @('-m', 'pulse.workers.batch6', 'forward', '--date', $day)
 # Batch 7 forward (E097 exact limit-up retest, E098 institution net buying; pre-registration 2026-11-20, first decision day 2026-11-23): pulse3 data only, exit 3 = nothing to decide yet.
 $null = Step 'batch7-forward' @('-m', 'pulse.workers.batch7', 'forward', '--date', $day)
+# Batch 8 forward (E099 Lhasa / one-day-seat FLAG, pre-registration 2026-11-23, first decision day 2026-11-24): exit 3 = nothing to decide yet.
+$null = Step 'batch8-forward' @('-m', 'pulse.workers.batch8', 'forward', '--date', $day)
 Add-Content $log "== $(Get-Date -Format s) done"

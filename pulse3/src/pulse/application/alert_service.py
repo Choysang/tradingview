@@ -15,10 +15,14 @@ Invariants:
 * the intent, its attempts and the ``alert.raised`` outbox event are written in one transaction; evidence artifacts are owned
   by the user and immutable.
 Not covered: price-line (``Condition``) evaluation - a rule's condition is stored and pinned (annotation id + version) but only the
-scopes ``news_tier`` / ``instrument`` / ``sector`` are evaluated; LLM fallback tiers; intraday "already reacted" magnitude.
+scopes ``news_tier`` / ``instrument`` / ``sector`` are evaluated; intraday "already reacted" magnitude.
+LLM fallback (row #134): ``scan(llm=...)`` asks a model only for claims the rules left undecided (``domain.alerts.llm_tier``); without ``llm`` the
+scan is rules-only exactly as before. LLM-judged intents carry ``llm_judged`` + ``llm_confidence`` in their evidence and their own dedup key.
 """
 from __future__ import annotations
 
+import logging
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Callable
@@ -33,6 +37,7 @@ from pulse.adapters.postgres._canon import sha256_of
 from pulse.adapters.postgres.outbox import PgOutbox
 from pulse.application import ops_service
 from pulse.application.ports.delivery import OutboxEvent
+from pulse.domain.alerts import llm_tier as LT
 from pulse.domain.alerts import tiers as T
 
 SCOPE_KINDS = ("news_tier", "instrument", "sector")
@@ -299,14 +304,14 @@ def _rule_index(rules: list[dict]) -> dict[str, list[dict]]:
 
 
 def _new_intent(conn: psycopg.Connection, principal: UUID, rule: dict, hit: T.TierHit, claim: T.ClaimView, names: dict, now: datetime,
-                tier_label: str, target: str) -> UUID | None:
-    key = T.dedup_key(tier_label, claim, target)
+                tier_label: str, target: str, llm: LT.Judgement | None = None) -> UUID | None:
+    key = T.dedup_key(tier_label, claim, target, LT.POLICY_VERSION if llm else T.POLICY_VERSION)
     if conn.execute("SELECT 1 FROM notification.alert_intent WHERE principal_id=%s AND dedup_key=%s", (principal, key)).fetchone():
         return None
     prefix = key.rsplit(":", 1)[0] + ":"
     prev = conn.execute("SELECT alert_id FROM notification.alert_intent WHERE principal_id=%s AND dedup_key LIKE %s ORDER BY raised_at DESC LIMIT 1",
                         (principal, prefix.replace("%", r"\%").replace("_", r"\_") + "%")).fetchone()
-    body = T.evidence_body(hit, claim, rule_id=str(rule["rule_id"]), names=names)
+    body = T.evidence_body(hit, claim, rule_id=str(rule["rule_id"]), names=names, extra=LT.llm_evidence(llm, hit) if llm else None)
     body["tier"] = tier_label
     art = ops_service.put_artifact(conn, kind="alert-evidence", contract_id=EVIDENCE_CONTRACT, schema_version=EVIDENCE_VERSION, body=body, owner=principal)
     alert_id = uuid.uuid5(DEST_NS, f"{principal}|{key}")
@@ -331,9 +336,54 @@ def _new_intent(conn: psycopg.Connection, principal: UUID, rule: dict, hit: T.Ti
     return alert_id
 
 
+def _emit(conn: psycopg.Connection, principal: UUID, tier_rules: dict, hit: T.TierHit, claim: T.ClaimView, names: dict, now: datetime,
+          avail: datetime, judged: LT.Judgement | None, summary: dict) -> None:
+    rule = tier_rules.get(hit.tier)
+    if rule is None or avail < rule["updated_at"]:
+        return
+    target = ",".join(hit.instrument_ids or hit.industries)
+    with conn.transaction():
+        if _new_intent(conn, principal, rule, hit, claim, names, now, hit.tier, target, judged):
+            summary["intents"] += 1
+            if judged is not None:
+                summary["llm_intents"] = summary.get("llm_intents", 0) + 1
+
+
+def _has_rule_alert(conn: psycopg.Connection, principal: UUID, claim_id: str) -> bool:
+    """The user already got a rules-made alert (tier, instrument or sector rule) for this claim: the model is not asked for them."""
+    return conn.execute(
+        "SELECT 1 FROM notification.alert_intent i JOIN intelligence.claim_revision c ON c.claim_revision_id = i.source_claim_revision_id"
+        " WHERE i.principal_id=%s AND c.claim_id=%s AND i.dedup_key NOT LIKE %s LIMIT 1", (principal, UUID(claim_id), LT.POLICY_VERSION + ":%")).fetchone() is not None
+
+
+def _llm_pass(conn: psycopg.Connection, llm, deferred: list, names: dict, now: datetime, summary: dict) -> datetime | None:
+    """The LLM fallback for the claims the rules left undecided, after all rule alerts of this scan are committed. A failure of the
+    fallback is counted and skipped: it can never break the rule path. Returns the availability of the first claim not reached when
+    the pass ran out of its time budget (the cursor must not pass it), else None."""
+    deadline = time.monotonic() + llm.budget_seconds
+    for avail, c, p, ctx, tier_rules in sorted(deferred, key=lambda d: (d[0], d[1].claim_id)):
+        if time.monotonic() >= deadline:
+            return avail
+        try:
+            if _has_rule_alert(conn, p, c.claim_id):                       # a rule alert for this message wins: no paid call for this user
+                continue
+            judged = llm.judge(conn, c, names, now)                         # one question per message, ever
+            if judged is None:
+                continue
+            for hit in LT.decide_llm(c, ctx, judged):
+                _emit(conn, p, tier_rules, hit, c, names, now, avail, judged, summary)
+        except Exception as exc:                                            # never the class message: it may echo anything
+            summary["llm_errors"] = summary.get("llm_errors", 0) + 1
+            logging.getLogger("pulse.alerts").warning("alert llm fallback failed for one claim (%s)", type(exc).__name__)
+    return None
+
+
 def scan(conn: psycopg.Connection, now: datetime | None = None, *, principals: list[UUID] | None = None, since: datetime | None = None,
-         until: datetime | None = None, limit_principals: int = 100) -> dict:
-    """Turn new news claims into alert intents for every user with enabled rules. Idempotent."""
+         until: datetime | None = None, limit_principals: int = 100, llm=None) -> dict:
+    """Turn new news claims into alert intents for every user with enabled rules. Idempotent.
+
+    ``llm`` (an ``alert_llm_service.AlertFallback``) adds the LLM fallback for claims the rules left undecided; ``None`` = rules only,
+    and then the result and every written row are exactly what they were before the fallback existed."""
     now = now or ops_service.now_utc()
     cur = conn.execute("SELECT last_available_at FROM notification.scan_cursor WHERE cursor_name=%s", (SCAN_CURSOR,)).fetchone()
     start = since or (cur["last_available_at"] if cur else now - timedelta(hours=6))
@@ -344,6 +394,7 @@ def scan(conn: psycopg.Connection, now: datetime | None = None, *, principals: l
             "SELECT DISTINCT principal_id FROM notification.alert_rule_head LIMIT %s", (limit_principals,))]
     names_needed = {i for c in claims for i in c.instrument_ids}
     names = _names(conn, names_needed)
+    deferred: list[tuple[datetime, T.ClaimView, UUID, T.Context, dict]] = []
     for p in principals:
         rules = current_rules(conn, p)
         idx = _rule_index(rules)
@@ -357,14 +408,11 @@ def scan(conn: psycopg.Connection, now: datetime | None = None, *, principals: l
                 summary["skipped_backfill"] += 1
                 continue
             avail = datetime.fromisoformat(c.available_at)
-            for hit in T.decide(c, ctx):
-                rule = tier_rules.get(hit.tier)
-                if rule is None or avail < rule["updated_at"]:
-                    continue
-                target = ",".join(hit.instrument_ids or hit.industries)
-                with conn.transaction():
-                    if _new_intent(conn, p, rule, hit, c, names, now, hit.tier, target):
-                        summary["intents"] += 1
+            rule_hits = T.decide(c, ctx)
+            for hit in rule_hits:
+                _emit(conn, p, tier_rules, hit, c, names, now, avail, None, summary)
+            if llm is not None and LT.is_undecided(c, ctx, rule_hits) and any(avail >= r["updated_at"] for r in tier_rules.values()):
+                deferred.append((avail, c, p, ctx, tier_rules))           # the LLM pass comes after every rule alert is committed
             for kind, scope_hit in (("instrument", lambda r, c=c: r["body"]["scope"]["scope_key"] in c.instrument_ids),
                                     ("sector", lambda r, c=c: _sector_matches(conn, r["body"]["scope"]["scope_key"], c))):
                 for rule in idx[kind]:
@@ -374,11 +422,17 @@ def scan(conn: psycopg.Connection, now: datetime | None = None, *, principals: l
                     with conn.transaction():
                         if _new_intent(conn, p, rule, hit, c, names, now, "RULE", rule["body"]["scope"]["scope_key"]):
                             summary["intents"] += 1
+    resume = _llm_pass(conn, llm, deferred, names, now, summary) if llm is not None else None
     if claims:
         newest = max(datetime.fromisoformat(c.available_at) for c in claims)
+        if resume is not None:                                            # the pass ran out of time: the next scan starts at the first unasked claim
+            newest = min(newest, resume - timedelta(microseconds=1))
+            summary["llm_resume_at"] = resume.isoformat()
         conn.execute("INSERT INTO notification.scan_cursor(cursor_name, last_available_at, updated_at) VALUES (%s,%s,%s)"
                      " ON CONFLICT (cursor_name) DO UPDATE SET last_available_at=GREATEST(notification.scan_cursor.last_available_at, EXCLUDED.last_available_at), updated_at=EXCLUDED.updated_at",
                      (SCAN_CURSOR, newest, now))
+    if llm is not None:
+        summary["llm"] = llm.summary(conn, now)
     return summary
 
 

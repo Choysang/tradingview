@@ -55,4 +55,9 @@ if ($imported) { $null = Step 'fundflow' @('-m', 'pulse.workers.intel', 'fundflo
 if ($imported) { $null = Step 'fusion-daily' @('-m', 'pulse.workers.fusion', 'daily') }
 # Factor series (#37/#80) for completed factor experiments that lack one; executed by Pulse3Jobs.
 $null = Step 'fillr-factor-series' @('-m', 'pulse.workers.fillr', 'enqueue-factor-series')
+# E092 live web-search LLM judgement (paid, pre-registered; caps and the 20-day stop are in the worker). Needs the fusion scores of today, so it runs after fusion-daily; asks nothing unless the switch file C:\pulse3\var\llm_live.enabled exists.
+$day = $cst.ToString('yyyy-MM-dd')   # the China-time trading day of this run ($cst above), as run_fwdlog.ps1 passes it
+if ($imported) { $null = Step 'llm-live-decide' @('-m', 'pulse.workers.llm_live', 'decide', '--date', $day) }
+# E092 outcomes: score the answers whose 5-day window has closed (append-only; nothing to do on most days).
+if ($imported) { $null = Step 'llm-live-track' @('-m', 'pulse.workers.llm_live', 'track', '--today', $day) }
 Add-Content $log "== $(Get-Date -Format s) done ok=$ok"

@@ -10,7 +10,7 @@ Invariants: pure and deterministic; a tier needs a NAMED subject (P0/P2) or a ke
 versioned table ``alert-industry-map-v1`` (P1) - a sector keyword alone never names a company; the verification status
 is carried into the evidence (an ``unverified`` claim still alerts, but says so); the dedup key contains the content
 version so a status change is a new, superseding intent while a re-scan of the same content is a no-op.
-Not covered: LLM fallback judgement (the optional model port of I3 stays upstream), delivery.
+Not covered: delivery. The LLM fallback for undecided claims is ``domain.alerts.llm_tier`` (``decide`` itself stays rules-only).
 """
 from __future__ import annotations
 
@@ -127,14 +127,16 @@ def content_version(claim: ClaimView) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
 
 
-def dedup_key(tier: str, claim: ClaimView, target: str) -> str:
-    return f"{POLICY_VERSION}:{tier}:{claim.claim_id}:{target}:{content_version(claim)}"
+def dedup_key(tier: str, claim: ClaimView, target: str, policy_version: str = POLICY_VERSION) -> str:
+    return f"{policy_version}:{tier}:{claim.claim_id}:{target}:{content_version(claim)}"
 
 
-def evidence_body(hit: TierHit, claim: ClaimView, *, rule_id: str, names: dict[str, dict] | None = None) -> dict:
-    """Immutable body of the alert's evidence artifact (contract ``pulse.ext_c.alert_evidence@1``)."""
+def evidence_body(hit: TierHit, claim: ClaimView, *, rule_id: str, names: dict[str, dict] | None = None, extra: dict | None = None) -> dict:
+    """Immutable body of the alert's evidence artifact (contract ``pulse.ext_c.alert_evidence@1``).
+
+    ``extra`` (LLM-judged alerts only, see ``llm_tier.llm_evidence``) overrides and adds keys; a rule alert passes none."""
     names = names or {}
-    return {
+    body = {
         "tier": hit.tier, "headline": claim.headline, "category": claim.category,
         "direction": "negative" if claim.polarity == NEGATIVE else ("positive" if claim.polarity == POSITIVE else "unclear"),
         "reason": hit.reason, "policy_version": POLICY_VERSION, "rule_id": rule_id,
@@ -147,3 +149,4 @@ def evidence_body(hit: TierHit, claim: ClaimView, *, rule_id: str, names: dict[s
         "available_at": claim.available_at, "event_time": claim.event_time, "trigger": hit.trigger,
         "already_reacted": None,          # price reaction since publication is not computed (no intraday source): stays null
     }
+    return {**body, **extra} if extra else body

@@ -12,7 +12,8 @@ Invariants:
   the slot is always ``main`` and the legacy warehouse path comes from the server environment, never from a request;
 * the manifest lists every ``core.api_binding`` row (core v3 + extension contract) enriched from the shipped contract files,
   plus the backfill routes actually mounted under ``/v1/x/bf/`` and ``/llms.txt``; nothing is hand-listed.
-Not covered: the MCP server (deferred, see docs/LEGACY_TRIAGE.md), per-operation request schemas in the manifest.
+The MCP endpoint (``/mcp``, #65) is generated from this same manifest by ``agent_access``; llms.txt marks its tools ``[mcp]``.
+Not covered: per-operation request schemas in the manifest.
 """
 from __future__ import annotations
 
@@ -24,7 +25,7 @@ import psycopg
 
 from pulse import config, contracts
 from pulse.application import bindings as B
-from pulse.application import ops_service
+from pulse.application import agent_access, ops_service
 
 ALLOWED_JOB_PARAMS = {"as_of", "top_n", "availability"}
 BF_PREFIX = "/v1/x/bf/"
@@ -185,7 +186,7 @@ def build_manifest(conn: psycopg.Connection, openapi_paths: dict) -> dict:
             "generated_from": {"core_api_binding_rows": n_bound, "mounted_backfill_routes": len(bf)}, "operations": ops}
 
 
-def render_llms_txt(manifest: dict, *, manifest_path: str = BF_PREFIX + "ops/manifest") -> str:
+def render_llms_txt(manifest: dict, *, manifest_path: str = BF_PREFIX + "ops/manifest", mcp_path: str = "/mcp") -> str:
     """Plain-text description for agents (llms.txt convention): conventions first, then every operation."""
     lines = [
         "# Pulse3", "",
@@ -194,7 +195,9 @@ def render_llms_txt(manifest: dict, *, manifest_path: str = BF_PREFIX + "ops/man
         "- Every JSON response is an envelope {meta, data}; failures are {meta, error:{code,message,retryable,field_errors}}.",
         "- Money, prices and ratios are decimal strings; missing values are null (never 0); instants are UTC strings ending in Z.",
         "- Sessions use the cookie `pulse_session`; commands (POST) need an `Idempotency-Key` header; the same key replays the first answer.",
-        f"- Machine-readable list of all operations: GET {manifest_path} (JSON, contract-checked).", "",
+        f"- Machine-readable list of all operations: GET {manifest_path} (JSON, contract-checked).",
+        f"- MCP: POST {mcp_path} (JSON-RPC 2.0, streamable HTTP, stateless). Read-only: each operation marked [mcp] below is one tool of the"
+        " same name and returns the same envelope; calls use the same session cookie rules as REST.", "",
         "## Operations", "",
     ]
     for source, title in (("core", "Core v3"), ("ext", "Extension"), ("backfill", "Backfill")):
@@ -205,7 +208,8 @@ def render_llms_txt(manifest: dict, *, manifest_path: str = BF_PREFIX + "ops/man
         for o in group:
             summary = (o["summary"] or "").replace("\n", " ").strip()
             lines.append(f"- {o['method']} {o['path']} - {o['operation_id']}" + (f": {summary}" if summary else "") + f" [auth: {o['auth']}]"
-                         + (" [Idempotency-Key]" if o["idempotency_key_required"] else ""))
+                         + (" [Idempotency-Key]" if o["idempotency_key_required"] else "")
+                         + (" [mcp]" if o["method"] == "GET" and o["operation_id"] in agent_access.TOOL_GROUP else ""))
         lines.append("")
     return "\n".join(lines)
 
