@@ -21,13 +21,16 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from pulse.adapters.models.model_guard import ModelNotAllowed, require_allowed
 from pulse.adapters.models.responses_client import CallFailed, CallStop, KeyProblem, Reply
 from pulse.application import frozen_specs as FS
 from pulse.application.bf_llm_live_store import LogStore, make_row
+from pulse.domain.llm_live import experiments as X
 from pulse.domain.llm_live import judge as J
 from pulse.domain.llm_live import rules as R
 
 WORKERS = 4
+PROBE_LIMIT = 3                     # cost-probe calls in all, per experiment
 TRACK_HORIZON = 6                    # decision day D buys at the D+1 open and sells at the D+6 open: the window is closed once the D+6 bar exists
 
 
@@ -57,12 +60,13 @@ LabelLoader = Callable[[Sequence[date]], dict[date, dict[str, tuple[float | None
 KeyLoader = Callable[[], str]
 
 
-SPEC_FILE = "2026-11-09-e092-llm-live-preregistration.md"
+SPEC_FILE = X.E092.spec_file                     # kept for callers of the first version
 
 
-def check_document(specs_dir: Path | None = None, repo_root: Path | None = None) -> str:
-    """Verify the frozen pre-registration shipped with the app (``pulse/research_specs``); raises ``FrozenSpecError`` when it is missing or differs. Never returns None."""
-    return FS.verify(SPEC_FILE, R.SPEC_SHA256, R.frozen_hash, repo_path=R.SPEC_PATH, specs_dir=specs_dir, repo_root=repo_root)
+def check_document(exp: X.Experiment | None = None, specs_dir: Path | None = None, repo_root: Path | None = None) -> str:
+    """Verify the frozen pre-registration of ``exp`` (default E100) shipped with the app (``pulse/research_specs``); raises ``FrozenSpecError`` when it is missing or differs. Never returns None."""
+    exp = exp or X.E100
+    return FS.verify(exp.spec_file, exp.spec_sha256, exp.frozen_hash, repo_path=exp.spec_path, specs_dir=specs_dir, repo_root=repo_root)
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -138,9 +142,14 @@ class _Gate:
                 return None
             n = used + 1
             try:
+                require_allowed(self.s.exp.model)                 # a model outside the allow-list never reaches the ledger or the network
+            except ModelNotAllowed:
+                self._halt("model_not_allowed")
+                return None
+            try:
                 self.s.store.append([self._row("call", job["id"], {"n": n, "id": job["id"], "attempt": attempt, "prompt_sha256": job["prompt_sha256"],
-                                                                  "model": R.LIVE_MODEL, "effort": R.LIVE_EFFORT,
-                                                                  "max_output_tokens": self.s.max_output_tokens})])
+                                                                  "model": self.s.exp.model, "effort": self.s.exp.effort,
+                                                                  "service_tier": self.s.exp.service_tier, "max_output_tokens": self.s.max_output_tokens})])
             except Exception:                                     # noqa: BLE001 - no ledger row, no request
                 self._halt("ledger_error")
                 return None
@@ -154,7 +163,8 @@ class _Gate:
     def answer(self, n: int, job: dict, reply: Reply, verdict: dict) -> None:
         with self.lock:
             done = self.s.clock()
-            body = {"id": job["id"], "code": job["code"], "group": job["group"], "score": job["score"], "call_n": n, "model": R.LIVE_MODEL, "effort": R.LIVE_EFFORT,
+            body = {"id": job["id"], "code": job["code"], "group": job["group"], "score": job["score"], "call_n": n, "model": self.s.exp.model, "effort": self.s.exp.effort,
+                    "service_tier": self.s.exp.service_tier,
                     "prompt_sha256": job["prompt_sha256"], "response_id": reply.response_id, "request_id": reply.request_id, "usage": reply.usage, "searches": reply.searches,
                     "cost_usd": self._cost(reply), "prices": self.s.prices.__dict__, "status": reply.status, "seconds": reply.seconds, "raw_text": reply.text,
                     "action": verdict["action"], "p_outperform": verdict["p_outperform"], "expected_excess_pct": verdict.get("expected_excess_pct"),
@@ -191,7 +201,7 @@ class LlmLive:
     def __init__(self, store: LogStore, *, context: ContextLoader, labels: LabelLoader, key_loader: KeyLoader, client_factory: Callable[[str], Any],
                  prices: R.Prices | None = None, cap_usd: float = R.DEFAULT_DAILY_CAP_USD, clock: Callable[[], datetime] | None = None,
                  sleep: Callable[[float], None] | None = None, switch_on: Callable[[], bool] = lambda: True, register: Callable[[datetime], None] | None = None,
-                 workers: int = WORKERS, max_output_tokens: int = R.DEFAULT_MAX_OUTPUT_TOKENS):
+                 workers: int = WORKERS, max_output_tokens: int = R.DEFAULT_MAX_OUTPUT_TOKENS, experiment: X.Experiment = X.E100):
         self.store, self.context, self.labels = store, context, labels
         self.key_loader, self.client_factory = key_loader, client_factory
         self.prices = prices or R.Prices()
@@ -199,6 +209,7 @@ class LlmLive:
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         self.switch_on, self.register, self.workers = switch_on, register, workers
         self.max_output_tokens = max_output_tokens
+        self.exp = experiment
         self.run_id = uuid.uuid4().hex[:12]
 
     def today(self) -> date:
@@ -211,8 +222,14 @@ class LlmLive:
         not_after = R.deadline_after(day)
 
         def out(status: str, **kw: Any) -> dict:
-            return {"status": status, "decision_date": iso, "not_after": not_after.isoformat(), **kw}
+            return {"status": status, "experiment": self.exp.key, "decision_date": iso, "not_after": not_after.isoformat(), **kw}
 
+        if self.exp.closed:
+            return out("closed", detail=self.exp.closed)
+        try:
+            require_allowed(self.exp.model)
+        except ModelNotAllowed as exc:                            # before the key, the lock, the universe, any row or any request
+            return out("model_not_allowed", detail=str(exc))
         if self.clock() >= not_after:
             return out("late")
         if self.cap_usd <= 0:
@@ -273,12 +290,11 @@ class LlmLive:
                 summary["run_row"] = "not written"
             return summary
 
-    @staticmethod
-    def _day_body(plan: DayPlan, not_after: datetime) -> dict:
+    def _day_body(self, plan: DayPlan, not_after: datetime) -> dict:
         system = R.system_text(plan.day)
         jobs = [{**j, "prompt_sha256": R.prompt_sha256(system, j["prompt"])} for j in plan.jobs]
-        return {"decision_date": plan.day.isoformat(), "not_after": not_after.isoformat(), "model": R.LIVE_MODEL, "effort": R.LIVE_EFFORT, "system": system,
-                "market": plan.market, "jobs": jobs, "refs": plan.refs, "notes": plan.notes, "spec_sha256": R.SPEC_SHA256}
+        return {"decision_date": plan.day.isoformat(), "not_after": not_after.isoformat(), "model": self.exp.model, "effort": self.exp.effort, "system": system,
+                "market": plan.market, "jobs": jobs, "refs": plan.refs, "notes": plan.notes, "spec_sha256": self.exp.spec_sha256, "experiment": self.exp.key}
 
     @staticmethod
     def _plan_from_row(day: date, body: dict) -> DayPlan:
@@ -294,7 +310,8 @@ class LlmLive:
                 if n is None:
                     return
                 try:
-                    reply = client.ask(job["prompt"], model=R.LIVE_MODEL, effort=R.LIVE_EFFORT, system=system, max_output_tokens=self.max_output_tokens)
+                    reply = client.ask(job["prompt"], model=self.exp.model, effort=self.exp.effort, system=system, max_output_tokens=self.max_output_tokens,
+                                      service_tier=self.exp.service_tier)
                 except CallStop as exc:
                     gate.halt(exc.reason, exc.detail)
                     gate.fail(n, job, exc.reason, exc.reply)
@@ -317,6 +334,108 @@ class LlmLive:
 
         with ThreadPoolExecutor(self.workers) as pool:
             list(pool.map(one, jobs))
+
+    # -- probe -----------------------------------------------------------------------------------------------------
+    def probe_status(self, rows: Sequence[Mapping]) -> dict:
+        ledger = _of([r for r in rows if r["body"].get("phase") == "ledger"], "probe")
+        done = [r["body"] for r in rows if r["kind"] == "probe" and r["body"].get("phase") == "result"]
+        return {"calls": len(ledger), "limit": PROBE_LIMIT, "results": len(done), "cost_usd": round(sum(d["cost_usd"] for d in done if d.get("cost_usd") is not None), 6)}
+
+    def probe(self, day: date, n: int = PROBE_LIMIT, *, allow: bool = False) -> dict:
+        """At most ``PROBE_LIMIT`` real calls in all, from ``day``'s candidate list, to measure the cost of a 40-name day before go-live. Rows are ``probe`` rows (ledger first, result after);
+        they never count toward the request cap, the decision days, the spend cap or the score. Needs ``allow`` (``--allow-probe``): the probe runs BEFORE the switch file is created."""
+        iso = day.isoformat()
+
+        def out(status: str, **kw: Any) -> dict:
+            return {"status": status, "experiment": self.exp.key, "decision_date": iso, **kw}
+
+        if self.exp.closed:
+            return out("closed", detail=self.exp.closed)
+        try:
+            require_allowed(self.exp.model)
+        except ModelNotAllowed as exc:
+            return out("model_not_allowed", detail=str(exc))
+        if not 1 <= n <= PROBE_LIMIT:
+            return out("bad_n", detail=f"n must be 1..{PROBE_LIMIT}")
+        try:
+            key = self.key_loader()
+        except KeyProblem as exc:
+            return out(exc.code)
+        with self.store.exclusive() as held:
+            if not held:
+                return out("busy")
+            self.store.refresh()
+            rows = self.store.rows()
+            have = self.probe_status(rows)["calls"]
+            if have >= PROBE_LIMIT:
+                return out("probe_done", probe=self.probe_status(rows))
+            if have + n > PROBE_LIMIT:
+                return out("probe_limit", detail=f"{have} probe calls exist; {n} more would pass {PROBE_LIMIT}", probe=self.probe_status(rows))
+            try:
+                plan = self.context(day)
+            except ContextMissing as exc:
+                return out("not_ready", code=exc.code, detail=exc.detail)
+            picks = plan.jobs[:: max(1, len(plan.jobs) // n)][:n]       # evenly spread over the day's list (top and control names)
+            if not allow:
+                return out("probe_not_allowed", detail="pass --allow-probe to send the probe calls", would_ask=[j["id"] for j in picks], probe=self.probe_status(rows))
+            client = self.client_factory(key)
+            system = R.system_text(day)
+            asked = []
+            for job in picks:
+                call_no = self.probe_status(self.store.rows())["calls"] + 1
+                base = {"n": call_no, "id": job["id"], "model": self.exp.model, "effort": self.exp.effort, "service_tier": self.exp.service_tier,
+                        "max_output_tokens": self.max_output_tokens, "prompt_sha256": R.prompt_sha256(system, job["prompt"])}
+                try:
+                    require_allowed(self.exp.model)
+                    self.store.append([make_row(iso, "probe", job["id"], self.run_id, {**base, "phase": "ledger"}, at=self.clock())])       # ledger first
+                except Exception as exc:                 # noqa: BLE001 - no ledger row, no request
+                    asked.append({"id": job["id"], "status": f"ledger_error_{type(exc).__name__}"})
+                    break
+                res: dict = {**base, "phase": "result"}
+                stop = False
+                try:
+                    reply = client.ask(job["prompt"], model=self.exp.model, effort=self.exp.effort, system=system, max_output_tokens=self.max_output_tokens,
+                                       service_tier=self.exp.service_tier)
+                except CallStop as exc:
+                    stop = True
+                    reply, res["label"] = exc.reply, exc.reason
+                    res["detail"] = exc.detail or None
+                except CallFailed as exc:
+                    reply, res["label"] = exc.reply, exc.label
+                except Exception as exc:                                    # noqa: BLE001 - class name only
+                    reply, res["label"] = None, type(exc).__name__
+                if reply is not None:
+                    cost = R.estimate_cost(reply.usage, reply.searches, self.prices)
+                    res.update(usage=reply.usage, searches=reply.searches, response_id=reply.response_id, request_id=reply.request_id, status=reply.status,
+                               seconds=reply.seconds, raw_text=reply.text, cost_usd=cost)
+                    try:
+                        R.parse_verdict(reply.text)
+                        res["parsed"] = True
+                    except ValueError:
+                        res["parsed"] = False
+                elif "label" in res:
+                    res["cost_usd"] = R.failure_cost(res["label"], None)
+                try:
+                    self.store.append([make_row(iso, "probe", job["id"], self.run_id, res, at=self.clock())])
+                except Exception:                                           # noqa: BLE001 - the ledger row stays; the figures are in the summary below
+                    res["result_row"] = "not written"
+                asked.append({"id": job["id"], "label": res.get("label"), "usage": res.get("usage"), "searches": res.get("searches"), "cost_usd": res.get("cost_usd"), "parsed": res.get("parsed")})
+                if stop:
+                    break
+            figures = self.probe_estimate(self.store.rows())
+            return out("probed" if all(a.get("label") is None for a in asked) and asked else "probe_partial", per_call=asked, **figures, probe=self.probe_status(self.store.rows()))
+
+    def probe_estimate(self, rows: Sequence[Mapping]) -> dict:
+        """The cost of a ``MAX_JOBS``-name day from the probe results that reported usage, at the configured prices, against the daily cap."""
+        done = [r["body"] for r in rows if r["kind"] == "probe" and r["body"].get("phase") == "result" and r["body"].get("cost_usd")]
+        if not done:
+            return {"estimate_day_usd": None}
+        mean = sum(d["cost_usd"] for d in done) / len(done)
+        mean_in = sum((d.get("usage") or {}).get("input_tokens", 0) for d in done) / len(done)
+        mean_out = sum((d.get("usage") or {}).get("output_tokens", 0) for d in done) / len(done)
+        est = round(mean * R.MAX_JOBS, 4)
+        return {"estimate_day_usd": est, "mean_call_usd": round(mean, 6), "mean_input_tokens": round(mean_in), "mean_output_tokens": round(mean_out), "cap_usd": self.cap_usd,
+                "within_cap": est <= self.cap_usd, "prices": self.prices.__dict__, "prices_are_placeholders": "confirm the model's prices (PULSE_LLM_PRICE_*_GPT_6_LUNA) before relying on this"}
 
     # -- track -----------------------------------------------------------------------------------------------------
     def track(self, today: date | None = None) -> dict:
@@ -377,8 +496,8 @@ class LlmLive:
             if not (ev["ready"] or limit_reached):
                 return {"status": "progress", "evaluation": ev, "progress": prog,
                         "reason": f"{ev['days']}/{J.MIN_DAYS} days with a rank correlation; {prog['decision_days']}/{R.MAX_DECISION_DAYS} decision days started"}
-            body = {**ev, "decision_days": prog["decision_days"], "spec_sha256": R.SPEC_SHA256, "decided_at": self.clock().isoformat(timespec="seconds")}
-            self.store.append([make_row(R.EXPERIMENT, "judgement", R.EXPERIMENT, self.run_id, body, at=self.clock())])
+            body = {**ev, "decision_days": prog["decision_days"], "spec_sha256": self.exp.spec_sha256, "experiment": self.exp.key, "decided_at": self.clock().isoformat(timespec="seconds")}
+            self.store.append([make_row(self.exp.key, "judgement", self.exp.key, self.run_id, body, at=self.clock())])
             return {"status": "judged", "stored": False, "evaluation": body, "progress": prog}
 
     def status(self) -> dict:
@@ -387,6 +506,6 @@ class LlmLive:
         today = self.today().isoformat()
         spent, unresolved = R.day_spend(rows, today, self.prices)
         stops = {r["session"]: r["body"]["reason"] for r in _of(rows, "stop")}
-        return {"spec_sha256": R.SPEC_SHA256, "model": R.LIVE_MODEL, "effort": R.LIVE_EFFORT, "today": today, "switch_on": self.switch_on(), "cap_usd": self.cap_usd,
+        return {"experiment": self.exp.key, "closed": self.exp.closed, "spec_sha256": self.exp.spec_sha256, "model": self.exp.model, "effort": self.exp.effort, "today": today, "switch_on": self.switch_on(), "cap_usd": self.cap_usd,
                 "calls_today": len(_of(rows, "call", today)), "calls_cap": R.MAX_CALLS, "spent_today_usd": round(spent, 4), "unresolved_calls_today": unresolved,
-                "stops": stops, "judgement": (_of(rows, "judgement") or [{"body": None}])[0]["body"], **self.progress(rows)}
+                "stops": stops, "probe": self.probe_status(rows), "judgement": (_of(rows, "judgement") or [{"body": None}])[0]["body"], **self.progress(rows)}

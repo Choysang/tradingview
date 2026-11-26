@@ -11,7 +11,8 @@ keep their existing ids: ``IntelligenceService`` already registers them and the 
 declared a second time.
 Invariants: ``register`` only declares specs; it never opens a connection; cadence and breaker numbers below are the old
 recorder's (``backend/app/warehouse/news.py``): Tonghuashun every 10 s, Eastmoney and CLS every 30 s, day window 08:00-22:00,
-3 consecutive bad answers stop that feed for the day. Here a block (403/429/456/501) stops that host at once, without a retry.
+3 consecutive unusable answers stop that feed for the day. Here a block (403/429/456/501, or an HTML page for data) stops that host at once,
+without a retry, while a transport failure only backs off (TRANSIENT_* below).
 Not covered: the guba follow-up fetches and ``watch.json`` of the old recorder (guba is the community lane's, ``watch.json``
 feeds the old intraday recorder only).
 """
@@ -28,7 +29,20 @@ RAW_FORMAT = "legacy-news-revision-v1"  # the lossless per-revision raw object k
 #: origin ids, identical to the old recorder's ``source_id`` column, so ``source_record_id`` (``<origin>:<item id>``) matches
 ORIGIN_THS, ORIGIN_EM, ORIGIN_CLS = "ths.724", "em.724", "cls.telegraph"
 POLL_EVERY_SECONDS = {ORIGIN_THS: 10, ORIGIN_EM: 30, ORIGIN_CLS: 30}
-BREAK_AFTER = 3  # consecutive bad answers (HTML, vendor error, 5xx, timeout) that stop a feed for the day
+BREAK_AFTER = 3  # consecutive unusable ANSWERS (vendor error, unparsable JSON) that stop a feed for the day (the old recorder's breaker)
+# Transport failures (ConnectTimeout, ReadTimeout, reset, 5xx) are not blocks. The old recorder counted them toward BREAK_AFTER with an 8 s
+# timeout, so about a minute of network trouble ended a feed for the day; on 2026-11-23 three ConnectTimeouts of ~20 s each ended ths.724 at
+# 13:22 and em.724 at 13:59 for the rest of the day. Now such a feed backs off (its own cadence x 2^(n-1): ths 10 20 40 80 160 180 ..., em/cls
+# 30 60 120 180 180 ...; per-host pacing stays >= 1 s) and is given up for the day only after a long unbroken failure window.
+# Cap and window, from the 2026-11-24 raw files on the server: the busiest 5 minutes of the day first-saw 34 (ths), 35 (em) and 26 (cls) items,
+# i.e. at most ~7 / ~7 / ~5 per minute, and one page holds 30 / 30 / 20 items. A gap of G seconds loses nothing while 7 * G/60 stays under the page,
+# so the cap is 180 s (21 / 21 / 15 items worst case; 5 min would not hold for CLS). Late items are still recorded, with the later receipt time.
+TRANSIENT_BACKOFF_MAX_SECONDS = 180
+# 60 min of unbroken failure before a feed is given up for the day (a judgement, not a measurement: every run of 1-2 failures on 2026-11-23 and
+# 24 recovered on the next poll, and the three runs of 3 were never observed to end because the recorder stopped them). It equals the health
+# module's blocked cool-down (3600 s), outlasts any plausible handshake/route glitch, and is cheap: about 23 probes (ths) / 22 (em, cls) in
+# that hour, versus 360 / 120 requests in a normal hour, never above 1 request/s per host.
+TRANSIENT_GIVE_UP_SECONDS = 3600
 STOP_AT = "22:00"  # the old scheduled task started at 08:00 and the process stopped at 22:00 Asia/Shanghai
 START_AT = "08:00"
 

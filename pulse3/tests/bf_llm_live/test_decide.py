@@ -9,6 +9,7 @@ import pytest
 from pulse.application.bf_llm_live_service import ContextMissing
 from pulse.application.bf_llm_live_store import MemoryLogStore, make_row
 from pulse.adapters.models.responses_client import KeyProblem
+from pulse.domain.llm_live import experiments as X
 from pulse.domain.llm_live import rules as R
 from bf_llm_live.support import DAY, EVENING, KEY, Clock, Recorder, build, kinds, plan, reply
 
@@ -19,15 +20,15 @@ def test_a_full_day_stores_one_answer_per_name_with_everything_needed_to_audit_i
     svc, store, vendor, _ = build()
     out = svc.decide(DAY)
     assert out["status"] == "done" and out["asked"] == 40 and out["calls"] == 40 and len(vendor.requests) == 40
-    assert all(vendor.auth_ok) and all(r["model"] == "gpt-6.1-terra" and r["reasoning"] == {"effort": "high"} and r["tools"] == [{"type": "web_search"}] for r in vendor.requests)
+    assert all(vendor.auth_ok) and all(r["model"] == "gpt-6-luna" and r["reasoning"] == {"effort": "high"} and r["tools"] == [{"type": "web_search"}] for r in vendor.requests)
     assert len(kinds(store, "day")) == 1 and len(kinds(store, "call")) == 40 and len(kinds(store, "answer")) == 40 and len(kinds(store, "run")) == 1
     a = kinds(store, "answer")[0]["body"]
-    assert a["model"] == "gpt-6.1-terra" and a["effort"] == "high" and len(a["prompt_sha256"]) == 64 and a["request_id"].startswith("req-r") and a["response_id"].startswith("r")
+    assert a["model"] == "gpt-6-luna" and a["effort"] == "high" and len(a["prompt_sha256"]) == 64 and a["request_id"].startswith("req-r") and a["response_id"].startswith("r")
     assert a["usage"] == {"input_tokens": 2000, "output_tokens": 500} and a["searches"] == 2 and a["cost_usd"] == pytest.approx(0.01 + 0.0125 + 0.02)
     assert json.loads(a["raw_text"])["action"] == "watch" and a["valid"] is True and a["available_at"] < a["not_after"] and a["not_after"].startswith("2026-11-24T09:25")
     assert {r["body"]["group"] for r in kinds(store, "answer")} == {"top", "control"}
     day = kinds(store, "day")[0]["body"]
-    assert day["spec_sha256"] == R.SPEC_SHA256 and day["system"].startswith("你是一名经验丰富的 A 股交易员") and "今天是 2026-11-23" in day["system"] and len(day["jobs"]) == 40
+    assert day["spec_sha256"] == X.E100.spec_sha256 and day["experiment"] == "E100" and day["system"].startswith("你是一名经验丰富的 A 股交易员") and "今天是 2026-11-23" in day["system"] and len(day["jobs"]) == 40
 
 
 def test_a_rerun_asks_nothing_and_a_partial_day_asks_only_the_missing_names():

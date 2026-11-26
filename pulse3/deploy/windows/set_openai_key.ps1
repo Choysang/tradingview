@@ -1,7 +1,7 @@
 # Writes the OpenAI key to pulse3's protected folder (#199). Run on the server, for example from the PC:
 #   ssh -t -i <key> <user>@<server> powershell -NoProfile -ExecutionPolicy Bypass -File C:\pulse3\set_openai_key.ps1
 # The key is typed at a hidden prompt, so it never appears in a command line, a history file or a log.
-# Plain UTF-8 without a byte order mark, one line. pulse3_env.ps1 prefers this file over the old C:\pulse copy.
+# Plain UTF-8 without a byte order mark, one line. pulse3_env.ps1 reads this file (no fallback to the old install any more).
 param([string]$Path = 'C:\pulse3\secrets\openai.key')
 
 $ErrorActionPreference = 'Stop'

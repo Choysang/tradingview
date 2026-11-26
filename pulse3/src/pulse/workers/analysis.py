@@ -12,7 +12,10 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.analysis show
 
 Exit codes: 0 ok, 1 failure (release not published; reasons printed), 2 a source blocked us (nothing built), 5 ``actionability``: no fresh native
-recording (<= 3 minutes old), nothing published, never a fallback fetch.
+recording (<= 3 minutes old) while the market is trading, nothing published, never a fallback fetch.
+``actionability`` with no fresh recording is not a failure outside the trading minutes (weekend, holiday, before open, lunch 11:30-13:00, after close)
+nor in the first 3 minutes of a session (the recorder's first board of the session is not published yet): it prints ``market closed: <why>`` /
+``market opening: ...`` on stdout and exits 0, nothing published (``pulse.domain.market_rules.sessions``). A fresh recording is published in any phase.
 ``daily`` fetches increments only for the focus set (plan instruments and holdings) at <= 1 request/s; a full-universe
 raw refresh is the ingest worker's ``live-daily`` over the universe (about 55 minutes at 1 request/s).
 Not covered: scheduling.
@@ -38,6 +41,7 @@ from pulse.application import bindings as B
 from pulse.application import native_quotes as NQ
 from pulse.application.data_service import DataService
 from pulse.application.release_service import BuildConfig, BuildFailed, BuildInProgress, RawCoverageMissing, build_release
+from pulse.domain.market_rules import sessions
 
 
 def parse_as_of(text: str) -> datetime | None:
@@ -191,8 +195,7 @@ def _actionability(a, conn, lake, client, clock=None) -> int:
     try:                                                      # the recording is the only source: no request is made, with or without a recording
         quote = NQ.publish_native_quote_snapshot(svc, wanted=wanted, only_wanted=a.scope == "focus")
     except NQ.NoFreshRecording as exc:
-        print(f"no fresh recording: {exc}; nothing published", file=sys.stderr)
-        return 5
+        return _no_fresh_recording(exc, now())
     series = B.load_raw_series(conn, [r["instrument_id"] for r in ent], datetime.now(B.CST).date(), cur.published_at)
     payload = acct.build_actionability(conn, release_id=cur.release_id, ranking_id=run_row["ranking_id"], account_id=account_id,
                                        quote=quote, raw_series=series, checked_at=datetime.now(timezone.utc))
@@ -202,6 +205,24 @@ def _actionability(a, conn, lake, client, clock=None) -> int:
                       "entries": len(payload["entries"]), "status": dict(Counter(e["actionability_status"] for e in payload["entries"])),
                       "quote_missing": list(quote.missing), "http_requests": client.requests_made}, indent=2))
     return 0
+
+
+def _no_fresh_recording(exc: NQ.NoFreshRecording, now: datetime) -> int:
+    """Exit code of an ``actionability`` run that found no fresh recording at ``now``: 0 when no feed is due, 5 when one is overdue.
+
+    A feed is due only inside a continuous session, and only once the recorder had ``MAX_AGE`` to publish its first board of that session: a run at
+    09:30:00 or 13:00:00 finds only the previous session's recording (older than ``MAX_AGE``), which says nothing about the feed yet. The message goes
+    to stdout when it is not an error: under Windows PowerShell 5.1 anything a native command writes to stderr is wrapped as an error record in the log.
+    """
+    phase = sessions.phase_at(now)
+    if not phase.trading:
+        print(f"market closed: {phase.label}; nothing published ({exc})")
+        return 0
+    if now - phase.session_start < NQ.MAX_AGE:
+        print(f"market opening: the first recording of the {phase.session_start:%H:%M} session is not published yet; nothing published ({exc})")
+        return 0
+    print(f"no fresh recording: {exc}; nothing published", file=sys.stderr)
+    return 5
 
 
 # ==== EXT-A BEGIN: market tape and ranking outcomes (extension group A) ====

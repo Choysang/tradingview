@@ -4,7 +4,6 @@
 # Each command is incremental and idempotent: re-running a day with nothing new publishes nothing. A failed step is logged and the
 # later steps still run (the seal facts need the snapshots, so they are skipped when that step failed).
 . C:\pulse3\pulse3_env.ps1
-if (-not $env:PULSE_LEGACY_DATA) { $env:PULSE_LEGACY_DATA = 'C:\pulse\data' }
 Set-Location "$root\app"
 $py = "$root\app\.venv\Scripts\python.exe"
 $day = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time').ToString('yyyy-MM-dd')

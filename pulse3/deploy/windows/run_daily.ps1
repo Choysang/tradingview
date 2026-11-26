@@ -1,5 +1,5 @@
 # pulse3 after-close pipeline (scheduled task Pulse3Daily, weekdays 18:10 Asia/Shanghai).
-# Order: legacy warehouse increment (old system keeps writing it) -> live raw daily + announcements ->
+# Order: legacy warehouse increment (old system keeps writing it; skipped once it is retired, see $retired) -> live raw daily + announcements ->
 # intelligence (news, claims, seats) -> analysis release. Each step logs and a failure stops the release build,
 # so no new READY release is built on incomplete inputs.
 . C:\pulse3\pulse3_env.ps1
@@ -17,17 +17,32 @@ function Step($name, [string[]]$argv) {
 # 800 calendar days (about 540 sessions): the fusion scorer needs 400 sessions, and 600 days gave only 399 on 2026-11-19
 # (holidays), so the daily run refused with history_too_short (BF_FUSION.md).
 $since = (Get-Date).AddDays(-800).ToString('yyyy-MM-dd')
-$ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
-$imported = $ok   # the fusion scorer needs only the research snapshot, not the release below
-# With the native reference data on (refdata_switch.ps1), the research inputs come from pulse3's own datasets: a failed legacy
-# import is logged but no longer stops the build.
-if ($env:PULSE_REFDATA_SOURCE -eq 'native' -and -not $ok) { Add-Content $log '-- legacy-import failed; native reference data is on, continuing'; $ok = $true; $imported = $true }
+if ($retired) {
+    # The old warehouse is archived (retire_legacy.ps1): there is nothing to import. Research bars, index bars, boards and caps come from
+    # the native datasets that run_refdata.ps1 daily keeps current (weekdays 16:30), and every step below reads them through
+    # PULSE_REFDATA_SOURCE (fusion daily, outcomes, fundflow, the release build). Without 'native' there is no data source at all.
+    if ($env:PULSE_REFDATA_SOURCE -ne 'native') { Add-Content $log '!! the old system is retired but PULSE_REFDATA_SOURCE is not native: no research data source, stopping'; exit 1 }
+    Add-Content $log '-- legacy-import skipped: the old system is retired; research data comes from the native refdata datasets'
+    $rlog = "$root\logs\refdata_daily_$(Get-Date -Format yyyy-MM-dd).log"
+    if (-not (Test-Path $rlog) -or -not (Select-String -Path $rlog -Pattern 'adjusted-refresh exit 0' -Quiet)) {
+        Add-Content $log "!! no successful 'adjusted-refresh' of refdata daily in ${rlog}: today's native research bars may be missing, the results below may rest on the previous session"
+    }
+    $ok = $true
+    $imported = $true
+} else {
+    $ok = Step 'legacy-import' @('-m', 'pulse.workers.ingest', 'legacy-import', '--since', $since)
+    $imported = $ok   # the fusion scorer needs only the research snapshot, not the release below
+    # With the native reference data on (refdata_switch.ps1), the research inputs come from pulse3's own datasets: a failed legacy
+    # import is logged but no longer stops the build.
+    if ($env:PULSE_REFDATA_SOURCE -eq 'native' -and -not $ok) { Add-Content $log '-- legacy-import failed; native reference data is on, continuing'; $ok = $true; $imported = $true }
+}
 # Raw (execution-grade) daily bars for the whole universe: ~3,200 Sina requests at 1 request/s (about an hour).
 # Without them the new research session has no raw closes and the build refuses (RawCoverageMissing).
 if ($ok) { $ok = Step 'live-daily-universe' @('-m', 'pulse.workers.ingest', 'live-daily', '--universe', '--source', 'sina', '--count', '10') }
 if ($ok -and -not $cutover) { $null = Step 'intel-news' @('-m', 'pulse.workers.intel', 'news', '--source', 'both', '--pages', '2') }
-if ($ok) { $null = Step 'intel-claims' @('-m', 'pulse.workers.intel', 'claims') }
-if ($ok) { $null = Step 'intel-seats' @('-m', 'pulse.workers.intel', 'seats', '--days', '2') }
+# Claims and seats do not need the raw bars: on 2026-11-25 a Sina reset (live-daily-universe exit 3) skipped the seats and broke the LHB comparison.
+if ($imported) { $null = Step 'intel-claims' @('-m', 'pulse.workers.intel', 'claims') }
+if ($imported) { $null = Step 'intel-seats' @('-m', 'pulse.workers.intel', 'seats', '--days', '2') }
 if ($ok) { $ok = Step 'analysis-daily' @('-m', 'pulse.workers.analysis', 'daily') }
 # A source timeout (exit 3) on 2026-11-20 skipped every later step: retry the build once after 10 minutes.
 if ($imported -and -not $ok -and $LASTEXITCODE -eq 3) { Start-Sleep -Seconds 600; $ok = Step 'analysis-daily-retry' @('-m', 'pulse.workers.analysis', 'daily') }
@@ -43,8 +58,10 @@ if ($imported) { $null = Step 'outcomes' @('-m', 'pulse.workers.analysis', 'outc
 # titles; index-futures and option expiries for this month and the next.
 $null = Step 'calendar-sync' @('-m', 'pulse.workers.alerts', 'calendar-sync', '--days', '60')
 $null = Step 'calendar-derive' @('-m', 'pulse.workers.alerts', 'calendar-derive')
-# The old system's calendar store as a declared pulse3 source (until the cutover; read by the fwdlog M3 catalyst rule).
-$null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
+# The old system's calendar store as a declared pulse3 source (read by the fwdlog M3 catalyst rule while PULSE_CATALYST_SOURCE is legacy).
+# Once retired the store is a frozen copy that run_fwdlog.ps1 imports; the M3 catalyst reads pulse3's own calendar (native).
+if ($retired) { Add-Content $log '-- calendar-legacy skipped: the old calendar store is frozen (var\legacy_calendar), run_fwdlog.ps1 imports it; M3 reads the native calendar' }
+else { $null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar') }
 $cst = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time')
 foreach ($m in @($cst, $cst.AddMonths(1))) { $null = Step "calendar-expiries-$($m.ToString('yyyy-MM'))" @('-m', 'pulse.workers.alerts', 'calendar-expiries', '--year', "$($m.Year)", '--month', "$($m.Month)") }
 # Fund flow of the focus set (plan instruments + holdings, at most 60 codes; the old system does not crawl it).
@@ -55,9 +72,9 @@ if ($imported) { $null = Step 'fundflow' @('-m', 'pulse.workers.intel', 'fundflo
 if ($imported) { $null = Step 'fusion-daily' @('-m', 'pulse.workers.fusion', 'daily') }
 # Factor series (#37/#80) for completed factor experiments that lack one; executed by Pulse3Jobs.
 $null = Step 'fillr-factor-series' @('-m', 'pulse.workers.fillr', 'enqueue-factor-series')
-# E092 live web-search LLM judgement (paid, pre-registered; caps and the 20-day stop are in the worker). Needs the fusion scores of today, so it runs after fusion-daily; asks nothing unless the switch file C:\pulse3\var\llm_live.enabled exists.
+# E100 live web-search LLM judgement with gpt-6-luna (paid, pre-registered; E092 is closed; caps and the 20-day stop are in the worker). Needs the fusion scores of today, so it runs after fusion-daily; asks nothing unless the switch file C:\pulse3\var\llm_live.enabled exists.
 $day = $cst.ToString('yyyy-MM-dd')   # the China-time trading day of this run ($cst above), as run_fwdlog.ps1 passes it
-if ($imported) { $null = Step 'llm-live-decide' @('-m', 'pulse.workers.llm_live', 'decide', '--date', $day) }
-# E092 outcomes: score the answers whose 5-day window has closed (append-only; nothing to do on most days).
-if ($imported) { $null = Step 'llm-live-track' @('-m', 'pulse.workers.llm_live', 'track', '--today', $day) }
+if ($imported) { $null = Step 'llm-live-decide' @('-m', 'pulse.workers.llm_live', 'decide', '--experiment', 'E100', '--date', $day) }
+# E100 outcomes: score the answers whose 5-day window has closed (append-only; nothing to do on most days).
+if ($imported) { $null = Step 'llm-live-track' @('-m', 'pulse.workers.llm_live', 'track', '--experiment', 'E100', '--today', $day) }
 Add-Content $log "== $(Get-Date -Format s) done ok=$ok"

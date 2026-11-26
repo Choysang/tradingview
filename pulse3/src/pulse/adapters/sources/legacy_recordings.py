@@ -5,7 +5,9 @@ requests to Sina/Tencent and risk a block for both systems, so pulse3 imports th
 SOURCE (old DATA may be read by an adapter, old code never). Rows: LEGACY_TRIAGE #103/#185 (intraday), #131/#187 (news),
 #104/#186 (extended intraday); the seal facts (#5/#124) derive from the snapshots.
 
-Layout read (root ``PULSE_LEGACY_DATA``, default ``C:\\pulse\\data``), one directory per session date::
+Layout read (root ``PULSE_LEGACY_DATA``; the default ``C:\\pulse3\\var\\legacy_data`` does not exist, so without the variable nothing is
+read: the old tree is archived by ``deploy/windows/retire_legacy.ps1`` and ``pulse3_env.ps1`` sets the variable only until then), one
+directory per session date::
 
     intraday/<d>/quotes/part-*.parquet   main-board snapshots (full polls), intraday/<d>/hot/part-*.parquet (hot subset), done.json;
                                          after the close the parts are compacted into intraday/<d>/quotes.parquet and hot.parquet
@@ -46,7 +48,7 @@ NEWS_SOURCE_ID = "legacy_news_recorder"
 SCHEMA_VERSION = "legacy-recorder-parquet-20261113"
 MAPPING_VERSION = "1.0.0"
 ENV_ROOT = "PULSE_LEGACY_DATA"
-DEFAULT_ROOT = "C:\\pulse\\data"
+DEFAULT_ROOT = "C:\\pulse3\\var\\legacy_data"          # absent on purpose: an unset PULSE_LEGACY_DATA reads as "no recordings", never as the old install
 CST = "Asia/Shanghai"
 UTC = timezone.utc
 

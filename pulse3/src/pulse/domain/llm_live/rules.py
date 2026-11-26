@@ -166,15 +166,18 @@ def parse_verdict(text: str) -> dict:
 # ---------------------------------------------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Prices:
-    """USD per million input tokens, per million output tokens (reasoning tokens are part of the output), per web-search call, and the amount assumed for a call whose cost is unknown."""
+    """USD per million input tokens, per million output tokens (reasoning tokens are part of the output), per web-search call, the amount assumed for a call whose cost is unknown, and
+    the price of cached input tokens (``None`` = the input price)."""
     in_per_m: float = 5.0
     out_per_m: float = 25.0
     search_per_call: float = 0.01
     reserve_per_call: float = 0.25
+    cached_in_per_m: float | None = None
 
 
+#: The variable of each price; a per-model variable adds ``_<MODEL>`` (``PULSE_LLM_PRICE_IN_PER_M_GPT_6_LUNA`` for ``gpt-6-luna``) and wins over the general one.
 PRICE_ENV = {"in_per_m": "PULSE_LLM_PRICE_IN_PER_M", "out_per_m": "PULSE_LLM_PRICE_OUT_PER_M", "search_per_call": "PULSE_LLM_PRICE_SEARCH_PER_CALL",
-             "reserve_per_call": "PULSE_LLM_CALL_RESERVE_USD"}
+             "reserve_per_call": "PULSE_LLM_CALL_RESERVE_USD", "cached_in_per_m": "PULSE_LLM_PRICE_CACHED_IN_PER_M"}
 
 
 def _positive(name: str, raw: str) -> float:
@@ -187,10 +190,21 @@ def _positive(name: str, raw: str) -> float:
     return v
 
 
-def prices_from_env(env: Mapping[str, str] | None = None) -> Prices:
+def model_suffix(model: str) -> str:
+    """``gpt-6-luna`` -> ``GPT_6_LUNA`` (every non-alphanumeric character becomes an underscore)."""
+    return "".join(ch if ch.isalnum() else "_" for ch in model).upper()
+
+
+def prices_from_env(env: Mapping[str, str] | None = None, model: str | None = None) -> Prices:
+    """Prices for ``model``: ``<VAR>_<MODEL>`` first, then ``<VAR>``, then the placeholder default; a malformed value is an error, never a silent default."""
     env = os.environ if env is None else env
     base = Prices()
-    return Prices(**{f: _positive(var, env[var]) if env.get(var, "").strip() else getattr(base, f) for f, var in PRICE_ENV.items()})
+    out: dict = {}
+    for field_name, var in PRICE_ENV.items():
+        names = ([f"{var}_{model_suffix(model)}"] if model else []) + [var]
+        raw_name = next((n for n in names if env.get(n, "").strip()), None)
+        out[field_name] = _positive(raw_name, env[raw_name]) if raw_name else getattr(base, field_name)
+    return Prices(**out)
 
 
 def daily_cap_from_env(env: Mapping[str, str] | None = None) -> float:
@@ -200,13 +214,18 @@ def daily_cap_from_env(env: Mapping[str, str] | None = None) -> float:
 
 
 def estimate_cost(usage: Mapping | None, searches: int, prices: Prices) -> float | None:
-    """USD estimate, or None when the reply reported no usable token counts (the caller then assumes ``reserve_per_call``). Cached input is charged at the full rate (conservative)."""
+    """USD estimate, or None when the reply reported no usable token counts (the caller then assumes the unit cost). Cached input tokens
+    (``input_tokens_details.cached_tokens``) are charged at ``cached_in_per_m`` when that price is set, else at the input price."""
     if not usage:
         return None
     tin, tout = usage.get("input_tokens"), usage.get("output_tokens")
     if not isinstance(tin, (int, float)) or not isinstance(tout, (int, float)) or isinstance(tin, bool) or isinstance(tout, bool):
         return None
-    return round(tin / 1e6 * prices.in_per_m + tout / 1e6 * prices.out_per_m + searches * prices.search_per_call, 6)
+    details = usage.get("input_tokens_details")
+    cached = details.get("cached_tokens") if isinstance(details, dict) else None
+    cached = cached if isinstance(cached, (int, float)) and not isinstance(cached, bool) and 0 <= cached <= tin else 0
+    cached_price = prices.in_per_m if prices.cached_in_per_m is None else prices.cached_in_per_m
+    return round((tin - cached) / 1e6 * prices.in_per_m + cached / 1e6 * cached_price + tout / 1e6 * prices.out_per_m + searches * prices.search_per_call, 6)
 
 
 def _known_costs(rows: Sequence[Mapping], day: str) -> list[float]:

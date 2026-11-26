@@ -8,6 +8,8 @@ Invariants:
 * the key is read at call time, lives only in the request header, and is never stored, logged, repr'd or put in an error;
 * the answer's status is a short label (``ok``, ``http_429``, ``error_ConnectTimeout``); an error response body is never
   returned (it can echo the key), only a 200 body's text and its ``usage`` object are;
+* the model must be in the shared allow-list (``model_guard``, ``PULSE_LLM_ALLOWED_MODELS``, default gpt-6-luna): a client for another model cannot be built (``ModelNotAllowed``, e.g.
+  ``PULSE_ALERT_MODEL=gpt-6.1-terra``) and ``ask`` re-checks before it reads the key or opens a connection;
 * nothing is sent under pytest unless a ``transport`` is injected (``LlmDisabled``), like the webhook adapter.
 Not covered: streaming, retries, pacing and caps (the service does those).
 """
@@ -20,6 +22,7 @@ from typing import Mapping
 
 import httpx
 
+from .model_guard import ModelNotAllowed, require_allowed  # noqa: F401 - re-exported for callers
 from .openai_compat import DEFAULT_BASE_URL, ENV_BASE_URL, ENV_KEY_FILE
 
 ENV_MODEL = "PULSE_ALERT_MODEL"
@@ -49,6 +52,7 @@ def read_key_file(path: Path) -> str | None:
 class AlertLlmClient:
     def __init__(self, *, key_file: Path, model: str = DEFAULT_MODEL, base_url: str = DEFAULT_BASE_URL,
                  transport: httpx.BaseTransport | None = None):
+        require_allowed(model)                   # raises before anything else exists
         self._key_file = Path(key_file)
         self.model = model
         self._url = base_url.rstrip("/") + "/responses"
@@ -66,8 +70,13 @@ class AlertLlmClient:
         return cls(key_file=Path(path), model=(env.get(ENV_MODEL) or "").strip() or DEFAULT_MODEL,
                    base_url=(env.get(ENV_BASE_URL) or "").strip() or DEFAULT_BASE_URL, transport=transport)
 
+    def check_model(self) -> None:
+        """Raises ``ModelNotAllowed`` unless the model is in the allow-list (callers use it before they write a ledger row)."""
+        require_allowed(self.model)
+
     def ask(self, instructions: str, prompt: str) -> LlmReply:
-        """One Responses-API call. Never raises for provider or network trouble; raises ``LlmDisabled`` for a forbidden call."""
+        """One Responses-API call. Never raises for provider or network trouble; raises ``LlmDisabled`` for a forbidden call and ``ModelNotAllowed`` for a model outside the allow-list."""
+        self.check_model()
         if self._transport is None and os.environ.get("PYTEST_CURRENT_TEST"):
             raise LlmDisabled("real LLM calls are disabled under pytest")
         key = read_key_file(self._key_file)

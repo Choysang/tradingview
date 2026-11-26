@@ -30,7 +30,7 @@ from pulse.domain.fwdlog.common import CST, MAIN_PREFIX, UTC
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "fwdlog_data"
 ENV_EVENTS = "PULSE_FWDLOG_EVENTS"
-DEFAULT_EVENTS = "C:\\pulse\\app\\backend\\data\\calendar\\events.jsonl"
+DEFAULT_EVENTS = "C:\\pulse3\\var\\legacy_calendar\\events.jsonl"      # frozen copy made by retire_legacy.ps1; until then pulse3_env.ps1 points PULSE_FWDLOG_EVENTS at the live old store
 KNOWN_LAG_S = {"hot": 2.0, "auction_hot": 2.0, "after_hot": 2.0, "full": 5.0, "auction": 5.0, "auction_final": 5.0, "close": 5.0, "after": 5.0}
 SESSION_KINDS = ("full", "hot", "close")
 MAIN_PREFIX_LIST = list(MAIN_PREFIX)

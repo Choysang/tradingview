@@ -10,6 +10,7 @@ Usage (from pulse3/, after the daily data import of ``run_daily.ps1``)::
     uv run python -m pulse.workers.fusion reconcile --pc D:/.../.work/lab [--scores-cache f.parquet]   # compare with the PC's files
 
 Exit codes: 0 done, 1 failure, 2 the run was refused and recorded (coverage, history, reproduction gate).
+``reconcile`` returns 3 and does nothing when the old system is retired (``PULSE_LEGACY_RETIRED=1``, set by ``pulse3_env.ps1``).
 Not covered: scheduling (``deploy/windows`` is the integrator's), mining of new factors.
 """
 from __future__ import annotations
@@ -64,6 +65,9 @@ def run(argv: list[str] | None = None) -> int:
     from pulse.application import bf_fusion_service as S
 
     a = _parser().parse_args(argv)
+    if a.cmd == "reconcile" and config.legacy_retired():
+        print("skipped: the old system is retired (PULSE_LEGACY_RETIRED=1); its PC files stopped growing, so there is nothing current to reconcile with")
+        return 3
     cfg = config.load()
     conn = db.connect(a.dsn or cfg.dsn, autocommit=True)
     lake = LakeStore(cfg.lake_root)

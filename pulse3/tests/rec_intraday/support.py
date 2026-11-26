@@ -111,6 +111,7 @@ class World:
         self.block: dict[str, int] = {}
         self.fail: dict[str, int] = {}
         self.stale = False
+        self.cap_symbols: int | None = None                       # the vendor silently answers only the first N symbols of a request
         self.trailer: str | None = None
         self.log: list[tuple[datetime, str, list[str]]] = []      # (time, host, symbols asked) of every request
 
@@ -153,6 +154,8 @@ class World:
             return self.pool_handler(req)
         want = str(req.url).split("list=" if host == "hq.sinajs.cn" else "q=")[1].split(",")
         self.log.append((self.t, host, want))
+        if self.cap_symbols is not None:
+            want = want[:self.cap_symbols]
         self.requests[host].append((self.mono, 0))
         n = len(self.requests[host])
         if host in self.block and n >= self.block[host]:
@@ -162,6 +165,7 @@ class World:
         when = self.t.astimezone(CST).replace(tzinfo=None)
         if self.stale:
             when -= timedelta(days=1)
-        chosen = [s for s in self.stocks if f"{s.prefix}{s.code}" in want]
+        wanted = set(want)
+        chosen = [s for s in self.stocks if f"{s.prefix}{s.code}" in wanted]
         body = sina_body(chosen, when, self.trailer) if host == "hq.sinajs.cn" else tencent_body(chosen, when)
         return httpx.Response(200, content=body, headers={"content-type": "text/plain"})

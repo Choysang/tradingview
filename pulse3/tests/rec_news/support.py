@@ -41,15 +41,26 @@ class World:
         self.bodies = {THS: recorded("ths_push_p1.json"), EM: recorded("eastmoney_news_p1.json"), CLS: recorded("cls_roll_p1.json")}
         self.status = {o: 200 for o in HOSTS}
         self.requests = {o: 0 for o in HOSTS}
+        self.times: dict[str, list[datetime]] = {o: [] for o in HOSTS}               # when each request left (fake clock)
+        self.outage: dict[str, tuple[datetime, datetime]] = {}                         # origin -> [start, end): the host times out
+        self.timeout_cost = 20.0                                                       # a ConnectTimeout holds the loop this long (real client: 20 s)
+        self.clock: Clock | None = None
 
     def handler_for(self, origin: str):
         def handle(req: httpx.Request) -> httpx.Response:
             assert req.url.host == HOSTS[origin], f"{origin} client sent a request to {req.url.host}"
             self.requests[origin] += 1
+            if self.clock is not None:
+                self.times[origin].append(self.clock.t)
+                window = self.outage.get(origin)
+                if window and window[0] <= self.clock.t < window[1]:
+                    self.clock.advance(seconds=self.timeout_cost)
+                    raise httpx.ConnectTimeout("_ssl.c:1015: The handshake operation timed out")
             return httpx.Response(self.status[origin], content=self.bodies[origin], headers={"content-type": "application/json"})
         return handle
 
     def clients(self, clock: Clock) -> dict[str, RateLimitedClient]:
+        self.clock = clock
         return {o: RateLimitedClient(min_interval_seconds=0.0, transport=httpx.MockTransport(self.handler_for(o)), now=clock, sleep=lambda s: None)
                 for o in HOSTS}
 

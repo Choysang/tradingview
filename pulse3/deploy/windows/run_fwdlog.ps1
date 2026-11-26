@@ -4,7 +4,6 @@
 # Then E077/E078, E089 and the paper replay (triggers v2.1) are computed for the session. Exit codes of fwdlog run:
 # 0 ok, 2 a session failed, 3 no recordings imported. A failed step is logged and later steps still run.
 . C:\pulse3\pulse3_env.ps1
-if (-not $env:PULSE_LEGACY_DATA) { $env:PULSE_LEGACY_DATA = 'C:\pulse\data' }
 Set-Location "$root\app"
 $py = "$root\app\.venv\Scripts\python.exe"
 $day = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time').ToString('yyyy-MM-dd')
@@ -19,6 +18,9 @@ $ok = if ($cutover) { $true } else { Step 'legacy-intraday' @('-m', 'pulse.worke
 if ($ok) { $null = Step 'seal-facts' @('-m', 'pulse.workers.ingest', 'seal-facts', '--date', $day) }
 if (-not $cutover) { $null = Step 'legacy-ext' @('-m', 'pulse.workers.ingest', 'legacy-ext', '--date', $day) }
 # The M3 catalyst reads pulse3's calendar dataset (step 2): import the old store first so events seen since 18:10 yesterday count.
+# Once retired, PULSE_FWDLOG_EVENTS (pulse3_env.ps1) is the frozen copy in C:\pulse3\var\legacy_calendar (a repeat import of the same
+# bytes publishes nothing) and PULSE_CATALYST_SOURCE=native makes M3 read pulse3's own calendar (the old store stopped growing).
+if ($retired) { Add-Content $log "-- old calendar store is frozen: importing $env:PULSE_FWDLOG_EVENTS (no change expected); M3 catalyst source: $env:PULSE_CATALYST_SOURCE" }
 $null = Step 'calendar-legacy' @('-m', 'pulse.workers.fillm', 'import-calendar')
 $null = Step 'fwdlog-run' @('-m', 'pulse.workers.fwdlog', 'run', '--date', $day)
 # Batch 6 forward (E095 auction, E096 active flow; pre-registration 2026-11-18): exit 3 = no complete recording yet.
@@ -27,4 +29,6 @@ $null = Step 'batch6-forward' @('-m', 'pulse.workers.batch6', 'forward', '--date
 $null = Step 'batch7-forward' @('-m', 'pulse.workers.batch7', 'forward', '--date', $day)
 # Batch 8 forward (E099 Lhasa / one-day-seat FLAG, pre-registration 2026-11-23, first decision day 2026-11-24): exit 3 = nothing to decide yet.
 $null = Step 'batch8-forward' @('-m', 'pulse.workers.batch8', 'forward', '--date', $day)
+# E101 forward (US macro releases, pre-registration 2026-11-25, first D0 2026-11-26): market rows, events, D0 / R outcomes; exit 3 = nothing new.
+$null = Step 'e101-forward' @('-m', 'pulse.workers.e101', 'forward', '--date', $day)
 Add-Content $log "== $(Get-Date -Format s) done"

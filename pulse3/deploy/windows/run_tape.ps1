@@ -1,6 +1,9 @@
 # pulse3 intraday tape (scheduled task Pulse3Tape, weekdays every 5 minutes 09:30-15:05 Asia/Shanghai).
 # actionability: builds a quote snapshot from the native recorder's latest part (no request; exit 5 = no recording newer
-# than 3 minutes, nothing published) for the release's top entries, holdings and watchlists (--scope focus: the whole board
+# than 3 minutes while the market is trading, nothing published; outside the trading minutes (lunch 11:30-13:00, before the
+# open, after the close, holidays) and in the first 3 minutes of a session the worker itself prints "market closed: ..." /
+# "market opening: ..." and exits 0, so this script needs no clock of its own)
+# for the release's top entries, holdings and watchlists (--scope focus: the whole board
 # would add about 3,100 observations per run, 100-200 MB a day); tape: diffs consecutive snapshots into the market tape log.
 . C:\pulse3\pulse3_env.ps1
 Set-Location "$root\app"

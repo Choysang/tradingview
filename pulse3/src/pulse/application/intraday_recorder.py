@@ -5,7 +5,7 @@ publishes the SAME dataset in the SAME frame schema (``intraday_rows.rows_to_fra
 seal facts, forward logs and analysis pages need no change; only the lineage differs (batches belong to ``pulse_intraday_recorder``).
 Rows: LEGACY_TRIAGE #103/#185 (recorder), #119 (second source with fallback). Ported from the old ``warehouse/intraday.py`` schedule:
 09:15-09:25 full snapshot every 60 s and the 09:25:10 result (auction), the static pool every 5 s from 09:19:30 to 09:25:10, 09:30-11:30 and
-13:00-15:00 full every 60 s and the hot subset every 10 s, 15:01:30 close, 15:05-15:30 after-hours fixed-price session (static pool + hot subset
+13:00-15:00 full every 60 s and the hot subset every 20 s (``intraday_rows.HOT_EVERY_SECONDS``, user decision 2026-11-24; the old recorder: 10 s), 15:01:30 close, 15:05-15:30 after-hours fixed-price session (static pool + hot subset
 every 60 s, whole board at 15:05:05, 15:15 and 15:30:05); nothing in the 11:30-13:00 break; the loop ends at ``until``.
 Vendors: Tencent (qt.gtimg.cn) is the PRIMARY because the old recorder polled it and it is the only vendor that carries every legacy
 column (outer/inner lots, turnover, caps, volume ratio, vwap, the vendor's own limit prices incl. ST names, after-hours fields). Sina is the
@@ -13,9 +13,17 @@ OPTIONAL fallback (opt-in, ``--fallback sina``; off by default because hq.sinajs
 a second host is not assumed to be available): no outer/inner lots, turnover, caps, volume ratio or vwap, and limit prices from the
 price-limit rules (NULL where unverified). Without a fallback a block of Tencent stops the run.
 Cost of the 1 request/s per host limit with Tencent (80 symbols per request, the old recorder's batch; the old one ran 10 requests/s): a
-full main-board snapshot (~3100 codes) takes about 39 s, so a full board plus the hot polls no longer fit every 10 s grid slot. Hot polls
-are cut by their 8 s budget (about 640 names; the rest wait for the next slot, counted as ``truncated_hot``) and grid slots lost while a
-full board runs are counted as ``missed_hot`` / ``missed_auction_hot`` in the summary. Nothing is hidden: the 60 s boards stay complete.
+full main-board snapshot (~3100 codes) takes about 39 s, so a full board plus hot polls every 10 s does not fit (see below). Hot polls
+are cut by their 8 s budget (about 640 names; the rest wait for the next slot, counted as ``truncated_hot``) and grid slots lost are counted as
+``missed_hot`` / ``missed_auction_hot`` in the summary and in the manifest (``request_budget``). Nothing is hidden: the 60 s boards stay complete.
+In-session hot polls run BETWEEN the requests of a running board (``_interleave``) when the board still ends inside its 60 s cycle, otherwise
+after it: the board is longer than the 20 s grid, so without this the slot inside every board would be lost although the minute has the requests.
+Measured on the first live sessions (2026-11-23 / 24, 3191 codes, hot set ~440): the loop is saturated (board 40 requests + ~3 hot polls of 6 =
+58 of the 60 requests of a minute), 743 of 1442 hot slots were lost and the day held 1.09M rows against 1.40M of the old recorder (hot stream
+-49%, 266k rows; the 164 convertible bonds and 3 suspended names the old one also polled, 43k rows, are not in the universe). Demand at 80
+symbols per request and a 10 s grid is about 76 requests/min, which no scheduling fits into 60; the user decided 2026-11-24 to poll the hot subset
+every 20 s instead (40 + 3 x 6 = 58 requests/min), with batch 80 and 1 request/s unchanged. ``--batch`` (opt-in, default unchanged: Tencent's real
+maximum has not been probed; responses shorter than asked are counted as ``short_batches``) stays available as a further lever.
 Invariants:
 * requests: one client per vendor, each at most 1 request per second; the first block (HTTP 403/429/456/501, or an HTML body) or 10
   transport failures in a row take that vendor out for the rest of the session; with a fallback configured the SAME symbols are re-sliced to
@@ -41,10 +49,11 @@ the first day after the cutover and the hot subset then grows from the 09:30 pol
 """
 from __future__ import annotations
 
+import math
 import time as _time
 import uuid
 from dataclasses import dataclass, replace
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from typing import Any, Callable
 
 from pulse.adapters.lake import ObjectRef
@@ -202,6 +211,9 @@ class IntradayRecorder:
                     continue
                 return len(symbols), None
             v.fails = 0
+            if len(records) < len(symbols):                         # a vendor that silently caps a request shows up here (see ``--batch``)
+                self.s.add("short_batches")
+                self.s.add("short_symbols", len(symbols) - len(records))
             return len(symbols), (v, cap, records)
 
     # ---- polls ------------------------------------------------------------------------------------------------------------
@@ -211,10 +223,15 @@ class IntradayRecorder:
         started = self.svc.clock()
         rows: list[dict] = []
         pos = 0
+        hot_spent = 0.0                                      # seconds of hot polls run inside this board: not the board's own time
         while pos < len(symbols):
             if self._late():
                 break
-            if (self.svc.clock() - started).total_seconds() > POLL_BUDGET.get(kind, 55.0):
+            if kind == "full" and pos:
+                hot_spent += self._interleave(len(symbols) - pos)
+                if self._stop is not None:
+                    break
+            if (self.svc.clock() - started).total_seconds() - hot_spent > POLL_BUDGET.get(kind, 55.0):
                 self.s.add(f"truncated_{kind}")
                 break
             used, got = self._request(symbols[pos:])
@@ -234,6 +251,31 @@ class IntradayRecorder:
         self.s.add(f"polls_{kind}")
         self.s.add("rows_polled", len(rows))
         return rows
+
+    def _interleave(self, remaining: int) -> float:
+        """Run the in-session hot poll whose grid slot has come while a full board is still being requested; returns the seconds it took.
+        Why: the board is 40 sequential requests at 1 request/s, longer than the 20 s hot grid, so hot slots that fall inside it would be lost
+        although the minute has the requests for them (40 + 3 x 6 = 58 of 60, see ``intraday_rows.HOT_EVERY_SECONDS``). The board keeps priority:
+        the hot poll runs only if the rest of the board still ends inside its own 60 s cycle; otherwise it waits for the board's end, as before."""
+        now = self._cst()
+        last = self.state.last_full
+        if not self.hot or last is None or "hot" not in R.due_hot(now, self.state, self.cfg):
+            return 0.0
+        v = self.active
+        hot_requests = min(math.ceil(len(self.hot) / v.batch), math.ceil(POLL_BUDGET["hot"]))
+        needed = (hot_requests + math.ceil(remaining / v.batch)) * v.client.min_interval
+        if now + timedelta(seconds=needed) > last + timedelta(seconds=self.cfg.full_every):
+            return 0.0
+        began = self.svc.clock()
+        self._advance("hot", now)
+        try:
+            self._hot("hot")
+        except AllSourcesDown:
+            raise
+        except Exception as exc:                             # like a failing step of the main loop: counted and noted, the board goes on
+            self.s.add("step_errors")
+            self._note(f"step hot (inside a board) failed: {exc!r}"[:200])
+        return (self.svc.clock() - began).total_seconds()
 
     def _verify(self, rows: list[dict], need: int, *, board: bool) -> None:
         """Trading-day check on the quote dates. Rows stamped today verify the day at any time (the auction's own rows are then kept even if a
@@ -298,7 +340,11 @@ class IntradayRecorder:
         """Publish the buffered rows as new parts of today's dataset version (cumulative manifest); the buffers are kept on failure."""
         svc, day = self.svc, self.day
         buffered = {k: v for k, v in self._buf.items() if v}
-        if not buffered:
+        prev = svc.latest_ready(DATASET_QUOTES, day)
+        # ``source_complete`` exists only on the FINAL manifest. The last periodic flush usually lands after the last poll of the day (the
+        # 15:30:05 after-hours board is flushed at 15:31:55 and nothing is polled after it), so the final flush often has NO new rows: it must
+        # still publish, with the same parts, to carry the marker (2026-11-23 / 24: 140 interim manifests, none complete, consumers undecided).
+        if not buffered and not (final and prev is not None and not prev["coverage_document"].get("source_complete")):
             return
         now = svc.clock()
         stamp = f"{now.astimezone(CST):%H%M%S}"
@@ -309,7 +355,6 @@ class IntradayRecorder:
                 svc.data.store_capture(batch_id, cap, owner)
             with svc.conn.transaction():
                 ingest_repo.commit_raw(svc.conn, batch_id, svc.clock())
-            prev = svc.latest_ready(DATASET_QUOTES, day)
             parts: dict[str, dict] = dict((prev["coverage_document"].get("parts") or {}) if prev else {})
             old: dict[str, ObjectRef] = {}
             if prev:
@@ -331,8 +376,10 @@ class IntradayRecorder:
                 newest = top if newest is None or (top is not None and top > newest) else newest
             total = sum(v["rows"] for v in parts.values())
             coverage = self._coverage(day, parts, now, final)
-            manifest = svc.lake.commit_manifest(DATASET_QUOTES, [members[k] for k in sorted(members)], owner=owner,
-                                                meta={"row_count": total, "kind": "table", "session_date": day.isoformat(), "parts": sorted(members)})
+            meta = {"row_count": total, "kind": "table", "session_date": day.isoformat(), "parts": sorted(members)}
+            if final:
+                meta["final"] = True            # a final manifest without new parts must still differ from the last interim one
+            manifest = svc.lake.commit_manifest(DATASET_QUOTES, [members[k] for k in sorted(members)], owner=owner, meta=meta)
             with svc.conn.transaction():
                 ingest_repo.set_batch_state(svc.conn, batch_id, "NORMALIZED")
             svc.data._stage_and_publish(DATASET_QUOTES, uuid.uuid4(), batch_id, manifest, "pulse.bf_live.quote_snapshot", coverage, owner, total, now, (), ())
@@ -341,8 +388,9 @@ class IntradayRecorder:
                 ingest_repo.set_batch_state(svc.conn, batch_id, "FAILED", failure_code="record_error")
             svc.lake.release(owner)
             raise
-        svc.data.record_attempt(self.spec[R.STREAM_FULL], str(day), "success_data", new_records=added,
-                                newest_content_at=newest if newest is not None and newest <= now else None, content_expected_now=False, canonical_ready=True)
+        if added:
+            svc.data.record_attempt(self.spec[R.STREAM_FULL], str(day), "success_data", new_records=added,
+                                    newest_content_at=newest if newest is not None and newest <= now else None, content_expected_now=False, canonical_ready=True)
         self.s.add("rows_published", added)
         self.s.add("flushes")
         self._buf, self._caps = {}, []
@@ -350,7 +398,9 @@ class IntradayRecorder:
 
     def _coverage(self, day: date, parts: dict[str, dict], now: datetime, final: bool) -> dict:
         vendors = sorted({p["vendor"] for p in parts.values() if p.get("vendor")})
-        return {"dataset": DATASET_QUOTES, "session_date": day.isoformat(), "parts": dict(sorted(parts.items())), "imported_at": _z(now),
+        # what the 1 request/s limit cost so far: grid slots lost, polls cut by their budget, responses shorter than the request
+        budget = {k: v for k, v in sorted(self.s.counts.items()) if k.startswith(("missed_", "truncated_", "short_"))}
+        return {"dataset": DATASET_QUOTES, "request_budget": {"primary_batch_symbols": self.vendors[0].batch, **budget}, "session_date": day.isoformat(), "parts": dict(sorted(parts.items())), "imported_at": _z(now),
                 "source_complete": bool(final and self._stop is None), "recorder": N.SOURCE_ID, "vendors": vendors,
                 "primary": self.source, "source_switches": self.s.counts.get("source_switches", 0),
                 "capability": "sampled_snapshots_estimated", "sampled_interval_seconds_nominal": 60, "not_tick_data": True,

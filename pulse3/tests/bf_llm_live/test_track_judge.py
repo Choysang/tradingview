@@ -7,6 +7,7 @@ from datetime import date
 import pytest
 
 from pulse.application.bf_llm_live_store import MemoryLogStore, make_row
+from pulse.domain.llm_live import experiments as X
 from pulse.domain.llm_live import judge as J
 from pulse.domain.llm_live import rules as R
 from bf_llm_live.support import DAY, EVENING, Recorder, build, kinds, plan, reply
@@ -160,7 +161,7 @@ def test_judge_writes_the_verdict_once_when_20_days_are_scored():
     out = svc.judge()
     assert out["status"] == "judged" and out["evaluation"]["verdict"] == "passed" and out["stored"] is False
     row = kinds(store, "judgement")
-    assert len(row) == 1 and row[0]["body"]["spec_sha256"] == R.SPEC_SHA256 and row[0]["body"]["decision_days"] == 20
+    assert len(row) == 1 and row[0]["body"]["spec_sha256"] == X.E100.spec_sha256 and row[0]["body"]["decision_days"] == 20
     again = svc.judge()
     assert again["stored"] is True and len(kinds(store, "judgement")) == 1                      # never rewritten
 
@@ -184,4 +185,4 @@ def test_status_reports_caps_spend_and_progress_without_a_network():
     svc, store, vendor, _ = answered()
     s = svc.status()
     assert s["calls_today"] == 40 and s["calls_cap"] == 60 and s["cap_usd"] == 5.0 and s["decision_days"] == 1 and s["answers"] == 40 and s["spent_today_usd"] > 0
-    assert s["model"] == "gpt-6.1-terra" and s["judgement"] is None and len(vendor.requests) == 40
+    assert s["model"] == "gpt-6-luna" and s["judgement"] is None and len(vendor.requests) == 40

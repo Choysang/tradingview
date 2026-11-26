@@ -16,6 +16,7 @@ from pulse.application import portfolio_service as PS
 from pulse.domain.alerts import llm_tier as LT
 
 from . import llm_support as H
+from .llm_support import allow_test_models  # noqa: F401 - autouse fixture
 from . import support as S
 
 pytestmark = pytest.mark.pg
@@ -356,6 +357,7 @@ def test_a_storage_error_after_the_call_leaves_an_error_row(conn, tmp_path, monk
     s = w2.scan(llm=H.fallback(tmp_path, t))
     assert s["llm"]["lost"] == 1 and len(judgements(conn, w2, "pending")) == 1 and judgements(conn, w2) == []
     monkeypatch.undo()
+    monkeypatch.setenv("PULSE_LLM_ALLOWED_MODELS", "gpt-6-luna,gpt-test-model,m2")        # undo() also removed the autouse allow-list of the made-up test model
     assert w2.scan(llm=H.fallback(tmp_path, t))["intents"] == 0 and len(t.calls) == 2
 
 

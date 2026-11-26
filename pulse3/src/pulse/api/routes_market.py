@@ -165,6 +165,21 @@ def _freshness(reference: datetime | None, stale_after: int, now: datetime) -> s
     return "current" if (now - reference).total_seconds() <= stale_after else "stale"
 
 
+def _complete_fq(fq: dict | None, raw_object_id=None) -> dict | None:
+    """Fill the FieldQualityEntry keys the contract requires (reason, raw_object_id) when a stored entry lacks them.
+    Native quote observations written before 2026-11-24 omitted both; the stored rows are immutable, so the read side completes them."""
+    if not isinstance(fq, dict):
+        return fq
+    out = {}
+    for k, e in fq.items():
+        if isinstance(e, dict):
+            e = {**e}
+            e.setdefault("reason", None)
+            e.setdefault("raw_object_id", str(raw_object_id) if raw_object_id is not None else None)
+        out[k] = e
+    return out
+
+
 def _quote_from_projection(conn, row: dict, policy: str, now: datetime) -> tuple[dict, str, list[dict]]:
     q = {
         "instrument_id": row["instrument_id"], "source_id": row["source_id"], "endpoint_id": row["endpoint_id"],
@@ -175,7 +190,7 @@ def _quote_from_projection(conn, row: dict, policy: str, now: datetime) -> tuple
         "last_price_raw": _pos(row["last_price_raw"]), "bid_price_raw": _pos(row["bid_price_raw"]),
         "ask_price_raw": _pos(row["ask_price_raw"]), "bid_volume_shares": row["bid_volume_shares"],
         "ask_volume_shares": row["ask_volume_shares"], "quality_status": row["quality_status"],
-        "field_quality": row["field_quality"]}
+        "field_quality": _complete_fq(row["field_quality"])}
     stale_after = _stale_after(conn, row["source_id"], row["endpoint_id"], row["source_schema_version"], row["mapping_version"])
     fresh = _freshness(row["source_event_time"] or row["available_at"], stale_after, now)
     return {"quote_snapshot_id": row["quote_snapshot_id"], "quote_policy_version": policy, "quote": q,
@@ -203,7 +218,7 @@ def _quote_from_observation(conn, instrument_id: UUID, now: datetime) -> tuple[d
         "available_at": row["available_at"], "currency": "CNY", "adjustment_mode": "raw",
         "last_price_raw": _pos(p.get("last_price_raw")), "bid_price_raw": _pos(p.get("bid_price_raw")),
         "ask_price_raw": _pos(p.get("ask_price_raw")), "bid_volume_shares": p.get("bid_volume_shares"),
-        "ask_volume_shares": p.get("ask_volume_shares"), "quality_status": quality, "field_quality": row["field_quality"]}
+        "ask_volume_shares": p.get("ask_volume_shares"), "quality_status": quality, "field_quality": _complete_fq(row["field_quality"], row["raw_object_id"])}
     stale_after = _stale_after(conn, q["source_id"], q["endpoint_id"], q["source_schema_version"], q["mapping_version"])
     fresh = _freshness(row["event_time"] or row["available_at"], stale_after, now)
     snapshot_id = uuid.uuid5(_QUOTE_NS, f"{row['observation_id']}:{QUOTE_POLICY_VERSION}")

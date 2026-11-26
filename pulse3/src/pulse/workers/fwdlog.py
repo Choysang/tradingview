@@ -11,7 +11,7 @@ Usage (from pulse3/)::
 ``legacy-ext``) and appends rows; a decided session is never rewritten, so a repeated run is a no-op. It never writes to the legacy tree and makes no network
 request. ``reconcile`` prints every difference with a reason and exits 1 when one has no reason (an unexplained difference means not done).
 Exit codes: 0 ok; 1 reconcile found an unexplained difference; 2 a session failed (see errors in the JSON); 3 no recordings imported (``catalyst-compare``: one of the two calendars is absent).
-Environment: ``PULSE_CATALYST_SOURCE`` (``legacy`` default | ``native``: where M3 reads catalyst events), ``PULSE_DSN``, ``PULSE_LAKE``, ``PULSE_LEGACY_DATA`` (old recorder tree, read only), ``PULSE_FWDLOG_EVENTS`` (old calendar store, read only).
+Environment: ``PULSE_CATALYST_SOURCE`` (``legacy`` default | ``native``: where M3 reads catalyst events), ``PULSE_DSN``, ``PULSE_LAKE``, ``PULSE_LEGACY_DATA`` (old recorder tree, read only), ``PULSE_FWDLOG_EVENTS`` (old calendar store, read only; default the frozen copy C:/pulse3/var/legacy_calendar/events.jsonl).
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def _parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="pulse.workers.fwdlog")
     ap.add_argument("--dsn", default=None)
     ap.add_argument("--lake", default=None)
-    ap.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA or C:/pulse/data)")
+    ap.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA, else the absent C:/pulse3/var/legacy_data = no recordings)")
     ap.add_argument("--bars-dsn", default=None, help="read the daily bars from another database (local reconciliation only)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("run", help="decide every session up to --date that has no row yet")

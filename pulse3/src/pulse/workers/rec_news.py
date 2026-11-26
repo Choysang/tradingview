@@ -11,7 +11,8 @@ Usage (from pulse3/)::
 
 Files of the day (raw answers of polls that produced new versions, ``summary.json``, ``blocked.json``) go to
 ``PULSE_NATIVE_NEWS_DIR`` (default ``<lake>/../native_news/<YYYY-MM-DD>``), never into the old system's data tree.
-Exit codes: 0 ok, 1 failure, 2 a host blocked us (that host is stopped for the day, the others continue; nothing is retried).
+Exit codes: 0 ok, 1 failure, 2 a host blocked us (that host is stopped for the day, the others continue; nothing is retried), 3 a feed gave up after
+``TRANSIENT_GIVE_UP_SECONDS`` of unbroken transport failures (timeouts back off and resume; only that feed stops, the others continue).
 ``record`` skips weekends and the exchange closures of a COMPLETE schedule (``market_rules.holidays``); a weekday whose year has no
 complete schedule is unknown and is still polled. ``--any-day`` overrides both.
 Not covered: scheduling, guba follow-ups, alert scan and delivery.
@@ -88,11 +89,11 @@ def run(argv: list[str] | None = None) -> int:
         rec = NewsRecorder(day_dir, writer, default_feeds(clients), run_claims=not a.no_claims)
         reason = rec.run(start=a.start, until=a.until) if a.cmd == "record" else rec.once()
         for st in rec.states:
-            print(f"{st.feed.origin}: polls={st.polls} new={st.new} revisions={st.revisions} stopped={st.stopped}")
+            print(f"{st.feed.origin}: polls={st.polls} new={st.new} revisions={st.revisions} stopped={st.stopped} transport_failures={st.transport_total}")
         print(f"end: {reason}; claims: {rec.claim_totals}; requests: {sum(c.requests_made for c in clients.values())}")
         for e in rec.errors:
             print(f"error: {e}", file=sys.stderr)
-        return 2 if rec.blocked else 0
+        return 2 if rec.blocked else 3 if rec.gave_up else 0
     finally:
         for c in clients.values():
             c.close()

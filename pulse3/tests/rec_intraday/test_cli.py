@@ -43,3 +43,14 @@ def test_limit_pools_are_off_by_default_and_not_enabled_by_the_run_script():
     assert parse().limit_pools is False and parse("--limit-pools").limit_pools is True
     path = Path(__file__).resolve().parents[2] / "deploy" / "windows" / "run_intraday_record.ps1"
     assert not any("--limit-pools" in ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.lstrip().startswith("#"))
+
+
+def test_batch_is_opt_in_bounded_and_not_set_by_the_run_script():
+    from pathlib import Path
+
+    assert parse().batch is None and parse("--batch", "160").batch == 160            # default: the vendor's own batch (Tencent 80)
+    for bad in ("0", "201"):
+        with pytest.raises(SystemExit):
+            parse("--batch", bad)
+    path = Path(__file__).resolve().parents[2] / "deploy" / "windows" / "run_intraday_record.ps1"
+    assert not any("--batch" in ln for ln in path.read_text(encoding="utf-8").splitlines() if not ln.lstrip().startswith("#"))   # needs a vendor probe first

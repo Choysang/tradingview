@@ -198,3 +198,15 @@ def test_holiday_quotes_are_not_stamped_today():
     rows = [{"quote_ts": datetime(2026, 11, 11, 15, 0)}] * 9 + [{"quote_ts": None}]
     assert not R.stamped_today(rows, T.DAY) and R.stamped_today([{"quote_ts": datetime(2026, 11, 12, 9, 30)}], T.DAY)
     assert not R.stamped_today([], T.DAY)
+
+
+def test_in_session_hot_grid_is_20_seconds():
+    """User decision 2026-11-24 (evidence in ``R.HOT_EVERY_SECONDS``): the hot subset is due every 20 s, not every 10 s."""
+    c = R.Clock()
+    at = lambda h, m, s=0: datetime(2026, 11, 12, h, m, s)            # noqa: E731
+    assert R.HOT_EVERY_SECONDS == 20 and R.Schedule().hot_every == 20
+    c.last_hot = R.slot(at(10, 0, 5), 20)
+    assert R.due_hot(at(10, 0, 19), c) == [] and R.due_hot(at(10, 0, 20), c) == ["hot"] and R.due_hot(at(10, 0, 39), c) == ["hot"]
+    assert R.due_hot(at(12, 0, 0), c) == [] and R.due_hot(at(9, 29, 59), c) == []              # nothing in the break or before the open
+    c.last_full = R.slot(at(10, 0, 20), 60)
+    assert R.due(at(10, 0, 20), c) == ["hot"] and set(R.due(at(10, 1, 2), c)) == {"full", "hot"}

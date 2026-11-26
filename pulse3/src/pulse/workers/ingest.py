@@ -83,7 +83,7 @@ def _parser() -> argparse.ArgumentParser:
     for name in ("legacy-intraday", "legacy-ext", "legacy-guba", "legacy-alerts", "seal-facts", "legacy-news"):
         p = sub.add_parser(name, help="BF live lane: import the old recorder's files (read-only) for one session")
         p.add_argument("--date", type=date.fromisoformat, default=None, help="session date (default: today, Asia/Shanghai)")
-        p.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA or C:/pulse/data)")
+        p.add_argument("--legacy-data", default=None, help="root of the old recorder data (default PULSE_LEGACY_DATA; unset reads as no recordings)")
         if name == "legacy-news":
             p.add_argument("--no-claims", action="store_true", help="documents only; skip claim extraction")
     p = sub.add_parser("intraday-record", help="native main-board recorder (auction, 5-level book, hot subset; Tencent primary, optional Sina fallback); "
@@ -102,6 +102,10 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--limit-pools", action="store_true",
                    help="OPTIONAL: also fetch the Eastmoney limit-up / broken-board / limit-down pools once after the close (15:25-15:50) into the "
                         "dataset limit_pools_eastmoney, to reconcile the seal facts (default off; compare with: python -m pulse.workers.pool_compare)")
+    p.add_argument("--batch", type=int, default=None, choices=range(1, 201), metavar="N",
+                   help="symbols per quote request (default: the vendor's own, Tencent 80 as the old recorder sent). At 1 request/s a full board of ~3200 codes "
+                        "takes 40 s of every minute, so a hot grid of 10 s would lose about half of its slots (the 20 s default fits); a larger N shortens the board. Tencent's real "
+                        "maximum is NOT verified: probe it once by hand first, and watch short_batches in the run summary (responses shorter than asked)")
     p.add_argument("--static-sessions", type=int, default=3, help="earlier sessions whose limit touches form the static pool (0 = none)")
     return ap
 
@@ -152,7 +156,7 @@ def run_live(a, conn, lake: LakeStore, client: RateLimitedClient) -> list:
     pool_client = RateLimitedClient(min_interval_seconds=client.min_interval) if a.limit_pools else None      # its own circuit and pacing
     try:
         pools = LimitPoolRecorder(svc, pool_client) if pool_client is not None else None
-        rec = IntradayRecorder(svc, client, source=a.source, fallback_client=fallback, static=static, limit_pools=pools)
+        rec = IntradayRecorder(svc, client, source=a.source, fallback_client=fallback, chunk=a.batch, static=static, limit_pools=pools)
         try:
             return [rec.run(codes, today, a.until, cycle_seconds=a.cycle_seconds, flush_every=a.flush_every)]
         except AllSourcesDown as exc:

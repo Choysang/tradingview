@@ -4,7 +4,7 @@ Why: every request, answer, error, stop, outcome and judgement of the experiment
 request is sent). The house pattern (``bf_batch7_forward``) is a derived dataset ``llm_live_log`` whose READY snapshots are deltas: a row is written once, in one snapshot, and the log is the
 concatenation of the snapshots in manifest order.
 Row = dict(session=decision date ISO, kind, key, written_at ISO, run_id, body=dict). Kinds: ``day`` (universe, prompts, deadline; once per decision day), ``call`` (ledger row, before the request),
-``answer``, ``error``, ``stop``, ``run``, ``outcome`` (once per answer), ``judgement`` (once).
+``answer``, ``error``, ``stop``, ``run``, ``outcome`` (once per answer), ``judgement`` (once), ``probe`` (a cost-measurement call: a ledger row before the request and a result row after; never counted as a call, a decision day or a score).
 Invariants: ``append`` returns only after the rows are durable (an exception means nothing was added); there is no update or delete; ``exclusive`` is a session advisory lock in PostgreSQL, so two
 processes (a decide and a track, or a rerun by hand) never write at once, and a crashed process releases it with its connection.
 Not covered: the meaning of the rows (``bf_llm_live_service``), the experiment's registry rows (``bf_llm_live_registry``).
@@ -31,7 +31,7 @@ CONTRACT = "pulse.analysis_artifact"
 METHOD = "llm-live-log-v1"
 LOCK_KEY = 0x4C4C4D4C495645                                   # "LLMLIVE": the advisory lock of the lane
 SCHEMA = {"session": pl.String, "kind": pl.String, "key": pl.String, "written_at": pl.String, "run_id": pl.String, "body": pl.String, "body_sha256": pl.String}
-KINDS = ("day", "call", "answer", "error", "stop", "run", "outcome", "judgement")
+KINDS = ("day", "call", "answer", "error", "stop", "run", "outcome", "judgement", "probe")
 
 
 class LogStore(Protocol):
@@ -95,13 +95,15 @@ class MemoryLogStore:
 
 
 class LakeLogStore:
-    def __init__(self, svc: DataService):
-        self.svc, self.conn, self.lake = svc, svc.conn, svc.lake
+    """One experiment's log: ``dataset`` is its own (E092 ``llm_live_log``, E100 ``llm_live_log_e100``); the advisory lock is shared by all of them (one run at a time)."""
+
+    def __init__(self, svc: DataService, dataset: str = DATASET):
+        self.svc, self.conn, self.lake, self.dataset = svc, svc.conn, svc.lake, dataset
         self._rows: list[dict] = []
         self.refresh()
 
     def refresh(self) -> None:
-        mans = self.conn.execute("SELECT * FROM market.dataset_manifest WHERE dataset_id=%s AND manifest_state='READY' ORDER BY manifest_version", (DATASET,)).fetchall()
+        mans = self.conn.execute("SELECT * FROM market.dataset_manifest WHERE dataset_id=%s AND manifest_state='READY' ORDER BY manifest_version", (self.dataset,)).fetchall()
         rows: list[dict] = []
         for m in mans:
             frame = self.lake.read_snapshot_frames(m["content_hash"])
@@ -117,9 +119,9 @@ class LakeLogStore:
             return
         frame = _encode(rows)
         now = self.svc.clock()
-        cov = {"dataset": DATASET, "method": METHOD, "rows": frame.height, "evaluated_at": now.isoformat(),
+        cov = {"dataset": self.dataset, "method": METHOD, "rows": frame.height, "evaluated_at": now.isoformat(),
                "frame_sha256": sha256(frame.write_csv().encode("utf-8")).hexdigest()}
-        B.publish_derived(self.svc, DATASET, frame, cov, contract_id=CONTRACT, watermark=now)
+        B.publish_derived(self.svc, self.dataset, frame, cov, contract_id=CONTRACT, watermark=now)
         self._rows.extend(_decode(frame))
 
     @contextmanager
@@ -132,5 +134,5 @@ class LakeLogStore:
                 self.conn.execute("SELECT pg_advisory_unlock(%s)", (LOCK_KEY,))
 
 
-def open_lake_store(conn: psycopg.Connection, lake: LakeStore) -> LakeLogStore:
-    return LakeLogStore(DataService(conn, lake))
+def open_lake_store(conn: psycopg.Connection, lake: LakeStore, dataset: str = DATASET) -> LakeLogStore:
+    return LakeLogStore(DataService(conn, lake), dataset)

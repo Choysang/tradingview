@@ -38,6 +38,7 @@ from psycopg.types.json import Jsonb
 
 from pulse import config
 from pulse.adapters.models.alert_llm import AlertLlmClient
+from pulse.adapters.models.model_guard import ModelNotAllowed
 from pulse.domain.alerts import llm_tier as LT
 from pulse.domain.alerts import tiers as T
 
@@ -96,7 +97,11 @@ class AlertFallback:
         """``None`` (rules only) unless the switch file exists and the key file is readable."""
         if not switch_path(env, lake_root).is_file():
             return None
-        client = AlertLlmClient.from_env(env, transport)
+        try:
+            client = AlertLlmClient.from_env(env, transport)
+        except ModelNotAllowed as exc:                                # the configured model is not in PULSE_LLM_ALLOWED_MODELS: rules only, and say why
+            LOG.error("alert LLM fallback off: %s", exc)
+            return None
         return None if client is None else cls(client, cap=cap_from_env(env), sleep=sleep)
 
     # ---- the day's state, from the rows ----------------------------------------------------------------------------------
@@ -146,6 +151,11 @@ class AlertFallback:
     def judge(self, conn: psycopg.Connection, claim: T.ClaimView, names: dict[str, dict], now: datetime) -> LT.Judgement | None:
         """The stored or freshly asked judgement of this message; ``None`` = none exists (skipped, failed, unparsable or lost)."""
         key = LT.message_key(claim)
+        try:
+            self.client.check_model()                                 # before the pending row: a model outside the allow-list leaves no trace and no call
+        except ModelNotAllowed:
+            self.skipped["model_not_allowed"] += 1
+            return None
         with conn.transaction():                                      # short: check, then reserve the call with a pending row
             conn.execute("SELECT pg_advisory_xact_lock(%s)", (LOCK_KEY,))
             rows = conn.execute("SELECT phase, judgement_id, model, judgement FROM notification.alert_llm_judgement WHERE message_key=%s", (key,)).fetchall()

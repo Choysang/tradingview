@@ -67,14 +67,14 @@ class Recorder:
 
 
 def build(store: LogStore | None = None, *, vendor: Recorder | None = None, clock: Clock | None = None, plan_: DayPlan | None = None, prices: R.Prices | None = None,
-          cap_usd: float = 5.0, workers: int = 1, switch: bool = True, key_loader=None, context=None, labels=None, register=None) -> tuple[LlmLive, MemoryLogStore, Recorder, Clock]:
+          cap_usd: float = 5.0, workers: int = 1, switch: bool = True, key_loader=None, context=None, labels=None, register=None, experiment=None) -> tuple[LlmLive, MemoryLogStore, Recorder, Clock]:
     store = store or MemoryLogStore()
     vendor = vendor or Recorder()
     clock = clock or Clock()
     p = plan_ or plan()
     svc = LlmLive(store, context=context or (lambda d: p), labels=labels or (lambda days: {}), key_loader=key_loader or (lambda: KEY),
                   client_factory=lambda key: ResponsesClient(key, transport=httpx.MockTransport(vendor)), prices=prices or R.Prices(), cap_usd=cap_usd, clock=clock,
-                  switch_on=lambda: switch, register=register, workers=workers)
+                  switch_on=lambda: switch, register=register, workers=workers, **({"experiment": experiment} if experiment is not None else {}))
     return svc, store, vendor, clock
 
 

@@ -24,6 +24,7 @@ function Restart-Api {
     Start-ScheduledTask -TaskName Pulse3Api
 }
 
+if ($Rollback -and $retired) { 'refused: the old system is retired (legacy_state.json), its warehouse no longer exists; the legacy refdata source cannot come back'; exit 1 }
 if (-not $Rollback) {
     Set-Location "$root\app"
     $rep = & "$root\app\.venv\Scripts\python.exe" -m pulse.workers.refdata reconcile 2>&1 | Out-String

@@ -188,8 +188,8 @@ recorder covers it), sync runs execute, and pulse3 pushes to the phone. The nati
 Every pulse3 process paces per host across processes (`PULSE_HOST_PACING_DIR`), so two recorders sharing a host stay at
 1 request/s. `-Rollback -Apply` reverses it.
 
-Known gaps: the intraday recorder at 1 request/s needs about 39 s per full board and cuts hot polls (reported as
-`truncated_hot`); Eastmoney limit pools, minute bars, convertible bonds and guba follow-ups of the old recorders are not
+Known gaps: the intraday recorder at 1 request/s needs about 39 s per full board, so the in-session hot subset is polled every 20 s
+instead of the old recorder's 10 s (user decision 2026-11-24; losses are reported as `missed_hot` / `truncated_hot` and in the manifest's `request_budget`); Eastmoney limit pools, minute bars, convertible bonds and guba follow-ups of the old recorders are not
 ported; the news recorder polls weekday holidays; native boards are current membership only (no history).
 
 ## Re-audit 2026-11-21 (independent, read-only, against the code at f050170)
@@ -212,6 +212,10 @@ caps plus alias-independent code lookup (rows 108/113, prerequisite of the refda
 snapshots (9/69/127/39); E089 health from the native ext coverage (173); M3 catalyst from pulse3's own calendar behind
 `PULSE_CATALYST_SOURCE` (174); the two seat playbooks (145); `sync_refdata` job kind (49/89); guba sampling after the
 cutover (136, run_daily); a failed legacy import no longer stops the build when the native reference data is on.
+
+## Old system retired (2026-11-24, step 2 closed)
+
+User decision 2026-11-24: keep only pulse3. `deploy/windows/retire_legacy.ps1` (dry run by default) archives `C:\pulse` into one `.tgz` under `C:\pulse3\backup`, unregisters the nine old tasks (XML exported first) and deletes the tree; `pulse3_env.ps1` reads `legacy_state.json` and, once retired, stops pointing at `C:\pulse` (no warehouse import, frozen calendar copy, native catalyst source, no fallback key or tools). Rows 199/203 are done for good: nothing is read from `C:\pulse` any more. Procedure and the table of changes: `docs/m6/LEGACY_RETIREMENT.md`. Not yet run on the server.
 
 ## Deferred LLM tools (2026-11-23)
 

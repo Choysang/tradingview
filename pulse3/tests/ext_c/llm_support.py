@@ -118,3 +118,12 @@ def fallback(tmp_path: Path, transport: Transport, *, cap: int | None = None, pa
     key.write_bytes(f"{SECRET}\n".encode("utf-8"))
     client = AlertLlmClient(key_file=key, model=model, transport=transport.transport)
     return LS.AlertFallback(client, cap=cap, pace=pace, sleep=(sleeps.append if sleeps is not None else (lambda s: None)), max_consecutive=max_consecutive, budget_seconds=budget)
+
+
+import pytest  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def allow_test_models(monkeypatch):
+    """The alert tests use made-up model names; the shared allow-list (``PULSE_LLM_ALLOWED_MODELS``, default gpt-6-luna only) must let them through. Import this fixture into a test module."""
+    monkeypatch.setenv("PULSE_LLM_ALLOWED_MODELS", "gpt-6-luna,gpt-test-model,m2")

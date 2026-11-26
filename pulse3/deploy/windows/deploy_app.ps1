@@ -1,7 +1,7 @@
 # Deploy a pulse3 bundle uploaded to C:\pulse3\incoming\<round>\ (app.zip, optional pulse.dump, lake.zip).
 #   powershell -File C:\pulse3\deploy_app.ps1 -Round r1 [-RestoreDb] [-RestoreLake]
 # Backs up the previous app to C:\pulse3\backup\<round>\ first and refuses if that backup exists.
-# Never touches C:\pulse (the old system).
+# Never touches C:\pulse (the old system); retire_legacy.ps1 is the only script that does.
 param([Parameter(Mandatory)][string]$Round, [switch]$RestoreDb, [switch]$RestoreLake)
 $ErrorActionPreference = 'Stop'
 # Native tools (uv, pg_restore) write progress to stderr; PS 5.1 would turn that into a terminating error.
@@ -21,13 +21,8 @@ $venv = "$root\app\.venv"
 if (Test-Path "$root\app") { Get-ChildItem "$root\app" -Exclude '.venv' | Remove-Item -Recurse -Force }
 Expand-Archive "$in\app.zip" -DestinationPath "$root\app" -Force
 Set-Location "$root\app"
-# Own copies of uv and the interpreter (#203): copied once from C:\pulse\tools (read only there), then used from C:\pulse3\tools.
-if (-not (Test-Path "$tools\uv.exe") -and (Test-Path 'C:\pulse\tools\uv.exe')) {
-    New-Item -ItemType Directory -Force $tools | Out-Null
-    Copy-Item 'C:\pulse\tools\uv.exe' "$tools\uv.exe"
-    Copy-Item 'C:\pulse\tools\python' "$tools\python" -Recurse
-    $uv = "$tools\uv.exe"; $basepy = "$tools\$pyrel"
-}
+# Own copies of uv and the interpreter live under C:\pulse3\tools (#203); the one-time copy from the old install is done, nothing is read from it.
+if (-not (Test-Path $uv) -or -not (Test-Path $basepy)) { throw "uv or the interpreter is missing under $tools (pulse3_env.ps1 no longer falls back to the old install)" }
 $rc = Native { & $uv sync --frozen --no-dev --python $basepy }
 if ($rc[-1] -ne 0) { throw "uv sync failed" }
 
@@ -52,7 +47,7 @@ $rc = Native { & "$root\app\.venv\Scripts\python.exe" -m pulse.workers.lab impor
 if ($rc[-1] -ne 0) { throw "ledger import failed" }
 Remove-Item Env:PGPASSWORD
 
-Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\run_intraday_import.ps1", "$root\app\deploy\windows\run_news_import.ps1", "$root\app\deploy\windows\run_fwdlog.ps1", "$root\app\deploy\windows\run_jobs.ps1", "$root\app\deploy\windows\run_tape.ps1", "$root\app\deploy\windows\run_weekly.ps1", "$root\app\deploy\windows\set_openai_key.ps1", "$root\app\deploy\windows\cutover.ps1", "$root\app\deploy\windows\run_intraday_record.ps1", "$root\app\deploy\windows\run_ext_record.ps1", "$root\app\deploy\windows\run_news_record.ps1", "$root\app\deploy\windows\run_refdata.ps1", "$root\app\deploy\windows\run_sync_jobs.ps1", "$root\app\deploy\windows\refdata_switch.ps1","$root\app\deploy\windows\pulse3_env.ps1" $root -Force
+Copy-Item "$root\app\deploy\windows\run_api.ps1", "$root\app\deploy\windows\run_daily.ps1", "$root\app\deploy\windows\run_intraday_import.ps1", "$root\app\deploy\windows\run_news_import.ps1", "$root\app\deploy\windows\run_fwdlog.ps1", "$root\app\deploy\windows\run_e101_plan.ps1", "$root\app\deploy\windows\run_jobs.ps1", "$root\app\deploy\windows\run_tape.ps1", "$root\app\deploy\windows\run_weekly.ps1", "$root\app\deploy\windows\set_openai_key.ps1", "$root\app\deploy\windows\cutover.ps1", "$root\app\deploy\windows\run_intraday_record.ps1", "$root\app\deploy\windows\run_ext_record.ps1", "$root\app\deploy\windows\run_news_record.ps1", "$root\app\deploy\windows\run_refdata.ps1", "$root\app\deploy\windows\run_sync_jobs.ps1", "$root\app\deploy\windows\refdata_switch.ps1", "$root\app\deploy\windows\retire_legacy.ps1", "$root\app\deploy\windows\pulse3_env.ps1" $root -Force
 $ps = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Get-ScheduledTask -TaskName Pulse3Api -ErrorAction SilentlyContinue)) {
     $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_api.ps1"
@@ -86,6 +81,15 @@ if (-not (Get-ScheduledTask -TaskName Pulse3ForwardLog -ErrorAction SilentlyCont
     $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 16:45
     $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 1) -StartWhenAvailable
     Register-ScheduledTask -TaskName Pulse3ForwardLog -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
+}
+# E101 plan reports (recorded only): R report before the open, D0 report before the close; exit 3 (no release that day) is mapped to 0, exit 4 (bars not ready) is retried.
+foreach ($pt in @(@{ Name = 'Pulse3E101PlanR'; Kind = 'r'; At = '09:00' }, @{ Name = 'Pulse3E101PlanD0'; Kind = 'd0'; At = '14:30' })) {
+    if (-not (Get-ScheduledTask -TaskName $pt.Name -ErrorAction SilentlyContinue)) {
+        $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_e101_plan.ps1 -Kind $($pt.Kind)"
+        $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At $pt.At
+        $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 50) -MultipleInstances IgnoreNew -StartWhenAvailable
+        Register-ScheduledTask -TaskName $pt.Name -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
+    }
 }
 # Queued-job runner: every 5 minutes, all day (web commands only enqueue).
 if (-not (Get-ScheduledTask -TaskName Pulse3Jobs -ErrorAction SilentlyContinue)) {

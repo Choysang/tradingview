@@ -243,3 +243,44 @@ def test_a_day_without_a_recording_publishes_nothing(nt, played):
     next_day = Tick(played["last"] + timedelta(days=1))
     with no_http(), pytest.raises(NQ.NoFreshRecording, match="no recording of 2026-11-13"):
         NQ.publish_native_quote_snapshot(DataService(nt["conn"], nt["lake"], clock=next_day))
+
+
+# ---- the session calendar: no recording is due outside the trading minutes (Pulse3Tape ran into exit 5 17 times in the 2026-11-23 lunch break) ----
+def run_at(nt, when: datetime, capsys):
+    """(exit code, stdout, stderr, published-state) of one focus-less ``actionability`` run at ``when`` against the stale 10:0x recording."""
+    conn = nt["conn"]
+    before = (conn.execute("select count(*) n from market.dataset_manifest where dataset_id='quotes_l1'").fetchone()["n"],
+              conn.execute("select count(*) n from ingest.observation").fetchone()["n"])
+    client = RateLimitedClient(min_interval_seconds=0)
+    with no_http():
+        rc = analysis._actionability(args(), conn, nt["lake"], client, clock=Tick(when.astimezone(T.UTC)))
+    out = capsys.readouterr()
+    after = (conn.execute("select count(*) n from market.dataset_manifest where dataset_id='quotes_l1'").fetchone()["n"],
+             conn.execute("select count(*) n from ingest.observation").fetchone()["n"])
+    assert after == before and client.requests_made == 0                           # nothing published, no request, whatever the exit code
+    return rc, out.out, out.err
+
+
+def cst_at(day: int, hm: str, sec: int = 0) -> datetime:
+    h, m = map(int, hm.split(":"))
+    return datetime(2026, 11, day, h, m, sec, tzinfo=T.CST)
+
+
+@pytest.mark.parametrize("day, hm, why", [(12, "11:35", "lunch"), (12, "12:55", "lunch"), (12, "15:05", "after close"),
+                                          (13, "09:10", "before open"), (14, "10:00", "weekend")])
+def test_no_recording_due_outside_the_trading_minutes_exits_zero(nt, played, capsys, day, hm, why):
+    rc, out, err = run_at(nt, cst_at(day, hm), capsys)
+    assert rc == 0 and f"market closed: {why}" in out and "nothing published" in out and err == ""
+
+
+def test_the_first_board_of_the_afternoon_session_gets_three_minutes(nt, played, capsys):
+    rc, out, err = run_at(nt, cst_at(12, "13:01"), capsys)
+    assert rc == 0 and "market opening" in out and err == ""
+    rc, out, err = run_at(nt, cst_at(12, "13:03"), capsys)                         # 180 s into the session: the recorder is overdue
+    assert rc == 5 and "no fresh recording" in err and out == ""
+
+
+@pytest.mark.parametrize("hm", ["10:13", "11:20", "13:10", "14:30"])
+def test_a_stale_recording_inside_the_trading_minutes_still_exits_five(nt, played, capsys, hm):
+    rc, out, err = run_at(nt, cst_at(12, hm), capsys)
+    assert rc == 5 and "no fresh recording" in err and "nothing published" in err and out == ""

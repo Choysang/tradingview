@@ -151,10 +151,10 @@ def test_three_bad_answers_in_a_row_stop_a_feed_but_a_good_one_resets_the_count(
     for _ in range(3):
         rec.poll(st)
     assert st.stopped and "3 bad answers" in st.stopped and sink.bad == [EM] * 5
-    world.status[CLS] = 503                                                                    # a gateway fault is a bad answer too, not a block
+    world.status[CLS] = 503                                                                    # a gateway fault is a transport failure: it backs off (see test_transient)
     for _ in range(3):
         rec.poll(state(rec, CLS))
-    assert state(rec, CLS).stopped and not rec.blocked
+    assert not state(rec, CLS).stopped and state(rec, CLS).degraded and not rec.blocked
 
 
 @pytest.mark.parametrize("origin", [THS, EM, CLS])

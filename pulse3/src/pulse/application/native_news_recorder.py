@@ -18,11 +18,15 @@ Message semantics (identical to the old recorder and to ``legacy_recordings.read
 
 Invariants: one ``RateLimitedClient`` per host (<= 1 request/s per host); a block (403/429/456/501 -> ``SourceBlocked``, or an HTML page
 answered with HTTP 200) stops THAT host for the rest of the day at once, is never retried and is remembered in ``blocked.json`` so a restart the same day does not
-touch the host again; 3 consecutive bad answers (HTML, vendor error, timeout, 5xx) also stop a feed for the day; a failed write
+touch the host again; 3 consecutive unusable answers (vendor error, unparsable JSON) also stop a feed for the day; a transport failure
+(ConnectTimeout, ReadTimeout, connection reset, 5xx; not 4xx) is NOT a block: that feed backs off exponentially (its own cadence x 2^(n-1), at most
+``TRANSIENT_BACKOFF_MAX_SECONDS``), is degraded in health meanwhile, resumes at the first answer, and is given up for the day only after
+``TRANSIENT_GIVE_UP_SECONDS`` of unbroken failure; feeds never influence each other's state; a failed write
 leaves the in-memory state unchanged, so the next poll tries the same items again; raw answers are kept (gzip JSON lines) only
 for polls that produced new versions, before the sink sees the messages. Nothing here reads or writes the legacy data tree.
 Not covered: scheduling (``deploy/windows/run_news_record.ps1`` is NOT registered before the cutover), guba follow-up fetches and
-the old ``watch.json``, alert scanning and delivery (``pulse.workers.alerts``), and any HTTP retry.
+the old ``watch.json``, alert scanning and delivery (``pulse.workers.alerts``), and any HTTP retry inside one poll (one attempt per poll,
+as the old recorder; the backoff only spaces the NEXT polls).
 """
 from __future__ import annotations
 
@@ -32,7 +36,7 @@ import json
 import logging
 import time as _time
 from dataclasses import dataclass, field
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Callable, Protocol
 from zoneinfo import ZoneInfo
@@ -45,6 +49,17 @@ LOG = logging.getLogger("pulse.native_news")
 UTC = timezone.utc
 CST = ZoneInfo("Asia/Shanghai")
 HEARTBEAT_SECONDS = 60.0  # an answer with nothing new still tells the health state the feed is alive, at most this often
+
+
+def backoff_delay(every: int, failures: int, cap: float) -> float:
+    """Seconds to wait after the ``failures``-th transport failure in a row: the feed's own cadence doubled each time, capped (never below ``every``)."""
+    return min(float(cap), float(every) * 2 ** min(max(failures - 1, 0), 30))
+
+
+def is_transient(exc: TransportFailure) -> bool:
+    """Only a failure with no HTTP answer (``status`` None: timeout, connect error, reset) or a 5xx is transient; any other status the client raises
+    (400/401/404/412/418...) is an answer the host chose to give, often a WAF page, and counts as a bad answer (3 in a row stop the feed)."""
+    return exc.status is None or 500 <= exc.status < 600
 
 
 @dataclass(frozen=True)
@@ -96,12 +111,21 @@ def build_message(origin: str, item: dict, digest: str, prior_revision: str | No
 class FeedState:
     feed: Feed
     last: datetime | None = None
-    fails: int = 0
+    fails: int = 0                          # consecutive unusable ANSWERS (vendor error / unparsable); 3 stop the feed for the day
     stopped: str | None = None
+    transport_fails: int = 0                # consecutive transport failures (no answer at all): backoff, never a stop by count
+    failing_since: datetime | None = None   # when the current unbroken run of transport failures began
+    retry_at: datetime | None = None        # no poll before this (the backoff); None = on the normal cadence
+    transport_total: int = 0                # all transport failures of the day, for summary.json
     polls: int = 0
     new: int = 0
     revisions: int = 0
     heartbeat_at: datetime | None = None
+
+    @property
+    def degraded(self) -> bool:
+        """Backing off after transport failures (health shows degraded/unavailable through the sink's ``transport_error`` records)."""
+        return self.stopped is None and self.failing_since is not None
 
 
 @dataclass
@@ -112,6 +136,8 @@ class NewsRecorder:
     clock: Callable[[], datetime] = lambda: datetime.now(UTC)
     sleep: Callable[[float], None] = _time.sleep
     break_after: int = native_news.BREAK_AFTER
+    backoff_max: float = native_news.TRANSIENT_BACKOFF_MAX_SECONDS
+    give_up_after: float = native_news.TRANSIENT_GIVE_UP_SECONDS
     run_claims: bool = True
     known: dict[tuple[str, str], tuple[str, str]] = field(default_factory=dict)   # (origin, item) -> (content hash, revision id)
     errors: list[str] = field(default_factory=list)
@@ -140,8 +166,13 @@ class NewsRecorder:
             self._block(st, str(exc))
             return 0
         except TransportFailure as exc:
-            self._bad(st, exc)
+            if is_transient(exc):                          # no answer at all, or a 5xx: a timeout is not a block, so back off and try again later
+                self._transient(st, exc)
+            else:                                          # the host answered with 400/401/404/412/418...: possibly a WAF page, keep the 3-strike stop
+                self._answered(st)
+                self._bad(st, exc)
             return 0
+        self._answered(st)
         try:
             items = st.feed.parse(cap.body)
         except BlockedPage as exc:                         # an HTML shell with HTTP 200 is a block in disguise: stop the host now, no retry
@@ -216,6 +247,32 @@ class NewsRecorder:
         tmp.write_text(json.dumps(marker, ensure_ascii=False), encoding="utf-8")
         tmp.replace(self.day_dir / "blocked.json")
 
+    def _transient(self, st: FeedState, exc: Exception) -> None:
+        """A transport failure (timeout, reset, 5xx). Only this feed is affected: it waits ``backoff_delay`` and is given up for the day after
+        ``give_up_after`` seconds of unbroken failure. The give-up is NOT written to ``blocked.json``: a restart tries the host again."""
+        now = self.clock()
+        st.transport_fails += 1
+        st.transport_total += 1
+        if st.failing_since is None:
+            st.failing_since = now
+        down = (now - st.failing_since).total_seconds()
+        if down >= self.give_up_after:
+            st.retry_at = None
+            st.stopped = f"gave up: {st.transport_fails} transport failures over {down / 60:.0f} min, last: {exc}"
+            self._error(f"{st.feed.origin} {st.stopped}: feed stopped for the day, the other feeds continue")
+            return
+        delay = backoff_delay(st.feed.every, st.transport_fails, self.backoff_max)
+        st.retry_at = now + timedelta(seconds=delay)
+        LOG.warning("news: %s transport failure %d (failing for %.0f s), degraded, next try in %.0f s: %s",
+                    st.feed.origin, st.transport_fails, down, delay, exc)
+
+    def _answered(self, st: FeedState) -> None:
+        """The host answered (whatever the body): the connection works, the transport failure run is over."""
+        if st.failing_since is not None:
+            LOG.info("news: %s answered again after %d transport failures over %.0f s", st.feed.origin, st.transport_fails,
+                     (self.clock() - st.failing_since).total_seconds())
+        st.transport_fails, st.failing_since, st.retry_at = 0, None, None
+
     def _bad(self, st: FeedState, exc: Exception) -> None:
         st.fails += 1
         LOG.warning("news: %s bad answer %d/%d: %s", st.feed.origin, st.fails, self.break_after, exc)
@@ -266,12 +323,22 @@ class NewsRecorder:
                     reason = "all feeds stopped"
                     break
                 for st in live:
-                    if st.last is None or (now - st.last).total_seconds() >= st.feed.every:
+                    if self._due(st, now):
                         self.poll_safely(st)
                 self.sleep(0.5)
         finally:
             self.finish(reason)
         return reason
+
+    @staticmethod
+    def _due(st: FeedState, now: datetime) -> bool:
+        if st.retry_at is not None and now < st.retry_at:
+            return False
+        return st.last is None or (now - st.last).total_seconds() >= st.feed.every
+
+    @property
+    def gave_up(self) -> bool:
+        return any((st.stopped or "").startswith("gave up") for st in self.states)
 
     @property
     def blocked(self) -> bool:
@@ -279,7 +346,8 @@ class NewsRecorder:
 
     def finish(self, reason: str) -> str:
         doc = {"end": reason, "finished_at": self.clock().astimezone(CST).isoformat(timespec="seconds"),
-               "feeds": {st.feed.origin: {"polls": st.polls, "new": st.new, "revisions": st.revisions, "stopped": st.stopped} for st in self.states},
+               "feeds": {st.feed.origin: {"polls": st.polls, "new": st.new, "revisions": st.revisions, "stopped": st.stopped,
+                                                         "transport_failures": st.transport_total, "degraded": st.degraded} for st in self.states},
                "claims": self.claim_totals, "errors": self.errors}
         try:
             (self.day_dir / "summary.json").write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")

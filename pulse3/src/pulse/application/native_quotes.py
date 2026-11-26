@@ -142,7 +142,7 @@ def _observations(svc: DataService, board: pl.DataFrame, ids: Mapping[str, uuid.
             "entity_type": "instrument", "entity_key": str(iid), "natural_key": nat, "observation_revision": 1, "event_time": r["quote_at"],
             "available_at": r["poll_at"], "recorded_at": now, "quality_status": "valid" if "last_price_raw" in payload else "partial",
             "canonical_payload": payload, "content_hash": sha256_json(payload),
-            "field_quality": {FQ_SUMMARY_KEY: {"status": "observed", "source_id": N.SOURCE_ID, "endpoint_id": N.EP_QUOTES,
+            "field_quality": {FQ_SUMMARY_KEY: {"status": "observed", "reason": None, "raw_object_id": str(raw_id), "source_id": N.SOURCE_ID, "endpoint_id": N.EP_QUOTES,
                                                "mapping_version": N.MAPPING_VERSION, "conversion": "native-recording:lots x 100 = shares",
                                                "value_origin": "primary_source"}}})
         result.append(oid)

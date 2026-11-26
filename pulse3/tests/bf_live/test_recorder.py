@@ -73,8 +73,8 @@ def _recorder(conn, lake, legacy_root, world, chunk=1):
 def test_records_same_dataset_shape_at_most_one_request_per_second(conn, lake, legacy_root, world):
     svc, client, rec = _recorder(conn, lake, legacy_root, world)
     s = rec.run(["000001", "600000"], T.DAY, time(10, 0), cycle_seconds=60.0, flush_every=10)
-    hot = s.counts["polls_hot"]                                          # the sealed name (000001) joins the hot subset, polled every 10 s
-    assert s.counts["polls_full"] == 2 and hot >= 10 and s.counts["rows_polled"] == s.counts["rows_published"] == 4 + hot
+    hot = s.counts["polls_hot"]                                          # the sealed name (000001) joins the hot subset, polled every 20 s (HOT_EVERY_SECONDS)
+    assert s.counts["polls_full"] == 2 and hot >= 5 and s.counts["rows_polled"] == s.counts["rows_published"] == 4 + hot
     assert client.requests_made == 4 + hot                               # chunk 1: one request per code of a full board, one per hot poll
     gaps = [b - a for a, b in zip(world.request_times, world.request_times[1:])]
     assert min(gaps) >= 1.0 - 1e-9                                       # never faster than one request per second

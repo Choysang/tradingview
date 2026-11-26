@@ -13,4 +13,4 @@ $day = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China 
 $log = "$root\logs\news_record_$day.log"
 Add-Content $log "== $(Get-Date -Format s) rec_news record"
 & $py -m pulse.workers.rec_news --news-dir "$root\var\native_news" record --until 22:00 *>> $log
-if ($LASTEXITCODE -ne 0) { Add-Content $log "!! rec_news failed exit $LASTEXITCODE (2 = a host blocked us and was stopped for the day)" }
+if ($LASTEXITCODE -ne 0) { Add-Content $log "!! rec_news failed exit $LASTEXITCODE (2 = a host blocked us and was stopped for the day, 3 = a feed gave up after 60 min of timeouts)" }

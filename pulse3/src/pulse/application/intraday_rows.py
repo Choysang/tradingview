@@ -201,11 +201,19 @@ AFTER_SHOTS = ("after_open", "after_mid", "after_end")
 POOLS_WINDOW = (time(15, 25), time(15, 50))        # the old recorder's one-shot step "pools"
 
 
+# User decision 2026-11-24: the in-session hot subset is polled every 20 s, not every 10 s as the old recorder did. Evidence (first live
+# sessions 2026-11-23 / 24, Tencent at 1 request/s with 80 symbols per request, ~3190 codes, ~440 hot names): the board costs 40 requests, a hot poll 6,
+# so a minute needs 40 + 6 x 6 = 76 requests at a 10 s grid against the 60 available (743 of 1442 hot slots were lost, 1.09M rows against 1.40M); at a
+# 20 s grid it needs 40 + 3 x 6 = 58, which fits when the hot polls run between the board's requests (``IntradayRecorder._interleave``).
+# Batch (80) and rate (1 request/s) stay as they are. The auction grid (5 s, static pool) and the after-hours grid (60 s) are not part of this decision.
+HOT_EVERY_SECONDS = 20
+
+
 @dataclass(frozen=True)
 class Schedule:
     """Grid periods in seconds; the offsets keep a poll off the second the exchange's minute is still being printed."""
     full_every: int = 60
-    hot_every: int = 10
+    hot_every: int = HOT_EVERY_SECONDS
     auction_every: int = 5
     after_every: int = 60
     full_offset: int = 2
@@ -233,8 +241,8 @@ def slot(now: datetime, every: int) -> datetime:
     return midnight + timedelta(seconds=seconds - seconds % every)
 
 
-def due(now: datetime, clock: Clock, cfg: Schedule = Schedule()) -> list[str]:
-    """Steps to run at ``now`` (naive Asia/Shanghai), the fast grids first so a slow full snapshot does not delay them."""
+def due_hot(now: datetime, clock: Clock, cfg: Schedule = Schedule()) -> list[str]:
+    """The hot-subset grids that are due at ``now`` (auction static pool, in-session hot subset, after-hours subset)."""
     t = now.time()
     out: list[str] = []
     in_session = any(_inside(t, w) for w in SESSIONS)
@@ -244,6 +252,14 @@ def due(now: datetime, clock: Clock, cfg: Schedule = Schedule()) -> list[str]:
         out.append("hot")
     if _inside(t, AFTER_HOURS) and now.second >= cfg.after_offset and clock.last_after != slot(now, cfg.after_every):
         out.append("after_hot")
+    return out
+
+
+def due(now: datetime, clock: Clock, cfg: Schedule = Schedule()) -> list[str]:
+    """Steps to run at ``now`` (naive Asia/Shanghai), the fast grids first so a slow full snapshot does not delay them."""
+    t = now.time()
+    in_session = any(_inside(t, w) for w in SESSIONS)
+    out = due_hot(now, clock, cfg)
     if ((in_session or _inside(t, AUCTION)) and (now - slot(now, cfg.full_every)).total_seconds() >= cfg.full_offset
             and clock.last_full != slot(now, cfg.full_every)):
         out.append("full")

@@ -14,7 +14,7 @@ def client(fn, key=KEY):
 
 
 def ask(c):
-    return c.ask("the prompt", model="gpt-6.1-terra", effort="high", system="the system")
+    return c.ask("the prompt", model="gpt-6-luna", effort="high", system="the system")
 
 
 def test_key_file_is_plain_utf8_first_line(tmp_path):
@@ -41,7 +41,7 @@ def test_request_has_the_preregistered_shape_and_the_key_only_in_the_header():
     r = ask(c)
     assert rec.urls == [RC.URL] and KEY not in rec.urls[0] and rec.auth_ok == [True]
     body = rec.requests[0]
-    assert body == {"model": "gpt-6.1-terra", "input": "the prompt", "instructions": "the system", "reasoning": {"effort": "high"}, "tools": [{"type": "web_search"}]}
+    assert body == {"model": "gpt-6-luna", "input": "the prompt", "instructions": "the system", "reasoning": {"effort": "high"}, "tools": [{"type": "web_search"}]}
     assert KEY not in str(body)
     assert (r.response_id, r.request_id, r.searches, r.status) == ("resp_9", "req-resp_9", 2, "completed")
     assert r.usage == {"input_tokens": 2000, "output_tokens": 500} and '"action"' in r.text
@@ -102,7 +102,7 @@ def test_an_unfinished_reply_is_a_failure_not_an_answer():
 
 def test_max_output_tokens_is_sent_only_when_given():
     c, rec = client(lambda n, b: reply())
-    c.ask("p", model="m", effort="high", system="s", max_output_tokens=4321)
+    c.ask("p", model="gpt-6-luna", effort="high", system="s", max_output_tokens=4321)
     assert rec.requests[0]["max_output_tokens"] == 4321
     ask(c)
     assert "max_output_tokens" not in rec.requests[1]

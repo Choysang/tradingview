@@ -16,7 +16,7 @@ from pulse.adapters.lake import LakeStore
 from pulse.adapters.postgres import db
 
 ENV_EVENTS = "PULSE_FWDLOG_EVENTS"                      # the same variable the forward-log lane uses for the old store path
-DEFAULT_EVENTS = "C:\\pulse\\app\\backend\\data\\calendar\\events.jsonl"
+DEFAULT_EVENTS = "C:\\pulse3\\var\\legacy_calendar\\events.jsonl"      # frozen copy (retire_legacy.ps1); same default as bf_fwdlog_inputs
 
 
 def _parser() -> argparse.ArgumentParser:

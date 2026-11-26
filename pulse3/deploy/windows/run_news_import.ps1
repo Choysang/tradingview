@@ -4,7 +4,6 @@
 # and watch lists). The old system's alerts.jsonl is imported only as a comparison dataset, never into pulse3 alerts.
 # Incremental and idempotent; if an earlier run is still going the task scheduler ignores the new start (IgnoreNew).
 . C:\pulse3\pulse3_env.ps1
-if (-not $env:PULSE_LEGACY_DATA) { $env:PULSE_LEGACY_DATA = 'C:\pulse\data' }
 Set-Location "$root\app"
 $py = "$root\app\.venv\Scripts\python.exe"
 $day = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'China Standard Time').ToString('yyyy-MM-dd')

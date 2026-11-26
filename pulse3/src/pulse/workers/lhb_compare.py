@@ -5,7 +5,8 @@ Usage (from pulse3/)::
     uv run python -m pulse.workers.lhb_compare --since 2026-11-10 --until 2026-11-21 [--legacy-warehouse PATH] [--json]
 
 ``--legacy-warehouse`` is the old ``warehouse\\live`` directory holding ``lhb_stocks`` and ``lhb_seats`` (default: the env var
-``PULSE_LEGACY_WAREHOUSE``, on the server ``C:\\pulse\\app\\backend\\data\\warehouse\\live``). The new side is read from PostgreSQL
+``PULSE_LEGACY_WAREHOUSE``, which ``pulse3_env.ps1`` sets on the server only until the old system is retired; afterwards the
+warehouse exists only in the archive). The new side is read from PostgreSQL
 (``intelligence.seat_report`` rows of ``intel seats``). The worker makes no HTTP request and writes nothing; the database session is
 read-only. Per session it prints the stocks listed on one side only, the seat rows and amounts that differ (tolerance 0.5% or 1 yuan),
 institution and Lhasa seat counts per side and a SAME / DIFF verdict, and counts the newest consecutive SAME sessions (10 = the old

@@ -29,3 +29,9 @@ def load() -> Settings:
         api_host=os.environ.get("PULSE_API_HOST", "127.0.0.1"),
         api_port=int(os.environ.get("PULSE_API_PORT", "8200")),
     )
+
+
+def legacy_retired(environ: dict | None = None) -> bool:
+    """True when the old system (the first install, archived by retire_legacy.ps1) is deleted: ``deploy/windows/pulse3_env.ps1`` exports ``PULSE_LEGACY_RETIRED=1``
+    once ``legacy_state.json`` says so. Comparisons against the old system's files (``fusion reconcile --pc``) are skipped with a reason then."""
+    return str((environ if environ is not None else os.environ).get("PULSE_LEGACY_RETIRED", "")).strip().lower() in ("1", "true", "yes")

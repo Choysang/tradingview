@@ -1,7 +1,7 @@
 """OpenAI Responses API client with web search, for the E092 live judgement (port of ``scripts/lab/llm.py`` + ``llm_ask.py``).
 
 Why: the experiment needs one paid, web-searching call per name and a record of exactly what came back (text, response id, usage). The key is the most sensitive thing here.
-Invariants: a 429 carries a ``detail`` (quota vs rate limit, numeric headers) so the stop row can tell our own pressure from other users of the key; the key comes from the file named by ``PULSE_OPENAI_KEY_FILE`` (plain UTF-8, no BOM, first line) and lives only in the request header and a private attribute; it is never
+Invariants: the model must be in the shared allow-list (``model_guard``, default gpt-6-luna) or ``ask`` raises before any I/O; a 429 carries a ``detail`` (quota vs rate limit, numeric headers) so the stop row can tell our own pressure from other users of the key; the key comes from the file named by ``PULSE_OPENAI_KEY_FILE`` (plain UTF-8, no BOM, first line) and lives only in the request header and a private attribute; it is never
 printed, logged, stored, put in a URL, repr'd or placed in an error. An error carries only a label (an HTTP status or an exception class name), never the vendor's body (a 401 body quotes
 part of the key). 401, 403, 429 and a model refusal raise ``CallStop`` (the caller stops the day); any other failure raises ``CallFailed``; a timeout is ``CallFailed("timeout")`` so the
 caller can ask once more. The transport is injectable (tests use ``httpx.MockTransport`` and never touch the network).
@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import httpx
+
+from .model_guard import require_allowed
 
 ENV_KEY_FILE = "PULSE_OPENAI_KEY_FILE"
 URL = "https://api.openai.com/v1/responses"
@@ -162,8 +164,11 @@ class ResponsesClient:
     def __repr__(self) -> str:
         return f"ResponsesClient(url={self._url!r})"
 
-    def ask(self, prompt: str, *, model: str, effort: str, system: str, max_output_tokens: int | None = None) -> Reply:
+    def ask(self, prompt: str, *, model: str, effort: str, system: str, max_output_tokens: int | None = None, service_tier: str | None = None) -> Reply:
+        require_allowed(model)                                         # before any request is built: a model outside PULSE_LLM_ALLOWED_MODELS raises ModelNotAllowed here
         body = {"model": model, "input": prompt, "instructions": system, "reasoning": {"effort": effort}, "tools": TOOLS}
+        if service_tier is not None:                                   # absent = the vendor's default tier
+            body["service_tier"] = service_tier
         if max_output_tokens is not None:                              # counts reasoning tokens too: a bound on what one call can cost
             body["max_output_tokens"] = max_output_tokens
         t0 = time.monotonic()

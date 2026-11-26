@@ -15,6 +15,7 @@ from pulse.application import bf_llm_live_registry as REG
 from pulse.application import bindings as B
 from pulse.application.bf_llm_live_store import LakeLogStore, make_row
 from pulse.application.data_service import DataService
+from pulse.domain.llm_live import experiments as X
 from pulse.domain.llm_live import rules as R
 
 pytestmark = pytest.mark.pg
@@ -51,11 +52,11 @@ def test_registered_once_as_shadow_with_the_frozen_hash(conn, lake):
     svc = DataService(conn, lake, clock=lambda: NOW)
     frame = pl.DataFrame({"code": ["600000"], "date": [NOW.date()], "score": [1.0]}, schema=S.CURRENT_SCHEMA)
     B.publish_derived(svc, S.DS_CURRENT, frame, {"dataset": S.DS_CURRENT}, contract_id="pulse.analysis_artifact", watermark=NOW)
-    first = REG.register(conn, NOW)
-    second = REG.register(conn, NOW)
+    first = REG.register(conn, NOW, X.E100)
+    second = REG.register(conn, NOW, X.E100)
     assert first["experiment_id"] == second["experiment_id"]
     runs = conn.execute("SELECT run_purpose, run_state, run_manifest FROM research.experiment_run WHERE run_manifest->>'lane'='llm_live'").fetchall()
-    assert len(runs) == 1 and runs[0]["run_purpose"] == "shadow" and runs[0]["run_state"] == "running" and R.SPEC_SHA256 in str(runs[0]["run_manifest"])
+    assert len(runs) == 1 and runs[0]["run_purpose"] == "shadow" and runs[0]["run_state"] == "running" and X.E100.spec_sha256 in str(runs[0]["run_manifest"])
 
 
 def test_a_decide_day_end_to_end_on_the_lake_log_with_the_real_registry_hook(conn, lake):
@@ -69,12 +70,29 @@ def test_a_decide_day_end_to_end_on_the_lake_log_with_the_real_registry_hook(con
     frame = pl.DataFrame({"code": ["600000"], "date": [NOW.date()], "score": [1.0]}, schema=S.CURRENT_SCHEMA)
     B.publish_derived(svc, S.DS_CURRENT, frame, {"dataset": S.DS_CURRENT}, contract_id="pulse.analysis_artifact", watermark=NOW)
     vendor = Recorder()
-    live = LlmLive(LakeLogStore(svc), context=lambda d: plan(d, n_top=2, n_ctl=1), labels=lambda ds: {}, key_loader=lambda: KEY,
+    live = LlmLive(LakeLogStore(svc, X.E100.dataset), context=lambda d: plan(d, n_top=2, n_ctl=1), labels=lambda ds: {}, key_loader=lambda: KEY,
                    client_factory=lambda key: ResponsesClient(key, transport=httpx.MockTransport(vendor)), clock=lambda: NOW, switch_on=lambda: True,
-                   register=lambda now: REG.register(conn, now), workers=1)
+                   register=lambda now: REG.register(conn, now, X.E100), workers=1)
     out = live.decide(DAY)
     assert out["status"] == "done" and out["asked"] == 3 and len(vendor.requests) == 3
-    reopened = LakeLogStore(DataService(conn, lake, clock=lambda: NOW)).rows()
+    reopened = LakeLogStore(DataService(conn, lake, clock=lambda: NOW), X.E100.dataset).rows()
     assert [r["kind"] for r in reopened].count("call") == 3 and [r["kind"] for r in reopened].count("answer") == 3 and KEY not in str(reopened)
     assert conn.execute("SELECT count(*) AS n FROM research.experiment_run WHERE run_manifest->>'lane'='llm_live'").fetchone()["n"] == 1
     assert live.decide(DAY)["status"] == "complete" and len(vendor.requests) == 3
+
+
+def test_each_experiment_has_its_own_log_dataset_and_the_lane_lock_is_shared(conn, lake, fresh_dsn):
+    a = LakeLogStore(DataService(conn, lake, clock=lambda: NOW), X.E092.dataset)
+    a.append([make_row("2026-11-23", "call", "k", "r", {"n": 1}, at=NOW)])
+    c2 = db.connect(fresh_dsn, autocommit=True)
+    try:
+        b = LakeLogStore(DataService(c2, lake, clock=lambda: NOW), X.E100.dataset)
+        b.append([make_row("2026-11-24", "probe", "k", "r", {"n": 1, "phase": "ledger"}, at=NOW)])
+        assert [r["kind"] for r in LakeLogStore(DataService(conn, lake, clock=lambda: NOW), X.E092.dataset).rows()] == ["call"]
+        assert [r["kind"] for r in LakeLogStore(DataService(conn, lake, clock=lambda: NOW), X.E100.dataset).rows()] == ["probe"]
+        with a.exclusive() as got_a:
+            with b.exclusive() as got_b:                                # another experiment cannot run at the same time
+                pass
+        assert got_a is True and got_b is False
+    finally:
+        c2.close()

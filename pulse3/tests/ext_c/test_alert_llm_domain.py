@@ -12,6 +12,7 @@ from pulse.domain.alerts import llm_tier as LT
 from pulse.domain.alerts import tiers as T
 
 from . import llm_support as H
+from .llm_support import allow_test_models  # noqa: F401 - autouse fixture
 
 HELD, WATCHED, OTHER = "00000000-0000-0000-0000-00000000000a", "00000000-0000-0000-0000-00000000000b", "00000000-0000-0000-0000-00000000000c"
 CTX = T.Context(holdings=frozenset({HELD}), watch=frozenset({WATCHED}), main_board=frozenset({HELD, WATCHED, OTHER}),

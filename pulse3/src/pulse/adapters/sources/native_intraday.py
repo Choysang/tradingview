@@ -44,8 +44,8 @@ def register(add, spec_cls, sources: dict) -> None:
                  {**_COMMON, "endpoint": "full snapshots", "kinds": "auction (09:15-09:25 every 60 s), auction_final (09:25:10), full (60 s in "
                   "the sessions), close (15:01:30), after (15:05:05, 15:15, 15:30:05)", "universe": "main board, every code of the run"},
                  True, None))
-    add(spec_cls(SOURCE_ID, EP_HOT, SCHEMA_VERSION, MAPPING_VERSION, "CanonicalQuote", "poll", 120, 10, None,
-                 {**_COMMON, "endpoint": "hot subset", "kinds": "auction_hot (5 s, 09:19:30-09:25:10, static pool), hot (10 s in the sessions), "
+    add(spec_cls(SOURCE_ID, EP_HOT, SCHEMA_VERSION, MAPPING_VERSION, "CanonicalQuote", "poll", 120, 20, None,
+                 {**_COMMON, "endpoint": "hot subset", "kinds": "auction_hot (5 s, 09:19:30-09:25:10, static pool), hot (20 s in the sessions), "
                   "after_hot (60 s, 15:05-15:30)", "universe": "static pool (names that touched a limit in the last 3 recorded sessions) "
                   "plus names within 2% of a limit or that touched one today, at most 800"},
                  True, None))

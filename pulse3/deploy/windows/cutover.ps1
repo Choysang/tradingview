@@ -17,6 +17,7 @@
 param([switch]$Apply, [switch]$Rollback, [switch]$AnyTime, [switch]$NoPush)
 $ErrorActionPreference = 'Stop'
 . C:\pulse3\pulse3_env.ps1
+if ($Rollback -and $retired) { 'refused: the old system is retired (legacy_state.json); its recorder tasks are gone and cannot be re-enabled'; exit 1 }
 $ps = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
 $stateFile = "$root\cutover_state.json"
 $oldRecorders = 'PulseIntraday', 'PulseIntradayExt', 'PulseNews', 'PulseNewsAlerts'
