@@ -818,6 +818,24 @@ def _build(conn, lake, svc: DataService, inp: BuildInputs, cfg: BuildConfig, acc
             for m in top:
                 candidates.setdefault(m, node)
         member_snap = inp.membership.manifest["snapshot_id"]
+        # Fix N+1: pre-fetch READY/SUPERSEDED release timestamps once for dwell calculation
+        rel_times = [
+            r["decision_as_of"]
+            for r in conn.execute(
+                "SELECT decision_as_of FROM decision.release WHERE release_state IN ('READY','SUPERSEDED') ORDER BY decision_as_of"
+            ).fetchall()
+        ]
+        # Attach TradePlan references; only plans genuinely in 'actionable' state satisfy plan_validated=True
+        # (template plans remain state='watching' / TEMPLATE_PLAN_NOT_VALIDATED and never bypass the gate).
+        plan_by_iid: dict[uuid.UUID, tuple[tuple[uuid.UUID, int], bool]] = {}
+        for h_key in h_ids:
+            for p_iid, p_doc in plans_by_h.get(h_key, {}).items():
+                p_state = str(p_doc.get("plan_state") or p_doc.get("state") or "watching")
+                is_valid = p_state == "actionable"
+                cur = plan_by_iid.get(p_iid)
+                if cur is None or (is_valid and not cur[1]):
+                    plan_by_iid[p_iid] = ((uuid.UUID(str(p_doc["plan_id"])), int(p_doc["plan_version"])), is_valid)
+
         for iid, node in sorted(candidates.items(), key=lambda kv: str(kv[0])):
             a = assess.get(node)
             if a is None:
@@ -825,16 +843,20 @@ def _build(conn, lake, svc: DataService, inp: BuildInputs, cfg: BuildConfig, acc
             pr = prev_rows.get(iid)
             prev = None
             if pr is not None:
-                dwell = 1 + conn.execute("SELECT count(*) n FROM decision.release WHERE release_state IN ('READY','SUPERSEDED')"
-                                         " AND decision_as_of > %s", (pr["decision_as_of"],)).fetchone()["n"]
+                dwell = 1 + sum(1 for dt in rel_times if dt > pr["decision_as_of"])
                 prev = P.PoolState(pr["current_state"], pr["event_sequence"], dwell)
             invalid = None if iid in included else "left_universe"
-            _, change = P.decide_next_state(pool_policy, prev, a, hard_invalidation=invalid)
+            p_entry = plan_by_iid.get(iid)
+            p_ref = p_entry[0] if p_entry else None
+            p_valid = p_entry[1] if p_entry else False
+            _, change = P.decide_next_state(
+                pool_policy, prev, a, plan_ref=p_ref, plan_validated=p_valid, hard_invalidation=invalid
+            )
             if change is None:
                 continue
             ev = P.make_event(pool_id=pool_id, instrument_id=iid, policy=pool_policy, prev=prev, new=change,
                               taxonomy=(tax, B.TAXONOMY_VERSION, node), membership_snapshot_id=member_snap, release_id=release_id,
-                              plan_ref=None, decision_as_of=inp.decision_as_of, available_at=max(clock(), inp.decision_as_of))
+                              plan_ref=p_ref, decision_as_of=inp.decision_as_of, available_at=max(clock(), inp.decision_as_of))
             with conn.transaction():
                 decision_repo.append_pool_event(conn, ev, recorded_at=clock())
             pool_items.append(ev)

@@ -38,6 +38,14 @@ import type { SubPaneId } from './bf/stock/api';
 import { StockStatsCard } from './bf/stock/StockStatsCard';
 import { AnalogTab } from './bf/fillr/AnalogTab';
 import { SealFactsPanel } from './bf/live/SealClock';
+import { nexusOps } from './bf/nexus/api';
+import {
+  NexusActionSummaryCard,
+  NexusExecutionSection,
+  NexusFallbackStockWorkbench,
+  NexusMicrostructureSection,
+  NexusTvProSection,
+} from './bf/nexus/StockProPanels';
 import { useStockIndicators } from './bf/stock/useStockIndicators';
 
 const TF_GROUPS: Array<{ label: string; options: Array<[ChartTimeframe, string]> }> = [
@@ -65,11 +73,23 @@ export function StockPage() {
   const theme = useTheme();
   const toast = useToast();
   const [drawMode, setDrawMode] = useState(false);
+  const [showNexusOverlay, setShowNexusOverlay] = useState(true);
   const [lowerTab, setLowerTab] = useState<'evidence' | 'analog'>('evidence');
   const boll = layout.doc.panes.boll ?? false;
   const setBoll = (v: boolean) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, boll: v } });
   const tf = layout.doc.timeframe;
   const adj = layout.doc.adjustment;
+
+  const nexusTf = tf === '1m' || tf === '5m' || tf === '15m' || tf === '1h' ? '1d' : tf;
+
+  const nexusProQ = useQuery({
+    queryKey: ['bf-nexus', 'stock-pro', instrumentId, nexusTf, adj, rid],
+    queryFn: ({ signal }) => nexusOps.stockPro(instrumentId, { timeframe: nexusTf, adjustment: adj, release_id: rid ?? undefined }, signal),
+    enabled: !!instrumentId,
+    retry: false,
+    staleTime: 45_000,
+  });
+  const nexusPro = nexusProQ.data?.data ?? null;
 
   // ---- plans: main + sub-plans, all pinned to the workspace release
   const planQs = useQueries({ queries: (ws?.data.plan_refs ?? []).map((p) => planQuery(p.plan_id, p.plan_version)) });
@@ -113,7 +133,7 @@ export function StockPage() {
 
   const setView = (v: 'public' | 'account'): void => setSp((p) => { const n = new URLSearchParams(p); if (v === 'account') n.set('view', 'account'); else n.delete('view'); return n; }, { replace: true });
 
-  // ---- chart lines: plan zone (raw only) + visible drawings
+  // ---- chart lines: plan zone (raw only) + Nexus Pro anchors + visible drawings
   const lines: ChartLine[] = useMemo(() => {
     const out: ChartLine[] = [];
     const zone = mainPlan?.env.data.entry_price_zone;
@@ -121,6 +141,12 @@ export function StockPage() {
       const lo = toChartNumber(zone.lower_price_raw); const hi = toChartNumber(zone.upper_price_raw);
       if (lo !== null) out.push({ id: 'zone-lo', price: lo, title: '买入区间下沿', tone: 'plan', dashed: true });
       if (hi !== null && hi !== lo) out.push({ id: 'zone-hi', price: hi, title: '买入区间上沿', tone: 'plan', dashed: true });
+    }
+    if (adj === 'raw' && showNexusOverlay && nexusPro) {
+      for (const nl of nexusPro.chart_lines) {
+        const np = toChartNumber(nl.price);
+        if (np !== null) out.push({ id: nl.id, price: np, title: nl.title, tone: nl.tone, dashed: nl.dashed });
+      }
     }
     for (const a of ann.items) {
       const b = a.body as unknown as Partial<HlineBody>;
@@ -130,10 +156,14 @@ export function StockPage() {
       }
     }
     return out;
-  }, [mainPlan, ann.items, adj]);
+  }, [mainPlan, ann.items, adj, showNexusOverlay, nexusPro]);
 
   if (wsQ.isLoading || (!ws && rel.pointer.isLoading)) return <div className="page"><Loading label="读取个股工作台…" /></div>;
-  if (wsQ.error && !ws) return <div className="page"><ErrorState error={wsQ.error} what="个股工作台" onRetry={() => void wsQ.refetch()} /></div>;
+  if (wsQ.error && !ws) {
+    if (nexusPro) return <NexusFallbackStockWorkbench pro={nexusPro} meta={nexusProQ.data?.meta} rel={rel} horizonKey={horizon.key} />;
+    if (nexusProQ.isLoading) return <div className="page"><Loading label="切换至 Nexus 全市场 PostgreSQL 个股工作台…" /></div>;
+    return <div className="page"><ErrorState error={wsQ.error} what="个股工作台" onRetry={() => { void wsQ.refetch(); void nexusProQ.refetch(); }} /></div>;
+  }
   if (!ws) return <div className="page"><EmptyState>当前没有可显示的发布版本。</EmptyState></div>;
 
   const inst = ws.data.instrument;
@@ -196,6 +226,7 @@ export function StockPage() {
               <label className="check"><input type="checkbox" checked={layout.doc.panes.volume} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, volume: e.target.checked } })} />成交量</label>
               <label className="check"><input type="checkbox" checked={layout.doc.panes.ma} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, ma: e.target.checked } })} />MA</label>
               <label className="check"><input type="checkbox" checked={layout.doc.panes.ema} onChange={(e) => layout.save({ ...layout.doc, panes: { ...layout.doc.panes, ema: e.target.checked } })} />EMA</label>
+              <label className="check"><input type="checkbox" checked={showNexusOverlay} onChange={(e) => setShowNexusOverlay(e.target.checked)} />Nexus买卖锚点与信号</label>
               <IndicatorControls boll={boll} onBoll={setBoll} sub={sub} onSub={onSub} />
               <button className={`btn btn-small ${drawMode ? 'btn-on' : ''}`} aria-pressed={drawMode} onClick={() => setDrawMode((d) => !d)}>{drawMode ? '点击图上位置画线…' : '画水平线'}</button>
               {layout.saving && <span className="muted small">保存布局…</span>}
@@ -210,13 +241,22 @@ export function StockPage() {
             {barWindow && (
               <>
                 {barWindow.bars.length === 0 ? <EmptyState>该窗口没有K线（{barWindow.window_complete ? '已确认为空' : '未确认完整，可能只是尚未取到'}）。</EmptyState> : (
-                  <PriceChart bars={barWindow} showVolume={layout.doc.panes.volume} lines={lines} drawMode={drawMode} onPickPrice={picked} themeVersion={theme.version} overlays={indicators.overlays} subSeries={indicators.subSeries} />
+                  <PriceChart bars={barWindow} showVolume={layout.doc.panes.volume} lines={lines} drawMode={drawMode} onPickPrice={picked} themeVersion={theme.version} overlays={indicators.overlays} subSeries={indicators.subSeries} markers={showNexusOverlay ? nexusPro?.chart_markers : undefined} />
                 )}
                 <BarNotes win={barWindow} meta={barsQ.data!.meta} />
                 <IndicatorNotes view={indicators} />
               </>
             )}
           </section>
+
+          {nexusPro && (
+            <>
+              <NexusActionSummaryCard pro={nexusPro} />
+              <NexusTvProSection pro={nexusPro} />
+              <NexusExecutionSection instrumentId={instrumentId} releaseId={wsReleaseId} initialPro={nexusPro} />
+              <NexusMicrostructureSection pro={nexusPro} />
+            </>
+          )}
 
           <section className="card">
             <div className="segmented" role="tablist" aria-label="证据与相似情景">

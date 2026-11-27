@@ -6,6 +6,7 @@ import { FusionPage } from '../pages/bf/fusion/FusionPage';
 import { ForwardLogPage } from '../pages/bf/fwdlog/ForwardLogPage';
 import { BatchComparePage } from '../pages/bf/lab/BatchComparePage';
 import { LedgerPage } from '../pages/bf/lab/LedgerPage';
+import { NexusHubPage } from '../pages/bf/nexus/NexusHubPage';
 
 export interface ExtRoute {
   path: string;
@@ -14,6 +15,7 @@ export interface ExtRoute {
 }
 
 export const routesBf: ExtRoute[] = [
+  { path: 'nexus', label: '全域选股中枢', element: <NexusHubPage /> },
   { path: 'themes', label: '题材图谱', element: <ThemeMapPage /> },
   { path: 'lab/ledger', label: '历史实验台账', element: <LedgerPage /> },
   { path: 'lab/batch', label: '批量对比', element: <BatchComparePage /> },

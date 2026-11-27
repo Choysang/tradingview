@@ -52,8 +52,22 @@ def open_paper_account(conn: psycopg.Connection, *, trading_day: date, account_i
     if conn.execute("SELECT 1 FROM execution.account_head WHERE account_id=%s", (account_id,)).fetchone():
         return False
     ctx = EventContext("paper-account-open", MARKET_RULES_VERSION, user_account_2026().version, KERNEL_VERSION, "none")
-    repo.create_account(account_id, {"trading_day": trading_day.isoformat(), "opening_cash": initial_cash,
-                                     "positions": dict(positions or {}), "sale_proceeds_reusable": True}, ctx)
+    from pulse.adapters.postgres.outbox import PgOutbox
+    from pulse.application.ports.delivery import OutboxEvent
+    with conn.transaction():
+        repo.create_account(account_id, {"trading_day": trading_day.isoformat(), "opening_cash": initial_cash,
+                                         "positions": dict(positions or {}), "sale_proceeds_reusable": True}, ctx)
+        PgOutbox(conn).append(OutboxEvent(
+            event_id=B.aid("outbox", "account.updated", str(account_id), "1"),
+            event_type="account.updated",
+            schema_version="3.0.0",
+            aggregate_type="account",
+            aggregate_id=str(account_id),
+            aggregate_version=1,
+            occurred_at=datetime(trading_day.year, trading_day.month, trading_day.day, tzinfo=timezone.utc),
+            producer_version="account_service-v1",
+            payload={"account_id": str(account_id), "account_version": 1, "reason": "account_opened"},
+        ))
     return True
 
 
@@ -247,4 +261,18 @@ def build_actionability(conn: psycopg.Connection, *, release_id: uuid.UUID, rank
         ranking_order=[(e["instrument_id"], e["action_rank"]) for e in entries], plans=plans, quotes=dict(quote.views), account=acct)
     with conn.transaction():
         payload = store_actionability(conn, inp)
+        from pulse.adapters.postgres.outbox import PgOutbox
+        from pulse.application.ports.delivery import OutboxEvent
+        aid_str = str(payload["actionability_id"])
+        PgOutbox(conn).append(OutboxEvent(
+            event_id=B.aid("outbox", "actionability.ready", aid_str),
+            event_type="actionability.ready",
+            schema_version="3.0.0",
+            aggregate_type="actionability",
+            aggregate_id=aid_str,
+            aggregate_version=1,
+            occurred_at=checked_at,
+            producer_version="account_service-v1",
+            payload={"actionability_id": aid_str, "release_id": str(release_id), "account_id": str(account_id)},
+        ))
     return payload

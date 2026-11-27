@@ -1,0 +1,38 @@
+# Public HTTPS front for the pulse3 site (task Pulse3Caddy, run_caddy.ps1). The public address comes from the environment
+# (PULSE_PUBLIC_HOST, read by run_caddy.ps1 from C:\pulse3\caddy\public_host.txt), so no server address lives in the repository.
+# Certificates: Let's Encrypt short-lived IP certificate over TLS-ALPN on 443 first; if that CA refuses, Caddy's own local CA.
+# Port 80 is not used (HTTP challenge and redirects off). The app's login gate (site_auth.py) protects every proxied request.
+{
+	admin off
+	skip_install_trust
+	auto_https disable_redirects
+	default_sni {$PULSE_PUBLIC_HOST}
+	storage file_system C:\pulse3\caddy\data
+	log {
+		output file C:\pulse3\logs\caddy.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}
+
+https://{$PULSE_PUBLIC_HOST} {
+	tls {
+		issuer acme {
+			profile shortlived
+			disable_http_challenge
+		}
+		issuer internal
+	}
+	request_body {
+		max_size 16MB
+	}
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		X-Frame-Options DENY
+		-Server
+	}
+	reverse_proxy 127.0.0.1:8200
+}

@@ -46,6 +46,11 @@ export function HomePage() {
   return (
     <div className="page">
       <ReleaseBar rel={rel} displayedReleaseId={rel.release.data?.data.release_id} />
+      <div className="notice notice-info">
+        <b>Nexus 2026 五维选股与情报中枢：</b>
+        <span>多源核验消息面 · 国内外宏观/资金映射 · 火速晋升板块备选池 · 正交冠军策略「取其精华、去其糟粕」推荐总榜</span>
+        <Link className="btn btn-small btn-on" to={`/nexus${rel.effectiveReleaseId ? `?release=${rel.effectiveReleaseId}` : ''}`}>进入全域选股中枢 →</Link>
+      </div>
       <nav className="entry-tabs" aria-label="首页入口">
         {ENTRIES.map((e) => (
           <button key={e.key} className={`entry-tab ${entry === e.key ? 'on' : ''}`} aria-pressed={entry === e.key} onClick={() => setParam('entry', e.key)}>

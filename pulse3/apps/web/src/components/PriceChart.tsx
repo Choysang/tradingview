@@ -8,8 +8,8 @@
  */
 import { useEffect, useRef } from 'react';
 import {
-  CandlestickSeries, ColorType, CrosshairMode, HistogramSeries, LineSeries, LineStyle, createChart,
-  type IChartApi, type IPriceLine, type ISeriesApi, type Time,
+  CandlestickSeries, ColorType, CrosshairMode, HistogramSeries, LineSeries, LineStyle, createChart, createSeriesMarkers,
+  type IChartApi, type IPriceLine, type ISeriesApi, type ISeriesMarkersPluginApi, type SeriesMarker, type Time,
 } from 'lightweight-charts';
 import type { BarWindow } from '../api/types';
 import { toChartNumber } from '../lib/decimal';
@@ -22,6 +22,14 @@ export interface ChartLine {
   title: string;
   tone: 'plan' | 'draw' | 'exit' | 'risk';
   dashed?: boolean;
+}
+
+export interface ChartSignalMarker {
+  time: string;
+  position: 'aboveBar' | 'belowBar';
+  shape: 'arrowUp' | 'arrowDown' | 'circle' | 'square';
+  text: string;
+  tone: 'buy' | 'sell' | 'warn' | 'info';
 }
 
 export interface PlottedBars {
@@ -79,12 +87,15 @@ export interface PriceChartProps {
   overlays?: DrawnSeries[];
   /** Server series of the selected sub-pane (own pane below price / volume). */
   subSeries?: DrawnSeries[];
+  /** Optional server-computed Pro signal markers (SuperTrend flip, Squeeze release, MACD/RSI divergence, Volume spike). */
+  markers?: ChartSignalMarker[];
 }
 
-export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, themeVersion, overlays, subSeries }: PriceChartProps) {
+export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, themeVersion, overlays, subSeries, markers }: PriceChartProps) {
   const host = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
   const volRef = useRef<ISeriesApi<'Histogram'> | null>(null);
   const priceLines = useRef<IPriceLine[]>([]);
   const extraRef = useRef<Array<ISeriesApi<'Line'> | ISeriesApi<'Histogram'>>>([]);
@@ -106,12 +117,13 @@ export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, the
     });
     chartRef.current = chart;
     candleRef.current = chart.addSeries(CandlestickSeries, {});
+    markersRef.current = createSeriesMarkers(candleRef.current, []);
     chart.subscribeClick((p) => {
       if (!drawRef.current || !p.point || !candleRef.current) return;
       const price = candleRef.current.coordinateToPrice(p.point.y);
       if (price !== null && Number.isFinite(price)) pickRef.current?.(price);
     });
-    return () => { chart.remove(); chartRef.current = null; candleRef.current = null; volRef.current = null; priceLines.current = []; extraRef.current = []; };
+    return () => { chart.remove(); chartRef.current = null; candleRef.current = null; markersRef.current = null; volRef.current = null; priceLines.current = []; extraRef.current = []; };
   }, []);
 
   // data + theme
@@ -189,6 +201,32 @@ export function PriceChart({ bars, showVolume, lines, drawMode, onPickPrice, the
       title: l.title,
     }));
   }, [lines, bars]);
+
+  // signal markers
+  useEffect(() => {
+    const plug = markersRef.current;
+    if (!plug) return;
+    if (!markers || markers.length === 0 || isIntraday(bars.timeframe)) {
+      plug.setMarkers([]);
+      return;
+    }
+    const validTimes = new Set(bars.bars.map((b) => b.trade_date));
+    const up = cssVar('--up', '#e5484d');
+    const down = cssVar('--down', '#2fa36b');
+    const warn = cssVar('--warn', '#d97706');
+    const info = cssVar('--accent', '#2563eb');
+    const mapped: SeriesMarker<Time>[] = markers
+      .filter((m) => validTimes.has(m.time))
+      .sort((a, b) => a.time.localeCompare(b.time))
+      .map((m) => ({
+        time: m.time as Time,
+        position: m.position,
+        shape: m.shape,
+        text: m.text,
+        color: m.tone === 'buy' ? up : m.tone === 'sell' ? down : m.tone === 'warn' ? warn : info,
+      }));
+    plug.setMarkers(mapped);
+  }, [markers, bars, themeVersion]);
 
   return <div ref={host} className={`chart-host ${drawMode ? 'drawing' : ''}`} role="img" aria-label="K线图" />;
 }

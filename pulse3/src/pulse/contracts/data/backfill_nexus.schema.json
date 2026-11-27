@@ -1,0 +1,970 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pulse:contracts:backfill:nexus:v1",
+  "title": "Pulse 3.5 Nexus Unified Quant, Microstructure, TradingView Pro, Real-Time RAPTOR & Swiss Arena Contract",
+  "x-contract-version": "2.0.0",
+  "$defs": {
+    "DecStr": { "type": ["string", "null"] },
+    "RatingLabel": {
+      "type": "string",
+      "enum": ["strong_sell", "sell", "neutral", "buy", "strong_buy", "unavailable"]
+    },
+    "SectorRole": {
+      "type": "string",
+      "enum": ["leader_1", "leader_2", "core_capacity", "pioneer", "catchup", "member"]
+    },
+    "GaugeGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "score", "buy_count", "neutral_count", "sell_count", "total_count", "items"],
+      "properties": {
+        "label": { "$ref": "#/$defs/RatingLabel" },
+        "score": { "$ref": "#/$defs/DecStr" },
+        "buy_count": { "type": "integer", "minimum": 0 },
+        "neutral_count": { "type": "integer", "minimum": 0 },
+        "sell_count": { "type": "integer", "minimum": 0 },
+        "total_count": { "type": "integer", "minimum": 0 },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value", "signal"],
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "$ref": "#/$defs/DecStr" },
+              "signal": { "type": "string", "enum": ["buy", "neutral", "sell", "unavailable"] }
+            }
+          }
+        }
+      }
+    },
+    "TimeframeTechnicalRating": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timeframe", "bar_count", "last_bar_date", "summary", "moving_averages", "oscillators"],
+      "properties": {
+        "timeframe": { "type": "string", "enum": ["1d", "1w", "1mo", "1y"] },
+        "bar_count": { "type": "integer", "minimum": 0 },
+        "last_bar_date": { "type": ["string", "null"] },
+        "summary": { "$ref": "#/$defs/GaugeGroup" },
+        "moving_averages": { "$ref": "#/$defs/GaugeGroup" },
+        "oscillators": { "$ref": "#/$defs/GaugeGroup" }
+      }
+    },
+    "PivotLevelSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "p", "r1", "r2", "r3", "r4", "s1", "s2", "s3", "s4"],
+      "properties": {
+        "method": { "type": "string", "enum": ["traditional", "classic", "fibonacci", "camarilla", "woodie", "demark"] },
+        "p": { "$ref": "#/$defs/DecStr" },
+        "r1": { "$ref": "#/$defs/DecStr" },
+        "r2": { "$ref": "#/$defs/DecStr" },
+        "r3": { "$ref": "#/$defs/DecStr" },
+        "r4": { "$ref": "#/$defs/DecStr" },
+        "s1": { "$ref": "#/$defs/DecStr" },
+        "s2": { "$ref": "#/$defs/DecStr" },
+        "s3": { "$ref": "#/$defs/DecStr" },
+        "s4": { "$ref": "#/$defs/DecStr" }
+      }
+    },
+    "VpvrProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available", "lookback_bars", "poc", "vah", "val", "winner_ratio",
+        "avg_chip_cost", "concentration_90", "hvn_zones", "lvn_zones", "bins"
+      ],
+      "properties": {
+        "available": { "type": "boolean" },
+        "lookback_bars": { "type": "integer", "minimum": 0 },
+        "poc": { "$ref": "#/$defs/DecStr" },
+        "vah": { "$ref": "#/$defs/DecStr" },
+        "val": { "$ref": "#/$defs/DecStr" },
+        "winner_ratio": { "$ref": "#/$defs/DecStr" },
+        "avg_chip_cost": { "$ref": "#/$defs/DecStr" },
+        "concentration_90": { "$ref": "#/$defs/DecStr" },
+        "hvn_zones": { "type": "array", "items": { "type": "string" } },
+        "lvn_zones": { "type": "array", "items": { "type": "string" } },
+        "bins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["low", "high", "mid", "volume_share", "up_share", "is_value_area", "is_poc", "node_kind"],
+            "properties": {
+              "low": { "type": "string" },
+              "high": { "type": "string" },
+              "mid": { "type": "string" },
+              "volume_share": { "type": "string" },
+              "up_share": { "type": "string" },
+              "is_value_area": { "type": "boolean" },
+              "is_poc": { "type": "boolean" },
+              "node_kind": { "type": "string", "enum": ["poc", "hvn", "lvn", "normal"] }
+            }
+          }
+        }
+      }
+    },
+    "NeurosymbolicGuards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["all_passed", "crumble_risk_level", "spread_to_cost_multiple", "violations", "checks"],
+      "properties": {
+        "all_passed": { "type": "boolean" },
+        "crumble_risk_level": { "type": "string", "enum": ["low", "moderate", "high", "unknown"] },
+        "spread_to_cost_multiple": { "$ref": "#/$defs/DecStr" },
+        "violations": { "type": "array", "items": { "type": "string" } },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["guard_id", "passed", "detail"],
+            "properties": {
+              "guard_id": { "type": "string" },
+              "passed": { "type": "boolean" },
+              "detail": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "IntradayTPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archetype_id", "archetype_name", "paper_ref", "recommended_direction",
+        "reference_price", "reservation_price", "forward_buy_price", "forward_sell_price",
+        "reverse_sell_price", "reverse_buyback_price", "abort_stop_price",
+        "base_sellable_shares", "available_cash_cny", "recommended_lots", "recommended_shares",
+        "round_trip_fee_bps", "min_profitable_spread_pct", "expected_cost_reduction_pct",
+        "cash_non_overdraft_verified", "t1_lock_verified", "crumble_risk_level",
+        "neurosymbolic_guards", "execution_notes", "backtest_summary"
+      ],
+      "properties": {
+        "archetype_id": { "type": "string" },
+        "archetype_name": { "type": "string" },
+        "paper_ref": { "type": "string" },
+        "recommended_direction": { "type": "string", "enum": ["forward_t", "reverse_t", "dual_vwap_t", "lock_hold", "exit_only", "unavailable"] },
+        "reference_price": { "$ref": "#/$defs/DecStr" },
+        "reservation_price": { "$ref": "#/$defs/DecStr" },
+        "forward_buy_price": { "$ref": "#/$defs/DecStr" },
+        "forward_sell_price": { "$ref": "#/$defs/DecStr" },
+        "reverse_sell_price": { "$ref": "#/$defs/DecStr" },
+        "reverse_buyback_price": { "$ref": "#/$defs/DecStr" },
+        "abort_stop_price": { "$ref": "#/$defs/DecStr" },
+        "base_sellable_shares": { "type": "integer", "minimum": 0 },
+        "available_cash_cny": { "type": "string" },
+        "recommended_lots": { "type": "integer", "minimum": 0 },
+        "recommended_shares": { "type": "integer", "minimum": 0 },
+        "round_trip_fee_bps": { "type": "string" },
+        "min_profitable_spread_pct": { "type": "string" },
+        "expected_cost_reduction_pct": { "$ref": "#/$defs/DecStr" },
+        "cash_non_overdraft_verified": { "type": "boolean" },
+        "t1_lock_verified": { "type": "boolean" },
+        "crumble_risk_level": { "type": "string", "enum": ["low", "moderate", "high", "unknown"] },
+        "neurosymbolic_guards": { "$ref": "#/$defs/NeurosymbolicGuards" },
+        "execution_notes": { "type": "array", "items": { "type": "string" } },
+        "backtest_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sessions_tested", "triggered_days", "win_rate", "cum_extra_return_pct", "vs_hold_delta_pct"],
+          "properties": {
+            "sessions_tested": { "type": "integer", "minimum": 0 },
+            "triggered_days": { "type": "integer", "minimum": 0 },
+            "win_rate": { "$ref": "#/$defs/DecStr" },
+            "cum_extra_return_pct": { "$ref": "#/$defs/DecStr" },
+            "vs_hold_delta_pct": { "$ref": "#/$defs/DecStr" }
+          }
+        }
+      }
+    },
+    "GridPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode", "anchor_price", "lower_bound", "upper_bound", "upper_circuit_breaker",
+        "lower_stop_breaker", "grid_count", "step_pct", "per_grid_lots", "per_grid_shares",
+        "base_locked_shares", "rungs", "crumble_risk_level", "neurosymbolic_guards",
+        "budget_status_note", "backtest"
+      ],
+      "properties": {
+        "mode": { "type": "string", "enum": ["atr_adaptive", "geometric", "arithmetic", "budget_insufficient", "unavailable"] },
+        "anchor_price": { "$ref": "#/$defs/DecStr" },
+        "lower_bound": { "$ref": "#/$defs/DecStr" },
+        "upper_bound": { "$ref": "#/$defs/DecStr" },
+        "upper_circuit_breaker": { "$ref": "#/$defs/DecStr" },
+        "lower_stop_breaker": { "$ref": "#/$defs/DecStr" },
+        "grid_count": { "type": "integer", "minimum": 0 },
+        "step_pct": { "$ref": "#/$defs/DecStr" },
+        "per_grid_lots": { "type": "integer", "minimum": 0 },
+        "per_grid_shares": { "type": "integer", "minimum": 0 },
+        "base_locked_shares": { "type": "integer", "minimum": 0 },
+        "rungs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["level_index", "trigger_price", "action", "shares", "target_pair_price", "est_net_profit_cny"],
+            "properties": {
+              "level_index": { "type": "integer" },
+              "trigger_price": { "type": "string" },
+              "action": { "type": "string", "enum": ["buy_dip", "anchor", "sell_rally"] },
+              "shares": { "type": "integer", "minimum": 0 },
+              "target_pair_price": { "$ref": "#/$defs/DecStr" },
+              "est_net_profit_cny": { "$ref": "#/$defs/DecStr" }
+            }
+          }
+        },
+        "crumble_risk_level": { "type": "string", "enum": ["low", "moderate", "high", "unknown"] },
+        "neurosymbolic_guards": { "$ref": "#/$defs/NeurosymbolicGuards" },
+        "budget_status_note": { "type": ["string", "null"] },
+        "backtest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sessions_tested", "completed_round_trips", "grid_net_profit_cny",
+            "cost_reduction_per_share_cny", "cost_reduction_pct", "vs_buy_hold_excess_pct", "max_capital_usage_pct"
+          ],
+          "properties": {
+            "sessions_tested": { "type": "integer", "minimum": 0 },
+            "completed_round_trips": { "type": "integer", "minimum": 0 },
+            "grid_net_profit_cny": { "$ref": "#/$defs/DecStr" },
+            "cost_reduction_per_share_cny": { "$ref": "#/$defs/DecStr" },
+            "cost_reduction_pct": { "$ref": "#/$defs/DecStr" },
+            "vs_buy_hold_excess_pct": { "$ref": "#/$defs/DecStr" },
+            "max_capital_usage_pct": { "$ref": "#/$defs/DecStr" }
+          }
+        }
+      }
+    },
+    "SessionPulse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_bucket", "label", "post_count", "unique_authors", "bullish_ratio", "divergence_index", "dominant_topic", "heat_state"],
+      "properties": {
+        "session_bucket": { "type": "string", "enum": ["pre_market", "intraday", "midday_break", "post_market"] },
+        "label": { "type": "string" },
+        "post_count": { "type": "integer", "minimum": 0 },
+        "unique_authors": { "type": "integer", "minimum": 0 },
+        "bullish_ratio": { "$ref": "#/$defs/DecStr" },
+        "divergence_index": { "$ref": "#/$defs/DecStr" },
+        "dominant_topic": { "type": "string" },
+        "heat_state": { "type": "string", "enum": ["cold", "normal", "warming", "overheated_warning", "no_data"] }
+      }
+    },
+    "RetailResonance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_posts", "template_spam_ratio", "abnormal_attention_z", "sir_contagion_slope", "crowd_state", "sessions", "claim_checks", "synthesized_judgment"],
+      "properties": {
+        "total_posts": { "type": "integer", "minimum": 0 },
+        "template_spam_ratio": { "$ref": "#/$defs/DecStr" },
+        "abnormal_attention_z": { "$ref": "#/$defs/DecStr" },
+        "sir_contagion_slope": { "$ref": "#/$defs/DecStr" },
+        "crowd_state": { "type": "string", "enum": ["overheated_reversal_risk", "healthy_divergence", "early_discovery", "quiet_ignored", "unavailable"] },
+        "sessions": { "type": "array", "items": { "$ref": "#/$defs/SessionPulse" } },
+        "claim_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["retail_claim", "verdict", "objective_evidence"],
+            "properties": {
+              "retail_claim": { "type": "string" },
+              "verdict": { "type": "string", "enum": ["supported_by_facts", "contradicted_by_facts", "unverified_noise"] },
+              "objective_evidence": { "type": "string" }
+            }
+          }
+        },
+        "synthesized_judgment": { "type": "string" }
+      }
+    },
+    "SeatBattleAnalysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "has_recent_lhb", "report_date", "lhasa_buyer_count", "one_day_raider_count",
+        "synergy_leader_count", "quant_seat_count", "net_buy_amount_cny", "lhasa_ratio",
+        "battle_verdict", "fake_institution_check", "seats", "opponent_strategy"
+      ],
+      "properties": {
+        "has_recent_lhb": { "type": "boolean" },
+        "report_date": { "type": ["string", "null"] },
+        "lhasa_buyer_count": { "type": "integer", "minimum": 0 },
+        "one_day_raider_count": { "type": "integer", "minimum": 0 },
+        "synergy_leader_count": { "type": "integer", "minimum": 0 },
+        "quant_seat_count": { "type": "integer", "minimum": 0 },
+        "net_buy_amount_cny": { "$ref": "#/$defs/DecStr" },
+        "lhasa_ratio": { "$ref": "#/$defs/DecStr" },
+        "battle_verdict": { "type": "string", "enum": ["synergy_bullish", "neutral_turnover", "retail_trap_bearish", "raider_dump_warning", "no_lhb_data"] },
+        "fake_institution_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["institution_present", "verdict", "risk_score", "reasons"],
+          "properties": {
+            "institution_present": { "type": "boolean" },
+            "verdict": { "type": "string", "enum": ["real_institution_likely", "quant_fake_institution_risk", "mixed_uncertain", "none"] },
+            "risk_score": { "$ref": "#/$defs/DecStr" },
+            "reasons": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "seats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "seat_name", "side", "category", "net_amount_cny", "persona_code",
+              "persona_label", "style_summary", "empirical_d1_gap_pct", "empirical_d5_excess_pct", "counter_tactic"
+            ],
+            "properties": {
+              "seat_name": { "type": "string" },
+              "side": { "type": "string", "enum": ["buy", "sell", "both"] },
+              "category": { "type": "string" },
+              "net_amount_cny": { "$ref": "#/$defs/DecStr" },
+              "persona_code": { "type": "string" },
+              "persona_label": { "type": "string" },
+              "style_summary": { "type": "string" },
+              "empirical_d1_gap_pct": { "$ref": "#/$defs/DecStr" },
+              "empirical_d5_excess_pct": { "$ref": "#/$defs/DecStr" },
+              "counter_tactic": { "type": "string" }
+            }
+          }
+        },
+        "opponent_strategy": { "type": "string" }
+      }
+    },
+    "ChartSignalMarker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["time", "position", "shape", "tone", "text"],
+      "properties": {
+        "time": { "type": "string" },
+        "position": { "type": "string", "enum": ["aboveBar", "belowBar"] },
+        "shape": { "type": "string", "enum": ["arrowUp", "arrowDown", "circle", "square"] },
+        "tone": { "type": "string", "enum": ["buy", "sell", "warn", "info"] },
+        "text": { "type": "string" }
+      }
+    },
+    "ChartAnchorLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "price", "title", "tone", "dashed"],
+      "properties": {
+        "id": { "type": "string" },
+        "price": { "type": "string" },
+        "title": { "type": "string" },
+        "tone": { "type": "string", "enum": ["plan", "exit", "risk", "draw"] },
+        "dashed": { "type": "boolean" }
+      }
+    },
+    "CompactBar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trade_date", "open", "high", "low", "close", "volume"],
+      "properties": {
+        "trade_date": { "type": "string" },
+        "open": { "type": "string" },
+        "high": { "type": "string" },
+        "low": { "type": "string" },
+        "close": { "type": "string" },
+        "volume": { "type": "string" }
+      }
+    },
+    "RealtimeAdjustmentBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tilt_bps", "action_directive", "liquidity_filter_triggered",
+        "risk_veto_reasons", "llm_model_used", "llm_status", "guard_message",
+        "bull_points", "bear_points", "holding_plan"
+      ],
+      "properties": {
+        "tilt_bps": { "type": "string" },
+        "action_directive": { "type": "string", "enum": ["catalyst_boost", "tighten_stop_grid", "risk_veto", "neutral_monitor"] },
+        "liquidity_filter_triggered": { "type": "boolean" },
+        "risk_veto_reasons": { "type": "array", "items": { "type": "string" } },
+        "llm_model_used": { "type": ["string", "null"] },
+        "llm_status": { "type": "string" },
+        "guard_message": { "type": "string" },
+        "bull_points": { "type": "array", "items": { "type": "string" } },
+        "bear_points": { "type": "array", "items": { "type": "string" } },
+        "holding_plan": { "type": "string" }
+      }
+    },
+    "NexusStockProAnalysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instrument_id", "symbol", "display_name", "board_code", "release_id", "decision_as_of",
+        "cached_in_postgres", "cache_key_hash", "timeframe", "adjustment_mode", "price_basis_note",
+        "kline_bars", "multi_timeframe_ratings", "mtf_resonance_label", "mtf_resonance_score",
+        "pivot_points", "vpvr", "pro_signals", "chart_lines", "chart_markers",
+        "action_plan", "realtime_adjustment", "intraday_t_plan", "grid_plan",
+        "retail_resonance", "seat_battle", "verified_news"
+      ],
+      "properties": {
+        "instrument_id": { "type": "string", "format": "uuid" },
+        "symbol": { "type": "string" },
+        "display_name": { "type": "string" },
+        "board_code": { "type": ["string", "null"] },
+        "release_id": { "type": "string", "format": "uuid" },
+        "decision_as_of": { "type": "string" },
+        "cached_in_postgres": { "type": "boolean" },
+        "cache_key_hash": { "type": "string" },
+        "timeframe": { "type": "string" },
+        "adjustment_mode": { "type": "string" },
+        "price_basis_note": { "type": "string" },
+        "kline_bars": { "type": "array", "items": { "$ref": "#/$defs/CompactBar" } },
+        "multi_timeframe_ratings": { "type": "array", "items": { "$ref": "#/$defs/TimeframeTechnicalRating" } },
+        "mtf_resonance_label": { "$ref": "#/$defs/RatingLabel" },
+        "mtf_resonance_score": { "$ref": "#/$defs/DecStr" },
+        "pivot_points": { "type": "array", "items": { "$ref": "#/$defs/PivotLevelSet" } },
+        "vpvr": { "$ref": "#/$defs/VpvrProfile" },
+        "pro_signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "supertrend_dir", "supertrend_level", "volatility_squeeze", "bb_kc_squeeze_on",
+            "squeeze_momentum", "adx_14", "anchored_vwap_20d", "rvol_20d",
+            "macd_divergence", "rsi_divergence", "volume_patterns", "atr_14"
+          ],
+          "properties": {
+            "supertrend_dir": { "type": "string", "enum": ["bullish", "bearish", "unavailable"] },
+            "supertrend_level": { "$ref": "#/$defs/DecStr" },
+            "volatility_squeeze": { "type": "string", "enum": ["squeeze_on", "squeeze_fired_up", "squeeze_fired_down", "normal", "unavailable"] },
+            "bb_kc_squeeze_on": { "type": ["boolean", "null"] },
+            "squeeze_momentum": { "$ref": "#/$defs/DecStr" },
+            "adx_14": { "$ref": "#/$defs/DecStr" },
+            "anchored_vwap_20d": { "$ref": "#/$defs/DecStr" },
+            "rvol_20d": { "$ref": "#/$defs/DecStr" },
+            "macd_divergence": { "type": "string", "enum": ["bullish_bottom_div", "bearish_top_div", "none"] },
+            "rsi_divergence": { "type": "string", "enum": ["bullish_bottom_div", "bearish_top_div", "none"] },
+            "volume_patterns": { "type": "array", "items": { "type": "string" } },
+            "atr_14": { "$ref": "#/$defs/DecStr" }
+          }
+        },
+        "chart_lines": { "type": "array", "items": { "$ref": "#/$defs/ChartAnchorLine" } },
+        "chart_markers": { "type": "array", "items": { "$ref": "#/$defs/ChartSignalMarker" } },
+        "action_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "composite_score", "entry_low", "entry_high", "stop_loss", "target_1", "target_2", "holding_sessions", "max_position_pct", "risk_vetoes", "pillar_scores", "rationale"],
+          "properties": {
+            "verdict": { "type": "string", "enum": ["strong_priority", "accumulate_on_dip", "hold_and_grid_t", "watch_wait", "risk_avoid"] },
+            "composite_score": { "$ref": "#/$defs/DecStr" },
+            "entry_low": { "$ref": "#/$defs/DecStr" },
+            "entry_high": { "$ref": "#/$defs/DecStr" },
+            "stop_loss": { "$ref": "#/$defs/DecStr" },
+            "target_1": { "$ref": "#/$defs/DecStr" },
+            "target_2": { "$ref": "#/$defs/DecStr" },
+            "holding_sessions": { "type": "string" },
+            "max_position_pct": { "type": "string" },
+            "risk_vetoes": { "type": "array", "items": { "type": "string" } },
+            "pillar_scores": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["technical", "capital_flow", "news_catalyst", "sentiment_micro"],
+              "properties": {
+                "technical": { "$ref": "#/$defs/DecStr" },
+                "capital_flow": { "$ref": "#/$defs/DecStr" },
+                "news_catalyst": { "$ref": "#/$defs/DecStr" },
+                "sentiment_micro": { "$ref": "#/$defs/DecStr" }
+              }
+            },
+            "rationale": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "realtime_adjustment": { "$ref": "#/$defs/RealtimeAdjustmentBrief" },
+        "intraday_t_plan": { "$ref": "#/$defs/IntradayTPlan" },
+        "grid_plan": { "$ref": "#/$defs/GridPlan" },
+        "retail_resonance": { "$ref": "#/$defs/RetailResonance" },
+        "seat_battle": { "$ref": "#/$defs/SeatBattleAnalysis" },
+        "verified_news": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cluster_id", "headline", "tier", "verification_state", "sources", "polarity", "published_at", "bull_bear_note"],
+            "properties": {
+              "cluster_id": { "type": "string" },
+              "headline": { "type": "string" },
+              "tier": { "type": "string", "enum": ["tier1_official", "tier2_financial_press", "tier3_portal_social"] },
+              "verification_state": { "type": "string", "enum": ["official_confirmed", "multi_source_verified", "single_source_flash", "contradicted"] },
+              "sources": { "type": "array", "items": { "type": "string" } },
+              "polarity": { "type": "string", "enum": ["positive", "negative", "neutral"] },
+              "published_at": { "type": ["string", "null"] },
+              "bull_bear_note": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "EnsemblePickRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rank", "instrument_id", "symbol", "display_name", "sector_node", "sector_role",
+        "ensemble_score", "voter_support_count", "total_active_voters",
+        "entry_low", "entry_high", "stop_loss", "target_price", "holding_horizon",
+        "tags", "supporting_strategies", "risk_flags", "catalyst_summary"
+      ],
+      "properties": {
+        "rank": { "type": "integer", "minimum": 1 },
+        "instrument_id": { "type": "string", "format": "uuid" },
+        "symbol": { "type": "string" },
+        "display_name": { "type": "string" },
+        "sector_node": { "type": ["string", "null"] },
+        "sector_role": { "$ref": "#/$defs/SectorRole" },
+        "ensemble_score": { "type": "string" },
+        "voter_support_count": { "type": "integer", "minimum": 0 },
+        "total_active_voters": { "type": "integer", "minimum": 0 },
+        "entry_low": { "$ref": "#/$defs/DecStr" },
+        "entry_high": { "$ref": "#/$defs/DecStr" },
+        "stop_loss": { "$ref": "#/$defs/DecStr" },
+        "target_price": { "$ref": "#/$defs/DecStr" },
+        "holding_horizon": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "supporting_strategies": { "type": "array", "items": { "type": "string" } },
+        "risk_flags": { "type": "array", "items": { "type": "string" } },
+        "catalyst_summary": { "type": "string" }
+      }
+    },
+    "HeatingSectorCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "taxonomy_id", "node_id", "surge_score", "velocity_label", "member_count", "present_components", "missing_components", "watch_candidates"],
+      "properties": {
+        "rank": { "type": "integer", "minimum": 1 },
+        "taxonomy_id": { "type": "string" },
+        "node_id": { "type": "string" },
+        "surge_score": { "type": "string" },
+        "velocity_label": { "type": "string", "enum": ["rapid_promotion", "steady_warming", "observing"] },
+        "member_count": { "type": "integer", "minimum": 0 },
+        "present_components": { "type": "array", "items": { "type": "string" } },
+        "missing_components": { "type": "array", "items": { "type": "string" } },
+        "watch_candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instrument_id", "symbol", "display_name", "role", "pool_state", "score"],
+            "properties": {
+              "instrument_id": { "type": "string", "format": "uuid" },
+              "symbol": { "type": "string" },
+              "display_name": { "type": "string" },
+              "role": { "type": "string" },
+              "pool_state": { "type": "string" },
+              "score": { "$ref": "#/$defs/DecStr" }
+            }
+          }
+        }
+      }
+    },
+    "NexusHubOverview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id", "decision_as_of", "horizon_track", "normalization_rule",
+        "arena_weight_source", "market_regime", "macro_factor_matrix",
+        "source_polling_status", "cross_verified_flashes", "active_realtime_adjustments",
+        "picks", "rapid_rising_sectors", "candidate_watch_pool"
+      ],
+      "properties": {
+        "release_id": { "type": ["string", "null"] },
+        "decision_as_of": { "type": ["string", "null"] },
+        "horizon_track": { "type": "string", "enum": ["composite", "short", "swing", "long"] },
+        "normalization_rule": { "type": "string" },
+        "arena_weight_source": { "type": "string" },
+        "market_regime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "label", "curve_gate_active", "recommended_exposure_pct", "summary"],
+          "properties": {
+            "code": { "type": "string" },
+            "label": { "type": "string" },
+            "curve_gate_active": { "type": "boolean" },
+            "recommended_exposure_pct": { "type": "string" },
+            "summary": { "type": "string" }
+          }
+        },
+        "macro_factor_matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dimension", "factor_name", "status", "signal", "detail", "source_authority"],
+            "properties": {
+              "dimension": { "type": "string", "enum": ["domestic_policy_macro", "global_linkage", "capital_proxy_2026", "retail_sentiment", "microstructure_seats"] },
+              "factor_name": { "type": "string" },
+              "status": { "type": "string", "enum": ["observed", "partial", "awaiting_feed"] },
+              "signal": { "type": "string", "enum": ["supportive", "neutral", "cautious", "unknown"] },
+              "detail": { "type": "string" },
+              "source_authority": { "type": "string" }
+            }
+          }
+        },
+        "source_polling_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total_sources", "healthy_count", "degraded_count", "silent_warning_count", "host_rate_limit_rps", "sources"],
+          "properties": {
+            "total_sources": { "type": "integer", "minimum": 0 },
+            "healthy_count": { "type": "integer", "minimum": 0 },
+            "degraded_count": { "type": "integer", "minimum": 0 },
+            "silent_warning_count": { "type": "integer", "minimum": 0 },
+            "host_rate_limit_rps": { "type": "string" },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["source_id", "tier", "runtime_state", "freshness_state", "last_success_at", "fallback_group"],
+                "properties": {
+                  "source_id": { "type": "string" },
+                  "tier": { "type": "string" },
+                  "runtime_state": { "type": "string" },
+                  "freshness_state": { "type": "string" },
+                  "last_success_at": { "type": ["string", "null"] },
+                  "fallback_group": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "cross_verified_flashes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cluster_id", "headline", "verification_state", "corroboration_count", "confidence_score", "sources", "polarity", "affected_sectors", "published_at"],
+            "properties": {
+              "cluster_id": { "type": "string" },
+              "headline": { "type": "string" },
+              "verification_state": { "type": "string" },
+              "corroboration_count": { "type": "integer", "minimum": 1 },
+              "confidence_score": { "type": "string" },
+              "sources": { "type": "array", "items": { "type": "string" } },
+              "polarity": { "type": "string" },
+              "affected_sectors": { "type": "array", "items": { "type": "string" } },
+              "published_at": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "active_realtime_adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["adjustment_id", "target_scope", "target_key", "tilt_bps", "action_directive", "llm_model_used", "summary", "available_at"],
+            "properties": {
+              "adjustment_id": { "type": "string" },
+              "target_scope": { "type": "string", "enum": ["market", "sector", "instrument"] },
+              "target_key": { "type": "string" },
+              "tilt_bps": { "type": "string" },
+              "action_directive": { "type": "string" },
+              "llm_model_used": { "type": ["string", "null"] },
+              "summary": { "type": "string" },
+              "available_at": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "picks": { "type": "array", "items": { "$ref": "#/$defs/EnsemblePickRow" } },
+        "rapid_rising_sectors": { "type": "array", "items": { "$ref": "#/$defs/HeatingSectorCard" } },
+        "candidate_watch_pool": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instrument_id", "symbol", "display_name", "sector_node", "pool_state", "trigger_code", "entry_hint"],
+            "properties": {
+              "instrument_id": { "type": "string", "format": "uuid" },
+              "symbol": { "type": "string" },
+              "display_name": { "type": "string" },
+              "sector_node": { "type": "string" },
+              "pool_state": { "type": "string" },
+              "trigger_code": { "type": "string" },
+              "entry_hint": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "NexusSectorDeepDive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id", "taxonomy_id", "node_id", "horizon_id", "is_rapidly_rising",
+        "surge_score", "surge_components", "top_picks", "watch_pool_members", "sector_news"
+      ],
+      "properties": {
+        "release_id": { "type": "string", "format": "uuid" },
+        "taxonomy_id": { "type": "string" },
+        "node_id": { "type": "string" },
+        "horizon_id": { "type": "string" },
+        "is_rapidly_rising": { "type": "boolean" },
+        "surge_score": { "$ref": "#/$defs/DecStr" },
+        "surge_components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "label", "value", "status"],
+            "properties": {
+              "key": { "type": "string" },
+              "label": { "type": "string" },
+              "value": { "$ref": "#/$defs/DecStr" },
+              "status": { "type": "string", "enum": ["ready", "missing"] }
+            }
+          }
+        },
+        "top_picks": { "type": "array", "items": { "$ref": "#/$defs/EnsemblePickRow" } },
+        "watch_pool_members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instrument_id", "symbol", "display_name", "pool_state", "role", "trigger_code", "plan_ready"],
+            "properties": {
+              "instrument_id": { "type": "string", "format": "uuid" },
+              "symbol": { "type": "string" },
+              "display_name": { "type": "string" },
+              "pool_state": { "type": "string" },
+              "role": { "type": "string" },
+              "trigger_code": { "type": "string" },
+              "plan_ready": { "type": "boolean" }
+            }
+          }
+        },
+        "sector_news": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "BenchmarkStandardSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "standard_id", "execution_timing", "stamp_duty_bps", "commission_bps",
+        "min_commission_cny", "transfer_fee_bps", "slippage_model", "limit_queue_rule", "validation_protocol"
+      ],
+      "properties": {
+        "standard_id": { "type": "string" },
+        "execution_timing": { "type": "string" },
+        "stamp_duty_bps": { "type": "string" },
+        "commission_bps": { "type": "string" },
+        "min_commission_cny": { "type": "string" },
+        "transfer_fee_bps": { "type": "string" },
+        "slippage_model": { "type": "string" },
+        "limit_queue_rule": { "type": "string" },
+        "validation_protocol": { "type": "string" }
+      }
+    },
+    "StrategyTaxonomyEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy_code", "display_name", "layer", "horizon_bucket", "paradigm",
+        "regime_fit", "portfolio_role", "cluster_id", "is_cluster_champion",
+        "glicko_mu", "glicko_phi", "glicko_sigma", "conservative_score",
+        "swiss_wins", "swiss_draws", "swiss_losses",
+        "net_return_pct", "excess_return_pct", "sharpe_ratio", "max_drawdown_pct",
+        "nw_t_stat", "worst_cvar_pct", "rre_stability", "pfs_robustness",
+        "evaluation_source", "lifecycle_tier", "ensemble_weight", "ram_floor_weight",
+        "paper_citation", "summary"
+      ],
+      "properties": {
+        "strategy_code": { "type": "string" },
+        "display_name": { "type": "string" },
+        "layer": { "type": "string", "enum": ["stock_selection", "sector_rotation", "regime_timing", "intraday_execution"] },
+        "horizon_bucket": { "type": "string", "enum": ["intraday_t0", "ultra_short_1_3d", "short_5d", "swing_10_20d", "position_60d"] },
+        "paradigm": { "type": "string", "enum": ["top_paper_2026", "multi_factor_fusion", "classic_factor", "technical_pattern", "sentiment_microstructure", "hot_money_seat", "grid_intraday_t", "rl_distributional", "llm_hybrid"] },
+        "regime_fit": { "type": "array", "items": { "type": "string" } },
+        "portfolio_role": { "type": "string", "enum": ["core_alpha", "defensive_shield", "risk_veto", "cost_reducer", "exploratory_shadow"] },
+        "cluster_id": { "type": "string" },
+        "is_cluster_champion": { "type": "boolean" },
+        "glicko_mu": { "type": "string" },
+        "glicko_phi": { "type": "string" },
+        "glicko_sigma": { "type": "string" },
+        "conservative_score": { "type": "string" },
+        "swiss_wins": { "type": "integer", "minimum": 0 },
+        "swiss_draws": { "type": "integer", "minimum": 0 },
+        "swiss_losses": { "type": "integer", "minimum": 0 },
+        "net_return_pct": { "$ref": "#/$defs/DecStr" },
+        "excess_return_pct": { "$ref": "#/$defs/DecStr" },
+        "sharpe_ratio": { "$ref": "#/$defs/DecStr" },
+        "max_drawdown_pct": { "$ref": "#/$defs/DecStr" },
+        "nw_t_stat": { "$ref": "#/$defs/DecStr" },
+        "worst_cvar_pct": { "$ref": "#/$defs/DecStr" },
+        "rre_stability": { "$ref": "#/$defs/DecStr" },
+        "pfs_robustness": { "$ref": "#/$defs/DecStr" },
+        "evaluation_source": { "type": "string" },
+        "lifecycle_tier": { "type": "string", "enum": ["champion_active", "promoted_active", "candidate_shadow", "observing_trial", "demoted_paused", "retired_falsified"] },
+        "ensemble_weight": { "type": "string" },
+        "ram_floor_weight": { "type": "string" },
+        "paper_citation": { "type": ["string", "null"] },
+        "summary": { "type": "string" }
+      }
+    },
+    "DiscoveredCandidateItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "parent_code", "dag_depth", "display_name", "max_corr_existing", "rre_stability", "pfs_robustness", "net_sharpe", "nw_t_stat", "gate_verdict"],
+      "properties": {
+        "candidate_id": { "type": "string" },
+        "parent_code": { "type": ["string", "null"] },
+        "dag_depth": { "type": "integer", "minimum": 1 },
+        "display_name": { "type": "string" },
+        "max_corr_existing": { "$ref": "#/$defs/DecStr" },
+        "rre_stability": { "$ref": "#/$defs/DecStr" },
+        "pfs_robustness": { "$ref": "#/$defs/DecStr" },
+        "net_sharpe": { "$ref": "#/$defs/DecStr" },
+        "nw_t_stat": { "$ref": "#/$defs/DecStr" },
+        "gate_verdict": { "type": "string", "enum": ["admitted_shadow", "rejected_redundant", "rejected_turnover_rre", "rejected_fragile_pfs", "rejected_negative_net", "pending_eval"] }
+      }
+    },
+    "NexusArenaOverview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "benchmark_standard", "season_id", "evaluation_basis", "sessions_evaluated",
+        "rounds_completed", "total_strategies", "orthogonal_clusters", "taxonomy_facets",
+        "strategies", "recent_pairings", "top_papers_2026", "discovered_candidates"
+      ],
+      "properties": {
+        "benchmark_standard": { "$ref": "#/$defs/BenchmarkStandardSpec" },
+        "season_id": { "type": "string" },
+        "evaluation_basis": { "type": "string" },
+        "sessions_evaluated": { "type": "integer", "minimum": 0 },
+        "rounds_completed": { "type": "integer", "minimum": 0 },
+        "total_strategies": { "type": "integer", "minimum": 0 },
+        "orthogonal_clusters": { "type": "integer", "minimum": 0 },
+        "taxonomy_facets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layers", "horizons", "paradigms", "roles"],
+          "properties": {
+            "layers": { "type": "array", "items": { "type": "string" } },
+            "horizons": { "type": "array", "items": { "type": "string" } },
+            "paradigms": { "type": "array", "items": { "type": "string" } },
+            "roles": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "strategies": { "type": "array", "items": { "$ref": "#/$defs/StrategyTaxonomyEntry" } },
+        "recent_pairings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["round_no", "left_code", "right_code", "winner", "score_delta", "reason"],
+            "properties": {
+              "round_no": { "type": "integer", "minimum": 1 },
+              "left_code": { "type": "string" },
+              "right_code": { "type": "string" },
+              "winner": { "type": "string" },
+              "score_delta": { "type": "string" },
+              "reason": { "type": "string" }
+            }
+          }
+        },
+        "top_papers_2026": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["paper_id", "title", "venue_year", "authors", "core_formula", "ashare_operator", "integrated_strategy_code"],
+            "properties": {
+              "paper_id": { "type": "string" },
+              "title": { "type": "string" },
+              "venue_year": { "type": "string" },
+              "authors": { "type": "string" },
+              "core_formula": { "type": "string" },
+              "ashare_operator": { "type": "string" },
+              "integrated_strategy_code": { "type": "string" }
+            }
+          }
+        },
+        "discovered_candidates": { "type": "array", "items": { "$ref": "#/$defs/DiscoveredCandidateItem" } }
+      }
+    },
+    "NexusIntegrityAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audit_version", "overall_status", "benchmark_standard", "entrypoint_accounting_parity",
+        "source_normalization_matrix", "outbox_event_channels", "database_health"
+      ],
+      "properties": {
+        "audit_version": { "type": "string" },
+        "overall_status": { "type": "string", "enum": ["healthy", "warnings_present", "degraded"] },
+        "benchmark_standard": { "$ref": "#/$defs/BenchmarkStandardSpec" },
+        "entrypoint_accounting_parity": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["entrypoint", "module_path", "uses_unified_standard", "fee_basis", "limit_rule", "t1_enforced", "note"],
+            "properties": {
+              "entrypoint": { "type": "string" },
+              "module_path": { "type": "string" },
+              "uses_unified_standard": { "type": "boolean" },
+              "fee_basis": { "type": "string" },
+              "limit_rule": { "type": "string" },
+              "t1_enforced": { "type": "boolean" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "source_normalization_matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "domain", "raw_fields", "canonical_fields", "missing_value_policy", "unit_guard"],
+            "properties": {
+              "source_id": { "type": "string" },
+              "domain": { "type": "string" },
+              "raw_fields": { "type": "string" },
+              "canonical_fields": { "type": "string" },
+              "missing_value_policy": { "type": "string" },
+              "unit_guard": { "type": "string" }
+            }
+          }
+        },
+        "outbox_event_channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event_type", "producer_wired", "total_emitted", "last_emitted_at"],
+            "properties": {
+              "event_type": { "type": "string" },
+              "producer_wired": { "type": "boolean" },
+              "total_emitted": { "type": "integer", "minimum": 0 },
+              "last_emitted_at": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "database_health": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nexus_tables_ready", "workbench_cache_rows", "cross_verified_clusters",
+            "realtime_adjustments_rows", "arena_ratings_rows", "discovered_candidates_rows",
+            "performance_indexes_ready"
+          ],
+          "properties": {
+            "nexus_tables_ready": { "type": "boolean" },
+            "workbench_cache_rows": { "type": "integer", "minimum": 0 },
+            "cross_verified_clusters": { "type": "integer", "minimum": 0 },
+            "realtime_adjustments_rows": { "type": "integer", "minimum": 0 },
+            "arena_ratings_rows": { "type": "integer", "minimum": 0 },
+            "discovered_candidates_rows": { "type": "integer", "minimum": 0 },
+            "performance_indexes_ready": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

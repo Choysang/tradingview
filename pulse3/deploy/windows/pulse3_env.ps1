@@ -10,6 +10,10 @@ $env:PULSE_API_PORT = '8200'
 $env:PULSE_ENV = 'dev'
 $env:PULSE_API_HOST = '127.0.0.1'
 $env:PULSE_DEV_PRINCIPAL = '00000000-0000-0000-0000-000000000001'
+# Public access goes through Caddy (HTTPS on 443, task Pulse3Caddy) to 127.0.0.1:8200. Every proxied request must pass the site
+# login (pulse/api/site_auth.py); without a password file the gate answers 503. Set the password with set_site_password.ps1.
+$env:PULSE_SITE_PASSWORD_FILE = "$root\secrets\site_password.txt"
+$env:PULSE_SITE_SECRET_FILE = "$root\secrets\site_secret.txt"
 $env:PYTHONUTF8 = '1'
 # M6 cutover state (cutover.ps1 writes it): after the cutover the run scripts skip the imports of the old recorder's files,
 # because pulse3's own recorders write the same datasets and one day must come from one recorder only.

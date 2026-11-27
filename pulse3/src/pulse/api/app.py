@@ -39,6 +39,10 @@ def create_app() -> FastAPI:
     validate_dev_principal()                      # refuse to start with an unguarded dev principal
     app = FastAPI(title="Pulse v3", version="3.0.0", lifespan=lifespan, docs_url="/v1/docs", openapi_url=None)
 
+    from pulse.api.site_auth import gate
+
+    app.middleware("http")(gate)                  # login gate for proxied (public) requests; loopback requests pass
+
     @app.exception_handler(ApiError)
     async def _api_error(_: Request, exc: ApiError):
         return error_response(exc)

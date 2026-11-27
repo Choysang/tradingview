@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from pulse.domain.market.units import profile_hash
 
-from . import cninfo, legacy, legacy_calendar, legacy_recordings, native_ext, native_intraday, native_news, native_ref, sina, tencent
+from . import cninfo, legacy, legacy_calendar, legacy_recordings, native_ext, native_intraday, native_news, native_ref, sina, tencent, xinhua_news
 
 CONTRACT_VERSION = "3.0.0"
 
@@ -111,8 +111,8 @@ _add(EndpointSpec(legacy_calendar.SOURCE_ID, legacy_calendar.ENDPOINT_ID, legacy
                   "batch", 7 * 86400, None, None, legacy_calendar.POLICY, True, None))
 
 
-# Step 2 native sources (cutover readiness): each lane declares its endpoints in its own module.
-for _lane in (native_intraday, native_ext, native_news, native_ref):
+# Step 2 native sources (cutover readiness) + Tier-1 Xinhua central financial wire:
+for _lane in (native_intraday, native_ext, native_news, native_ref, xinhua_news):
     _lane.register(_add, EndpointSpec, SOURCES)
 
 

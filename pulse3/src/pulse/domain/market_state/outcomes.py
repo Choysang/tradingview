@@ -28,6 +28,16 @@ from .daily import Bar
 OUTCOME_VERSION = "ranking-forward-outcome-v1"
 D = Decimal
 PATH_GUARD = D("0.111")                 # a daily raw move beyond 11.1% on the main board is not a price move
+BOARD_PATH_GUARDS: dict[str, Decimal] = {
+    "main": D("0.111"),
+    "MAIN": D("0.111"),
+    "chinext": D("0.222"),
+    "CHINEXT": D("0.222"),
+    "star": D("0.222"),
+    "STAR": D("0.222"),
+    "bse": D("0.333"),
+    "BSE": D("0.333"),
+}
 TOP_N = 10
 
 
@@ -42,7 +52,13 @@ def _q(x: Decimal | None, places: str = "0.000001") -> Decimal | None:
     return None if x is None else x.quantize(D(places), rounding=ROUND_HALF_EVEN)
 
 
-def path_return(iid: str, bars: Sequence[Bar], entry_day: date, exit_day: date) -> PathResult:
+def path_guard_for_board(board_code: str | None) -> Decimal:
+    if not board_code:
+        return PATH_GUARD
+    return BOARD_PATH_GUARDS.get(board_code, PATH_GUARD)
+
+
+def path_return(iid: str, bars: Sequence[Bar], entry_day: date, exit_day: date, *, board_code: str | None = None) -> PathResult:
     by = {b.d: b for b in bars}
     e, x = by.get(entry_day), by.get(exit_day)
     if e is None or e.o is None or e.o <= 0:
@@ -50,9 +66,10 @@ def path_return(iid: str, bars: Sequence[Bar], entry_day: date, exit_day: date) 
     if x is None or x.c is None or x.c <= 0:
         return PathResult(iid, None, "NO_EXIT_BAR")
     inside = [b for b in bars if entry_day <= b.d <= exit_day and b.c is not None]
+    guard = path_guard_for_board(board_code)
     prev = None
     for b in sorted(inside, key=lambda b: b.d):
-        if prev is not None and prev.c and abs(b.c / prev.c - 1) > PATH_GUARD:        # type: ignore[operator]
+        if prev is not None and prev.c and abs(b.c / prev.c - 1) > guard:        # type: ignore[operator]
             return PathResult(iid, None, "UNVERIFIABLE_PRICE_PATH")
         prev = b
     return PathResult(iid, x.c / e.o - 1, None)
@@ -65,7 +82,8 @@ def metric(name: str, value: Decimal | None, unit: str, n: int, missing: str | N
 
 def evaluate(*, ranking_id: str, release_id: str, horizon_id: str, horizon_sessions: int, decision_session: date,
              ranked: Sequence[tuple[str, int]], series: Mapping[str, Sequence[Bar]], sessions: Sequence[date],
-             cost_ratio: Decimal, cost_version: str, top_n: int = TOP_N) -> dict[str, Any]:
+             cost_ratio: Decimal, cost_version: str, top_n: int = TOP_N,
+             boards: Mapping[str, str] | None = None) -> dict[str, Any]:
     """Outcome body for one ranking at the observed calendar ``sessions`` (ascending)."""
     cal = sorted(set(sessions))
     head = {"ranking_id": ranking_id, "release_id": release_id, "horizon_id": horizon_id, "horizon_sessions": horizon_sessions,
@@ -80,7 +98,8 @@ def evaluate(*, ranking_id: str, release_id: str, horizon_id: str, horizon_sessi
     i = cal.index(decision_session)
     entry_day, exit_day = cal[i + 1], cal[i + horizon_sessions]
     ordered = sorted(ranked, key=lambda t: t[1])
-    results = {iid: path_return(iid, series.get(iid, ()), entry_day, exit_day) for iid, _ in ordered}
+    bmap = boards or {}
+    results = {iid: path_return(iid, series.get(iid, ()), entry_day, exit_day, board_code=bmap.get(iid)) for iid, _ in ordered}
     gross_all = [r.gross for r in results.values() if r.gross is not None]
     med = D(str(median(gross_all))) if gross_all else None
     top, bottom = [iid for iid, _ in ordered[:top_n]], [iid for iid, _ in ordered[-top_n:]]

@@ -94,6 +94,7 @@ What is lost, by design: the old recordings and warehouse exist only in the arch
 
 ## Log
 
+- 2026-11-26 00:30: retirement applied on the server (`retire_legacy.ps1 -Apply`, task Pulse3RetireLegacyOnce, result 0). The first attempt on 2026-11-25 22:30 stopped at preflight (LHB comparison 0 SAME sessions: the 11-25 seats were missing on the pulse3 side because `live-daily` failed with WinError 10054 and `run_daily.ps1` skipped `intel-seats`; fixed in e16dbb3, seats rerun by hand, 12 SAME). Archive `C:\pulse3\backup\legacy_pulse_2026-11-26.tgz` (6,624,910,677 bytes, 5672/5672 files, `archive_verified: true`, task XML exports beside it); `C:\pulse` deleted, the nine old tasks unregistered, `legacy_state.json` = retired, Pulse3Api restarted and answering 200, paused pulse3 tasks resumed. Log `C:\pulse3\logs\retire_legacy_2026-11-26.log`.
 - 2026-11-24: the user decided to keep only pulse3. The conditions in the table above no longer gate the retirement (only the LHB check, which `-Force` can relax); the nine tasks and `C:\pulse` go together through `retire_legacy.ps1` (procedure above). Written and tested in a local sandbox; nothing was run on the server.
 - 2026-11-21: PulseWeb died at 02:46 when an RDP logoff ended the session it ran in; the user chose to keep it down and its
   task is Disabled. From now on the legacy warehouse no longer grows (last session 2026-11-20): pulse3 needs

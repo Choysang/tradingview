@@ -82,6 +82,15 @@ if (-not (Get-ScheduledTask -TaskName Pulse3ForwardLog -ErrorAction SilentlyCont
     $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 1) -StartWhenAvailable
     Register-ScheduledTask -TaskName Pulse3ForwardLog -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
 }
+# Public HTTPS front (Caddy, 443 -> 8200). Registered only; it starts at boot or when started by hand, after the login gate is live.
+if (-not (Get-ScheduledTask -TaskName Pulse3Caddy -ErrorAction SilentlyContinue)) {
+    $a = New-ScheduledTaskAction -Execute $ps -Argument "-NoProfile -ExecutionPolicy Bypass -File $root\run_caddy.ps1"
+    $t = New-ScheduledTaskTrigger -AtStartup
+    $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+    Register-ScheduledTask -TaskName Pulse3Caddy -Action $a -Trigger $t -Settings $s -User SYSTEM -RunLevel Highest | Out-Null
+}
+Copy-Item "$root\app\deploy\windows\Caddyfile" "$root\Caddyfile" -Force
+if ((Get-ScheduledTask -TaskName Pulse3Caddy).State -eq 'Running') { Get-Process caddy -ErrorAction SilentlyContinue | Stop-Process -Force }   # run_caddy.ps1 restarts it on the new Caddyfile
 # E101 plan reports (recorded only): R report before the open, D0 report before the close; exit 3 (no release that day) is mapped to 0, exit 4 (bars not ready) is retried.
 foreach ($pt in @(@{ Name = 'Pulse3E101PlanR'; Kind = 'r'; At = '09:00' }, @{ Name = 'Pulse3E101PlanD0'; Kind = 'd0'; At = '14:30' })) {
     if (-not (Get-ScheduledTask -TaskName $pt.Name -ErrorAction SilentlyContinue)) {

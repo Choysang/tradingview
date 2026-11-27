@@ -29,25 +29,28 @@ MAX_REF_DEPTH = 8
 MCP_TOOL_GROUPS: dict[str, tuple[str, ...]] = {
     "market": ("queryMarketToday", "queryMarketSentiment", "querySectorDetails", "getSectorOverview", "getSectorRanking",
                "getCandidatePool", "queryEventClusters", "queryCalendarEvents",
-               "theme_map_v1_x_bf_board_theme_map_get", "crowd_v1_x_bf_fillm_crowd_get", "seal_clock_v1_x_bf_live_seal_clock_get"),
+               "theme_map_v1_x_bf_board_theme_map_get", "crowd_v1_x_bf_fillm_crowd_get", "seal_clock_v1_x_bf_live_seal_clock_get",
+               "getNexusHubOverview", "getNexusSectorDeepDive"),
     "rankings": ("getCurrentRelease", "getRelease", "getMarketRanking", "queryRankingHistory", "queryRankingTrackRecord",
                  "getTradePlan", "queryPlanVersions", "watch_cards_v1_x_bf_board_watch_cards_get"),
     "stock": ("instrument_search_v1_x_bf_board_instrument_search_get", "getStockWorkspace", "getStockQuote", "getStockBars", "getStockEvidence", "getStockCommunity", "getStockFundFlow",
               "getStockSeats", "queryAnalogCases", "queryIntervalStatistics", "queryCommunityOpinions",
               "querySeatDirectory", "querySeatProfile", "querySeatReports",
               "get_indicators_v1_x_bf_stock_indicators_get", "get_stats_v1_x_bf_stock_stats_get",
-              "stock_stats_plus_v1_x_bf_fillm_stock_stats_plus_get", "seal_facts_v1_x_bf_live_seal_facts_get"),
+              "stock_stats_plus_v1_x_bf_fillm_stock_stats_plus_get", "seal_facts_v1_x_bf_live_seal_facts_get",
+              "getNexusStockProAnalysis"),
     # Saved screens, screen runs and custom fillr runs are per-user (2026-11-23 review M6): left out with the other private data.
     "playbooks_screens": ("getFillrPlaybookBoard", "getFillrMonthlyReturns", "getFillrFactorSeries", "getFillrAnalogStudy",
                           "parseScreenText"),
     "research_ledger": ("getLabLedger", "getLabLedgerImports", "getLabLedgerEntry", "getLabRetiredTools", "getLabTearSheet",
                         "listLabBatchCompare", "getLabBatchCompare", "listStrategies", "queryStrategyVersion", "listPapers",
                         "getEvaluation", "getLeague", "playbook_replay_v1_x_bf_research_playbook_replay_get",
-                        "regime_heatmap_v1_x_bf_research_regime_heatmap_get", "experiments_v1_x_bf_research_experiments_get"),
+                        "regime_heatmap_v1_x_bf_research_regime_heatmap_get", "experiments_v1_x_bf_research_experiments_get",
+                        "getNexusArenaOverview"),
     "forward_logs": ("getForwardMonitor", "getFusionStatus", "getFusionScores", "getFusionBooks", "getFusionExperiments",
                      "experiments_v1_x_bf_fwdlog_experiments_get",
                      "rows_v1_x_bf_fwdlog_experiments__key__rows_get", "paper_fills_v1_x_bf_fwdlog_paper__session_date__fills_get"),
-    "data_health": ("getDataStatus", "queryDatasetStatus", "queryJobRuns", "getBatch6Overview"),
+    "data_health": ("getDataStatus", "queryDatasetStatus", "queryJobRuns", "getBatch6Overview", "getNexusIntegrityAudit"),
 }
 MCP_TOOL_IDS: tuple[str, ...] = tuple(oid for group in MCP_TOOL_GROUPS.values() for oid in group)
 TOOL_GROUP: dict[str, str] = {oid: g for g, ids in MCP_TOOL_GROUPS.items() for oid in ids}

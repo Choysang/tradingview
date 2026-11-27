@@ -602,9 +602,11 @@ def evaluate_outcomes(svc: DataService, *, outcome_as_of: datetime, slot: str = 
     if not todo:
         return {"published": False, "evaluated": 0, "pending": 0, "resolved": 0}
     cost, cost_version = round_trip_cost()
+    metas, _ = B.load_instrument_meta(conn, outcome_as_of, B.AVAILABILITY_POLICY)
+    boards_all = {str(iid): m.board_code for iid, m in metas.items() if m.board_code}
     stocks = load_stocks(conn, outcome_as_of, B.AVAILABILITY_POLICY)
-    ids = [str(i) for i in stocks]
-    series = load_bars(conn, ids, outcome_as_of, B.AVAILABILITY_POLICY, since=min(r["decision_as_of"] for r in todo).astimezone(B.CST).date() - timedelta(days=10))
+    all_ids = sorted({str(i) for i in stocks} | {str(i) for i in metas if (metas[i].board_code or "").lower() in ("main", "chinext", "star", "bse")})
+    series = load_bars(conn, all_ids, outcome_as_of, B.AVAILABILITY_POLICY, since=min(r["decision_as_of"] for r in todo).astimezone(B.CST).date() - timedelta(days=10))
     cal = observed_sessions(series)
     rows, pending = [], 0
     for r in todo:
@@ -614,7 +616,8 @@ def evaluate_outcomes(svc: DataService, *, outcome_as_of: datetime, slot: str = 
             "SELECT instrument_id, alpha_rank FROM decision.ranking_entry WHERE ranking_id=%s ORDER BY alpha_rank", (r["ranking_id"],))]
         body = outcomes.evaluate(ranking_id=str(r["ranking_id"]), release_id=str(r["release_id"]), horizon_id=r["horizon_id"],
                                  horizon_sessions=HORIZON_SESSIONS[r["horizon_id"]], decision_session=sess or date.min, ranked=entries,
-                                 series=series, sessions=cal, cost_ratio=cost, cost_version=cost_version)
+                                 series=series, sessions=cal, cost_ratio=cost, cost_version=cost_version,
+                                 boards=boards_all)
         if body["status"] != "resolved":
             pending += 1
             continue

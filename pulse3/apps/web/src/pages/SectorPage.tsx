@@ -12,6 +12,7 @@ import { EmptyState, ErrorState, Loading, SectionTitle } from '../components/Sta
 import { TAXONOMIES, horizonByKey } from '../config';
 import { usePinnedPages } from '../hooks/usePinnedPages';
 import { useReleaseSelection } from '../hooks/useRelease';
+import { SectorTopPicksPanel } from './bf/nexus/SectorTopPicksPanel';
 import { poolIdOf } from './HomePage';
 
 export function SectorPage() {
@@ -48,6 +49,7 @@ export function SectorPage() {
       <ReleaseBar rel={rel} displayedReleaseId={ranking.firstPage?.data.release_id} />
       <p><Link to={`/?entry=sector&h=${h.key}${rel.pinnedReleaseId ? `&release=${rel.pinnedReleaseId}` : ''}`}>← 返回板块机会</Link></p>
       <SectionTitle title={node} hint={`${tax.label}分类 · ${h.label}（${h.hint}）`} />
+      <SectorTopPicksPanel nodeId={node} taxonomyId={tax.id} horizonId={h.horizonId} horizonKey={h.key} releaseId={rid} />
       {ranking.firstPage && (
         <p className="muted small">
           成分股名单固定在成分快照 <span className="mono">{ranking.firstPage.data.membership_snapshot_id?.slice(0, 8) ?? '无'}</span>（同一次发布内不变）。同一股票可同时属于其他板块，组合层会单独计算集中度。

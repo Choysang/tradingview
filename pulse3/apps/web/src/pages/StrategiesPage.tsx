@@ -14,6 +14,7 @@ import { MetaStrip } from '../components/MetaStrip';
 import { EmptyState, ErrorState, Loading, SectionTitle } from '../components/States';
 import { useToast } from '../components/Toast';
 import { HORIZONS, LEAGUE_DEFAULT } from '../config';
+import { PapersAndBenchmarkView, SwissArenaView } from './bf/nexus/ArenaAndPapersPanel';
 import { ExperimentArchive } from './bf/research/ExperimentArchive';
 import { usePinnedPages } from '../hooks/usePinnedPages';
 import { useStrategyCatalog } from '../hooks/useStrategyCatalog';
@@ -21,8 +22,15 @@ import { toFixed, toPercent } from '../lib/decimal';
 import { LIFECYCLE_LABEL, OUTCOME_LABEL, ROLE_LABEL, RUN_PURPOSE_LABEL, RUN_STATE_LABEL, fmtTime } from '../lib/format';
 import { gradeOfInstance } from '../lib/grades';
 
-type Tab = 'catalog' | 'league' | 'experiment' | 'archive';
-const TABS: Array<[Tab, string]> = [['catalog', '策略目录'], ['league', '联赛'], ['experiment', '提交实验'], ['archive', '实验档案']];
+type Tab = 'catalog' | 'arena' | 'papers2026' | 'league' | 'experiment' | 'archive';
+const TABS: Array<[Tab, string]> = [
+  ['catalog', '策略目录'],
+  ['arena', '瑞士轮天梯与分类路由'],
+  ['papers2026', '2026顶会论文与统一记账'],
+  ['league', '联赛'],
+  ['experiment', '提交实验'],
+  ['archive', '实验档案'],
+];
 const IMPL_LABEL: Record<string, string> = { not_implemented: '未实现', prototype: '原型', implemented: '已实现' };
 const REPRO_LABEL: Record<string, string> = { not_started: '未开始复现', running: '复现中', reproduced: '已复现', failed: '复现失败' };
 const HEALTH_LABEL: Record<string, string> = { healthy: '运行正常', degraded: '降级', unavailable: '不可用' };
@@ -38,6 +46,8 @@ export function StrategiesPage() {
         {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => set('tab', k)}>{l}</button>)}
       </div>
       {tab === 'catalog' && <Catalog />}
+      {tab === 'arena' && <SwissArenaView />}
+      {tab === 'papers2026' && <PapersAndBenchmarkView />}
       {tab === 'league' && <LeagueView />}
       {tab === 'experiment' && <ExperimentForm />}
       {tab === 'archive' && <ExperimentArchive />}

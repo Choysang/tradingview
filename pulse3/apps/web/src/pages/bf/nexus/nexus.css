@@ -1,0 +1,202 @@
+/* Nexus 2026 Unified Workbench & Hub Styles (A-Share convention: --up red, --down green, --accent blue) */
+
+.nx-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+.nx-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.nx-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.nx-banner {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nx-pick-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nx-pick-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nx-rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-price-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 6px 10px;
+  background: var(--surface-2);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+}
+
+.nx-price-strip dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.nx-price-strip dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-up { color: var(--up); }
+.nx-down { color: var(--down); }
+
+/* TradingView Multi-Timeframe Gauge & Meter */
+.nx-gauge-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nx-meter {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--down) 0%, #78909c 50%, var(--up) 100%);
+  overflow: visible;
+  margin: 6px 0;
+}
+
+.nx-meter-needle {
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--text);
+  box-shadow: 0 0 0 2px var(--surface);
+  transform: translateX(-50%);
+}
+
+/* VPVR Horizontal Chip Histogram */
+.nx-vpvr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.nx-vpvr-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.nx-vpvr-track {
+  height: 12px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.nx-vpvr-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: #64748b88;
+}
+
+.nx-vpvr-fill.va {
+  background: var(--accent);
+  opacity: 0.75;
+}
+
+.nx-vpvr-fill.poc {
+  background: var(--up);
+  opacity: 0.95;
+}
+
+/* Grid Ladder & Intraday-T */
+.nx-rung-buy {
+  background: color-mix(in srgb, var(--up) 10%, transparent);
+}
+
+.nx-rung-sell {
+  background: color-mix(in srgb, var(--down) 10%, transparent);
+}
+
+.nx-rung-anchor {
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+/* 4-Session Guba & Seat Cards */
+.nx-session-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.nx-session-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nx-formula {
+  display: block;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  overflow-x: auto;
+}

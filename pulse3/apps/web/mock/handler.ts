@@ -19,6 +19,7 @@ import {
 import { EVIDENCE_PAGE, buildCommunity, buildEvidence, buildFundFlow, buildPlan, buildSeats, buildWorkspace } from './stock.ts';
 import { handleBfStock } from './bf_stock.ts';
 import { handleBfFillm } from './bf_fillm.ts';
+import { handleBfNexus } from './bf_nexus.ts';
 import { buildMeta, decodeCursor, encodeCursor, errorResponse, iso, opaque, uuid, type MockResponse } from './util.ts';
 
 const RANK_PAGE = 5;
@@ -117,6 +118,8 @@ export function handle(s: MockState, req: MockRequest): MockResponse {
   if (method === 'GET' && path.startsWith('/v1/x/bf/stock/')) return handleBfStock(path, q, now, findRelease(s, q.get('release_id')) ?? (q.get('release_id') ? undefined : currentRelease(s)));
   // ---- fill-market backfill reads (crowd and linkage, stock stats additions; see mock/bf_fillm.ts) ----
   if (method === 'GET' && path.startsWith('/v1/x/bf/fillm/')) return handleBfFillm(path, q, now, findRelease(s, q.get('release_id')) ?? (q.get('release_id') ? undefined : currentRelease(s)));
+  // ---- Nexus 2026 unified selection, TV Pro, Grid/T, Guba/LHB, and Swiss Arena reads ----
+  if (method === 'GET' && path.startsWith('/v1/x/bf/nexus/')) return handleBfNexus(path, q, now, findRelease(s, q.get('release_id')) ?? (q.get('release_id') ? undefined : currentRelease(s)));
 
   const m = (re: RegExp): RegExpExecArray | null => re.exec(path);
   let g: RegExpExecArray | null;

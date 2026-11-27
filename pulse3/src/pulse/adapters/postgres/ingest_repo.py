@@ -198,6 +198,14 @@ def advance_cursor(conn: psycopg.Connection, spec: EndpointSpec, partition_key: 
 
 def save_health(conn: psycopg.Connection, spec: EndpointSpec, partition_key: str, st: HealthState, now: datetime) -> None:
     runtime = st.runtime_state
+    agg_id = f"{spec.source_id}/{spec.endpoint_id}/{partition_key}"
+    conn.execute("SELECT pg_advisory_xact_lock(hashtext(%s))", (f"source_health:{agg_id}",))
+    prev = conn.execute(
+        "SELECT runtime_state FROM ingest.source_health WHERE source_id=%s AND endpoint_id=%s"
+        " AND source_schema_version=%s AND mapping_version=%s AND partition_key=%s",
+        (*spec.key, partition_key),
+    ).fetchone()
+    prev_state = prev["runtime_state"] if prev else None
     conn.execute(
         "INSERT INTO ingest.source_health(source_id, endpoint_id, source_schema_version, mapping_version, partition_key,"
         " runtime_state, freshness_state, last_attempt_at, last_transport_ok_at, last_new_record_at, last_canonical_ready_at,"
@@ -212,6 +220,26 @@ def save_health(conn: psycopg.Connection, spec: EndpointSpec, partition_key: str
         (*spec.key, partition_key, runtime, st.freshness_state, st.last_attempt_at, st.last_transport_ok_at,
          st.last_new_record_at, st.last_canonical_ready_at, st.consecutive_failures, st.next_attempt_at,
          st.last_error_code, now))
+    if prev_state != runtime:
+        from pulse.adapters.postgres.outbox import PgOutbox
+        from pulse.application.ports.delivery import OutboxEvent
+        ver = conn.execute(
+            "SELECT coalesce(max(aggregate_version), 0) + 1 AS v FROM ops.outbox"
+            " WHERE aggregate_type='source_health' AND aggregate_id=%s",
+            (agg_id,),
+        ).fetchone()["v"]
+        PgOutbox(conn).append(OutboxEvent(
+            event_id=uuid.uuid5(RAW_NS, f"health|{agg_id}|{ver}|{runtime}"),
+            event_type="source.health.changed",
+            schema_version="3.0.0",
+            aggregate_type="source_health",
+            aggregate_id=agg_id,
+            aggregate_version=int(ver),
+            occurred_at=now,
+            producer_version="ingest_repo-v1",
+            payload={"source_id": spec.source_id, "endpoint_id": spec.endpoint_id, "partition_key": partition_key,
+                     "previous_state": prev_state, "runtime_state": runtime, "freshness_state": st.freshness_state},
+        ))
 
 
 def load_health(conn: psycopg.Connection, spec: EndpointSpec, partition_key: str) -> HealthState:
